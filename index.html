@@ -951,6 +951,17 @@ a series deal is counted once, at its full amount.</div>
      out. With this false, alerts open in the mail app as before. The outbox code stays; set this
      back to true only once something is actually delivering the outbox. */
   var AUTO_SEND = false;
+  /* RELAY VERSION (September 26, 2026): the outbox is ON. Approving or marking paid saves an
+     email request into data/outbox.json through the relay. That save is a commit to the
+     private sponsorship-data repo, and the repo's webhook wakes the "Sponsorship Team Emails"
+     flow within seconds. The flow signs in to the relay with its OWN account (its password
+     lives only in the flow), reads the outbox, sends each new request with recipients and
+     wording it holds itself, and records what it sent in data/outbox-sent.json — a file only
+     the flow writes, so the two never save over each other. Nothing secret is in this page. */
+  AUTO_SEND = true;
+  var QUEUE_KINDS = {invoice:true, logo:true, paid:true};
+  var QUEUE_WHO = {invoice:"Bernie", logo:"Dillon and Jenny", paid:"Jonna, Amy and Kelly"};
+  var outboxSent = {};       // id -> {sentAt} from data/outbox-sent.json, written by the flow
   var ALERT_SECRET   = "mismo-sponsorship-portal";
 
   var PEOPLE = {
@@ -1336,9 +1347,11 @@ a series deal is counted once, at its full amount.</div>
   }
   function outboxWord(o){
     if(!o) return "";
+    var sent = outboxSent[o.id];
+    if(sent) return "emailed " + fmtDate(String(sent.sentAt || o.queuedAt).slice(0,10));
     if(o.status === "sent") return "emailed " + fmtDate(String(o.sentAt||o.queuedAt).slice(0,10));
     if(o.status === "failed") return "couldn't be emailed automatically — use Send Alert on the record";
-    return "queued — emails automatically, usually within the hour on weekdays";
+    return "on its way — emails automatically, usually within a minute";
   }
 
   var ALERT_LABEL = {invoice:"Invoice Request", logo:"Logo Request", paid:"Payment Made",
@@ -1366,17 +1379,22 @@ a series deal is counted once, at its full amount.</div>
      outbox can't be written (no connection, read-only account), fall back to the mail app
      so nothing is silently lost. */
   function queueAlert(kind, a){
-    var al = alertFor(kind, a); if(!al) return Promise.reject(new Error("no alert"));
+    if(!QUEUE_KINDS[kind]) return Promise.reject(new Error("not an automatic email"));
     if(!db || !canWrite) return Promise.reject(new Error("not connected"));
     var now = new Date();
     var id = "ob-" + String(a.appNo||"x").toLowerCase().replace(/[^a-z0-9]/g,"") + "-" + kind + "-" + now.getTime();
-    var text = al.autoBody || al.body;
-    var doc = {kind:kind, appNo:a.appNo||"", company:a.company||"",
-      to: al.to.map(function(p){ return p.email; }).join(";"),
-      toNames: al.to.map(function(p){ return p.name.split(" ")[0]; }).join(", "),
-      subject: al.subject, body: text, bodyHtml: esc(text).replace(/\n/g, "<br>"),
-      logoRef: (kind === "logo" && prospectusRef(a)) ? prospectusRef(a) : "NONE",
-      status:"queued", attempts:0, queuedAt: now.toISOString(), queuedBy: whoAmI()};
+    /* Facts only. The flow holds the recipients and the wording; it reads nothing from here
+       that decides who gets an email. Angle brackets are stripped so no web-page code can
+       ride along into an email. */
+    function plain(v){ return String(v == null ? "" : v).replace(/[<>]/g, "").slice(0, 300); }
+    var doc = {kind:kind, toNames: QUEUE_WHO[kind],
+      appNo: plain(a.appNo), company: plain(a.company), event: plain(a.event),
+      level: plain(levelOf(a)), opportunity: plain(a.opportunity),
+      amountDue: plain(money(a.amountDue)), billingName: plain(a.billingName),
+      contactName: plain(a.contactName), contactEmail: plain(a.contactEmail),
+      prospectusRef: plain(prospectusRef(a)), invoiceNumber: plain(a.invoiceNumber),
+      amountPaid: plain(money(a.amountPaid || a.amountDue)),
+      status:"queued", queuedAt: now.toISOString(), queuedBy: whoAmI()};
     outbox.push(Object.assign({id:id}, doc));
     return db.doc("outbox/" + id).set(doc).then(function(){
       addLog(a.appNo, (ALERT_LABEL[kind]||kind) + " queued to email automatically — " + doc.toNames, whoAmI());
@@ -1387,7 +1405,7 @@ a series deal is counted once, at its full amount.</div>
   }
 
   function sendAlert(kind, a){
-    if(AUTO_SEND && db && canWrite){
+    if(AUTO_SEND && db && canWrite && QUEUE_KINDS[kind]){
       queueAlert(kind, a).then(function(){ renderAll(); }, function(){ openMailFor(kind, a); });
       return;
     }
@@ -2733,7 +2751,7 @@ a series deal is counted once, at its full amount.</div>
       '<button class="btn ghost sm" data-alert="paid" data-id="' + esc(a.id) + '">Payment Made</button>' +
       '</div>' +
       '<div style="font-size:12px;color:var(--ink-3);margin-top:8px;">' +
-      (AUTO_SEND && db && canWrite ? "Approving and marking paid email these automatically. Use these buttons to send one again — it goes out the same way, usually within the hour on weekdays."
+      (AUTO_SEND && db && canWrite ? "Approving and marking paid email these automatically. Use these buttons to send one again — it goes out the same way, usually within a minute."
                       : "Opens the alert, addressed and written, in your mail app.") + '</div>' +
       (function(){
         var mine = outbox.filter(function(o){ return o.appNo === a.appNo; })
@@ -2918,7 +2936,7 @@ a series deal is counted once, at its full amount.</div>
     if(queuing && alerts.length){
       alerts.forEach(function(k){ sendAlert(k, after); });
       toast(alerts.map(function(k){ return ALERT_LABEL[k] || k; }).join(" and ") +
-            " will email automatically, usually within the hour on weekdays. Nothing to send by hand.",
+            " will email automatically, usually within a minute. Nothing to send by hand.",
             "", "Emails queued", true);
       openDrawer(after.id, null);
     } else if(ALERT_ENDPOINT || alerts.length < 2){
@@ -4040,9 +4058,14 @@ a series deal is counted once, at its full amount.</div>
     function clean(content, kind){
       var c = content && typeof content === "object" ? content : {};
       if(kind === "log") return {entries: Array.isArray(c.entries) ? c.entries : []};
+      if(kind === "list"){   // outbox-sent: {list:[{id, sentAt}]}, written by the flow only
+        var m = {};
+        (Array.isArray(c.list) ? c.list : []).forEach(function(x){ if(x && x.id) m[x.id] = x; });
+        return {docs: m};
+      }
       return {docs: (c.docs && typeof c.docs === "object") ? c.docs : {}};
     }
-    function kindOf(name){ return name === "log" ? "log" : "docs"; }
+    function kindOf(name){ return name === "log" ? "log" : (name === "outbox-sent" ? "list" : "docs"); }
     function notify(f){ f.listeners.forEach(function(fn){ try{ fn(f.data); }catch(e){} }); }
     function load(name){
       var f = file(name);
@@ -4062,6 +4085,9 @@ a series deal is counted once, at its full amount.</div>
         return ready.then(function(){
           var next = clean(JSON.parse(JSON.stringify(f.data || {})), kindOf(name));
           fn(next);
+          if(name === "outbox") next.list = Object.keys(next.docs).map(function(id){
+            return Object.assign({id:id}, next.docs[id]);
+          });
           return call("PUT", name, {content: next, sha: f.sha}).then(function(b){
             f.data = next; f.sha = b.sha; notify(f);
           }, function(err){
@@ -4178,6 +4204,13 @@ a series deal is counted once, at its full amount.</div>
     }, failed("loading the activity log"));
     d.collection("outbox").onSnapshot(function(snap){
       try{ outbox = copyDocs(snap); renderAll(); }catch(err){}
+    }, function(){});
+    d.collection("outbox-sent").onSnapshot(function(snap){
+      try{
+        outboxSent = {};
+        snap.docs.forEach(function(doc){ outboxSent[doc.id] = doc.data() || {}; });
+        renderAll();
+      }catch(err){}
     }, function(){});
     d.collection("leads").onSnapshot(function(snap){
       try{

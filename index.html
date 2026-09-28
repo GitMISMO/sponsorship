@@ -5436,18 +5436,19 @@ a series deal is counted once, at its full amount.</div>
   }
 
   var started = false;
+  /* Signing in and being refused use the shared screens every resources.mismo.org tool
+     uses (session.js), not banners of this page's own. requireAccess also asks the relay
+     before refusing, so someone granted the Portal after they signed in is asked to sign
+     in again rather than turned away (Sept 28, 2026). */
+  var TOOL_NAME = "the Sponsorship Portal";
   function startRelay(){
-    var s = RS && RS.current();
-    if(!s){
-      relayBanner("<b>Sign in to see the Sponsorship Portal.</b> Use <b>Sign in</b> at the top right — the same account as the Initiative Hub and Summit HQ.");
-      return;
-    }
+    RS.requireAccess(RELAY_PROJECT, {toolName: TOOL_NAME}).then(beginRelay, function(e){
+      if(e && e.code === "OFFLINE") relayBanner("<b>The Sponsorship Portal couldn't reach the sign-in service.</b> Check your connection, then reload the page.", "bad");
+    });
+  }
+  function beginRelay(role){
+    var s = RS.current() || {};
     user = {name: s.name || s.email || "MISMO"};
-    var role = RS.role(RELAY_PROJECT);
-    if(!role){
-      relayBanner("<b>Your account doesn't have access to the Sponsorship Portal.</b> Ask Jonna to add you on the admin screen.", "bad");
-      return;
-    }
     canWrite = (role === "admin" || role === "staff");
     if(started) return;
     started = true;
@@ -5463,7 +5464,7 @@ a series deal is counted once, at its full amount.</div>
       });
     }
     function failed(what){ return function(e){
-      if(e && e.code === "NO_ACCESS"){ relayBanner("<b>Your account doesn't have access to the Sponsorship Portal.</b> Ask Jonna to add you on the admin screen.", "bad"); return; }
+      if(e && e.code === "NO_ACCESS"){ RS.signIn({reason: "no-access", toolName: TOOL_NAME, gated: true}).catch(function(){}); return; }
       loadFailed(what, e && (e.message || e.code));
     }; }
     d.collection("applications").onSnapshot(function(snap){

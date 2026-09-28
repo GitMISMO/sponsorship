@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-rs-gate>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5590,7 +5590,7 @@ a series deal is counted once, at its full amount.</div>
      in again rather than turned away (Sept 28, 2026). */
   var TOOL_NAME = "the Sponsorship Portal";
   function startRelay(){
-    RS.requireAccess(RELAY_PROJECT, {toolName: TOOL_NAME}).then(beginRelay, function(e){
+    RS.requireAccess(RELAY_PROJECT, {toolName: TOOL_NAME, eyebrow: "Programs & Operations"}).then(beginRelay, function(e){
       if(e && e.code === "OFFLINE") relayBanner("<b>The Sponsorship Portal couldn't reach the sign-in service.</b> Check your connection, then reload the page.", "bad");
     });
   }
@@ -5612,7 +5612,7 @@ a series deal is counted once, at its full amount.</div>
       });
     }
     function failed(what){ return function(e){
-      if(e && e.code === "NO_ACCESS"){ RS.signIn({reason: "no-access", toolName: TOOL_NAME, gated: true}).catch(function(){}); return; }
+      if(e && e.code === "NO_ACCESS"){ RS.signIn({reason: "no-access", toolName: TOOL_NAME, eyebrow: "Programs & Operations", gated: true}).catch(function(){}); return; }
       loadFailed(what, e && (e.message || e.code));
     }; }
     d.collection("applications").onSnapshot(function(snap){

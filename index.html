@@ -5304,9 +5304,18 @@ a series deal is counted once, at its full amount.</div>
       if(!files[name]) files[name] = {data:null, sha:null, loaded:false, listeners:[], queue:Promise.resolve()};
       return files[name];
     }
-    function call(method, name, body){
+    /* A save made after the session has run out asks the person to sign in through the
+       shared window ("Sign in to finish saving") and then sends the SAME save. Before
+       Sept 28, 2026 it was rejected before being sent and the rejection was swallowed:
+       the record looked saved on screen and never reached the data store. Reads are not
+       prompted for, so a background refresh never opens a window by itself. */
+    function call(method, name, body, retried){
       var tok = RS && RS.token();
-      if(!tok) return Promise.reject({code:"SIGNED_OUT"});
+      var write = method !== "GET";
+      if(!tok){
+        if(!write || !RS || retried) return Promise.reject({code:"SIGNED_OUT"});
+        return askToFinish().then(function(){ return call(method, name, body, true); });
+      }
       return fetch(RELAY_URL + "/" + RELAY_PROJECT + "/data/" + name, {
         method: method, cache: "no-store",
         headers: Object.assign({"Authorization":"Bearer " + tok}, body ? {"Content-Type":"application/json"} : {}),
@@ -5315,9 +5324,17 @@ a series deal is counted once, at its full amount.</div>
         return r.json().catch(function(){ return {}; }).then(function(b){
           if(r.ok) return b;
           var err = {status:r.status, code:(b && b.error) || ("HTTP_" + r.status), message:b && b.message};
-          if(r.status === 401 && RS){ RS.signIn({reason:"expired"}).catch(function(){}); }
+          if(r.status === 401 && RS && write && !retried){
+            return askToFinish().then(function(){ return call(method, name, body, true); });
+          }
           throw err;
         });
+      });
+    }
+    function askToFinish(){
+      return RS.signIn({reason:"expired"}).then(null, function(){
+        relayBanner("<b>Your change wasn't saved.</b> Sign in to save it. It stays on screen until you reload.", "bad");
+        return Promise.reject({code:"SIGNED_OUT"});
       });
     }
     function clean(content, kind){

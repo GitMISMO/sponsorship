@@ -416,6 +416,15 @@
   .impdelta{display:block; font-size:12.5px; margin-top:6px;}
   .impnote{font-size:12.5px; color:var(--ink-2); border-left:3px solid var(--border-strong);
     padding:7px 12px; margin-bottom:8px;}
+  #pimp-scrim{z-index:51;}
+  .impfile.one{grid-column:1 / -1;}
+  .imptag{display:inline-block; font-size:10.5px; font-weight:600; text-transform:uppercase;
+    letter-spacing:.05em; border-radius:4px; padding:2px 6px; margin-left:6px; vertical-align:1px;
+    background:var(--sky-wash); color:var(--navy-mid); border:1px solid var(--sky);}
+  .impnotes{margin:7px 0 0; padding:0; list-style:none;}
+  .impnotes li{font-size:12.5px; color:var(--ink-2); border-left:2px solid var(--border-strong);
+    padding:2px 0 2px 9px; margin-top:5px;}
+  .impnotes li b{color:var(--ink); font-weight:600;}
 
   /* ---------- table ---------- */
   .tablewrap{overflow-x:auto;}
@@ -538,6 +547,10 @@
   .dsect > h4{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3);
     border-bottom:1px solid var(--rule); padding-bottom:6px; margin-bottom:11px;}
   .grid2{display:grid; grid-template-columns:1fr 1fr; gap:11px;}
+  /* A field that follows a two-column grid, or another full-width field, gets the same 11px
+     gap the grid uses between its own rows (Also Invoiced As sat flush under Number of
+     Comps, and Opportunity under 2027 Level). Not applied inside .grid2, where gap does it. */
+  .grid2 + .fld, .dsect > .fld + .fld{margin-top:11px;}
   @media (max-width:520px){ .grid2{grid-template-columns:1fr;} }
   .fld label{display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); margin-bottom:4px;}
   .fld input, .fld select, .fld textarea{width:100%; border:1px solid var(--border); border-radius:5px; padding:8px 9px;
@@ -589,6 +602,361 @@
   @media (max-width:430px){
     .stats, .stats.three{grid-template-columns:1fr;}
   }
+
+  /* ======================================================================
+     Website Migration HQ look and feel — applied 27 September 2026 at
+     Jonna's request, so the two pages read as siblings. Everything below
+     overrides what is above it by source order; nothing above was deleted,
+     so the older rules still document why each piece exists.
+     Reference: https://claude.ai/artifact/MD5K6uazNMNLD3pf2iqsqy
+     ====================================================================== */
+
+  /* ---- tokens, straight from Migration HQ ---- */
+  :root{
+    --navy:#0d314c; --sky:#74bfeb; --navy-deep:#06202f; --navy-mid:#14486e;
+    --sky-soft:#a9d8f3; --sky-wash:#e4f2fb;
+    --ground:#f1f6fa; --surface:#ffffff; --surface-2:#f6fafd; --surface-3:#e9f1f8;
+    --border:#d5e2ed; --border-strong:#adc4d6; --rule:#e5eef5;
+    --ink:#0d314c; --ink-2:#456179; --ink-3:#7794aa;
+    --good:#0f7b5c; --bad:#b3372c; --warn:#a2701a;
+    --good-soft:#e2f2ec; --bad-soft:#f9e6e4; --warn-soft:#f8efdc; --info-soft:#e4f2fb;
+    --c1:#2477b8; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300;
+    --display:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --shadow:0 1px 2px rgba(13,49,76,.06),0 6px 18px rgba(13,49,76,.06);
+    --hq-h:64px;
+    --tab-active:#ffffff; --chip:#eef4f9; --overlay:rgba(6,32,47,.42);
+    --rail-on:#14486e; --rail-pip:#c0392f;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+    --ground:#061722; --surface:#0d2837; --surface-2:#123143; --surface-3:#173c52;
+    --border:#1f4a63; --border-strong:#2f6688; --rule:#173547;
+    --ink:#e9f4fb; --navy-mid:#7fc0ea; --ink-2:#a6c5d9; --ink-3:#7a9db4;
+    --good:#4fc79b; --bad:#f08579; --warn:#e0a83c;
+    --good-soft:#123d33; --bad-soft:#43201f; --warn-soft:#3d3218;
+    --info-soft:#123a52; --sky-wash:#123a52;
+    --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#2f9e2f;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
+    --tab-active:#0d2837; --chip:#173c52; --overlay:rgba(2,10,16,.62);
+    color-scheme:dark; } }
+  :root[data-theme="dark"]{
+    --ground:#061722; --surface:#0d2837; --surface-2:#123143; --surface-3:#173c52;
+    --border:#1f4a63; --border-strong:#2f6688; --rule:#173547;
+    --ink:#e9f4fb; --navy-mid:#7fc0ea; --ink-2:#a6c5d9; --ink-3:#7a9db4;
+    --good:#4fc79b; --bad:#f08579; --warn:#e0a83c;
+    --good-soft:#123d33; --bad-soft:#43201f; --warn-soft:#3d3218;
+    --info-soft:#123a52; --sky-wash:#123a52;
+    --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#2f9e2f;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
+    --tab-active:#0d2837; --chip:#173c52; --overlay:rgba(2,10,16,.62);
+    color-scheme:dark;
+  }
+  body{font-family:var(--display); font-size:14px; line-height:1.5;
+    font-variant-numeric:tabular-nums;}
+  h1,h2,h3,h4{letter-spacing:-.012em; text-wrap:balance;}
+  a{color:var(--c1);}
+
+  /* ---- masthead ---- */
+  .mast{height:var(--hq-h); padding:0 22px; gap:0; flex-wrap:nowrap;
+    box-shadow:0 1px 0 rgba(116,191,235,.28);}
+  .mast-rule{width:2px; height:34px; align-self:center; flex:0 0 auto;
+    margin-inline:20px; border-radius:1px; background:var(--sky);}
+  .mast-name{font-size:15.5px; font-weight:700; letter-spacing:-.005em; color:var(--sky);
+    min-width:0; overflow:hidden; text-overflow:ellipsis;}
+  .eyebrow{font-weight:600;}
+  .plate{border-radius:7px; padding:8px 14px;}
+  @media (max-width:700px){ .eyebrow{display:none;} }
+  @media (max-width:560px){
+    .mast{padding:0 12px;} .mast-rule{margin-inline:12px; height:30px;}
+    .plate{padding:7px 10px;} .plate .wordmark{height:20px; width:131px;}
+    .mast-name{font-size:13.5px;}
+  }
+  @media (max-width:430px){
+    .mast{padding:0 11px;} .mast-rule{margin-inline:9px; height:26px;}
+    .plate .wordmark{height:17px; width:111px;}
+  }
+
+  /* ---- the rail ---- */
+  .side{box-shadow:1px 0 0 rgba(116,191,235,.22), 4px 0 18px rgba(6,32,47,.14);
+    border-right:0;}
+  .side-hd{padding:11px 10px 9px; border-bottom:1px solid rgba(116,191,235,.2);}
+  .side-lab{font-size:9.5px; letter-spacing:.12em; font-weight:700;
+    color:rgba(255,255,255,.55); padding-left:3px;}
+  .iconbtn{border:1px solid rgba(255,255,255,.18); border-radius:5px;}
+  .side-search{padding:11px 12px 3px;}
+  .sbox input{background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18);
+    border-radius:6px; font-size:12.5px; padding:6px 10px 6px 30px;}
+  .sbox .sico{left:11px;}
+  .tabband{padding:8px 8px 4px;}
+  .navgrp{font-size:9.5px; letter-spacing:.12em; font-weight:700;}
+  .tab{gap:10px; padding:8px 10px; border-radius:6px; font-size:13px; font-weight:500;
+    color:rgba(255,255,255,.76);}
+  .tab .ico{width:17px; height:17px; opacity:.85; color:currentColor;}
+  .tab:hover{background:rgba(255,255,255,.09); color:#fff;}
+  .tab.on{background:var(--rail-on); color:#fff; font-weight:600;}
+  .tab.on .ico{color:var(--sky); opacity:1;}
+  .tab .pip{border-radius:999px;}
+  /* the theme control reads as one more row, with a rule above it */
+  .side-ft{border-top:1px solid rgba(116,191,235,.2); padding:8px 8px 10px;}
+  .side-ft .theme-btn{background:none; border:0; border-radius:6px;
+    padding:8px 10px; font-size:13px; font-weight:500; color:rgba(255,255,255,.76);}
+  .side-ft .theme-btn:hover{background:rgba(255,255,255,.09); color:#fff;
+    border-color:transparent;}
+  .side-ft .theme-btn .ico{width:17px; height:17px; opacity:.85;}
+
+  /* ---- the page ---- */
+  .wrap{padding:24px 22px 90px;}
+  /* a view opens with its name and a line saying what it is for, above the boxes
+     rather than inside one — the Migration HQ arrangement */
+  .vhead{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+    gap:12px 20px; margin:0 0 16px;}
+  .vhead > div{flex:1 1 320px; min-width:0;}
+  .vhead h2{font-size:24px; font-weight:700;}
+  .vhead .psub{margin:5px 0 0; font-size:14px; color:var(--ink-2);}
+  .panel{border-radius:8px; padding:18px 20px; margin-bottom:22px;}
+  .panel > h2{font-size:15.5px;}
+  .psub{font-size:12.5px; color:var(--ink-2);}
+  .subhead{font-size:12px; font-weight:700; letter-spacing:.09em; color:var(--ink-2);
+    margin:0 0 10px;}
+  .foot{font-size:12.5px; color:var(--ink-2);}
+
+  /* ---- the headline band: where the season stands, in a sentence ---- */
+  .headline{background:var(--navy); color:#fff; border-radius:8px; padding:20px 22px;
+    display:flex; flex-direction:column; gap:14px; margin-bottom:26px;}
+  .hl-top{display:flex; align-items:center; justify-content:space-between; gap:12px;
+    flex-wrap:wrap; margin-bottom:-6px;}
+  .hl-date{font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--sky-soft);}
+  .headline .scopebar{margin:0; gap:8px;}
+  .headline .scopebar label{color:rgba(255,255,255,.62); font-weight:600;}
+  .headline .scopebar select{background:rgba(255,255,255,.1); color:#fff;
+    border:1px solid rgba(255,255,255,.22); border-radius:6px; font-size:12.5px;
+    padding:5px 9px;}
+  .headline .scopebar select option{color:#141413;}
+  .headline .scopenote{color:rgba(255,255,255,.6);}
+  .hl-say{font-size:18px; font-weight:600; letter-spacing:-.01em; line-height:1.35;}
+  .hl-say em{font-style:normal; color:var(--sky);}
+  .hl-say em.hl-late{color:#ffcf73;}
+  .headline .stats{margin-bottom:0;}
+  /* the four figures, as tiles on the navy rather than cards on the page */
+  .headline .stat{background:rgba(255,255,255,.07); border:1px solid rgba(116,191,235,.28);
+    border-radius:6px; padding:12px 14px; color:#fff;}
+  .headline .stat .lab{color:var(--sky-soft); text-transform:none; letter-spacing:0;
+    font-size:12px; order:2; margin-top:3px;}
+  .headline .stat .val{font-size:28px; font-weight:700; line-height:1.1; margin:0;
+    letter-spacing:-.01em; order:1; color:#fff;}
+  .headline .stat .sub{color:rgba(255,255,255,.6); font-size:11.5px; order:3; margin-top:2px;}
+  .headline .stat{display:flex; flex-direction:column;}
+  .headline .stat.good .val{color:#8fe3c4;}
+  .headline .stat.alert .val{color:#ffcf73;}
+
+  /* ---- cards and tiles elsewhere ---- */
+  .stat{border-radius:8px; padding:14px 16px;}
+  .stat .lab{font-size:12px; text-transform:none; letter-spacing:0; color:var(--ink-2);}
+  .stat .val{font-size:26px; font-weight:700; letter-spacing:-.015em;}
+  .stat .sub{font-size:11.5px; color:var(--ink-3);}
+  .stat.clickable{border-left:1px solid var(--border); box-shadow:var(--shadow);}
+  .stat.clickable:hover{border-color:var(--border-strong); background:var(--surface);
+    box-shadow:var(--shadow);}
+  .col{border-radius:8px; padding:16px 18px; box-shadow:var(--shadow);}
+  .col:hover{border-color:var(--border-strong); background:var(--surface);
+    box-shadow:var(--shadow);}
+  .col .cname{font-size:12px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--ink-2);}
+  .col .cbig{font-size:34px; font-weight:700; letter-spacing:-.02em;}
+  .qcard, .srow, .improw{border-radius:8px;}
+
+  /* ---- buttons ---- */
+  .btn{border:1px solid var(--navy); border-radius:4px; padding:7px 12px;
+    font-size:13px; font-weight:600;}
+  .btn:hover{background:var(--navy-mid); border-color:var(--navy-mid);}
+  .btn.ghost{background:transparent; color:var(--ink); border-color:var(--border-strong);}
+  .btn.ghost:hover{background:var(--surface-2); color:var(--ink);}
+  .btn.sm{padding:6px 11px; font-size:12.5px;}
+  /* navy on navy is unreadable in dark mode, so the primary button flips to sky */
+  :root[data-theme="dark"] .btn:not(.ghost):not(.danger){background:var(--sky);
+    color:var(--navy-deep); border-color:var(--sky);}
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .btn:not(.ghost):not(.danger){background:var(--sky);
+      color:var(--navy-deep); border-color:var(--sky);}
+  }
+
+  /* ---- chips ---- */
+  .tag, .st{border-radius:3px; padding:1px 7px; font-size:11.5px; font-weight:600;
+    line-height:1.6; border:1px solid transparent;}
+  .tag{text-transform:none; letter-spacing:0;}
+
+  /* ---- tables and notes ---- */
+  thead th{font-size:11px; font-weight:700; letter-spacing:.07em; color:var(--ink-2);
+    background:var(--surface-2); border-bottom:1px solid var(--border-strong);}
+  .banner, .dnote, .quickfilter{border-radius:0 6px 6px 0; background:var(--info-soft);
+    border-left:3px solid var(--c1);}
+  .banner.bad{background:var(--bad-soft); border-left-color:var(--bad);}
+  .impmsg{background:var(--info-soft);}
+  .impmsg.warn{background:var(--warn-soft);}
+  .impmsg.bad{background:var(--bad-soft);}
+  .empty{border-radius:8px; padding:18px; color:var(--ink-3);}
+
+  /* ---- panels that slide in ---- */
+  .drawer{border-left:1px solid var(--border); box-shadow:-8px 0 28px rgba(6,32,47,.18);}
+  .dhead h3{font-size:18px; font-weight:700;}
+  .dsect > h4{font-size:12px; font-weight:700; letter-spacing:.09em; color:var(--ink-2);}
+  .fld input, .fld select, .fld textarea{border-radius:6px;}
+  .toast{border-radius:8px; box-shadow:var(--shadow);}
+
+  @media (max-width:560px){
+    .vhead h2{font-size:20px;}
+    .hl-say{font-size:16px;}
+    .headline{padding:16px 16px;}
+  }
+
+  /* ---- Migration HQ cards, segments and legends — 27 September 2026 ---- */
+  .cards{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px;
+    margin-bottom:22px;}
+  .cards.pipe{grid-template-columns:repeat(4,minmax(0,1fr));}
+  @media (max-width:1100px){ .cards{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .cards.pipe{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  @media (max-width:620px){ .cards, .cards.pipe{grid-template-columns:1fr;} }
+  /* the rows line up across the grid whatever each card holds */
+  .cards > .card{display:grid; grid-row:span 3; grid-template-rows:subgrid; row-gap:10px;
+    align-content:start;}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:16px 18px; text-align:left; color:var(--ink); cursor:pointer;
+    box-shadow:var(--shadow); font:inherit; font-family:var(--display);}
+  .card:hover{border-color:var(--border-strong);}
+  .card:focus-visible{outline:2px solid var(--c1); outline-offset:2px;}
+  .card:disabled{cursor:default; opacity:.6; box-shadow:none;}
+  .card:disabled:hover{border-color:var(--border);}
+  .card.on{border-color:var(--c1); box-shadow:inset 0 0 0 1px var(--c1), var(--shadow);}
+  .card h3{font-size:16px; font-weight:700; display:flex; align-items:center;
+    justify-content:space-between; gap:10px;}
+  .card h3 .arr{color:var(--ink-3); font-weight:500; font-size:18px;}
+  .card:hover h3 .arr{color:var(--c1);}
+  .card p{margin:0; color:var(--ink-2); font-size:13px;}
+  .card .cfoot{display:flex; flex-direction:column; gap:10px; align-self:start; min-width:0;}
+  .card .numrow{display:flex; align-items:center; justify-content:space-between;
+    gap:8px 12px; min-height:28px;}
+  .card .big{font-size:26px; font-weight:700; line-height:1; flex:0 0 auto; white-space:nowrap;}
+  .card .big small{font-size:13px; font-weight:500; color:var(--ink-2); margin-left:6px;}
+  .card .meta{display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; margin-left:auto;}
+  .card .next{font-size:12.5px; color:var(--ink-2); border-top:1px solid var(--rule);
+    padding-top:9px; margin:0;}
+  .card .next b{color:var(--ink); font-weight:600;}
+
+  .chip{display:inline-flex; align-items:center; gap:5px; border-radius:3px; padding:1px 7px;
+    font-size:11.5px; font-weight:600; white-space:nowrap; border:1px solid transparent;
+    line-height:1.6; background:var(--chip); color:var(--ink-2);}
+  .chip.ch-bad{background:var(--bad-soft); color:var(--bad);}
+  .chip.ch-ok{background:var(--good-soft); color:var(--good);}
+  .chip.ch-warn{background:var(--warn-soft); color:var(--warn);}
+
+  .toolbar{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center;}
+  .tlab{font-size:12.5px; font-weight:600; color:var(--ink-2);}
+  .seg{display:inline-flex; border:1px solid var(--border-strong); border-radius:5px;
+    overflow:hidden;}
+  .seg button{border:0; border-right:1px solid var(--border-strong); background:var(--surface);
+    color:var(--ink-2); padding:6px 13px; font-family:inherit; font-size:12.5px;
+    font-weight:600; cursor:pointer;}
+  .seg button:last-child{border-right:0;}
+  .seg button:hover{background:var(--surface-2);}
+  .seg button[aria-pressed="true"]{background:var(--navy); color:#fff;}
+  .seg button:focus-visible{outline:2px solid var(--c1); outline-offset:-2px;}
+  :root[data-theme="dark"] .seg button[aria-pressed="true"]{background:var(--sky); color:var(--navy-deep);}
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .seg button[aria-pressed="true"]{background:var(--sky); color:var(--navy-deep);}
+  }
+
+  .lgd{display:flex; flex-wrap:wrap; gap:6px 16px; margin:12px 0 16px;
+    font-size:12.5px; color:var(--ink-2);}
+  .lgd span{display:inline-flex; align-items:center; gap:6px;}
+  .lgd i{width:10px; height:10px; border-radius:2px; display:inline-block;}
+  .lgd b{color:var(--ink); font-weight:700;}
+
+  /* the page header is the width of the page, above the navy band */
+  #pagehead{display:block; margin:0 0 18px;}
+  #pagehead h2{font-size:26px; font-weight:700;}
+  #pagehead .psub{margin:6px 0 0; font-size:14px; color:var(--ink-2); max-width:none;}
+  @media (max-width:560px){ #pagehead h2{font-size:21px;} }
+
+  /* a filter row that ends in a button */
+  .filters .btn{margin-left:4px;}
+  .snav{margin-bottom:0;}
+
+  /* controls and text sitting on the navy band have to be light */
+  .headline .btn.ghost{color:#fff; border-color:rgba(255,255,255,.3);
+    background:rgba(255,255,255,.08);}
+  .headline .btn.ghost:hover{background:rgba(255,255,255,.18); color:#fff;}
+  .headline .leadmix{color:rgba(255,255,255,.72);}
+  .headline .leadmix b{color:#fff;}
+  .headline .leadmix .sep{color:rgba(255,255,255,.45);}
+  .headline .stat.clickable{border:1px solid rgba(116,191,235,.28); box-shadow:none;}
+  .headline .stat.clickable:hover{background:rgba(255,255,255,.13);
+    border-color:rgba(116,191,235,.6); box-shadow:none;}
+  .headline .stat.clickable .qcue{color:var(--sky);}
+  .headline .stat.clickable:hover .qcue{color:#fff;}
+  .headline .hl-top .btn{flex:0 0 auto;}
+  /* three tiles rather than four on the Inventory band */
+  .headline .stats.three{grid-template-columns:repeat(3,minmax(0,1fr));}
+  @media (max-width:820px){ .headline .stats.three{grid-template-columns:1fr;} }
+
+  /* the applications list sits under the stage cards on the Pipeline tab */
+  #apps-head{margin-top:4px;}
+  .cards.pipe{margin-bottom:26px;}
+
+  /* ---- the rail search results, the Member 360 pattern ---- */
+  .sbox{position:relative;}
+  .railq-x{position:absolute; right:7px; top:50%; margin-top:-10px; width:20px; height:20px;
+    border:0; border-radius:4px; background:transparent; color:rgba(255,255,255,.6);
+    font-size:15px; line-height:1; padding:0; cursor:pointer; font-family:inherit;}
+  .railq-x:hover{background:rgba(255,255,255,.16); color:#fff;}
+  .railhits{margin-top:7px; background:var(--surface); border:1px solid var(--border-strong);
+    border-radius:6px; box-shadow:0 10px 26px rgba(6,32,47,.3);
+    overflow:hidden auto; max-height:min(52vh,420px);}
+  .railhits[hidden]{display:none;}
+  .railhits .rh-g{font-size:9px; letter-spacing:.09em; text-transform:uppercase; font-weight:700;
+    color:var(--ink-3); background:var(--surface-2); padding:4px 10px;
+    border-bottom:1px solid var(--rule); position:sticky; top:0;}
+  .railhits .rh{display:block; width:100%; text-align:left; background:none; border:0;
+    border-bottom:1px solid var(--rule); padding:6px 10px; color:var(--ink); cursor:pointer;
+    font-family:inherit;}
+  .railhits .rh:hover, .railhits .rh.on{background:var(--sky-wash);}
+  .railhits .rh b{display:block; font-size:12.5px; font-weight:600; line-height:1.3;
+    overflow-wrap:anywhere;}
+  .railhits .rh i{display:block; font-style:normal; font-size:9.5px; color:var(--ink-3);
+    margin-top:1px; overflow-wrap:anywhere;}
+  .railhits .rh-none{padding:10px; font-size:12px; color:var(--ink-3);}
+  /* collapsed to the rail there is nowhere to put them */
+  .side.mini .railhits, .side.mini .railq-x{display:none;}
+
+  /* ---- expand a panel, and put it back ---- */
+  .widebtn{margin-left:auto; display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; padding:0; flex:0 0 auto; cursor:pointer; border-radius:5px;
+    background:none; border:1px solid transparent; color:var(--ink-3); font-family:inherit;}
+  .widebtn:hover{color:var(--ink); background:var(--sky-wash); border-color:var(--sky);}
+  .widebtn:focus-visible{outline:2px solid var(--sky); outline-offset:1px;}
+  .widebtn svg{width:16px; height:16px;}
+  .widebtn .i-min{display:none;}
+  .drawer.wide .widebtn .i-max{display:none;}
+  .drawer.wide .widebtn .i-min{display:block;}
+  /* the close button sits right beside it rather than being pushed away */
+  .widebtn + .dclose{margin-left:2px;}
+  .drawer.wide{width:min(1320px, calc(100vw - 264px));}
+  .drawer.wide.stagedrawer, .drawer.wide.impdrawer{width:min(1320px, calc(100vw - 264px));}
+  @media (max-width:900px){
+    .drawer.wide, .drawer.wide.stagedrawer, .drawer.wide.impdrawer{width:100%;}
+    .widebtn{display:none;}
+    .widebtn + .dclose{margin-left:auto;}
+  }
+  /* so the smooth scroll doesn't tuck the list under the masthead */
+  #view-leads .panel{scroll-margin-top:calc(var(--mast-h,64px) + 14px);}
+
+  /* The Inventory picker kept an older id-level rule, which beat the band's own
+     styling and left it a big white box next to the navy pickers on the other tabs.
+     Same selector weight, later in the sheet, so the band wins. */
+  .headline #stock-view{background:rgba(255,255,255,.1); color:#fff;
+    border:1px solid rgba(255,255,255,.22); border-radius:6px; font-size:12.5px;
+    font-weight:600; padding:5px 9px;}
+  .headline #stock-view option{color:#141413;}
 </style>
 </head>
 <body>
@@ -639,12 +1007,14 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 <symbol id="ico-moon" viewBox="0 0 16 16"><path d="M13.4 9.6A5.6 5.6 0 0 1 6.4 2.6a5.8 5.8 0 1 0 7 7z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
 <symbol id="ico-sun" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="3.1"/><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"/></g></symbol>
 <symbol id="ico-search" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6.9" cy="6.9" r="4.6"/><path d="M10.3 10.3 14 14"/></g></symbol>
+<symbol id="ico-expand" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="ico-shrink" viewBox="0 0 24 24"><path d="M20 10h-6V4M4 14h6v6M14 10l7-7M10 14l-7 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="ico-chev" viewBox="0 0 16 16"><path d="M6 3.4 10.6 8 6 12.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </defs></svg>
 
 <header class="mast">
   <span class="plate"><svg class="wordmark" role="img" aria-label="MISMO" viewBox="0 0 708 108"><use href="#mismo-logo"/></svg><svg class="santa" viewBox="0 0 100 100" aria-hidden="true"><use href="#mismo-hat"/></svg></span>
-  <span class="mast-rule"></span>
+  <span class="mast-rule" aria-hidden="true"></span>
   <span class="mast-name">Sponsorship Portal</span>
   <span class="mast-right">
     <span class="eyebrow">Programs &amp; Operations</span>
@@ -662,14 +1032,15 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <span class="sbox">
       <svg class="sico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-search"/></svg>
       <input id="nav-search" type="search" placeholder="Search" autocomplete="off"
-             aria-label="Search sponsors and applications">
+             spellcheck="false" aria-label="Search sponsors, prospects and contacts">
+      <button class="railq-x" id="nav-search-x" type="button" aria-label="Clear the search" hidden>&times;</button>
     </span>
+    <div class="railhits" id="nav-hits" hidden></div>
   </div>
   <nav class="tabband" id="tabband" aria-label="Sections">
     <div class="navgrp">Work</div>
     <button class="tab on" data-view="pipeline" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pipe"/></svg><span class="tlbl">Pipeline</span><span class="pip quiet" id="pip-pipe">0</span></button>
-    <button class="tab" data-view="leads" type="button" title="Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Prospects</span><span class="pip quiet" id="pip-leads">0</span></button>
-    <button class="tab" data-view="apps" type="button" title="Applications"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-apps"/></svg><span class="tlbl">Applications</span></button>
+    <button class="tab" data-view="leads" type="button" title="Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Prospects</span></button>
     <div class="navgrp">Records</div>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
@@ -689,35 +1060,47 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 
   <div id="conn-banner" class="banner" style="display:none;"></div>
 
-  <div class="scopebar">
-    <label for="season">Showing</label>
-    <select id="season"></select>
-    <span class="scopenote" id="scope-note"></span>
-  </div>
+  <div class="vhead" id="pagehead"><div>
+    <h2 id="ph-title">Pipeline</h2>
+    <p class="psub" id="ph-sub"></p>
+  </div></div>
 
-  <div class="stats" id="stats"></div>
+  <div class="headline" id="headline">
+    <div class="hl-top">
+      <div class="hl-date" id="hl-date"></div>
+      <div class="scopebar">
+        <label for="season">Showing</label>
+        <select id="season"></select>
+        <span class="scopenote" id="scope-note"></span>
+      </div>
+    </div>
+    <div class="hl-say" id="hl-say"></div>
+    <div class="stats" id="stats"></div>
+  </div>
 
   <!-- ================= PROSPECTS ================= -->
   <section class="view" id="view-leads">
-    <div class="scopebar">
-      <label for="lead-season">Showing</label>
-      <select id="lead-season" aria-label="Sponsorship Season"></select>
-      <span class="leadmix" id="lead-mix"></span>
-    </div>
-    <div class="stats" id="lead-stats"></div>
-    <div class="panel">
-      <div class="phead">
-        <div>
-          <h2>Prospects</h2>
-          <p class="psub">Everyone Amy and Kelly are cultivating who hasn&rsquo;t applied yet &mdash; so a lead
-            never goes quiet the way Dark Matter Technologies did, told &ldquo;no budget&rdquo; in January and not
-            followed up again until they applied on their own eight months later. Give every prospect a
-            <b>Next Follow-Up</b> date; it turns this tab's <b>Needs Follow-Up</b> card red as soon as
-            that date arrives.</p>
+    <div class="headline">
+      <div class="hl-top">
+        <div class="hl-date" id="lead-hl-date"></div>
+        <div class="scopebar">
+          <label for="lead-season">Showing</label>
+          <select id="lead-season" aria-label="Sponsorship Season"></select>
+          <span class="leadmix" id="lead-mix"></span>
         </div>
-        <button class="btn sm" id="new-lead" type="button"
-          title="Opens a blank record for a company or contact worth following up">New Prospect</button>
       </div>
+      <div class="hl-say" id="lead-hl-say"></div>
+      <div class="stats" id="lead-stats"></div>
+    </div>
+
+    <div class="toolbar" style="margin-bottom:12px;">
+      <span class="tlab">View By</span>
+      <span class="seg" id="lead-seg" role="group" aria-label="View By"></span>
+    </div>
+    <div class="legend lgd" id="lead-legend"></div>
+    <div class="cards" id="lead-cards"></div>
+
+    <div class="panel">
       <div id="lead-quickfilter-bar" style="display:none;"></div>
       <div class="filters">
         <select id="f-lead-status">
@@ -733,6 +1116,10 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
           <option value="none">Not Set</option>
         </select>
         <input type="search" id="f-lead-search" placeholder="Company, contact or phone">
+        <button class="btn ghost sm" id="pimp-open" type="button"
+          title="Adds new companies and notes from the team's prospects spreadsheet. Nothing already here is overwritten.">Import from Sheet</button>
+        <button class="btn sm" id="new-lead" type="button"
+          title="Opens a blank record for a company or contact worth following up">New Prospect</button>
       </div>
       <div class="tablewrap">
         <table>
@@ -748,32 +1135,10 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 
   <!-- ================= PIPELINE ================= -->
   <section class="view on" id="view-pipeline">
-    <div class="panel">
-      <div class="phead">
-        <div>
-          <h2>Pipeline</h2>
-          <p class="psub">Where every application sits, and who owns the next move. Select a stage to see
-            the applications in it &mdash; each one shows what is still waiting on someone, with a button
-            to act on it, right there. Select an application itself to open its full record.</p>
-        </div>
-      </div>
-      <div class="pipe" id="pipe"></div>
-    </div>
-  </section>
+    <div class="cards pipe" id="pipe"></div>
 
-  <!-- ================= APPLICATIONS ================= -->
-  <section class="view" id="view-apps">
+    <h3 class="subhead" id="apps-head">Every Application</h3>
     <div class="panel">
-      <div class="phead">
-        <div>
-          <h2>Applications</h2>
-          <p class="psub">Every sponsorship request, newest first. Select a row to open the record.
-            <b>New Application</b> opens a blank record for a request that came in some other way &mdash;
-            a phone call, a conversation at a summit &mdash; so it can be tracked here like any other.</p>
-        </div>
-        <button class="btn sm" id="new-app" type="button"
-          title="Opens a blank record to type in a request that didn't come through the form">New Application</button>
-      </div>
       <div class="filters">
         <select id="f-event"><option value="">All Events</option></select>
         <select id="f-status">
@@ -783,6 +1148,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
           <option>Written Off</option>
         </select>
         <input type="search" id="f-search" placeholder="Company, contact, order ID or application no.">
+        <button class="btn sm" id="new-app" type="button"
+          title="Opens a blank record to type in a request that didn't come through the form">New Application</button>
       </div>
       <div class="tablewrap">
         <table>
@@ -798,30 +1165,42 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 
   <!-- ================= INVENTORY ================= -->
   <section class="view" id="view-stock">
-    <div class="panel">
-      <div class="phead">
-        <div>
-          <h2>What&rsquo;s Still Open to Sell</h2>
-          <p class="psub" id="stock-sub">Every opportunity in the prospectus, and whether anyone has taken it.
-            A sponsorship counts as taken once it is Approved &mdash; the same moment it should come off the public page.</p>
+    <div class="headline">
+      <div class="hl-top">
+        <div class="hl-date" id="stock-hl-date"></div>
+        <div class="scopebar">
+          <label for="stock-view">Showing</label>
+          <select id="stock-view" aria-label="What to Show"></select>
         </div>
-        <select id="stock-view" aria-label="What to Show"></select>
       </div>
+      <div class="hl-say" id="stock-hl-say"></div>
+      <div class="stats three" id="stock-stats"></div>
+    </div>
+    <div class="panel">
       <div id="stock-body"></div>
     </div>
   </section>
 
   <!-- ================= MONEY ================= -->
   <section class="view" id="view-money">
-    <div class="panel">
-      <div class="phead">
-        <div>
-          <h2 id="sum-title">Where the Money Is</h2>
-          <p class="psub" id="sum-sub">Every summit side by side. Pick a year and a season above to open one on its own.</p>
-        </div>
-        <button class="btn ghost sm" id="imp-open" type="button">Import Aptify Payments</button>
+    <div class="headline">
+      <div class="hl-top">
+        <div class="hl-date" id="money-hl-date"></div>
+        <!-- Import Aptify Payments was here until 27 September 2026. The scheduled
+             payment check now does the same three jobs on its own, four times a day:
+             marking a sponsorship Paid from the Financial System, filling in the Aptify
+             billing name when it differs, and listing summit sponsorship money that no
+             record here carries. The drawer and its .xlsx reader are left in the page
+             below, unreachable, so the button can be put back in one line if the check
+             ever stops running. -->
       </div>
-      <nav class="snav" id="summit-nav"></nav>
+      <div class="hl-say" id="money-hl-say"></div>
+      <div class="stats" id="money-stats"></div>
+    </div>
+    <div class="panel">
+      <div class="toolbar" style="margin-bottom:6px;">
+        <nav class="snav" id="summit-nav" style="flex:1 1 auto; margin-bottom:0; border-bottom:0;"></nav>
+      </div>
       <div id="summit-body"></div>
     </div>
   </section>
@@ -829,8 +1208,6 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
   <!-- ================= LOG ================= -->
   <section class="view" id="view-log">
     <div class="panel">
-      <h2>Activity</h2>
-      <p class="psub">Every status change and every alert sent, most recent first.</p>
       <div id="logbody"></div>
     </div>
   </section>
@@ -878,6 +1255,32 @@ a series deal is counted once, at its full amount.</div>
   </div>
 </aside>
 
+<div class="scrim" id="pimp-scrim"></div>
+<aside class="drawer impdrawer" id="pimp" aria-hidden="true" aria-label="Import prospects from a spreadsheet">
+  <div class="dhead">
+    <div>
+      <h3>Import Prospects from a Sheet</h3>
+      <div class="dsub">The team's prospects spreadsheet (.xlsx), with its Comments sheet. New companies
+        and new comments are added; nothing already in the portal is overwritten.</div>
+    </div>
+    <button class="dclose" id="pimp-close" type="button" aria-label="Close">&times;</button>
+  </div>
+  <div class="dbody">
+    <div class="impfiles">
+      <div class="impfile one"><label for="pimp-file">Prospects Spreadsheet</label>
+        <input id="pimp-file" type="file" accept=".xlsx"></div>
+    </div>
+    <div class="impmsg" id="pimp-msg"></div>
+    <p class="impstat">Nothing changes until you press Add. Statuses are never changed from the sheet,
+      and a field that already has something in it here keeps it.</p>
+    <div id="pimp-body"></div>
+  </div>
+  <div class="dfoot">
+    <button class="btn" id="pimp-apply" type="button" disabled>Add Changes</button>
+    <button class="btn ghost" id="pimp-cancel" type="button">Close</button>
+  </div>
+</aside>
+
 <div class="scrim" id="stage-scrim"></div>
 <aside class="drawer stagedrawer" id="stage" aria-hidden="true" aria-label="Applications at this stage">
   <div class="dhead">
@@ -885,6 +1288,7 @@ a series deal is counted once, at its full amount.</div>
       <h3 id="s-name">&mdash;</h3>
       <div class="dsub" id="s-sub">&mdash;</div>
     </div>
+<button class="widebtn" type="button" data-wide="1" aria-pressed="false" aria-label="Expand the panel" title="Expand"><svg class="i-max" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-expand"/></svg><svg class="i-min" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-shrink"/></svg></button>
     <button class="dclose" id="s-close" type="button" aria-label="Close">&times;</button>
   </div>
   <div class="dbody" id="s-body"></div>
@@ -897,6 +1301,7 @@ a series deal is counted once, at its full amount.</div>
       <h3 id="d-company">—</h3>
       <div class="dsub" id="d-sub">—</div>
     </div>
+<button class="widebtn" type="button" data-wide="1" aria-pressed="false" aria-label="Expand the panel" title="Expand"><svg class="i-max" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-expand"/></svg><svg class="i-min" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-shrink"/></svg></button>
     <button class="dclose" id="d-close" type="button" aria-label="Close">&times;</button>
   </div>
   <div class="dbody" id="d-body"></div>
@@ -914,6 +1319,7 @@ a series deal is counted once, at its full amount.</div>
       <h3 id="ld-company">—</h3>
       <div class="dsub" id="ld-sub">—</div>
     </div>
+<button class="widebtn" type="button" data-wide="1" aria-pressed="false" aria-label="Expand the panel" title="Expand"><svg class="i-max" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-expand"/></svg><svg class="i-min" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-shrink"/></svg></button>
     <button class="dclose" id="ld-close" type="button" aria-label="Close">&times;</button>
   </div>
   <div class="dbody" id="ld-body"></div>
@@ -1032,7 +1438,11 @@ a series deal is counted once, at its full amount.</div>
   var STAGES = [
     {key:"Submitted",       name:"Submitted",        owner:"Amy Moses and Kelly Bradshaw", next:"Review and approve"},
     {key:"Approved",        name:"Approved",         owner:"Bernardo Jordan",              next:"Raise the invoice"},
-    {key:"Pending Payment", name:"Pending Payment",  owner:"Dillon Tidgewell",             next:"Watch for payment"},
+    /* Nobody watches this stage by hand any more. A scheduled check reads the MISMO
+       Financial System four times a day on weekdays and marks a sponsorship Paid as soon
+       as the money shows up against its Aptify order ID. Bernie owns the chase when an
+       invoice goes past 30 days — that part is a person's job, not a lookup. */
+    {key:"Pending Payment", name:"Pending Payment",  owner:"Bernardo Jordan chases if overdue", next:"Paid automatically when the money lands"},
     {key:"Paid",            name:"Paid",             owner:"—",                            next:"Complete"}
   ];
 
@@ -1050,7 +1460,7 @@ a series deal is counted once, at its full amount.</div>
   var MOVE_HINT = {
     "Submitted":       "Approving stamps today's date, raises the invoice request for Bernie and the logo request for the team.",
     "Approved":        "Entering the Aptify order ID below moves this to Pending Payment by itself — there is no button for it.",
-    "Pending Payment": "Use the Payment buttons below to mark it paid. Write it off only when the money will never arrive.",
+    "Pending Payment": "The payment check marks this Paid by itself once the money shows up in the Financial System. Use the Payment buttons below only to record it sooner. Write it off only when the money will never arrive.",
     "Paid":            "Moving it back to Pending Payment clears the payment date and the amount paid.",
     "Declined":        "Moving it back to Submitted puts it in front of Amy and Kelly again.",
     "Written Off":     "Moving it back to Pending Payment puts it back in the chase."
@@ -1061,12 +1471,11 @@ a series deal is counted once, at its full amount.</div>
 
   /* ============================================================
      PROSPECTS
-     Amy and Kelly's working list of companies being cultivated for a future
-     summit, before any of them are a formal application. This is what a lead
-     like Dark Matter Technologies needed in January 2026 — told the company
-     was out of budget, nothing recorded it, and eight months passed before
-     anyone reached out again. Every status below is one Amy and Kelly already
-     use on their sheet; nothing here is invented.
+     The Strategic Growth Team's working list of companies being cultivated for
+     a future summit, before any of them are a formal application. It exists so a
+     lead told "not this year" is recorded with a date to come back to, rather
+     than going quiet until the company happens to apply on its own. Every status
+     below is one the team already uses on its sheet; nothing here is invented.
      ============================================================ */
   var LEAD_STATUSES = ["New Lead","Contacted","Meeting Scheduled","Pitching to Management",
     "Verbal Commitment","Follow Up","Not Now — Follow Up","Invoiced","Paid",
@@ -1097,6 +1506,9 @@ a series deal is counted once, at its full amount.</div>
   var leadSeason = null;     // which sponsorship season the Prospects tab shows ("2027" or "all")
   var leadSeasonChosen = false; // true once she picks a season herself
   var leadQuickFilter = null; // "overdue" | "recent" | "converted" | null — set by clicking a Prospects stat card
+  var leadBy = "status";      // Prospects "View By": status | owner | type
+  var leadGroup = null;       // the one group being shown, set by clicking a group card
+  var currentView = "pipeline";
   var summitView = "overall";
   var summitYear = null;
   var scopeYear = null;      // which season the figures, Pipeline and Applications show
@@ -1181,7 +1593,7 @@ a series deal is counted once, at its full amount.</div>
         field:"invoiceNumber", alert:"invoice"});
     }
     if(a.status === "Pending Payment" && !a.invoiceDate){
-      t.push({kind:"nodate", tone: summitPassed(a) ? "bad" : "warn", owner:"Dillon Tidgewell",
+      t.push({kind:"nodate", tone: summitPassed(a) ? "bad" : "warn", owner:"Bernardo Jordan",
         title:"Invoice Date Missing — Payment Can't Be Chased",
         why:"This is awaiting payment, but with no invoice date the 30-day follow-up can never " +
             "start, so it would sit here unnoticed. Add the date Bernie raised the invoice." +
@@ -1190,7 +1602,7 @@ a series deal is counted once, at its full amount.</div>
     if(a.status === "Pending Payment"){
       var c = chaseState(a);
       if(c.overdue){
-        t.push({kind:"chase", tone:"bad", owner:"Dillon Tidgewell",
+        t.push({kind:"chase", tone:"bad", owner:"Bernardo Jordan",
           title: c.count ? ("Follow Up Again — Chase " + (c.count+1)) : "Payment Is Overdue — First Follow-Up",
           why:"Invoiced " + fmtDate(a.invoiceDate) + ", " + c.days + " days ago" +
               (c.count ? (". Last chased " + fmtDate(a.lastFollowUpDate) + ".") : ", past the 30-day mark.") +
@@ -1303,7 +1715,7 @@ a series deal is counted once, at its full amount.</div>
     if(kind === "chase"){
       var c = chaseState(a);
       return {
-        to:[PEOPLE.dillon, PEOPLE.kelly, PEOPLE.jonna],
+        to:[PEOPLE.bernie, PEOPLE.jonna, PEOPLE.kelly],
         subject:"Payment follow-up — " + a.company + " — " + a.appNo,
         body:"Hi there,\n\n" + a.company + " was invoiced on " + fmtDate(a.invoiceDate) + " for " +
           money(a.amountDue) + " (Order ID " + (a.invoiceNumber||"—") + ") and payment has not been received " +
@@ -1644,8 +2056,41 @@ a series deal is counted once, at its full amount.</div>
     $("scope-note").innerHTML = (scopeYear === "all") ? "Every record the portal holds." : "";
   }
 
+  /* ---------------- the page header ----------------
+     One title and one line of explanation for the whole page, above the navy band,
+     rather than a heading inside each panel. The Money tab writes its own as the
+     summit picker moves, so it is kept here and re-applied whenever that tab is the
+     one being shown. */
+  var PAGES = {
+    pipeline: {t:"Pipeline",
+      s:"Where every application sits, and who owns the next move. Select a stage to see the " +
+        "applications in it \u2014 each one shows what is still waiting on someone, with a button to " +
+        "act on it, right there. Every application is listed underneath, newest first; select a row " +
+        "to open its record."},
+    leads: {t:"Prospects",
+      s:"Everyone the Strategic Growth Team is cultivating who hasn\u2019t applied yet. A prospect who " +
+        "said \u201cnot this year\u201d is still a prospect \u2014 this is where they stay visible instead of " +
+        "going quiet until they happen to come back on their own. Give every prospect a " +
+        "<b>Next Follow-Up</b> date, and the <b>Needs Follow-Up</b> card turns red the moment that " +
+        "date arrives."},
+    stock: {t:"What\u2019s Still Open to Sell",
+      s:"Every opportunity in the prospectus, and whether anyone has taken it. A sponsorship counts " +
+        "as taken once it is Approved \u2014 the same moment it should come off the public page."},
+    money: {t:"Where the Money Is",
+      s:"Every summit side by side. Pick a year and a season below to open one on its own."},
+    log: {t:"Activity", s:"Every status change and every alert sent, most recent first."}
+  };
+  var moneyHead = null;   // {t,s} while the Money tab is showing one summit
+  function paintPageHead(){
+    var pg = PAGES[currentView] || PAGES.pipeline;
+    var t = pg.t, sub = pg.s;
+    if(currentView === "money" && moneyHead){ t = moneyHead.t; sub = moneyHead.s; }
+    $("ph-title").textContent = t;
+    $("ph-sub").innerHTML = sub;
+  }
+
   /* ---------------- rendering ---------------- */
-  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeads(); }
+  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); }
 
   function totals(list){
     var t = {committed:0, collected:0, invoiced:0, approved:0, outstanding:0, overdue:0, overdueN:0,
@@ -1667,15 +2112,83 @@ a series deal is counted once, at its full amount.</div>
     return t;
   }
 
+  /* ---- what the band says on the Pipeline and Applications tabs ----
+     Deliberately not a reading of the four tiles underneath it. It names the single
+     thing most in need of attention, who it is waiting on, and the deadline it is
+     racing — the summit opening — because that is what the figures can't tell you. */
+  function pipelineHeadline(list, t){
+    if(!list.length){
+      return "Nothing is recorded for " +
+        (scopeYear === "all" ? "any season" : "the " + scopeYear + " season") + " yet.";
+    }
+    var late = [];
+    list.forEach(function(a){
+      var c = chaseState(a);
+      if(c.overdue) late.push({a:a, days:c.days});
+    });
+    late.sort(function(x,y){ return y.days - x.days; });
+    function countAt(st){ return list.filter(function(a){ return a.status === st; }).length; }
+    var nRev = countAt("Submitted"), nInv = countAt("Approved"), nPay = countAt("Pending Payment");
+
+    var say;
+    if(late.length){
+      say = "<em class=\"hl-late\">" + late.length + "</em> invoice" +
+        (late.length === 1 ? " is" : "s are") + " past the 30-day mark \u2014 <b>" +
+        esc(late[0].a.company || late[0].a.appNo) + "</b> the longest, " + late[0].days +
+        " days since it was raised.";
+    } else if(nRev){
+      say = "<em>" + nRev + "</em> request" + (nRev === 1 ? " is" : "s are") +
+        " waiting on Amy and Kelly to review.";
+    } else if(nInv){
+      say = "<em>" + nInv + "</em> approved sponsorship" + (nInv === 1 ? " is" : "s are") +
+        " waiting on Bernie for an Aptify order ID.";
+    } else if(nPay){
+      say = "<em>" + nPay + "</em> invoice" + (nPay === 1 ? " is" : "s are") +
+        " out, none of them overdue yet.";
+    } else if(t.committed){
+      say = "Every sponsorship this season is paid.";
+    } else {
+      say = "Nothing has been committed yet.";
+    }
+
+    /* whatever else is waiting, in as few words as possible, and never repeating the line above */
+    var also = [];
+    if(late.length && nRev) also.push(nRev + " waiting on review");
+    if((late.length || nRev) && nInv) also.push(nInv + " waiting on an order ID");
+    var stillPaying = nPay - late.length;
+    if((late.length || nRev || nInv) && stillPaying > 0) also.push(stillPaying + " waiting on payment");
+    if(also.length) say += " Also " + also.join(", ") + ".";
+
+    /* the deadline everything is racing */
+    var nextS = null;
+    allSummits().forEach(function(sm){
+      if(scopeYear !== "all" && sm.year !== scopeYear) return;
+      var o = parseDate(sm.opens); if(!o) return;
+      var d = daysBetween(today(), o);
+      if(d >= 0 && (!nextS || d < nextS.d)) nextS = {d:d, s:sm};
+    });
+    if(nextS){
+      say += " <b>" + esc(nextS.s.season + " " + nextS.s.year) + "</b> opens in <em>" + nextS.d +
+        "</em> days" + (t.outstanding
+          ? " with <em>" + esc(money(t.outstanding)) + "</em> still to collect."
+          : " with everything collected.");
+    }
+    return say;
+  }
+
   function renderStats(){
     var list = scoped();
     var t = totals(list);
     var n = 0; apps.forEach(function(a){ n += tasksFor(a).length; });
-    var ln = 0; leads.forEach(function(l){ ln += tasksForLead(l).length; });
     $("pip-pipe").textContent = n;
     $("pip-pipe").className = "pip" + (n ? "" : " quiet");
-    $("pip-leads").textContent = ln;
-    $("pip-leads").className = "pip" + (ln ? "" : " quiet");
+    /* No count on Prospects (Jonna, 27 Sep 2026). Overdue follow-ups are already
+       the Needs Follow-Up card at the top of that tab; a badge on the rail said the
+       same thing twice. */
+    /* The band says what is actually waiting on someone, and against what deadline. */
+    $("hl-date").textContent = "Today \u00b7 " + new Date().toLocaleDateString("en-US",
+      {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+    $("hl-say").innerHTML = pipelineHeadline(list, t);
     var what = scopeYear === "all" ? "record" : "application";
     $("stats").innerHTML =
       card("Committed", money(t.committed), list.length + " " + what + (list.length===1?"":"s") +
@@ -1703,16 +2216,23 @@ a series deal is counted once, at its full amount.</div>
       var sum = list.reduce(function(x,a){ return x + Number(a.amountDue||0); }, 0);
       var flags = list.filter(function(a){ return chaseState(a).overdue; }).length;
       var any = list.length > 0;
-      html += '<button class="col" type="button"' +
+      /* the same card the Migration HQ Tasks page uses: name and chevron, a line of
+         description, then the figure with its unit, any chips, and a footer */
+      html += '<button class="card" type="button"' +
         (any ? ' data-stage="' + esc(s.key) + '" title="Open the ' + esc(s.name) + ' applications"'
              : ' disabled') + '>' +
-        '<span class="chead"><span class="cname">' + esc(s.name) + '</span>' +
-          (any ? '<svg class="cchev" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-chev"/></svg>' : '') +
-        '</span>' +
-        '<span class="cbig">' + list.length + '</span>' +
-        '<span class="cmoney">' + esc(money(sum)) + '</span>' +
-        '<span class="cowner">' + esc(s.next) + (s.owner!=="—" ? " · " + esc(s.owner) : "") + '</span>' +
-        (flags ? '<span class="cflag">' + flags + ' overdue</span>' : '') +
+        '<h3>' + esc(s.name) + '<span class="arr" aria-hidden="true">' + (any ? '\u203a' : '') + '</span></h3>' +
+        '<p>' + esc(s.next) + (s.owner !== "\u2014" ? " \u00b7 " + esc(s.owner) : "") + '</p>' +
+        '<div class="cfoot">' +
+          '<div class="numrow">' +
+            '<div class="big">' + list.length +
+              '<small>' + (list.length === 1 ? "application" : "applications") + '</small></div>' +
+            '<div class="meta">' +
+              (flags ? '<span class="chip ch-bad">' + flags + ' overdue</span>' : '') +
+            '</div>' +
+          '</div>' +
+          '<p class="next">' + esc(money(sum)) + '</p>' +
+        '</div>' +
         '</button>';
     });
     $("pipe").innerHTML = html;
@@ -1762,7 +2282,7 @@ a series deal is counted once, at its full amount.</div>
       extras += '<div class="srow-info">Invoiced ' + esc(fmtDate(a.invoiceDate)) + ', ' + c.days +
         ' days ago' + (c.nextDue ? ' — first chase due ' + esc(fmtDate(iso(c.nextDue))) : '') +
         (toSummit !== null ? (toSummit < 0 ? ' — the summit has passed' : ' — ' + toSummit + ' days before the summit') : '') +
-        '. Nothing to do yet.</div>';
+        '. Nothing to do yet — the payment check is watching for the money.</div>';
     }
     if(s.key === "Approved" && a.invoiceRequestSentAt){
       var obI = outboxFor(a.appNo, "invoice");
@@ -1939,6 +2459,51 @@ a series deal is counted once, at its full amount.</div>
     return leads.filter(function(l){ return String(l.season || "") === String(leadSeason); });
   }
 
+  /* What the band says, in priority order. It is deliberately NOT a reading of the
+     four tiles underneath it — it names the thing that most needs doing and who it
+     is about, which is what the numbers on their own can't tell you. */
+  function leadHeadline(pool){
+    if(!pool.length){
+      return "No prospects are recorded for " +
+        (leadSeason === "all" ? "any season" : "the " + esc(leadSeason) + " season") + " yet.";
+    }
+    var openList = pool.filter(function(l){ return !LEAD_CLOSED[l.status]; });
+    if(!openList.length) return "Every prospect here is closed \u2014 converted, or lost.";
+
+    var t = today(), worst = null, dueToday = 0, next = null, undated = [];
+    openList.forEach(function(l){
+      var d = parseDate(l.nextFollowUpDate);
+      if(!d){ undated.push(l); return; }
+      var days = daysBetween(d, t);
+      if(days > 0 && (!worst || days > worst.days)) worst = {l:l, days:days};
+      if(days === 0) dueToday++;
+      if(days < 0 && (!next || d < next.d)) next = {l:l, d:d};
+    });
+
+    /* the tail: prospects nobody will be reminded about */
+    var tail = undated.length
+      ? " <em>" + undated.length + "</em> " + (undated.length === 1 ? "has" : "have") +
+        " no follow-up date, so nothing will bring " + (undated.length === 1 ? "it" : "them") + " back."
+      : "";
+
+    if(worst){
+      var n = openList.filter(function(l){
+        var d = parseDate(l.nextFollowUpDate); return d && daysBetween(d, t) > 0; }).length;
+      return "<em class=\"hl-late\">" + n + "</em> prospect" + (n === 1 ? " is" : "s are") +
+        " past the follow-up date \u2014 <b>" + esc(worst.l.company || worst.l.leadNo) +
+        "</b> the longest, " + worst.days + " day" + (worst.days === 1 ? "" : "s") + " ago." + tail;
+    }
+    if(dueToday){
+      return "<em>" + dueToday + "</em> follow-up" + (dueToday === 1 ? " is" : "s are") +
+        " due today." + tail;
+    }
+    if(next){
+      return "Nothing is due. Next up is <b>" + esc(next.l.company || next.l.leadNo) + "</b> on " +
+        esc(fmtDate(iso(next.d))) + "." + tail;
+    }
+    return "Nothing has a follow-up date set, so nothing here will resurface on its own.";
+  }
+
   function renderLeadStats(){
     renderLeadSeason();
     var pool = seasonLeads();
@@ -1947,6 +2512,9 @@ a series deal is counted once, at its full amount.</div>
     var open = pool.filter(function(l){ return !LEAD_CLOSED[l.status]; }).length;
     var monthAgo = leadMonthAgo();
     var recent = pool.filter(function(l){ var d = parseDate(l.createdDate); return d && d >= monthAgo; }).length;
+    $("lead-hl-date").textContent = "Today \u00b7 " + new Date().toLocaleDateString("en-US",
+      {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+    $("lead-hl-say").innerHTML = leadHeadline(pool);
     $("lead-stats").innerHTML =
       card("Prospects", String(total), open + " still open", "", "all") +
       card("Needs Follow-Up", String(overdue), overdue ? "past their follow-up date" : "nothing overdue", overdue ? "alert" : "good", "overdue") +
@@ -1955,12 +2523,118 @@ a series deal is counted once, at its full amount.</div>
            "became a real application", "good", "converted");
   }
 
+  /* ---- Prospects, the Migration HQ Tasks shape ----
+     A "View By" segment picks how the prospects are grouped, a card is drawn per
+     group, and selecting a card narrows the list below to that group. The grouping
+     is only a lens: nothing is stored on the record. */
+  var LEAD_BY = [["status","Status"], ["owner","Owner"], ["type","Acquisition / Retention"]];
+  function leadGroupOf(l){
+    if(leadBy === "owner") return l.owner || "Unassigned";
+    if(leadBy === "type")  return l.engagementType || "Not Set";
+    return l.status || "New Lead";
+  }
+  /* the order groups appear in: the statuses in their own order, everything else
+     biggest first, with the empty-ish bucket last */
+  function leadGroupOrder(names){
+    if(leadBy === "status"){
+      return names.slice().sort(function(a,b){
+        return LEAD_STATUSES.indexOf(a) - LEAD_STATUSES.indexOf(b); });
+    }
+    var last = {"Unassigned":1, "Not Set":1};
+    return names.slice().sort(function(a,b){
+      if(!!last[a] !== !!last[b]) return last[a] ? 1 : -1;
+      return a.localeCompare(b);
+    });
+  }
+  function renderLeadSeg(){
+    $("lead-seg").innerHTML = LEAD_BY.map(function(o){
+      return '<button type="button" data-leadby="' + o[0] + '" aria-pressed="' +
+             (leadBy === o[0]) + '">' + esc(o[1]) + '</button>';
+    }).join("");
+  }
+  function renderLeadLegend(pool){
+    var due = 0, open = 0, conv = 0, lost = 0;
+    pool.forEach(function(l){
+      if(l.status === "Converted to Application") conv++;
+      else if(l.status === "Lost") lost++;
+      else { open++; if(tasksForLead(l).length) due++; }
+    });
+    $("lead-legend").innerHTML =
+      '<span><i style="background:var(--c1)"></i>Open <b>' + open + '</b></span>' +
+      '<span><i style="background:var(--warn)"></i>Needs follow-up <b>' + due + '</b></span>' +
+      '<span><i style="background:var(--good)"></i>Converted <b>' + conv + '</b></span>' +
+      '<span><i style="background:var(--ink-3)"></i>Lost <b>' + lost + '</b></span>';
+  }
+  function renderLeadCards(){
+    var pool = seasonLeads();
+    renderLeadSeg();
+    renderLeadLegend(pool);
+    if(!pool.length){ $("lead-cards").innerHTML = ""; return; }
+    var groups = {};
+    pool.forEach(function(l){ (groups[leadGroupOf(l)] = groups[leadGroupOf(l)] || []).push(l); });
+    var names = leadGroupOrder(Object.keys(groups));
+    $("lead-cards").innerHTML = names.map(function(name){
+      var list = groups[name];
+      var due = list.filter(function(l){ return tasksForLead(l).length; }).length;
+      var openN = list.filter(function(l){ return !LEAD_CLOSED[l.status]; }).length;
+      /* the soonest follow-up still to come, so the card says what happens next */
+      var next = null;
+      list.forEach(function(l){
+        if(LEAD_CLOSED[l.status]) return;
+        var d = parseDate(l.nextFollowUpDate);
+        if(d && (!next || d < next.d)) next = {d:d, l:l};
+      });
+      var chips = "";
+      if(due) chips += '<span class="chip ch-bad">' + due + ' due</span>';
+      if(openN && openN !== list.length) chips += '<span class="chip ch-ok">' + openN + ' open</span>';
+      var line = next
+        ? 'Next: <b>' + esc(next.l.company || next.l.leadNo) + '</b>, ' + esc(fmtDate(iso(next.d)))
+        : (openN ? 'No follow-up date set' : 'Nothing open');
+      /* the line under the heading says something the heading doesn't: who is working
+         this group, or what kind of prospects it holds */
+      var sub;
+      if(leadBy === "owner"){
+        var acq = list.filter(function(l){ return l.engagementType === "Acquisition"; }).length;
+        var ret = list.filter(function(l){ return l.engagementType === "Retention"; }).length;
+        var mix = [];
+        if(acq) mix.push(acq + " acquisition");
+        if(ret) mix.push(ret + " retention");
+        sub = mix.length ? mix.join(" \u00b7 ") : "kind not set";
+      } else {
+        var owners = {};
+        list.forEach(function(l){ owners[l.owner || "unassigned"] = 1; });
+        var names = Object.keys(owners).map(function(o){
+          return o === "unassigned" ? "unassigned" : o.split(" ")[0]; });
+        sub = names.length > 2 ? (names.length + " owners") : names.join(" and ");
+      }
+      return '<button type="button" class="card' + (leadGroup === name ? " on" : "") +
+        '" data-leadgroup="' + esc(name) + '">' +
+        '<h3>' + esc(name) + '<span class="arr" aria-hidden="true">\u203a</span></h3>' +
+        '<p>' + esc(sub) + '</p>' +
+        '<div class="cfoot"><div class="numrow">' +
+          '<div class="big">' + list.length +
+            '<small>' + (list.length === 1 ? "prospect" : "prospects") + '</small></div>' +
+          '<div class="meta">' + chips + '</div>' +
+        '</div><p class="next">' + line + '</p></div></button>';
+    }).join("");
+  }
+
+  function scrollToLeadList(){
+    var el = document.querySelector("#view-leads .panel");
+    if(!el) return;
+    try{ el.scrollIntoView({behavior:"smooth", block:"start"}); }
+    catch(e){ el.scrollIntoView(); }
+  }
+
   function renderLeads(){
     var st = $("f-lead-status").value, q = $("f-lead-search").value.toLowerCase().trim();
     var ty = $("f-lead-type").value;
     var bar = $("lead-quickfilter-bar");
-    if(leadQuickFilter){
-      bar.innerHTML = '<div class="quickfilter">Showing <b>' + esc(LEAD_QUICKFILTER_LABEL[leadQuickFilter] || leadQuickFilter) +
+    if(leadQuickFilter || leadGroup !== null){
+      var what = [];
+      if(leadGroup !== null) what.push(esc(leadGroup));
+      if(leadQuickFilter) what.push(esc(LEAD_QUICKFILTER_LABEL[leadQuickFilter] || leadQuickFilter));
+      bar.innerHTML = '<div class="quickfilter">Showing <b>' + what.join("</b> and <b>") +
         '</b> only.<button type="button" id="lead-quickfilter-back">&larr; Back to All Prospects</button></div>';
       bar.style.display = "";
     } else {
@@ -1968,6 +2642,7 @@ a series deal is counted once, at its full amount.</div>
     }
     var monthAgo = leadMonthAgo();
     var rows = seasonLeads().filter(function(l){
+      if(leadGroup !== null && leadGroupOf(l) !== leadGroup) return false;
       if(leadQuickFilter === "overdue" && !tasksForLead(l).length) return false;
       if(leadQuickFilter === "recent"){
         var cd = parseDate(l.createdDate);
@@ -2148,10 +2823,11 @@ a series deal is counted once, at its full amount.</div>
     '<span><span class="sw" style="background:var(--ink-3)"></span>Written Off</span></div>';
 
   function renderSummitOverall(list){
-    $("sum-title").textContent = "Where the Money Is";
-    $("sum-sub").textContent = "Committed, collected and outstanding across every summit. " +
-      "Pick a year and a season above to open one on its own. A series sponsorship is split " +
-      "evenly across that year's three summits throughout this tab.";
+    moneyHead = {t:"Where the Money Is",
+      s:"Committed, collected and outstanding across every summit. Pick a year and a season below " +
+        "to open one on its own. A series sponsorship is split evenly across that year's three " +
+        "summits throughout this tab."};
+    paintPageHead();
 
     var rolls = list.map(function(s){ return {s:s, b:summitRoll(s.id)}; });
     var tot = {committed:0, collected:0, outstanding:0, sponsors:0};
@@ -2160,12 +2836,44 @@ a series deal is counted once, at its full amount.</div>
       tot.outstanding += r.b.outstanding; tot.sponsors += r.b.sponsors;
     });
 
-    var html = statRow([
-      card("Committed, All Summits", money(tot.committed), rolls.length + " summits", ""),
-      card("Collected", money(tot.collected), "cash received", "good"),
-      card("Outstanding", money(tot.outstanding), "approved or invoiced", ""),
-      card("Sponsorships", String(tot.sponsors), "series deals counted in each summit", "")
-    ]);
+    $("money-stats").innerHTML =
+      card("Committed, All Summits", money(tot.committed), rolls.length + " summits", "") +
+      card("Collected", money(tot.collected), "cash received", "good") +
+      card("Outstanding", money(tot.outstanding), "approved or invoiced", "") +
+      card("Sponsorships", String(tot.sponsors), "series deals counted in each summit", "");
+    $("money-hl-date").textContent = "Today \u00b7 " + new Date().toLocaleDateString("en-US",
+      {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+
+    /* Not a reading of the tiles: how this season compares with the last one, and
+       which summit is next to sell. */
+    var yrs = {};
+    rolls.forEach(function(r){ yrs[r.s.year] = (yrs[r.s.year] || 0) + r.b.committed; });
+    var yearList = Object.keys(yrs).map(Number).sort();
+    var thisY = yearList[yearList.length-1], prevY = yearList[yearList.length-2];
+    var sayM = "";
+    if(prevY && yrs[prevY]){
+      var pct = Math.round(yrs[thisY] / yrs[prevY] * 100);
+      var stillSelling = rolls.some(function(r){
+        var o = parseDate(r.s.opens); return r.s.year === thisY && o && daysBetween(today(), o) >= 0; });
+      sayM = "The <em>" + thisY + "</em> season has taken <em>" + esc(money(yrs[thisY])) +
+             "</em> so far \u2014 <em" + (pct < 60 ? " class=\"hl-late\"" : "") + ">" + pct +
+             "%</em> of what " + prevY + " took" + (stillSelling ? ", with summits still to sell." : ".");
+    } else {
+      sayM = "<em>" + esc(money(tot.committed)) + "</em> committed across " + rolls.length + " summits.";
+    }
+    var nextOpen = null;
+    rolls.forEach(function(r){
+      var o = parseDate(r.s.opens); if(!o) return;
+      var d = daysBetween(today(), o);
+      if(d >= 0 && (!nextOpen || d < nextOpen.d)) nextOpen = {d:d, r:r};
+    });
+    if(nextOpen){
+      sayM += " <b>" + esc(nextOpen.r.s.season + " " + nextOpen.r.s.year) + "</b> opens in " +
+              nextOpen.d + " days with " + esc(money(nextOpen.r.b.committed)) + " committed.";
+    }
+    $("money-hl-say").innerHTML = sayM;
+
+    var html = '';
 
     /* The tier mix across every summit. Built from the same share-split rows as the bars
        beside it, so the two charts add up to the same money — which the old separate
@@ -2288,19 +2996,52 @@ a series deal is counted once, at its full amount.</div>
     var b = summitRoll(id);
     var st = summitStage(s);
 
-    $("sum-title").textContent = s.season + " " + s.year + " Summit";
-    $("sum-sub").textContent = "Who sponsored this summit, what they took, and what it brought in. " +
-      st.word.charAt(0).toUpperCase() + st.word.slice(1) + ".";
+    moneyHead = {t: s.season + " " + s.year + " Summit",
+      s:"Who sponsored this summit, what they took, and what it brought in. " +
+        st.word.charAt(0).toUpperCase() + st.word.slice(1) + "."};
+    paintPageHead();
 
-    var html = statRow([
-      card("Committed", money(b.committed), b.sponsors + " sponsorship" + (b.sponsors===1?"":"s"), ""),
-      card("Collected", money(b.collected), "cash received", "good"),
+    $("money-stats").innerHTML =
+      card("Committed", money(b.committed), b.sponsors + " sponsorship" + (b.sponsors===1?"":"s"), "") +
+      card("Collected", money(b.collected), "cash received", "good") +
       card("Outstanding", money(b.outstanding), b.invoiced ? money(b.invoiced) + " already invoiced" : "nothing invoiced yet",
-           b.outstanding ? "" : "good"),
+           b.outstanding ? "" : "good") +
       (b.written
         ? card("Written Off", money(b.written), "committed, never collected", "alert")
-        : card("In Review", money(b.inReview), "not yet approved", ""))
-    ]);
+        : card("In Review", money(b.inReview), "not yet approved", ""));
+    $("money-hl-date").textContent = "Today \u00b7 " + new Date().toLocaleDateString("en-US",
+      {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+
+    /* What this summit needs, not what it holds: the biggest sponsor, and whether the
+       money is in before the doors open. */
+    var opensD = parseDate(s.opens), toGo = opensD ? daysBetween(today(), opensD) : null;
+    var biggest = null;
+    b.rows.forEach(function(r){
+      if(r.a.status === "Declined") return;
+      if(!biggest || r.due > biggest.due) biggest = r;
+    });
+    var sayS;
+    if(!b.rows.length){
+      sayS = "Nothing is recorded for this summit yet.";
+    } else if(toGo !== null && toGo >= 0){
+      sayS = "<em>" + esc(money(b.committed)) + "</em> committed from " + b.sponsors +
+             " sponsorship" + (b.sponsors===1?"":"s") + ", " +
+             (b.outstanding
+               ? "<em" + (toGo < 60 ? " class=\"hl-late\"" : "") + ">" + esc(money(b.outstanding)) +
+                 "</em> of it still to collect with <em>" + toGo + "</em> days until the doors open."
+               : "and all of it collected with <em>" + toGo + "</em> days to go.");
+    } else {
+      sayS = "This summit has been held. <em>" + esc(money(b.collected)) + "</em> was collected" +
+             (b.outstanding ? ", and <em class=\"hl-late\">" + esc(money(b.outstanding)) +
+              "</em> was never paid." : " \u2014 everything committed came in.");
+    }
+    if(biggest && biggest.a.company){
+      sayS += " Biggest sponsor: <b>" + esc(biggest.a.company) + "</b> at " +
+              esc(money(biggest.due)) + ".";
+    }
+    $("money-hl-say").innerHTML = sayS;
+
+    var html = '';
 
     if(!b.rows.length){
       html += '<div class="empty">No sponsorships recorded for this summit yet.</div>';
@@ -2496,12 +3237,50 @@ a series deal is counted once, at its full amount.</div>
 
     var label = isSeries ? (year + " Series — all three summits")
                          : (summitId + " only");
-    var html = '<div class="stats three" style="margin-bottom:22px;">' +
+    $("stock-stats").innerHTML =
       card("Slots Open", String(totCap - totUsed) + (unlimited ? " +" : ""),
            "of " + totCap + " in the prospectus" + (unlimited ? ", plus unlimited branding" : ""), "") +
       card("Taken", String(totUsed), "approved or beyond", "good") +
-      card("If Every Open Slot Sold", money(openValue), "at " + esc(label) + " prices", "") +
-      '</div>';
+      card("If Every Open Slot Sold", money(openValue), "at " + esc(label) + " prices", "");
+    $("stock-hl-date").textContent = "Today \u00b7 " + new Date().toLocaleDateString("en-US",
+      {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+
+    /* The sentence names what has actually gone, and what is one sale from going —
+       which the three figures above cannot say. */
+    var goneNames = [], lastOne = [];
+    tiers.forEach(function(g){
+      g.rows.forEach(function(r){
+        if(r.cap === null) return;
+        if(r.left === 0) goneNames.push(r.slot.item.opp);
+        else if(r.left === 1 && r.cap > 1) lastOne.push(r.slot.item.opp);
+      });
+    });
+    function list3(a){
+      if(a.length <= 2) return a.map(esc).join(" and ");
+      return a.slice(0,2).map(esc).join(", ") + " and " + (a.length - 2) + " more";
+    }
+    var saySt;
+    if(!totUsed){
+      saySt = "Nothing has been taken at " + esc(label) + " yet \u2014 all <em>" + totCap +
+              "</em> slots are open, worth <em>" + esc(money(openValue)) + "</em>.";
+    } else {
+      saySt = "<em>" + (totCap - totUsed) + "</em> of " + totCap + " slots are still open at " +
+              esc(label) + ", worth <em>" + esc(money(openValue)) + "</em> if every one sold. ";
+      if(goneNames.length){
+        saySt += "<em class=\"hl-late\">" + esc(list3(goneNames)) + "</em> " +
+                 (goneNames.length === 1 ? "has" : "have") + " gone";
+        saySt += lastOne.length ? "; " + esc(list3(lastOne)) + " " +
+                 (lastOne.length === 1 ? "is" : "are") + " down to the last one." : ".";
+      } else if(lastOne.length){
+        saySt += esc(list3(lastOne)) + " " + (lastOne.length === 1 ? "is" : "are") +
+                 " down to the last one.";
+      } else {
+        saySt += "Nothing is sold out.";
+      }
+    }
+    $("stock-hl-say").innerHTML = saySt;
+
+    var html = '';
 
     tiers.forEach(function(g){
       var open = !!stockOpen[g.t.name];
@@ -2637,7 +3416,8 @@ a series deal is counted once, at its full amount.</div>
       var c = chaseState(a);
       note = "<b>Waiting on payment.</b> " + (a.invoiceDate ? ("Invoiced " + fmtDate(a.invoiceDate) + ", " + c.days + " days ago. ") : "") +
         (c.overdue ? ("Overdue — chase " + (c.count+1) + " is due.") : (c.nextDue ? ("Next chase " + fmtDate(iso(c.nextDue)) + ".") : "")) +
-        " Entering a payment received date marks it Paid.";
+        " The payment check looks for this four times a day on weekdays and marks it Paid on its own " +
+        "once the money reaches the Financial System. Entering a payment received date does the same thing by hand.";
     }
     else if(stage === "Paid") note = "<b>Complete.</b> Paid " + fmtDate(a.paymentReceivedDate) + ".";
     else if(stage === "Written Off") note = "<b>Written off as bad debt.</b> " + money(a.amountDue) +
@@ -3075,8 +3855,8 @@ a series deal is counted once, at its full amount.</div>
       ". Fill in the company and a next follow-up date, then press Save — nothing reaches the shared " +
       "record until you do. Close this without saving and it is thrown away.";
     else if(!l.nextFollowUpDate && !LEAD_CLOSED[l.status]) note = "<b>No follow-up date set.</b> Without one this " +
-      "prospect won't turn up on the Needs Follow-Up card, however much time passes — which is exactly what " +
-      "happened to Dark Matter Technologies for eight months. Set one below.";
+      "prospect won't turn up on the Needs Follow-Up card, however much time passes — and a lead that goes " +
+      "quiet is usually one nobody put a date against. Set one below.";
     else if(tasksForLead(l).length) note = "<b>Follow-up is due.</b> " + fmtDate(l.nextFollowUpDate) +
       " has come and gone. Add a note once you've reached out, and set the next follow-up date.";
 
@@ -3331,6 +4111,24 @@ a series deal is counted once, at its full amount.</div>
       var out = [];
       if(!doc) return out;
       Array.prototype.forEach.call(doc.getElementsByTagName("row"), function(r){
+        out.push(cellsOf(r, strings, isDate));
+      });
+      return out;
+    }
+
+    /* Keyed by the row number Excel shows, so "Row 24" on a Comments sheet finds row 24
+       even when blank rows were left out of the file. */
+    function rowsByNum(doc, strings, isDate){
+      var out = {};
+      if(!doc) return out;
+      Array.prototype.forEach.call(doc.getElementsByTagName("row"), function(r, i){
+        var n = parseInt(r.getAttribute("r"), 10) || (i + 1);
+        out[n] = cellsOf(r, strings, isDate);
+      });
+      return out;
+    }
+
+    function cellsOf(r, strings, isDate){
         var row = [];
         Array.prototype.forEach.call(r.getElementsByTagName("c"), function(c){
           var ref = c.getAttribute("r") || "",
@@ -3356,9 +4154,7 @@ a series deal is counted once, at its full amount.</div>
           while(row.length < at) row.push(null);
           row[at] = v;
         });
-        out.push(row);
-      });
-      return out;
+        return row;
     }
 
     /* Rows of objects keyed by the header row, trimmed. Blank rows are dropped. */
@@ -3417,7 +4213,41 @@ a series deal is counted once, at its full amount.</div>
       return isFinite(n) ? n : 0;
     }
 
-    return {read: read, isoDate: isoDate, num: num};
+    /* file -> [{name, rows:{<row number>:[cells]}}], every sheet in workbook order */
+    function readBook(file){
+      return file.arrayBuffer().then(function(ab){
+        var files = entries(new Uint8Array(ab));
+        return Promise.all([
+          text(files["xl/workbook.xml"]),
+          text(files["xl/_rels/workbook.xml.rels"]),
+          text(files["xl/sharedStrings.xml"]),
+          text(files["xl/styles.xml"])
+        ]).then(function(p){
+          var wb = xml(p[0]), rels = xml(p[1]), targets = {}, list = [];
+          if(rels) Array.prototype.forEach.call(rels.getElementsByTagName("Relationship"), function(x){
+            targets[x.getAttribute("Id")] = x.getAttribute("Target") || "";
+          });
+          if(wb) Array.prototype.forEach.call(wb.getElementsByTagName("sheet"), function(sh){
+            var t = targets[sh.getAttribute("r:id")] || "";
+            t = t.charAt(0) === "/" ? t.slice(1) : "xl/" + t.replace(/^\.\//, "");
+            if(files[t]) list.push({name: sh.getAttribute("name") || "", path: t});
+          });
+          if(!list.length){
+            Object.keys(files).filter(function(n){ return /^xl\/worksheets\/[^\/]+\.xml$/.test(n); })
+              .sort().forEach(function(n, i){ list.push({name: "Sheet" + (i + 1), path: n}); });
+          }
+          if(!list.length) throw new Error("That workbook has no sheets in it.");
+          var strings = sharedStrings(xml(p[2])), isDate = dateStyles(xml(p[3]));
+          return Promise.all(list.map(function(x){ return text(files[x.path]); })).then(function(docs){
+            return list.map(function(x, i){
+              return {name: x.name, rows: rowsByNum(xml(docs[i]), strings, isDate)};
+            });
+          });
+        });
+      });
+    }
+
+    return {read: read, readBook: readBook, isoDate: isoDate, num: num};
   })();
 
   /* ================= importing Aptify payments =================
@@ -3704,6 +4534,336 @@ a series deal is counted once, at its full amount.</div>
           "", "Import applied");
   }
 
+  /* ================= importing the prospects spreadsheet =================
+     Amy keeps the team's prospects in a spreadsheet: one row per company
+     (company, Acquisition or Retention, contact, email, title, status, interested
+     in) and a Comments sheet whose "Row 24" lines are the notes on row 24.
+     This merges that workbook into the prospects here. The rules:
+       - a company already here is matched on its name, loosely ("Dark Matter"
+         finds "Dark Matter Technologies"); anything else is a new prospect;
+       - a comment already in that prospect's notes is not added twice, even where
+         the note here was tidied up after an earlier import;
+       - blank fields are filled in; a field with anything in it is left alone;
+       - status is never changed from the sheet. The portal is where statuses are
+         kept up to date; where the two disagree it is listed, not applied.
+     Nothing is saved until Add is pressed, and each change can be unticked. */
+  var pimpPlan = null;
+
+  function pimpSay(html, tone){
+    var m = $("pimp-msg");
+    m.className = "impmsg" + (tone ? " " + tone : "");
+    m.innerHTML = html || "";
+    m.style.display = html ? "block" : "none";
+  }
+
+  function coKey(s){
+    return String(s || "").toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]/g, "");
+  }
+  function sameCompany(a, b){
+    a = coKey(a); b = coKey(b);
+    if(!a || !b) return false;
+    if(a === b) return true;
+    var sh = a.length < b.length ? a : b, lg = a.length < b.length ? b : a;
+    return sh.length >= 5 && lg.indexOf(sh) === 0;
+  }
+
+  var NOTE_STOP = {the:1, and:1, "for":1, about:1, "with":1, that:1, this:1, their:1, them:1,
+    they:1, has:1, have:1, had:1, was:1, were:1, are:1, will:1, from:1, our:1, her:1, his:1,
+    him:1, she:1, you:1, who:1, any:1, all:1, but:1, not:1, out:1, into:1, over:1, next:1};
+  function noteWords(s){
+    var m = {}, n = 0;
+    String(s || "").toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).forEach(function(w){
+      if(w.length >= 3 && !NOTE_STOP[w] && !m[w]){ m[w] = 1; n++; }
+    });
+    return {m: m, n: n};
+  }
+  function noteOverlap(a, b){
+    var A = noteWords(a), B = noteWords(b);
+    if(!A.n || !B.n) return 0;
+    var c = 0;
+    for(var w in A.m){ if(B.m[w]) c++; }
+    return c / Math.min(A.n, B.n);
+  }
+  function daysApart(a, b){
+    var x = Date.parse(a), y = Date.parse(b);
+    return (isFinite(x) && isFinite(y)) ? Math.abs(x - y) / 86400000 : 999;
+  }
+  /* The same comment, whether or not it was reworded after an earlier import: nearly the
+     same words, or the same day and mostly the same words. A later comment that happens to
+     repeat an earlier one's wording is a different day, so it is still added. */
+  function hasNote(history, n){
+    return (history || []).some(function(h){
+      var o = noteOverlap(h.text, n.text);
+      return o >= 0.95 || (o >= 0.5 && daysApart(h.at, n.at) < 1);
+    });
+  }
+
+  function pad2(n){ return ("0" + n).slice(-2); }
+  /* A Comments line: its date is the one it starts with ("9/24 - …"), else the
+     "on 9/14" it ends with, else the date the comment was left. */
+  function sheetNote(text, who, stamp){
+    var left = "";
+    if(stamp instanceof Date) left = stamp.toISOString().slice(0, 10);
+    else if(typeof stamp === "number") left = XLSX.isoDate(stamp);
+    else {
+      var m = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/.exec(String(stamp || "").trim());
+      if(m) left = (m[3].length === 2 ? "20" + m[3] : m[3]) + "-" + pad2(m[1]) + "-" + pad2(m[2]);
+      else if(/^\d{4}-\d{2}-\d{2}/.test(String(stamp || ""))) left = String(stamp).slice(0, 10);
+    }
+    var year = left ? +left.slice(0, 4) : today().getFullYear();
+    function onDay(mo, d, y){
+      if(y) return (String(y).length === 2 ? "20" + y : y) + "-" + pad2(mo) + "-" + pad2(d);
+      var guess = year + "-" + pad2(mo) + "-" + pad2(d);
+      if(left && guess > left && daysApart(guess, left) > 45) guess = (year - 1) + "-" + pad2(mo) + "-" + pad2(d);
+      return guess;
+    }
+    var t = String(text || "").trim(), at = left;
+    var head = /^(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\s*[-–—:]?\s*/.exec(t);
+    var tail = /\bon (\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\.?\s*$/.exec(t);
+    if(head){ at = onDay(head[1], head[2], head[3]); t = t.slice(head[0].length); }
+    else if(tail){ at = onDay(tail[1], tail[2], tail[3]); }
+    t = t.replace(/\s{2,}/g, " ");
+    if(t) t = t.charAt(0).toUpperCase() + t.slice(1);
+    return {at: at || iso(today()), who: String(who || "").trim() || "Prospects sheet", text: t};
+  }
+
+  function oneEmail(v){
+    var s = String(v || "").trim();
+    return /^[^\s@<>,;]+@[^\s@<>,;]+\.[a-z]{2,}$/i.test(s) ? s : "";
+  }
+  function sheetStatus(v){
+    var s = String(v || "").trim().toLowerCase();
+    if(!s) return "";
+    for(var i = 0; i < LEAD_STATUSES.length; i++){ if(LEAD_STATUSES[i].toLowerCase() === s) return LEAD_STATUSES[i]; }
+    return null;   // not one the portal knows
+  }
+
+  function cellText(r, i){
+    var v = r && r[i];
+    if(v == null) return "";
+    if(v instanceof Date) return v.toISOString().slice(0, 10);
+    return String(v).replace(/\s+/g, " ").trim();
+  }
+
+  function buildProspectPlan(book, fileName){
+    var main = null, comments = null;
+    book.forEach(function(sh){
+      var nums = Object.keys(sh.rows), typed = 0, rowRefs = 0;
+      nums.forEach(function(n){
+        var r = sh.rows[n];
+        if(/^(acquisition|retention)$/i.test(cellText(r, 1))) typed++;
+        if(/^row\s*\d+$/i.test(cellText(r, 0))) rowRefs++;
+      });
+      if(!main && typed >= 1 && typed >= rowRefs) main = sh;
+      else if(!comments && rowRefs >= 1) comments = sh;
+    });
+    if(!main) throw new Error("No sheet in this workbook looks like the prospects list — none has " +
+      "Acquisition or Retention in its second column.");
+
+    var season = ((/(20\d\d)/.exec(main.name) || /(20\d\d)/.exec(fileName || "") || [])[1]) ||
+                 (leadSeason && leadSeason !== "all" ? leadSeason : String(today().getFullYear() + 1));
+
+    var notesByRow = {};
+    if(comments) Object.keys(comments.rows).forEach(function(n){
+      var r = comments.rows[n], ref = /^row\s*(\d+)$/i.exec(cellText(r, 0));
+      if(!ref || !cellText(r, 1)) return;
+      var raw = r[3] instanceof Date || typeof r[3] === "number" ? r[3] : cellText(r, 3);
+      (notesByRow[ref[1]] = notesByRow[ref[1]] || []).push(sheetNote(cellText(r, 1), cellText(r, 2), raw));
+    });
+
+    var plan = {season: season, sheet: main.name, hasComments: !!comments, changes: [], notes: [],
+                same: 0, orphanNotes: 0};
+    var seen = {};
+    Object.keys(main.rows).map(Number).sort(function(a, b){ return a - b; }).forEach(function(n){
+      var r = main.rows[n], co = cellText(r, 0);
+      if(!co || /^(company|company name|organization)$/i.test(co)) return;
+      var row = {n: n, company: co, type: cellText(r, 1), contact: cellText(r, 2),
+                 emailRaw: cellText(r, 3), role: cellText(r, 4), statusRaw: cellText(r, 5),
+                 interest: cellText(r, 6)};
+      row.email = oneEmail(row.emailRaw);
+      row.status = sheetStatus(row.statusRaw);
+      if(!/^(acquisition|retention)$/i.test(row.type)) row.type = "";
+      else row.type = row.type.charAt(0).toUpperCase() + row.type.slice(1).toLowerCase();
+      var sheetNotes = notesByRow[n] || [];
+      delete notesByRow[n];
+
+      var lead = null;
+      leads.forEach(function(l){
+        if(lead || l.id === leadDraft || String(l.season || "") !== season) return;
+        if(sameCompany(l.company, co)) lead = l;
+      });
+      if(lead && seen[lead.id]) lead = null;   // two sheet rows for one company: the second is new
+      if(lead) seen[lead.id] = 1;
+
+      if(row.emailRaw && !row.email && !(lead && lead.contactEmail)){
+        plan.notes.push({company: lead ? lead.company : co,
+          text: "The sheet's email for this contact isn't a single address (" + row.emailRaw +
+                "), so it was left out."});
+      }
+      if(row.statusRaw && row.status === null){
+        plan.notes.push({company: lead ? lead.company : co,
+          text: "The sheet's status “" + row.statusRaw + "” isn't one the portal uses" +
+                (lead ? "; the portal's is kept." : ", so it starts as New Lead.")});
+      }
+
+      if(!lead){
+        var notes = sheetNotes.slice().sort(function(a, b){ return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
+        var f = {company: co, season: season, engagementType: row.type, contactName: row.contact,
+                 contactEmail: row.email, contactRole: row.role, status: row.status || "New Lead",
+                 interestedIn: row.interest};
+        if(notes.length) f.lastContactDate = notes[notes.length - 1].at;
+        plan.changes.push({kind: "new", lead: null, fields: f, notes: notes, on: true, row: n});
+        return;
+      }
+
+      var fields = {}, filled = [];
+      function fill(key, val, label){
+        if(val && !String(lead[key] || "").trim()){ fields[key] = val; filled.push(label + " → " + val); }
+      }
+      fill("engagementType", row.type, "Acquisition or Retention");
+      fill("contactName", row.contact, "Contact");
+      fill("contactEmail", row.email, "Email");
+      fill("contactRole", row.role, "Title");
+      fill("interestedIn", row.interest, "Interested in");
+      var add = sheetNotes.filter(function(x){ return !hasNote(lead.history, x); });
+      if(row.status && row.status !== lead.status){
+        plan.notes.push({company: lead.company,
+          text: "The sheet says “" + row.status + "”; the portal says “" + (lead.status || "—") +
+                "”. The portal's is kept — change it on the prospect if the sheet is right."});
+      }
+      if(!filled.length && !add.length){ plan.same++; return; }
+      plan.changes.push({kind: "update", lead: lead, fields: fields, filled: filled, notes: add, on: true, row: n});
+    });
+    Object.keys(notesByRow).forEach(function(n){ plan.orphanNotes += notesByRow[n].length; });
+    return plan;
+  }
+
+  function renderProspectPlan(){
+    var p = pimpPlan, html = "";
+    if(!p){ $("pimp-body").innerHTML = ""; paintProspectApply(); return; }
+    var adds = p.changes.filter(function(c){ return c.kind === "new"; }).length;
+    var ups = p.changes.length - adds;
+    html += '<div class="impstat"><b>' + adds + '</b> new prospect' + (adds === 1 ? "" : "s") +
+      ' · <b>' + ups + '</b> to update · ' + p.same + ' already match the sheet' +
+      ' · Season <b>' + esc(p.season) + '</b></div>';
+    if(p.changes.length){
+      html += p.changes.map(function(c, i){
+        var f = c.fields, l = c.lead;
+        var meta = c.kind === "new"
+          ? ["Sheet row " + c.row, f.engagementType || "Acquisition or Retention not set", f.status]
+              .concat(f.contactName ? [f.contactName] : []).concat(f.contactEmail ? [f.contactEmail] : [])
+          : [l.leadNo, l.status || "", "sheet row " + c.row];
+        var bits = [];
+        if(c.kind === "new"){
+          if(f.contactRole) bits.push("Title → <b>" + esc(f.contactRole) + "</b>");
+          if(f.interestedIn) bits.push("Interested in → <b>" + esc(f.interestedIn) + "</b>");
+        } else {
+          (c.filled || []).forEach(function(x){
+            var k = x.split(" → ");
+            bits.push(esc(k[0]) + " → <b>" + esc(k.slice(1).join(" → ")) + "</b>");
+          });
+        }
+        return '<label class="improw' + (c.on ? " on" : "") + '">' +
+          '<input type="checkbox" data-pimp="' + i + '"' + (c.on ? " checked" : "") + '>' +
+          '<span class="impmain">' +
+            '<span class="impco">' + esc(c.kind === "new" ? f.company : l.company) +
+              '<span class="imptag">' + (c.kind === "new" ? "New" : "Update") + '</span></span>' +
+            '<span class="impmeta">' + meta.filter(Boolean).map(esc).join(" · ") + '</span>' +
+            (bits.length ? '<span class="impdelta">' + bits.join(" · ") + '</span>' : "") +
+            (c.notes.length ? '<ul class="impnotes">' + c.notes.map(function(n){
+              return '<li><b>' + esc(fmtDate(n.at)) + ' · ' + esc(n.who) + '</b> — ' + esc(n.text) + '</li>';
+            }).join("") + '</ul>' : "") +
+          '</span></label>';
+      }).join("");
+    } else {
+      html += '<div class="empty">Everything in this sheet is already in the portal.</div>';
+    }
+    if(p.notes.length || p.orphanNotes || !p.hasComments){
+      html += '<h4 class="subhead" style="margin-top:24px;">Worth Knowing</h4>';
+      if(!p.hasComments) html += '<div class="impnote">This workbook has no Comments sheet, so no notes were read.</div>';
+      if(p.orphanNotes) html += '<div class="impnote">' + p.orphanNotes + ' comment' + (p.orphanNotes === 1 ? "" : "s") +
+        ' point at a row with no company on it, so ' + (p.orphanNotes === 1 ? "it was" : "they were") + ' skipped.</div>';
+      html += p.notes.map(function(n){
+        return '<div class="impnote"><b>' + esc(n.company) + '</b> — ' + esc(n.text) + '</div>';
+      }).join("");
+    }
+    $("pimp-body").innerHTML = html;
+    paintProspectApply();
+  }
+
+  function paintProspectApply(){
+    var n = pimpPlan ? pimpPlan.changes.filter(function(c){ return c.on; }).length : 0;
+    var b = $("pimp-apply");
+    b.disabled = !n || !canWrite;
+    b.textContent = n ? ("Add " + n + " Change" + (n === 1 ? "" : "s")) : "Add Changes";
+  }
+
+  function readProspectSheet(){
+    var inp = $("pimp-file"), file = inp.files && inp.files[0];
+    if(!file){ pimpPlan = null; renderProspectPlan(); pimpSay(""); return; }
+    pimpSay("Reading…");
+    XLSX.readBook(file).then(function(book){
+      pimpPlan = buildProspectPlan(book, file.name);
+      pimpPlan.file = file.name;
+      pimpSay("Read <b>" + esc(file.name) + "</b> — the “" + esc(pimpPlan.sheet) + "” sheet" +
+        (pimpPlan.hasComments ? " and its comments." : "."), "");
+      if(!canWrite) pimpSay("This account can't record changes, so this is a preview only.", "warn");
+      renderProspectPlan();
+    }).catch(function(e){
+      pimpPlan = null; renderProspectPlan();
+      pimpSay("<b>Couldn't read that file.</b> " + esc((e && e.message) || String(e)), "bad");
+    });
+  }
+
+  function applyProspectPlan(){
+    if(!pimpPlan || !canWrite) return;
+    var picked = pimpPlan.changes.filter(function(c){ return c.on; });
+    if(!picked.length) return;
+    var from = pimpPlan.file || "the prospects sheet", made = 0, updated = 0, stamp = Date.now();
+    picked.forEach(function(c, i){
+      var after;
+      if(c.kind === "new"){
+        after = {id: "lead-" + stamp.toString(36) + "-" + i, leadNo: nextLeadNo(),
+                 createdDate: iso(today()), history: []};
+        Object.keys(c.fields).forEach(function(k){ if(c.fields[k]) after[k] = c.fields[k]; });
+      } else {
+        after = JSON.parse(JSON.stringify(c.lead));
+        Object.keys(c.fields).forEach(function(k){ after[k] = c.fields[k]; });
+      }
+      after.history = (after.history || []).concat(c.notes).map(function(h, j){ return [h, j]; })
+        .sort(function(a, b){ return a[0].at < b[0].at ? -1 : a[0].at > b[0].at ? 1 : a[1] - b[1]; })
+        .map(function(x){ return x[0]; });
+      saveLead(after);
+      var said = c.kind === "new" ? "prospect added from " + from : "updated from " + from;
+      var parts = [];
+      if(c.kind !== "new" && c.filled && c.filled.length) parts.push(c.filled.join("; "));
+      if(c.notes.length) parts.push(c.notes.length + " note" + (c.notes.length === 1 ? "" : "s") + " added");
+      addLog(after.leadNo, said + (parts.length ? " — " + parts.join("; ") : "") + " (prospect)", whoAmI());
+      if(c.kind === "new") made++; else updated++;
+    });
+    closeProspectImport();
+    toast((made ? made + " new prospect" + (made === 1 ? "" : "s") : "") +
+          (made && updated ? " and " : "") +
+          (updated ? updated + " updated" : "") + ". The Activity tab has the detail.", "", "Prospects imported");
+  }
+
+  function openProspectImport(){
+    if(db && typeof db.poll === "function") db.poll();   // start from the latest saved copy
+    pimpSay("");
+    $("pimp-body").innerHTML = "";
+    pimpPlan = null;
+    $("pimp-file").value = "";
+    paintProspectApply();
+    $("pimp-scrim").classList.add("on");
+    $("pimp").classList.add("on");
+    $("pimp").setAttribute("aria-hidden", "false");
+  }
+  function closeProspectImport(){
+    $("pimp-scrim").classList.remove("on");
+    $("pimp").classList.remove("on");
+    $("pimp").setAttribute("aria-hidden", "true");
+  }
+
   function openImport(){
     impSay("");
     $("imp-body2").innerHTML = "";
@@ -3777,16 +4937,33 @@ a series deal is counted once, at its full amount.</div>
       }
       ev.stopPropagation(); return;
     }
+    if((el = ev.target.closest("[data-leadby]"))){
+      leadBy = el.getAttribute("data-leadby");
+      leadGroup = null;
+      renderLeadCards(); renderLeads();
+      ev.stopPropagation(); return;
+    }
+    if((el = ev.target.closest("[data-leadgroup]"))){
+      var gk = el.getAttribute("data-leadgroup");
+      var picking = (leadGroup !== gk);
+      leadGroup = picking ? gk : null;
+      renderLeadCards(); renderLeads();
+      /* picking a group narrows the list further down the page, which is no use if you
+         can't see it — so go there. Letting go of a group leaves you where you are. */
+      if(picking) scrollToLeadList();
+      ev.stopPropagation(); return;
+    }
     if((el = ev.target.closest("[data-quickfilter]"))){
       var qfKey = el.getAttribute("data-quickfilter");
       leadQuickFilter = (qfKey === "all") ? null : qfKey;
       $("f-lead-status").value = ""; $("f-lead-type").value = ""; $("f-lead-search").value = "";
       renderLeads();
+      scrollToLeadList();
       ev.stopPropagation(); return;
     }
     if(el = ev.target.closest("#lead-quickfilter-back")){
-      leadQuickFilter = null;
-      renderLeads();
+      leadQuickFilter = null; leadGroup = null;
+      renderLeadCards(); renderLeads();
       ev.stopPropagation(); return;
     }
     if((el = ev.target.closest("[data-setstatus]"))){
@@ -3826,6 +5003,15 @@ a series deal is counted once, at its full amount.</div>
         doSave();
       }
       ev.stopPropagation(); return;
+    }
+    if((el = ev.target.closest("[data-pimp]"))){
+      var px = +el.getAttribute("data-pimp");
+      if(pimpPlan && pimpPlan.changes[px]){
+        pimpPlan.changes[px].on = el.checked;
+        el.closest(".improw").classList.toggle("on", el.checked);
+        paintProspectApply();
+      }
+      return;
     }
     if((el = ev.target.closest("[data-imp]"))){
       var ix = +el.getAttribute("data-imp");
@@ -3867,15 +5053,19 @@ a series deal is counted once, at its full amount.</div>
   });
 
   function showView(v){
+    currentView = v;
+    paintPageHead();
     document.querySelectorAll("#tabband .tab").forEach(function(t){
       t.classList.toggle("on", t.getAttribute("data-view") === v);
     });
     // The Summits and Prospects tabs carry their own figures rather than the
     // whole-portal row above them, which would put two different "Committed" —
     // or an unrelated one — on one screen.
-    var hide = (v === "money" || v === "stock" || v === "leads") ? "none" : "";
-    $("stats").style.display = hide;
-    $("season").parentNode.style.display = hide;
+    /* Activity is a log — a band saying what is owed on a page of past events would be
+       answering a question nobody asked there. Money, Inventory and Prospects carry their
+       own bands instead. */
+    var hide = (v === "money" || v === "stock" || v === "leads" || v === "log") ? "none" : "";
+    $("headline").style.display = hide;
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.id === "view-"+v); });
     if(v !== "pipeline" && stageKey) closeStage();
     if(v !== "money" && $("imp").classList.contains("on")) closeImport();
@@ -3904,12 +5094,18 @@ a series deal is counted once, at its full amount.</div>
   $("d-save").addEventListener("click", doSave);
   $("s-close").addEventListener("click", closeStage);
   $("stage-scrim").addEventListener("click", closeStage);
-  $("imp-open").addEventListener("click", openImport);
+  /* the Import Aptify Payments button is gone; its drawer stays for the day it comes back */
   $("imp-close").addEventListener("click", closeImport);
   $("imp-cancel").addEventListener("click", closeImport);
   $("imp-scrim").addEventListener("click", closeImport);
   $("imp-read").addEventListener("click", readImport);
   $("imp-apply").addEventListener("click", applyImport);
+  $("pimp-open").addEventListener("click", openProspectImport);
+  $("pimp-close").addEventListener("click", closeProspectImport);
+  $("pimp-cancel").addEventListener("click", closeProspectImport);
+  $("pimp-scrim").addEventListener("click", closeProspectImport);
+  $("pimp-file").addEventListener("change", readProspectSheet);
+  $("pimp-apply").addEventListener("click", applyProspectPlan);
   $("ld-close").addEventListener("click", closeLeadDrawer);
   $("ld-cancel").addEventListener("click", closeLeadDrawer);
   $("lead-scrim").addEventListener("click", closeLeadDrawer);
@@ -3948,14 +5144,15 @@ a series deal is counted once, at its full amount.</div>
   });
 
   ["f-lead-status","f-lead-type","f-lead-search"].forEach(function(id){
-    $(id).addEventListener("input", function(){ leadQuickFilter = null; renderLeads(); });
-    $(id).addEventListener("change", function(){ leadQuickFilter = null; renderLeads(); });
+    $(id).addEventListener("input", function(){ leadQuickFilter = null; leadGroup = null; renderLeadCards(); renderLeads(); });
+    $(id).addEventListener("change", function(){ leadQuickFilter = null; leadGroup = null; renderLeadCards(); renderLeads(); });
   });
 
   $("lead-season").addEventListener("change", function(){
     leadSeason = $("lead-season").value;
     leadSeasonChosen = true;
-    renderLeadStats(); renderLeads();
+    leadGroup = null;
+    renderLeadStats(); renderLeadCards(); renderLeads();
   });
 
   $("new-app").addEventListener("click", function(){
@@ -4007,7 +5204,65 @@ a series deal is counted once, at its full amount.</div>
     paint();
   })();
 
+  /* ---------------- what the rail search can find ----------------
+     Handed to the search script outside this closure, the way Member 360 does it, so
+     the rail can list what matches and open the record when one is picked. Everything
+     someone might have in their head is searchable: the company, the name Aptify bills
+     it under, the contact, the application or prospect number, the Aptify order ID,
+     the prospectus reference and the opportunity. */
+  function searchable(v){ return String(v == null ? "" : v).toLowerCase(); }
+  window.__portalFind = function(t){
+    var out = [];
+    apps.forEach(function(a){
+      var hay = [a.company, a.billingName, a.contactName, a.contactEmail, a.appNo,
+                 a.opportunity, a.invoiceNumber, a.prospectusRef, a.event].map(searchable).join(" ");
+      if(hay.indexOf(t) < 0) return;
+      var where = [a.appNo, a.event, a.status].filter(Boolean).join(" \u00b7 ");
+      if(a.billingName && searchable(a.billingName).indexOf(t) >= 0 &&
+         searchable(a.company).indexOf(t) < 0){ where += " \u00b7 invoiced as " + a.billingName; }
+      out.push({group:"Sponsors", name:a.company || a.appNo, where:where,
+        go:function(){ showView("pipeline"); openDrawer(a.id, null); }});
+    });
+    leads.forEach(function(l){
+      var hay = [l.company, l.contactName, l.contactEmail, l.contactPhone, l.leadNo,
+                 l.owner, l.interestedIn, l.status].map(searchable).join(" ");
+      if(hay.indexOf(t) < 0) return;
+      var where = [l.leadNo, l.status, l.owner].filter(Boolean).join(" \u00b7 ");
+      out.push({group:"Prospects", name:l.company || l.leadNo, where:where,
+        go:function(){ showView("leads"); openLeadDrawer(l.id, null); }});
+    });
+    return out;
+  };
+
+  /* ---------------- panels: expand and put back ----------------
+     The same control the other MISMO pages use — one button in the panel header that
+     swaps between the two arrow icons. The choice is remembered, because someone who
+     wants the record wide usually wants it wide next time too. */
+  var WIDE_KEY = "mismo.portal.panelwide";
+  var panelsWide = false;
+  try{ panelsWide = localStorage.getItem(WIDE_KEY) === "1"; }catch(e){}
+  function paintWide(){
+    ["drawer","stage","lead-drawer","imp"].forEach(function(id){
+      var el = $(id); if(el) el.classList.toggle("wide", panelsWide);
+    });
+    document.querySelectorAll(".widebtn").forEach(function(b){
+      b.setAttribute("aria-pressed", panelsWide ? "true" : "false");
+      b.setAttribute("aria-label", panelsWide ? "Put the panel back" : "Expand the panel");
+      b.setAttribute("title", panelsWide ? "Put back" : "Expand");
+    });
+  }
+  document.addEventListener("click", function(ev){
+    var b = ev.target.closest("[data-wide]");
+    if(!b) return;
+    panelsWide = !panelsWide;
+    try{ localStorage.setItem(WIDE_KEY, panelsWide ? "1" : "0"); }catch(e){}
+    paintWide();
+    ev.stopPropagation();
+  });
+  paintWide();
+
   /* ---------------- boot ---------------- */
+  paintPageHead();
   renderAll(); renderLog();
 
   /* ---------------- the save relay (September 26, 2026) ----------------
@@ -4286,39 +5541,126 @@ a series deal is counted once, at its full amount.</div>
 })();
 </script>
 <script>
-/* The panel search drives the Applications filter, which already matches on company,
-   application number, contact and the Aptify billing name. On a wide screen it jumps to
-   Applications as you type; in the narrow drawer it waits for Enter, so the drawer does
-   not shut under your hands mid-word. */
+/* The rail search, the Member 360 pattern: typing lists what matches, grouped by what
+   it is, and picking one opens that record. Up and down walk the list, Enter opens the
+   highlighted one, Escape closes it. Pressing Enter with nothing highlighted falls back
+   to the old behaviour and filters the Applications list instead, so a search for a word
+   that isn't a name still gets somewhere. */
 (function navSearch(){
-  var box = document.getElementById("nav-search"),
-      f   = document.getElementById("f-search"),
-      tab = document.querySelector('#tabband .tab[data-view="apps"]'),
+  var box  = document.getElementById("nav-search"),
+      xbtn = document.getElementById("nav-search-x"),
+      hits = document.getElementById("nav-hits"),
+      f    = document.getElementById("f-search"),
+      tab  = document.querySelector('#tabband .tab[data-view="pipeline"]'),
       side = document.getElementById("side");
-  if(!box || !f || !tab) return;
+  if(!box || !hits) return;
+  var rows = [], picked = -1, timer = null;
+
+  function norm(x){ return String(x == null ? "" : x).replace(/\s+/g, " ").trim().toLowerCase(); }
   function wide(){ return matchMedia("(min-width: 901px)").matches; }
-  function push(){
-    if(f.value === box.value) return;
-    f.value = box.value;
-    f.dispatchEvent(new Event("input", {bubbles:true}));
-  }
-  function jump(){ if(!tab.classList.contains("on")) tab.click(); }
-  /* On a phone the open panel covers the results, so Enter puts it back to icons —
-     clicking the rail's own toggle, so the panel and the script stay in step. */
+
+  /* on a phone the open panel covers the page, so picking a result puts it back to icons */
   function collapseOnNarrow(){
     if(wide() || side.classList.contains("mini")) return;
     var t = document.getElementById("nav-toggle");
     if(t) t.click();
   }
-  box.addEventListener("input", function(){ push(); if(wide() && box.value) jump(); });
+
+  function gather(q){
+    var t = norm(q);
+    if(t.length < 2) return [];
+    var found = [];
+    try{ found = (window.__portalFind ? window.__portalFind(t) : []) || []; }catch(e){ found = []; }
+    /* an exact name first, then names that start with what was typed, then the rest */
+    function score(name){
+      var n = norm(name);
+      return n === t ? 3 : n.indexOf(t) === 0 ? 2 : n.indexOf(t) >= 0 ? 1 : 0;
+    }
+    var best = {};
+    found.forEach(function(h){ h.s = score(h.name); best[h.group] = Math.max(best[h.group] || 0, h.s); });
+    var ORDER = ["Sponsors", "Prospects"];
+    found.sort(function(a, b){
+      return (best[b.group] - best[a.group])
+          || (ORDER.indexOf(a.group) - ORDER.indexOf(b.group))
+          || (b.s - a.s)
+          || String(a.name).localeCompare(String(b.name));
+    });
+    return found;
+  }
+
+  function close(){ hits.hidden = true; hits.textContent = ""; rows = []; picked = -1; }
+
+  function mark(){
+    rows.forEach(function(r, i){ r.classList.toggle("on", i === picked); });
+    if(rows[picked]){ try{ rows[picked].scrollIntoView({block:"nearest"}); }catch(e){} }
+  }
+
+  function draw(list){
+    hits.textContent = ""; rows = []; picked = -1;
+    if(!list.length){
+      var n = document.createElement("div");
+      n.className = "rh-none";
+      n.textContent = "Nothing matches.";
+      hits.appendChild(n); hits.hidden = false; return;
+    }
+    var g = null;
+    list.slice(0, 24).forEach(function(h){
+      if(h.group !== g){
+        g = h.group;
+        var hd = document.createElement("div");
+        hd.className = "rh-g"; hd.textContent = g;
+        hits.appendChild(hd);
+      }
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "rh";
+      var nm = document.createElement("b"); nm.textContent = h.name; b.appendChild(nm);
+      if(h.where){ var w = document.createElement("i"); w.textContent = h.where; b.appendChild(w); }
+      b.addEventListener("click", function(){
+        close(); box.blur(); collapseOnNarrow();
+        try{ h.go(); }catch(e){}
+      });
+      rows.push(b); hits.appendChild(b);
+    });
+    hits.hidden = false;
+  }
+
+  function run(){
+    var v = box.value;
+    if(xbtn) xbtn.hidden = !v;
+    if(norm(v).length < 2){ close(); return; }
+    draw(gather(v));
+  }
+
+  /* the fallback: hand the words to the Applications filter on the Pipeline tab */
+  function filterList(){
+    if(!f) return;
+    f.value = box.value;
+    f.dispatchEvent(new Event("input", {bubbles:true}));
+    if(tab && !tab.classList.contains("on")) tab.click();
+  }
+
+  box.addEventListener("input", function(){ clearTimeout(timer); timer = setTimeout(run, 120); });
+  box.addEventListener("focus", function(){ if(norm(box.value).length >= 2) run(); });
   box.addEventListener("keydown", function(e){
-    if(e.key === "Enter"){ push(); jump(); box.blur(); collapseOnNarrow(); }
-    if(e.key === "Escape"){ box.value = ""; push(); box.blur(); collapseOnNarrow(); }
+    if(e.key === "Escape"){ close(); box.blur(); collapseOnNarrow(); return; }
+    if(e.key === "ArrowDown" && rows.length){ e.preventDefault(); picked = (picked + 1) % rows.length; mark(); return; }
+    if(e.key === "ArrowUp" && rows.length){ e.preventDefault(); picked = (picked - 1 + rows.length) % rows.length; mark(); return; }
+    if(e.key === "Enter"){
+      e.preventDefault();
+      if(rows[picked]){ rows[picked].click(); return; }
+      close(); filterList(); box.blur(); collapseOnNarrow();
+    }
   });
-  /* Collapsed, the field is only a magnifier — tapping it opens the panel and puts
-     the cursor in it. This now applies on a phone too, where the rail is collapsed
-     by default. touchstart and mousedown both fire on a tap, so the second call
-     finds the panel already open and does nothing. */
+  if(xbtn) xbtn.addEventListener("click", function(){
+    box.value = ""; xbtn.hidden = true; close(); box.focus();
+  });
+  document.addEventListener("click", function(e){
+    if(!e.target.closest(".side-search")) close();
+  });
+
+  /* collapsed, the field is only a magnifier — tapping it opens the panel and puts the
+     cursor in it. touchstart and mousedown both fire on a tap; the second finds the
+     panel already open and does nothing. */
   function reveal(e){
     if(!side.classList.contains("mini")) return;
     if(e && e.cancelable) e.preventDefault();
@@ -4328,8 +5670,6 @@ a series deal is counted once, at its full amount.</div>
   }
   box.addEventListener("mousedown", reveal);
   box.addEventListener("touchstart", reveal, {passive:false});
-  /* typing in the Applications filter itself keeps the panel field in step */
-  f.addEventListener("input", function(){ if(f.value !== box.value) box.value = f.value; });
 })();
 </script>
 <script>
@@ -4340,5 +5680,3 @@ a series deal is counted once, at its full amount.</div>
 </script>
 </body>
 </html>
-
-

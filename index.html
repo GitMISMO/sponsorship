@@ -1116,8 +1116,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
           <option value="none">Not Set</option>
         </select>
         <input type="search" id="f-lead-search" placeholder="Company, contact or phone">
-        <button class="btn ghost sm" id="pimp-open" type="button"
-          title="Adds new companies and notes from the team's prospects spreadsheet. Nothing already here is overwritten.">Import from Sheet</button>
+        <!-- Import from Sheet was here briefly on 28 September 2026; Jonna had it taken off.
+             Its drawer and code stay below, unreachable, so it can come back in one line. -->
         <button class="btn sm" id="new-lead" type="button"
           title="Opens a blank record for a company or contact worth following up">New Prospect</button>
       </div>
@@ -4802,6 +4802,16 @@ a series deal is counted once, at its full amount.</div>
     var inp = $("pimp-file"), file = inp.files && inp.files[0];
     if(!file){ pimpPlan = null; renderProspectPlan(); pimpSay(""); return; }
     pimpSay("Reading…");
+    /* With nothing loaded, every company on the sheet would look new and be added
+       twice over. Refuse rather than guess (September 28, 2026: the relay copy opened
+       empty because its data files weren't in the store, and offered 26 "new"). */
+    if(!leads.length){
+      pimpPlan = null; renderProspectPlan();
+      pimpSay("<b>No prospects are loaded in the portal, so nothing was read.</b> Importing now would add " +
+        "every company on the sheet as new, including ones already recorded. Close this, reload the page, " +
+        "and check the Prospects tab shows your prospects first.", "bad");
+      return;
+    }
     XLSX.readBook(file).then(function(book){
       pimpPlan = buildProspectPlan(book, file.name);
       pimpPlan.file = file.name;
@@ -5100,7 +5110,7 @@ a series deal is counted once, at its full amount.</div>
   $("imp-scrim").addEventListener("click", closeImport);
   $("imp-read").addEventListener("click", readImport);
   $("imp-apply").addEventListener("click", applyImport);
-  $("pimp-open").addEventListener("click", openProspectImport);
+  /* the Import from Sheet button is gone (Jonna, 28 Sep 2026); its drawer stays */
   $("pimp-close").addEventListener("click", closeProspectImport);
   $("pimp-cancel").addEventListener("click", closeProspectImport);
   $("pimp-scrim").addEventListener("click", closeProspectImport);
@@ -5368,7 +5378,13 @@ a series deal is counted once, at its full amount.</div>
           var f = file(name);
           f.listeners.push(function(){ cb(docsSnap(f)); });
           load(name).catch(function(e){
-            if(e && e.status === 404){ f.data = clean(null, kindOf(name)); f.loaded = true; cb(docsSnap(f)); return; }
+            if(e && e.status === 404){
+              f.data = clean(null, kindOf(name)); f.loaded = true; cb(docsSnap(f));
+              /* A missing records file looks exactly like an empty portal, and anything
+                 entered on top of it would start a new file. Say so rather than show 0s. */
+              if(name === "applications" || name === "leads") missingFile(name);
+              return;
+            }
             if(errCb) errCb(e);
           });
         }};
@@ -5403,6 +5419,14 @@ a series deal is counted once, at its full amount.</div>
       }
     };
     return api;
+  }
+
+  var missing = {};
+  function missingFile(name){
+    missing[name] = 1;
+    var list = Object.keys(missing).map(function(n){ return "data/" + n + ".json"; }).join(" and ");
+    relayBanner("<b>The portal's saved records weren't found.</b> The data store has no " + esc(list) +
+      ", so everything here shows 0. Don't enter anything until the records are put back — tell Jonna.", "bad");
   }
 
   function relayBanner(html, tone){

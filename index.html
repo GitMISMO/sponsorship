@@ -1507,6 +1507,7 @@ a series deal is counted once, at its full amount.</div>
   var stageKey = null;       // which pipeline stage the right-hand panel is showing
   var draft = null;          // id of a blank New application not yet saved to the shared record
   var leadDraft = null;      // id of a blank New prospect not yet saved to the shared record
+  var leadBaseline = null;   // the prospect panel's field values as drawn, to tell what is unsaved
   var leadSeason = null;     // which sponsorship season the Prospects tab shows ("2027" or "all")
   var leadSeasonChosen = false; // true once she picks a season herself
   var leadQuickFilter = null; // "overdue" | "recent" | "converted" | null — set by clicking a Prospects stat card
@@ -3930,6 +3931,7 @@ a series deal is counted once, at its full amount.</div>
       '</div></div>';
 
     $("ld-body").innerHTML = html;
+    leadBaseline = JSON.stringify(leadFormValues());
     $("lead-scrim").classList.add("on");
     $("lead-drawer").classList.add("on");
     $("lead-drawer").setAttribute("aria-hidden","false");
@@ -3945,6 +3947,36 @@ a series deal is counted once, at its full amount.</div>
     $("lead-drawer").setAttribute("aria-hidden","true");
     currentLead = null;
     discardLeadDraft(null);
+  }
+
+  /* Unsaved work in the prospect panel (September 29, 2026). Typed information used to be
+     lost two ways: Add Note and Remove saved the record as it was when the panel opened and
+     redrew it, wiping the fields above; and closing the panel (x, clicking outside, Escape)
+     threw everything away without a word. Add Note and Remove now save the whole panel, and
+     closing with anything unsaved stops and says so. Compared against the values as drawn,
+     not the record, so a select that can't show a stored value doesn't look like an edit. */
+  function leadFormValues(){
+    var o = {};
+    $("ld-body").querySelectorAll("[data-lkey]").forEach(function(el){ o[el.getAttribute("data-lkey")] = el.value; });
+    return o;
+  }
+  function leadUnsaved(){
+    if(!currentLead || !$("lead-drawer").classList.contains("on")) return false;
+    var box = $("y-newnote");
+    return !!(box && box.value.trim()) || JSON.stringify(leadFormValues()) !== leadBaseline;
+  }
+  function leadUnsavedSay(){
+    $("ld-msg").innerHTML = "<b>Not saved yet.</b> Press Save to keep what you typed.";
+    $("ld-msg").className = "savemsg err";
+  }
+  function tryCloseLead(){
+    if(leadUnsaved()){ leadUnsavedSay(); $("ld-save").focus(); return; }
+    closeLeadDrawer();
+  }
+  function cancelLead(){
+    if(!leadUnsaved()){ closeLeadDrawer(); return; }
+    leadUnsavedSay();
+    armDangerButton($("ld-cancel"), "lead-cancel:" + currentLead.id, "Click Again to Discard", closeLeadDrawer);
   }
 
   function setLeadField(k, v){
@@ -4940,14 +4972,12 @@ a series deal is counted once, at its full amount.</div>
     if(el = ev.target.closest("#btn-lead-note")){
       if(currentLead){
         var box = $("y-newnote");
+        /* The same save as the Save button, so anything typed in the fields above goes with
+           the note instead of being wiped when the panel redraws (September 29, 2026). */
         if(box && box.value.trim()){
-          currentLead.history = (currentLead.history || []).concat(
-            [{at:iso(today()), who:whoAmI(), text:box.value.trim()}]);
-          currentLead.lastContactDate = iso(today());
-          saveLead(JSON.parse(JSON.stringify(currentLead)));
           addLog(currentLead.leadNo, "note added (prospect)", whoAmI());
-          openLeadDrawer(currentLead.id, null);
-        }
+          doSaveLead();
+        } else if(box) box.focus();
       }
       ev.stopPropagation(); return;
     }
@@ -4960,11 +4990,16 @@ a series deal is counted once, at its full amount.</div>
       var delIdx = +el.getAttribute("data-lead-delnote");
       if(currentLead && currentLead.history && currentLead.history[delIdx]){
         armDangerButton(el, "note:" + currentLead.id + ":" + delIdx, "Click Again to Remove", function(){
-          var afterDel = JSON.parse(JSON.stringify(currentLead));
+          /* Saves the fields as typed, and puts a half-written note back in its box after
+             the redraw, so removing an old note never costs anything new (September 29, 2026). */
+          var afterDel = collectLeadDrawer();
           afterDel.history = afterDel.history.slice(0, delIdx).concat(afterDel.history.slice(delIdx + 1));
+          var typedNote = $("y-newnote") ? $("y-newnote").value : "";
           saveLead(afterDel);
           addLog(afterDel.leadNo, "a note was removed (prospect)", whoAmI());
+          currentLead = afterDel;
           openLeadDrawer(afterDel.id, null);
+          if(typedNote && $("y-newnote")) $("y-newnote").value = typedNote;
         });
       }
       ev.stopPropagation(); return;
@@ -5138,15 +5173,15 @@ a series deal is counted once, at its full amount.</div>
   $("pimp-scrim").addEventListener("click", closeProspectImport);
   $("pimp-file").addEventListener("change", readProspectSheet);
   $("pimp-apply").addEventListener("click", applyProspectPlan);
-  $("ld-close").addEventListener("click", closeLeadDrawer);
-  $("ld-cancel").addEventListener("click", closeLeadDrawer);
-  $("lead-scrim").addEventListener("click", closeLeadDrawer);
+  $("ld-close").addEventListener("click", tryCloseLead);
+  $("ld-cancel").addEventListener("click", cancelLead);
+  $("lead-scrim").addEventListener("click", tryCloseLead);
   $("ld-save").addEventListener("click", doSaveLead);
   /* Escape steps back one panel at a time: the record first, then the stage list. */
   document.addEventListener("keydown", function(e){
     if(e.key === "Escape"){
       if($("drawer").classList.contains("on")) closeDrawer();
-      else if($("lead-drawer").classList.contains("on")) closeLeadDrawer();
+      else if($("lead-drawer").classList.contains("on")) tryCloseLead();
       else if($("imp").classList.contains("on")) closeImport();
       else if($("stage").classList.contains("on")) closeStage();
       return;
@@ -5323,7 +5358,8 @@ a series deal is counted once, at its full amount.</div>
   function relayDb(){
     var files = {};   // name -> {data, sha, loaded, listeners:[], queue:Promise}
     function file(name){
-      if(!files[name]) files[name] = {data:null, sha:null, loaded:false, listeners:[], queue:Promise.resolve()};
+      if(!files[name]) files[name] = {data:null, sha:null, loaded:false, listeners:[], queue:Promise.resolve(),
+                                      saving:0, saves:0};
       return files[name];
     }
     function call(method, name, body){
@@ -5357,9 +5393,16 @@ a series deal is counted once, at its full amount.</div>
     }
     function kindOf(name){ return name === "log" ? "log" : ((name === "outbox-sent" || name === "inbox") ? "list" : "docs"); }
     function notify(f){ f.listeners.forEach(function(fn){ try{ fn(f.data); }catch(e){} }); }
-    function load(name){
-      var f = file(name);
+    /* A background re-read that started before one of this screen's saves can arrive after
+       it, carrying the file as it was. Believing it put the old record back on screen, and the
+       next save of that record then wrote the old copy over the new one — a note saved a
+       moment earlier was lost (found September 29, 2026). So a re-read is ignored if a save is
+       in progress or finished while it was out; the next one, 20 seconds later, catches up.
+       Loads made by a save itself (after a conflict) pass force and are always believed. */
+    function load(name, force){
+      var f = file(name), saves0 = f.saves;
       return call("GET", name).then(function(b){
+        if(!force && f.loaded && (f.saving > 0 || f.saves !== saves0)) return f;
         var changed = !f.loaded || b.sha !== f.sha;
         f.data = clean(b.data, kindOf(name)); f.sha = b.sha || null; f.loaded = true;
         if(changed) notify(f);
@@ -5369,9 +5412,10 @@ a series deal is counted once, at its full amount.</div>
     /* One save at a time per file, each re-applying its own change after a conflict. */
     function mutate(name, fn){
       var f = file(name);
+      f.saving++;
       var job = f.queue.then(function attempt(tries){
         tries = tries || 0;
-        var ready = f.loaded ? Promise.resolve(f) : load(name);
+        var ready = f.loaded ? Promise.resolve(f) : load(name, true);
         return ready.then(function(){
           var next = clean(JSON.parse(JSON.stringify(f.data || {})), kindOf(name));
           fn(next);
@@ -5379,15 +5423,16 @@ a series deal is counted once, at its full amount.</div>
             return Object.assign({id:id}, next.docs[id]);
           });
           return call("PUT", name, {content: next, sha: f.sha}).then(function(b){
-            f.data = next; f.sha = b.sha; notify(f);
+            f.data = next; f.sha = b.sha; f.saves++; notify(f);
           }, function(err){
             if(err && err.status === 409 && tries < 4){
-              return load(name).then(function(){ return attempt(tries + 1); });
+              return load(name, true).then(function(){ return attempt(tries + 1); });
             }
             throw err;
           });
         });
       });
+      job.then(function(){ f.saving--; }, function(){ f.saving--; });
       f.queue = job.catch(function(){});
       return job;
     }

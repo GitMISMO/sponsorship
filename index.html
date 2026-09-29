@@ -1365,8 +1365,12 @@ a series deal is counted once, at its full amount.</div>
      wording it holds itself, and records what it sent in data/outbox-sent.json — a file only
      the flow writes, so the two never save over each other. Nothing secret is in this page. */
   AUTO_SEND = true;
-  var QUEUE_KINDS = {invoice:true, logo:true, paid:true};
-  var QUEUE_WHO = {invoice:"Bernie", logo:"Dillon and Jenny", paid:"Jonna, Amy and Kelly"};
+  /* "status" (September 28, 2026) is not an email: every time a record's status changes, the
+     flow copies it onto the matching row of the Sponsorship Requests list (or adds a row for a
+     sponsorship typed in by hand), which is what the public prospectus reads availability from. */
+  var QUEUE_KINDS = {invoice:true, logo:true, paid:true, status:true};
+  var QUEUE_WHO = {invoice:"Bernie", logo:"Dillon and Jenny", paid:"Jonna, Amy and Kelly",
+                   status:"the Sponsorship Requests list"};
   var outboxSent = {};       // id -> {sentAt} from data/outbox-sent.json, written by the flow
   var ALERT_SECRET   = "mismo-sponsorship-portal";
 
@@ -1760,6 +1764,10 @@ a series deal is counted once, at its full amount.</div>
   function outboxWord(o){
     if(!o) return "";
     var sent = outboxSent[o.id];
+    if(o.kind === "status"){
+      return sent ? "list updated " + fmtDate(String(sent.sentAt || o.queuedAt).slice(0,10)) + " (" + (o.listStatus || "") + ")"
+                  : "on its way to the list (" + (o.listStatus || "") + "), usually within a minute";
+    }
     if(sent) return "emailed " + fmtDate(String(sent.sentAt || o.queuedAt).slice(0,10));
     if(o.status === "sent") return "emailed " + fmtDate(String(o.sentAt||o.queuedAt).slice(0,10));
     if(o.status === "failed") return "couldn't be emailed automatically — use Send Alert on the record";
@@ -1790,6 +1798,10 @@ a series deal is counted once, at its full amount.</div>
   /* Every alert goes into the shared outbox; the scheduled messenger emails it. If the
      outbox can't be written (no connection, read-only account), fall back to the mail app
      so nothing is silently lost. */
+  /* Portal status -> the list's Status choices. Written Off keeps the slot taken on the
+     public page (the sponsor had it), so it goes to the list as Approved. */
+  var LIST_STATUS = {"Submitted":"New", "Approved":"Approved", "Pending Payment":"Pending Payment",
+                     "Paid":"Paid", "Declined":"Declined", "Written Off":"Approved"};
   function queueAlert(kind, a){
     if(!QUEUE_KINDS[kind]) return Promise.reject(new Error("not an automatic email"));
     if(!db || !canWrite) return Promise.reject(new Error("not connected"));
@@ -1806,10 +1818,20 @@ a series deal is counted once, at its full amount.</div>
       contactName: plain(a.contactName), contactEmail: plain(a.contactEmail),
       prospectusRef: plain(prospectusRef(a)), invoiceNumber: plain(a.invoiceNumber),
       amountPaid: plain(money(a.amountPaid || a.amountDue)),
+      /* the same record in the Sponsorship Requests list's own wording, so the flow can
+         write it into the list's Status, Program and Tier choices with no conversion */
+      listStatus: LIST_STATUS[a.status] || "New",
+      listReference: plain(prospectusRef(a) || a.appNo),
+      listProgram: /series/i.test(a.event || "") ? "Summit Series" : "Winter Summit",
+      listTier: plain(tierLabel(levelOf(a))),
+      listOpportunity: plain(String(a.opportunity || "").replace(/\s*[\u2014\u2013-]\s*(Monday|Tuesday|Wednesday|Thursday|Friday)\b.*$/i, "")),
+      listDay: plain(dayOf(a)),
       status:"queued", queuedAt: now.toISOString(), queuedBy: whoAmI()};
     outbox.push(Object.assign({id:id}, doc));
     return db.doc("outbox/" + id).set(doc).then(function(){
-      addLog(a.appNo, (ALERT_LABEL[kind]||kind) + " queued to email automatically — " + doc.toNames, whoAmI());
+      addLog(a.appNo, kind === "status"
+        ? "status " + doc.listStatus + " sent to the Sponsorship Requests list"
+        : (ALERT_LABEL[kind]||kind) + " queued to email automatically — " + doc.toNames, whoAmI());
     }, function(e){
       outbox = outbox.filter(function(o){ return o.id !== id; });
       throw e;
@@ -5487,6 +5509,21 @@ a series deal is counted once, at its full amount.</div>
             : (fresh.length + " requests came in through the online prospectus. They're on the Pipeline under Submitted."),
           "", "New from the prospectus");
   }
+
+  /* Every status change is sent on to the Sponsorship Requests list (see QUEUE_KINDS.status).
+     saveApp is the one place every save goes through, so the check lives here. */
+  ALERT_LABEL.status = "List Update";
+  var saveAppRaw = saveApp;
+  saveApp = function(a){
+    var prev = null;
+    for(var i = 0; i < apps.length; i++){ if(apps[i].id === a.id){ prev = apps[i]; break; } }
+    var was = prev ? prev.status : null;
+    var p = saveAppRaw(a);
+    if(was && was !== a.status && AUTO_SEND && db && canWrite){
+      queueAlert("status", a).then(function(){ renderAll(); }, function(){});
+    }
+    return p;
+  };
 
   var started = false;
   function startRelay(){

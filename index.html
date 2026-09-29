@@ -5446,9 +5446,9 @@ a series deal is counted once, at its full amount.</div>
     var ref = txt(r.reference).toUpperCase();
     var year = (/(20\d\d)/.exec(r.programLabel || "") || /(20\d\d)/.exec(r.submittedAt || "") || [])[1] ||
                String(today().getFullYear() + 1);
-    var series = r.program === "series";
+    var series = /series/i.test(String(r.program || ""));   // "series" before 28 Sep 2026, "Summit Series" after
     var opp = txt(r.opportunity);
-    if(r.tier === "diamond" || /diamond exclusive/i.test(opp)) opp = "Exclusive";
+    if(/^diamond$/i.test(String(r.tier || "")) || /diamond exclusive/i.test(opp)) opp = "Exclusive";
     var due = Number(String(r.price || "").replace(/[^0-9.]/g, ""));
     var notes = ["Received through the online prospectus."];
     if(txt(r.contactPhone)) notes.push("Phone: " + txt(r.contactPhone) + ".");

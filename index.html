@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-rs-gate>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5304,18 +5304,9 @@ a series deal is counted once, at its full amount.</div>
       if(!files[name]) files[name] = {data:null, sha:null, loaded:false, listeners:[], queue:Promise.resolve()};
       return files[name];
     }
-    /* A save made after the session has run out asks the person to sign in through the
-       shared window ("Sign in to finish saving") and then sends the SAME save. Before
-       Sept 28, 2026 it was rejected before being sent and the rejection was swallowed:
-       the record looked saved on screen and never reached the data store. Reads are not
-       prompted for, so a background refresh never opens a window by itself. */
-    function call(method, name, body, retried){
+    function call(method, name, body){
       var tok = RS && RS.token();
-      var write = method !== "GET";
-      if(!tok){
-        if(!write || !RS || retried) return Promise.reject({code:"SIGNED_OUT"});
-        return askToFinish().then(function(){ return call(method, name, body, true); });
-      }
+      if(!tok) return Promise.reject({code:"SIGNED_OUT"});
       return fetch(RELAY_URL + "/" + RELAY_PROJECT + "/data/" + name, {
         method: method, cache: "no-store",
         headers: Object.assign({"Authorization":"Bearer " + tok}, body ? {"Content-Type":"application/json"} : {}),
@@ -5324,30 +5315,25 @@ a series deal is counted once, at its full amount.</div>
         return r.json().catch(function(){ return {}; }).then(function(b){
           if(r.ok) return b;
           var err = {status:r.status, code:(b && b.error) || ("HTTP_" + r.status), message:b && b.message};
-          if(r.status === 401 && RS && write && !retried){
-            return askToFinish().then(function(){ return call(method, name, body, true); });
-          }
+          if(r.status === 401 && RS){ RS.signIn({reason:"expired"}).catch(function(){}); }
           throw err;
         });
-      });
-    }
-    function askToFinish(){
-      return RS.signIn({reason:"expired"}).then(null, function(){
-        relayBanner("<b>Your change wasn't saved.</b> Sign in to save it. It stays on screen until you reload.", "bad");
-        return Promise.reject({code:"SIGNED_OUT"});
       });
     }
     function clean(content, kind){
       var c = content && typeof content === "object" ? content : {};
       if(kind === "log") return {entries: Array.isArray(c.entries) ? c.entries : []};
-      if(kind === "list"){   // outbox-sent: {list:[{id, sentAt}]}, written by the flow only
+      if(kind === "list"){   // outbox-sent {list:[{id,sentAt}]} and inbox {list:[{reference,...}]}: flow-written
         var m = {};
-        (Array.isArray(c.list) ? c.list : []).forEach(function(x){ if(x && x.id) m[x.id] = x; });
+        (Array.isArray(c.list) ? c.list : []).forEach(function(x){
+          var k = x && (x.id || x.reference);
+          if(k) m[k] = x;
+        });
         return {docs: m};
       }
       return {docs: (c.docs && typeof c.docs === "object") ? c.docs : {}};
     }
-    function kindOf(name){ return name === "log" ? "log" : (name === "outbox-sent" ? "list" : "docs"); }
+    function kindOf(name){ return name === "log" ? "log" : ((name === "outbox-sent" || name === "inbox") ? "list" : "docs"); }
     function notify(f){ f.listeners.forEach(function(fn){ try{ fn(f.data); }catch(e){} }); }
     function load(name){
       var f = file(name);
@@ -5452,20 +5438,69 @@ a series deal is counted once, at its full amount.</div>
     b.innerHTML = html; b.style.display = "";
   }
 
-  var started = false;
-  /* Signing in and being refused use the shared screens every resources.mismo.org tool
-     uses (session.js), not banners of this page's own. requireAccess also asks the relay
-     before refusing, so someone granted the Portal after they signed in is asked to sign
-     in again rather than turned away (Sept 28, 2026). */
-  var TOOL_NAME = "the Sponsorship Portal";
-  function startRelay(){
-    RS.requireAccess(RELAY_PROJECT, {toolName: TOOL_NAME, eyebrow: "Programs & Operations"}).then(beginRelay, function(e){
-      if(e && e.code === "OFFLINE") relayBanner("<b>The Sponsorship Portal couldn't reach the sign-in service.</b> Check your connection, then reload the page.", "bad");
-    });
+  /* ---- turning a prospectus submission into an application ---- */
+  var appsLoaded = false, inboxItems = null, inboxTaken = {}, takeInboxReady = false;
+  function refKey(ref){ return String(ref || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function txt(v){ return String(v == null ? "" : v).replace(/[<>]/g, "").trim().slice(0, 300); }
+  function fromProspectus(r){
+    var ref = txt(r.reference).toUpperCase();
+    var year = (/(20\d\d)/.exec(r.programLabel || "") || /(20\d\d)/.exec(r.submittedAt || "") || [])[1] ||
+               String(today().getFullYear() + 1);
+    var series = r.program === "series";
+    var opp = txt(r.opportunity);
+    if(r.tier === "diamond" || /diamond exclusive/i.test(opp)) opp = "Exclusive";
+    var due = Number(String(r.price || "").replace(/[^0-9.]/g, ""));
+    var notes = ["Received through the online prospectus."];
+    if(txt(r.contactPhone)) notes.push("Phone: " + txt(r.contactPhone) + ".");
+    if(txt(r.signerName)) notes.push("Contract signed by " + txt(r.signerName) +
+                                     (txt(r.signerTitle) ? ", " + txt(r.signerTitle) : "") + ".");
+    if(r.multiDayInterest) notes.push("Asked about sponsoring more days \u2014 strategic growth to follow up with pricing.");
+    var submitted = /^\d{4}-\d{2}-\d{2}/.test(String(r.submittedAt || "")) ? String(r.submittedAt).slice(0, 10) : iso(today());
+    return {id: "app-" + refKey(ref), appNo: nextAppNo(), event: series ? year + " Series" : "Winter " + year,
+      status: "Submitted", company: txt(r.company), contactName: txt(r.contactName),
+      contactEmail: txt(r.contactEmail), level2027: txt(r.tier).toUpperCase(), opportunity: opp,
+      dateSubmitted: submitted, contractAccepted: r.agreed ? "Yes" : "",
+      acceptanceName: txt(r.signerName), acceptanceDate: txt(r.signedDate) || (r.signerName ? submitted : ""),
+      amountDue: isFinite(due) && due > 0 ? due : "", prospectusRef: ref, comments: notes.join(" "),
+      followUpCount: 0};
   }
-  function beginRelay(role){
-    var s = RS.current() || {};
+  function takeInbox(){
+    if(!db || !canWrite || !appsLoaded || !inboxItems || !takeInboxReady) return;
+    var have = {};
+    apps.forEach(function(a){ if(a.prospectusRef) have[refKey(a.prospectusRef)] = 1; });
+    var fresh = inboxItems.filter(function(r){
+      var k = r && refKey(r.reference);
+      return k && !have[k] && !inboxTaken[k];
+    });
+    if(!fresh.length) return;
+    fresh.forEach(function(r){
+      var k = refKey(r.reference);
+      inboxTaken[k] = 1;                       // at most once from this screen
+      var a = fromProspectus(r);
+      saveApp(a);
+      db.doc("inbox-taken/" + k).set({at: new Date().toISOString(), appNo: a.appNo, by: whoAmI()}).catch(function(){});
+      addLog(a.appNo, "received from the online prospectus (" + a.prospectusRef + ") \u2014 " +
+             (a.company || "") + ", " + (a.level2027 || "") + " " + (a.opportunity || ""), "Online prospectus");
+    });
+    toast(fresh.length === 1
+            ? (txt(fresh[0].company) + " applied through the online prospectus. It's on the Pipeline under Submitted.")
+            : (fresh.length + " requests came in through the online prospectus. They're on the Pipeline under Submitted."),
+          "", "New from the prospectus");
+  }
+
+  var started = false;
+  function startRelay(){
+    var s = RS && RS.current();
+    if(!s){
+      relayBanner("<b>Sign in to see the Sponsorship Portal.</b> Use <b>Sign in</b> at the top right — the same account as the Initiative Hub and Summit HQ.");
+      return;
+    }
     user = {name: s.name || s.email || "MISMO"};
+    var role = RS.role(RELAY_PROJECT);
+    if(!role){
+      relayBanner("<b>Your account doesn't have access to the Sponsorship Portal.</b> Ask Jonna to add you on the admin screen.", "bad");
+      return;
+    }
     canWrite = (role === "admin" || role === "staff");
     if(started) return;
     started = true;
@@ -5481,7 +5516,7 @@ a series deal is counted once, at its full amount.</div>
       });
     }
     function failed(what){ return function(e){
-      if(e && e.code === "NO_ACCESS"){ RS.signIn({reason: "no-access", toolName: TOOL_NAME, eyebrow: "Programs & Operations", gated: true}).catch(function(){}); return; }
+      if(e && e.code === "NO_ACCESS"){ relayBanner("<b>Your account doesn't have access to the Sponsorship Portal.</b> Ask Jonna to add you on the admin screen.", "bad"); return; }
       loadFailed(what, e && (e.message || e.code));
     }; }
     d.collection("applications").onSnapshot(function(snap){
@@ -5490,7 +5525,9 @@ a series deal is counted once, at its full amount.</div>
         if(draft) keep = apps.filter(function(a){ return a.id === draft; });
         apps = copyDocs(snap);
         keep.forEach(function(a){ if(!apps.some(function(x){ return x.id === a.id; })) apps.push(a); });
+        appsLoaded = true;
         renderAll();
+        takeInbox();
       }catch(err){ loadFailed("reading the records", err && err.message); }
     }, failed("loading the records"));
     d.doc("log/main").onSnapshot(function(snap){
@@ -5501,6 +5538,21 @@ a series deal is counted once, at its full amount.</div>
     }, failed("loading the activity log"));
     d.collection("outbox").onSnapshot(function(snap){
       try{ outbox = copyDocs(snap); renderAll(); }catch(err){}
+    }, function(){});
+    /* Requests from the online prospectus. The intake flow adds each one to
+       data/inbox.json (a file only the flow writes). The first signed-in person with
+       edit rights whose portal sees one it hasn't taken turns it into a Submitted
+       application, and notes the reference in data/inbox-taken.json so it is never
+       added twice — not even after the application is deleted. */
+    d.collection("inbox").onSnapshot(function(snap){
+      inboxItems = snap.docs.map(function(doc){ return doc.data() || {}; });
+      takeInbox();
+    }, function(){});
+    d.collection("inbox-taken").onSnapshot(function(snap){
+      inboxTaken = {};
+      snap.docs.forEach(function(doc){ inboxTaken[doc.id] = 1; });
+      takeInboxReady = true;
+      takeInbox();
     }, function(){});
     d.collection("outbox-sent").onSnapshot(function(snap){
       try{

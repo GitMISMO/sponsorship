@@ -5440,7 +5440,10 @@ a series deal is counted once, at its full amount.</div>
         return ready.then(function(){
           var next = clean(JSON.parse(JSON.stringify(f.data || {})), kindOf(name));
           fn(next);
-          if(name === "outbox") next.list = Object.keys(next.docs).map(function(id){
+          /* outbox and applications also carry their records as a plain list: Power Automate
+             can filter a list but not an object. The Team Emails flow reads the applications
+             list to copy booked sponsorships into Summit HQ's People tab (Sept 30, 2026). */
+          if(name === "outbox" || name === "applications") next.list = Object.keys(next.docs).map(function(id){
             return Object.assign({id:id}, next.docs[id]);
           });
           return call("PUT", name, {content: next, sha: f.sha}).then(function(b){

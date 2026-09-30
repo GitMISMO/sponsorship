@@ -1044,7 +1044,6 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="navgrp">Records</div>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
-    <button class="tab" data-view="log" type="button" title="Activity"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-log"/></svg><span class="tlbl">Activity</span></button>
   </nav>
   <div class="side-ft">
     <button class="theme-btn" id="theme-btn" type="button">
@@ -1205,12 +1204,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     </div>
   </section>
 
-  <!-- ================= LOG ================= -->
-  <section class="view" id="view-log">
-    <div class="panel">
-      <div id="logbody"></div>
-    </div>
-  </section>
+  <!-- The Activity tab was removed on September 30, 2026 (Jonna: not needed). The portal
+       still notes each change in data/log.json behind the scenes; nothing shows it. -->
 
 </div>
 
@@ -1990,7 +1985,7 @@ a series deal is counted once, at its full amount.</div>
     renderAll();
     db.doc("applications/" + id).delete().then(function(){
       addLog(a.appNo, "application deleted — " + (a.company || a.appNo), whoAmI());
-      toast((a.appNo || "") + " is gone from the portal. Its history stays on the Activity tab.", "",
+      toast((a.appNo || "") + " is gone from the portal.", "",
             "Deleted — " + (a.company || a.appNo));
     }, function(){
       toast("Nothing was deleted. Reload the page and try again.", "bad", "Couldn't delete " + (a.company || a.appNo), true);
@@ -3365,6 +3360,7 @@ a series deal is counted once, at its full amount.</div>
   }
 
   function renderLog(){
+    if(!$("logbody")) return;   // no Activity tab since September 30, 2026
     if(!logEntries.length){
       $("logbody").innerHTML = '<div class="empty">Nothing recorded yet.</div>';
       return;
@@ -3577,7 +3573,7 @@ a series deal is counted once, at its full amount.</div>
         '<button class="btn ghost sm" type="button" data-delapp="' + esc(a.id) + '">Delete Application</button>' +
         '<div class="fldnote">Removes this application from the portal for everyone, and stops any of its ' +
         'emails that haven\'t gone out yet. Click once, then again within a few seconds to confirm. ' +
-        'It can\'t be undone. The Activity tab keeps its history.</div></div>';
+        'It can\'t be undone.</div></div>';
     }
 
     $("d-body").innerHTML = html;
@@ -4584,7 +4580,7 @@ a series deal is counted once, at its full amount.</div>
 
     var n = picked.length;
     closeImport();
-    toast(n + " record" + (n===1?"":"s") + " updated from the Aptify export. The Activity tab has the detail.",
+    toast(n + " record" + (n===1?"":"s") + " updated from the Aptify export.",
           "", "Import applied");
   }
 
@@ -4908,7 +4904,7 @@ a series deal is counted once, at its full amount.</div>
     closeProspectImport();
     toast((made ? made + " new prospect" + (made === 1 ? "" : "s") : "") +
           (made && updated ? " and " : "") +
-          (updated ? updated + " updated" : "") + ". The Activity tab has the detail.", "", "Prospects imported");
+          (updated ? updated + " updated" : "") + ".", "", "Prospects imported");
   }
 
   function openProspectImport(){

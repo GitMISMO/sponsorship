@@ -1661,9 +1661,15 @@ a series deal is counted once, at its full amount.</div>
      its contacts are kept, and the application's panel shows them.
      ============================================================ */
   var appsSeen = false, leadsSeen = false;   // set by the loaders once each has arrived
-  function coKey(s){
-    return String(s || "").toLowerCase().replace(/&/g, " and ")
-      .replace(/\b(inc|llc|ltd|corp|corporation|co|company|the)\b\.?/g, " ").replace(/[^a-z0-9]+/g, "");
+  /* companies whose prospect someone deleted (October 3, 2026): never added back on their own */
+  var removedCos = {}, removedSeen = false;
+  /* one company, however it was typed: "Kastle AI" and "Kastle", "JazzX.ai" and "JazzX",
+     "Acme, Inc." and "Acme" are the same key */
+  var CO_NOISE = {inc:1, llc:1, ltd:1, corp:1, corporation:1, co:1, company:1, the:1, ai:1, io:1, com:1,
+                  group:1, technologies:1, technology:1};
+  function companyKey(s){
+    return String(s || "").toLowerCase().replace(/&/g, " and ").split(/[^a-z0-9]+/)
+      .filter(function(w){ return w && !CO_NOISE[w]; }).join("");
   }
   var SEASON_LAST_MONTH = {Winter:0, Spring:5, Fall:8};
   /* the last day of the sponsorship: a summit runs four days from the day it opens; a
@@ -1678,10 +1684,10 @@ a series deal is counted once, at its full amount.</div>
     return null;
   }
   function appsForLead(l){
-    var k = coKey(l.company), out = [];
+    var k = companyKey(l.company), out = [];
     apps.forEach(function(a){
       if(a.status === "Declined" || a.id === draft) return;
-      if((l.linkedAppNo && a.appNo === l.linkedAppNo) || (k && coKey(a.company) === k)) out.push(a);
+      if((l.linkedAppNo && a.appNo === l.linkedAppNo) || (k && companyKey(a.company) === k)) out.push(a);
     });
     return out;
   }
@@ -1697,6 +1703,7 @@ a series deal is counted once, at its full amount.</div>
   function lastEndedApp(l){
     var best = null, t = today();
     appsForLead(l).forEach(function(a){
+      if(a.status === "Written Off") return;   // bad debt is not invited back to renew
       var e = sponsorshipEnds(a);
       if(e && daysBetween(t, e) < 0 && (!best || e > best.ends)) best = {a:a, ends:e};
     });
@@ -1709,9 +1716,9 @@ a series deal is counted once, at its full amount.</div>
     var hit = null;
     leads.forEach(function(l){ if(!hit && l.linkedAppNo && l.linkedAppNo === a.appNo) hit = l; });
     if(hit) return hit;
-    var k = coKey(a.company); if(!k) return null;
+    var k = companyKey(a.company); if(!k) return null;
     var yr = (/(\d{4})/.exec(a.event || "") || [])[1];
-    var same = leads.filter(function(l){ return l.id !== leadDraft && coKey(l.company) === k; });
+    var same = leads.filter(function(l){ return l.id !== leadDraft && companyKey(l.company) === k; });
     if(!same.length) return null;
     return same.filter(function(l){ return String(l.season) === yr; })[0] ||
       same.slice().sort(function(x, y){ return (x.updatedAt || "") < (y.updatedAt || "") ? 1 : -1; })[0];
@@ -1737,22 +1744,44 @@ a series deal is counted once, at its full amount.</div>
     syncTimer = setTimeout(function(){ syncTimer = null; syncProspects(); }, 400);
   }
   function syncProspects(){
-    if(syncing || !db || !canWrite || !appsSeen || !leadsSeen || leadDraft || draft) return;
+    if(syncing || !db || !canWrite || !appsSeen || !leadsSeen || !removedSeen || leadDraft || draft) return;
     syncing = true;
     try{
       var changes = [], openId = currentLead ? currentLead.id : null, t = today();
       var plain = function(v){ return JSON.parse(JSON.stringify(v)); };
 
+      /* 0. a prospect the portal added for a past sponsor (id lead-co-…) that the team had
+         already entered themselves is folded into theirs: their record, status and owner
+         win; blanks are filled from the added one; every note is kept (October 3, 2026) */
+      var gone = [];
+      leads.slice().forEach(function(auto){
+        if(String(auto.id).indexOf("lead-co-") !== 0 || auto.id === openId) return;
+        var k = companyKey(auto.company); if(!k) return;
+        var theirs = leads.filter(function(x){
+          return x.id !== auto.id && String(x.id).indexOf("lead-co-") !== 0 && x.id !== leadDraft && companyKey(x.company) === k;
+        }).sort(function(x, y){ return (x.updatedAt || "") < (y.updatedAt || "") ? 1 : -1; })[0];
+        if(!theirs || theirs.id === openId) return;
+        var m = plain(theirs);
+        ["contactName","contactRole","contactEmail","contactPhone","owner","engagementType","interestedIn",
+         "linkedAppNo","nextFollowUpDate"].forEach(function(f){ if(!m[f] && auto[f]) m[f] = auto[f]; });
+        m.history = (m.history || []).concat(auto.history || [], [{at:iso(t), who:"Sponsorship Portal",
+          text:"Merged in " + (auto.leadNo || "a duplicate") + " (" + (auto.company || "") +
+               "), which the portal had added for a past sponsorship; its notes are above."}]);
+        for(var i = 0; i < leads.length; i++) if(leads[i].id === m.id) leads[i] = m;
+        leads = leads.filter(function(x){ return x.id !== auto.id; });
+        changes.push(m); gone.push(auto);
+      });
+
       /* 1. every sponsor gets a prospect record */
       var byCo = {};
-      leads.forEach(function(l){ var k = coKey(l.company); if(k) byCo[k] = 1; });
+      leads.forEach(function(l){ var k = companyKey(l.company); if(k) byCo[k] = 1; });
       var linkedNos = {};
       leads.forEach(function(l){ if(l.linkedAppNo) linkedNos[l.linkedAppNo] = 1; });
       var newCos = {};
       apps.forEach(function(a){
-        if(a.status === "Declined" || a.id === draft) return;
-        var k = coKey(a.company);
-        if(!k || byCo[k] || linkedNos[a.appNo]) return;
+        if(a.status === "Declined" || a.status === "Written Off" || a.id === draft) return;
+        var k = companyKey(a.company);
+        if(!k || byCo[k] || removedCos[k] || linkedNos[a.appNo]) return;
         var e = sponsorshipEnds(a); if(!e) return;
         if(!newCos[k] || e > newCos[k].ends) newCos[k] = {a:a, ends:e};
       });
@@ -1801,13 +1830,16 @@ a series deal is counted once, at its full amount.</div>
         }
       });
 
-      if(!changes.length) return;
+      if(!changes.length && !gone.length) return;
       changes.forEach(function(l){
         l.updatedAt = new Date().toISOString();
         db.doc("leads/" + l.id).set(leadDoc(l)).catch(function(){});
       });
+      gone.forEach(function(l){ db.doc("leads/" + l.id).delete().catch(function(){}); });
       addLog("", "prospects kept in step with applications \u2014 " + changes.length + " updated" +
-             (made ? ", " + made + " added for sponsors who were never prospects" : ""), "Sponsorship Portal");
+             (made ? ", " + made + " added for sponsors who were never prospects" : "") +
+             (gone.length ? ", " + gone.length + " duplicate" + (gone.length === 1 ? "" : "s") + " merged (" +
+               gone.map(function(l){ return l.company; }).join(", ") + ")" : ""), "Sponsorship Portal");
       renderAll();
     } finally { syncing = false; }
   }
@@ -2145,6 +2177,28 @@ a series deal is counted once, at its full amount.</div>
     return db.doc("applications/" + a.id).set(appDoc(a)).catch(function(e){
       if(e && e.code === "invalid_argument"){ canWrite = false; readOnlyNotice(); }
     });
+  }
+
+  function deleteLead(id){
+    var l = null;
+    for(var i = 0; i < leads.length; i++){ if(leads[i].id === id){ l = leads[i]; break; } }
+    if(!l || !db || !canWrite) return;
+    var k = companyKey(l.company);
+    leads = leads.filter(function(x){ return x.id !== id; });
+    currentLead = null;
+    closeLeadDrawer();
+    renderAll();
+    db.doc("leads/" + id).delete().then(function(){
+      addLog(l.leadNo, "prospect deleted \u2014 " + (l.company || l.leadNo), whoAmI());
+      toast((l.company || l.leadNo) + " is gone from the Prospects list.", "", "Deleted \u2014 " + (l.company || l.leadNo));
+    }, function(){
+      toast("Nothing was deleted. Reload the page and try again.", "bad", "Couldn't delete " + (l.company || l.leadNo), true);
+    });
+    if(k){
+      removedCos[k] = 1;
+      db.doc("prospects-removed/" + k.slice(0, 60)).set({company: l.company || "", leadNo: l.leadNo || "",
+        at: new Date().toISOString(), by: whoAmI()}).catch(function(){});
+    }
   }
 
   function deleteApp(id){
@@ -4128,6 +4182,17 @@ a series deal is counted once, at its full amount.</div>
       '<div style="margin-top:8px;"><button class="btn ghost sm" id="btn-lead-note" type="button">Add Note</button></div>' +
       '</div></div>';
 
+    /* Delete (October 3, 2026): for prospects that shouldn't be on the list at all, such as a
+       sponsorship written off as bad debt. Two clicks, like Delete Application. */
+    if(l.id !== leadDraft && db && canWrite){
+      html += '<div class="dsect"><h4>Delete</h4>' +
+        '<button class="btn ghost sm" type="button" data-dellead="' + esc(l.id) + '">Delete Prospect</button>' +
+        '<div class="fldnote">Removes this prospect and its notes from the portal for everyone. The company ' +
+        'won\'t be added back on its own when a sponsorship ends, but you can still add it again with ' +
+        '<b>New Prospect</b>. Its applications are not touched. Click once, then again within a few seconds ' +
+        'to confirm. It can\'t be undone.</div></div>';
+    }
+
     $("ld-body").innerHTML = html;
     leadBaseline = JSON.stringify(leadFormValues());
     $("lead-scrim").classList.add("on");
@@ -5179,6 +5244,11 @@ a series deal is counted once, at its full amount.</div>
       }
       ev.stopPropagation(); return;
     }
+    if((el = ev.target.closest("[data-dellead]"))){
+      var delLeadId = el.getAttribute("data-dellead");
+      armDangerButton(el, "dellead:" + delLeadId, "Click Again to Delete", function(){ deleteLead(delLeadId); });
+      ev.stopPropagation(); return;
+    }
     if((el = ev.target.closest("[data-delapp]"))){
       var delAppId = el.getAttribute("data-delapp");
       armDangerButton(el, "delapp:" + delAppId, "Click Again to Delete", function(){ deleteApp(delAppId); });
@@ -5861,6 +5931,13 @@ a series deal is counted once, at its full amount.</div>
         snap.docs.forEach(function(doc){ outboxSent[doc.id] = doc.data() || {}; });
         renderAll();
       }catch(err){}
+    }, function(){});
+    /* companies whose prospect was deleted, so the portal never adds them back (Oct 3, 2026) */
+    d.collection("prospects-removed").onSnapshot(function(snap){
+      removedCos = {};
+      snap.docs.forEach(function(doc){ removedCos[doc.id] = 1; });
+      removedSeen = true;
+      renderAll();
     }, function(){});
     d.collection("leads").onSnapshot(function(snap){
       try{

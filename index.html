@@ -1649,6 +1649,169 @@ a series deal is counted once, at its full amount.</div>
     return t;
   }
 
+  /* ============================================================
+     PROSPECTS AND APPLICATIONS, JOINED (October 3, 2026)
+     Jonna and the VP: once a prospect has applied it comes off the Prospects list and
+     stays off while the sponsorship runs; the day after it ends (the last summit it
+     covers — Fall for a Series) it comes back, ready to renew, with everything recorded
+     while it was a prospect. Every sponsor ends up with a prospect record this way,
+     including those who applied without ever being one (2026 sponsors included).
+     A prospect belongs to an application by Converted To Application # (linkedAppNo)
+     or by the same company name. Nothing is deleted: the prospect record, its notes and
+     its contacts are kept, and the application's panel shows them.
+     ============================================================ */
+  var appsSeen = false, leadsSeen = false;   // set by the loaders once each has arrived
+  function coKey(s){
+    return String(s || "").toLowerCase().replace(/&/g, " and ")
+      .replace(/\b(inc|llc|ltd|corp|corporation|co|company|the)\b\.?/g, " ").replace(/[^a-z0-9]+/g, "");
+  }
+  var SEASON_LAST_MONTH = {Winter:0, Spring:5, Fall:8};
+  /* the last day of the sponsorship: a summit runs four days from the day it opens; a
+     Series ends with that year's Fall summit; a summit with no date on file is taken as
+     ending with the month it is held in */
+  function sponsorshipEnds(a){
+    var ev = String(a.event || "").trim(), m;
+    if((m = /^(\d{4})\s+Series$/.exec(ev))) ev = "Fall " + m[1];
+    var s = SUMMITS[ev], opens = s ? parseDate(s.opens) : null;
+    if(opens){ var d = new Date(opens); d.setDate(d.getDate() + 3); return d; }
+    if((m = /^(Winter|Spring|Fall)\s+(\d{4})$/.exec(ev))) return new Date(+m[2], SEASON_LAST_MONTH[m[1]] + 1, 0);
+    return null;
+  }
+  function appsForLead(l){
+    var k = coKey(l.company), out = [];
+    apps.forEach(function(a){
+      if(a.status === "Declined" || a.id === draft) return;
+      if((l.linkedAppNo && a.appNo === l.linkedAppNo) || (k && coKey(a.company) === k)) out.push(a);
+    });
+    return out;
+  }
+  /* the sponsorship still running, if there is one: {a, ends} */
+  function runningApp(l){
+    var best = null, t = today();
+    appsForLead(l).forEach(function(a){
+      var e = sponsorshipEnds(a);
+      if(e && daysBetween(t, e) >= 0 && (!best || e > best.ends)) best = {a:a, ends:e};
+    });
+    return best;
+  }
+  function lastEndedApp(l){
+    var best = null, t = today();
+    appsForLead(l).forEach(function(a){
+      var e = sponsorshipEnds(a);
+      if(e && daysBetween(t, e) < 0 && (!best || e > best.ends)) best = {a:a, ends:e};
+    });
+    return best;
+  }
+  function sponsoringNow(l){ return !!runningApp(l); }
+  /* the prospect record behind an application: the one linked to it by number, else the
+     one with the same company name (preferring that season's) */
+  function leadForApp(a){
+    var hit = null;
+    leads.forEach(function(l){ if(!hit && l.linkedAppNo && l.linkedAppNo === a.appNo) hit = l; });
+    if(hit) return hit;
+    var k = coKey(a.company); if(!k) return null;
+    var yr = (/(\d{4})/.exec(a.event || "") || [])[1];
+    var same = leads.filter(function(l){ return l.id !== leadDraft && coKey(l.company) === k; });
+    if(!same.length) return null;
+    return same.filter(function(l){ return String(l.season) === yr; })[0] ||
+      same.slice().sort(function(x, y){ return (x.updatedAt || "") < (y.updatedAt || "") ? 1 : -1; })[0];
+  }
+  function appLine(a){
+    return a.appNo + " \u00b7 " + (a.event || "") +
+      ((levelOf(a) || a.opportunity) ? " \u00b7 " + [levelOf(a), a.opportunity].filter(Boolean).join(" ") : "");
+  }
+  /* the season a returning sponsor is renewed for: the year of the next summit still to
+     come — once that year's Fall summit has been reached, that is next year */
+  function renewSeason(ends){
+    var d = ends > today() ? ends : today();
+    return String(d.getMonth() >= 8 ? d.getFullYear() + 1 : d.getFullYear());
+  }
+  var RETURN_FROM = {"Converted to Application":1, "Invoiced":1, "Paid":1};
+
+  /* Keeps the prospect records in step with the applications. Runs on a screen that can
+     save, once both have loaded, and only writes what actually needs to change, so it is
+     safe to run on every redraw and on several screens at once. */
+  var syncTimer = null, syncing = false;
+  function scheduleProspectSync(){
+    if(syncTimer) return;
+    syncTimer = setTimeout(function(){ syncTimer = null; syncProspects(); }, 400);
+  }
+  function syncProspects(){
+    if(syncing || !db || !canWrite || !appsSeen || !leadsSeen || leadDraft || draft) return;
+    syncing = true;
+    try{
+      var changes = [], openId = currentLead ? currentLead.id : null, t = today();
+      var plain = function(v){ return JSON.parse(JSON.stringify(v)); };
+
+      /* 1. every sponsor gets a prospect record */
+      var byCo = {};
+      leads.forEach(function(l){ var k = coKey(l.company); if(k) byCo[k] = 1; });
+      var linkedNos = {};
+      leads.forEach(function(l){ if(l.linkedAppNo) linkedNos[l.linkedAppNo] = 1; });
+      var newCos = {};
+      apps.forEach(function(a){
+        if(a.status === "Declined" || a.id === draft) return;
+        var k = coKey(a.company);
+        if(!k || byCo[k] || linkedNos[a.appNo]) return;
+        var e = sponsorshipEnds(a); if(!e) return;
+        if(!newCos[k] || e > newCos[k].ends) newCos[k] = {a:a, ends:e};
+      });
+      var made = 0;
+      Object.keys(newCos).forEach(function(k){
+        var a = newCos[k].a, no = nextLeadNo();
+        var l = {id:"lead-co-" + k.slice(0, 40), leadNo:no, company:String(a.company || "").trim(),
+          season:(/(\d{4})/.exec(a.event || "") || [])[1] || String(t.getFullYear()),
+          engagementType:"Retention", contactName:a.contactName || "", contactEmail:a.contactEmail || "",
+          status:"Converted to Application", linkedAppNo:a.appNo, createdDate:iso(t),
+          history:[{at:iso(t), who:"Sponsorship Portal",
+            text:"Added from application " + appLine(a) + ", so it comes back here to renew when the sponsorship ends."}]};
+        leads.push(l); byCo[k] = 1; made++;
+        changes.push(l);
+      });
+
+      /* 2. a prospect that has applied comes off the list; 3. one whose sponsorship has
+         ended comes back, ready to renew */
+      leads.forEach(function(l0){
+        if(l0.id === openId || l0.id === leadDraft) return;
+        var l = plain(l0), run = runningApp(l), changed = false;
+        if(run){
+          if(l.status !== "Converted to Application" || l.linkedAppNo !== run.a.appNo){
+            l.history = (l.history || []).concat([{at:iso(t), who:"Sponsorship Portal",
+              text:"Applied \u2014 " + appLine(run.a) + ". Off the Prospects list until the sponsorship ends " +
+                   fmtDate(iso(run.ends)) + "."}]);
+            l.status = "Converted to Application"; l.linkedAppNo = run.a.appNo; changed = true;
+          }
+        } else if(RETURN_FROM[l.status]){
+          var past = lastEndedApp(l);
+          if(past){
+            l.history = (l.history || []).concat([{at:iso(t), who:"Sponsorship Portal",
+              text:"Sponsorship " + appLine(past.a) + " ended " + fmtDate(iso(past.ends)) +
+                   ". Back on the Prospects list to renew."}]);
+            l.status = "Follow Up"; l.engagementType = "Retention";
+            l.season = renewSeason(past.ends); l.nextFollowUpDate = iso(t);
+            l.linkedAppNo = past.a.appNo; changed = true;
+          }
+        }
+        if(changed && changes.indexOf(l0) < 0){
+          for(var i = 0; i < leads.length; i++) if(leads[i].id === l.id) leads[i] = l;
+          changes.push(l);
+        } else if(changed){
+          for(var j = 0; j < leads.length; j++) if(leads[j].id === l.id) leads[j] = l;
+          changes[changes.indexOf(l0)] = l;
+        }
+      });
+
+      if(!changes.length) return;
+      changes.forEach(function(l){
+        l.updatedAt = new Date().toISOString();
+        db.doc("leads/" + l.id).set(leadDoc(l)).catch(function(){});
+      });
+      addLog("", "prospects kept in step with applications \u2014 " + changes.length + " updated" +
+             (made ? ", " + made + " added for sponsors who were never prospects" : ""), "Sponsorship Portal");
+      renderAll();
+    } finally { syncing = false; }
+  }
+
   function summitPassed(a){
     var s = SUMMITS[a.event]; if(!s) return false;
     var opens = parseDate(s.opens); if(!opens) return false;
@@ -2116,7 +2279,7 @@ a series deal is counted once, at its full amount.</div>
   }
 
   /* ---------------- rendering ---------------- */
-  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); }
+  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); scheduleProspectSync(); }
 
   function totals(list){
     var t = {committed:0, collected:0, invoiced:0, approved:0, outstanding:0, overdue:0, overdueN:0,
@@ -2439,7 +2602,7 @@ a series deal is counted once, at its full amount.</div>
   function leadMonthAgo(){ var d = new Date(today()); d.setDate(d.getDate()-30); return d; }
 
   var LEAD_QUICKFILTER_LABEL = {
-    overdue: "Needs Follow-Up", recent: "Added This Month", converted: "Converted"
+    overdue: "Needs Follow-Up", recent: "Added This Month", converted: "Sponsoring Now"
   };
 
   /* ---- which sponsorship season a prospect is being worked for ----
@@ -2480,10 +2643,12 @@ a series deal is counted once, at its full amount.</div>
         (none ? '<span class="sep">·</span><b>' + none + '</b> not set' : '')
       : (leadSeason === "all" ? "" : "No prospects recorded for the " + esc(leadSeason) + " season yet.");
   }
-  function seasonLeads(){
+  function seasonLeadsAll(){
     if(leadSeason === "all") return leads.slice();
     return leads.filter(function(l){ return String(l.season || "") === String(leadSeason); });
   }
+  /* what the Prospects tab works from: everyone in the season except those sponsoring now */
+  function seasonLeads(){ return seasonLeadsAll().filter(function(l){ return !sponsoringNow(l); }); }
 
   /* What the band says, in priority order. It is deliberately NOT a reading of the
      four tiles underneath it — it names the thing that most needs doing and who it
@@ -2545,8 +2710,8 @@ a series deal is counted once, at its full amount.</div>
       card("Prospects", String(total), open + " still open", "", "all") +
       card("Needs Follow-Up", String(overdue), overdue ? "past their follow-up date" : "nothing overdue", overdue ? "alert" : "good", "overdue") +
       card("Added This Month", String(recent), "in the last 30 days", "", "recent") +
-      card("Converted", String(pool.filter(function(l){ return l.status === "Converted to Application"; }).length),
-           "became a real application", "good", "converted");
+      card("Sponsoring Now", String(seasonLeadsAll().filter(sponsoringNow).length),
+           "applied \u2014 back when it ends", "good", "converted");
   }
 
   /* ---- Prospects, the Migration HQ Tasks shape ----
@@ -2667,14 +2832,13 @@ a series deal is counted once, at its full amount.</div>
       bar.innerHTML = ""; bar.style.display = "none";
     }
     var monthAgo = leadMonthAgo();
-    var rows = seasonLeads().filter(function(l){
+    var rows = (leadQuickFilter === "converted" ? seasonLeadsAll().filter(sponsoringNow) : seasonLeads()).filter(function(l){
       if(leadGroup !== null && leadGroupOf(l) !== leadGroup) return false;
       if(leadQuickFilter === "overdue" && !tasksForLead(l).length) return false;
       if(leadQuickFilter === "recent"){
         var cd = parseDate(l.createdDate);
         if(!(cd && cd >= monthAgo)) return false;
       }
-      if(leadQuickFilter === "converted" && l.status !== "Converted to Application") return false;
       if(st && l.status !== st) return false;
       if(ty === "none" && (l.engagementType === "Acquisition" || l.engagementType === "Retention")) return false;
       if(ty && ty !== "none" && l.engagementType !== ty) return false;
@@ -3462,6 +3626,29 @@ a series deal is counted once, at its full amount.</div>
       fld("2027 Level","level2027","select",["","BRONZE","SILVER","GOLD","PLATINUM","DIAMOND"]) +
       '</div>' + fld("Opportunity","opportunity") + '</div>';
 
+    /* everything the team recorded while this sponsor was a prospect (October 3, 2026) */
+    var pl = a.id === draft ? null : leadForApp(a);
+    if(pl){
+      var pn = (pl.history || []).slice().sort(function(x, y){ return (x.at || "") < (y.at || "") ? 1 : -1; });
+      var who = [pl.contactName, pl.contactRole].filter(Boolean).join(", ");
+      var reach = [pl.contactEmail, pl.contactPhone].filter(Boolean).join(" \u00b7 ");
+      html += '<div class="dsect"><h4>From the Prospect</h4><div class="grid2">' +
+        roFld("Prospect", (pl.leadNo || "") + (pl.season ? " \u00b7 " + pl.season + " season" : "")) +
+        roFld("Owner", pl.owner || "\u2014") +
+        roFld("Acquisition or Retention", pl.engagementType || "\u2014") +
+        roFld("Contact", who || "\u2014", reach) +
+        '</div>' +
+        (pn.length
+          ? '<div style="margin-top:10px;">' + pn.map(function(h){
+              return '<div class="logline" style="grid-template-columns:110px 1fr;align-items:start;">' +
+                '<div class="lt">' + esc(fmtDate(h.at)) + '</div>' +
+                '<div>' + esc(h.text) + ' <span class="lw">\u00b7 ' + esc(h.who || "") + '</span></div></div>';
+            }).join("") + '</div>'
+          : '<div style="font-size:12.5px;color:var(--ink-3);padding:8px 0 0;">No notes on the prospect.</div>') +
+        '<div style="margin-top:10px;"><button class="btn ghost sm" type="button" data-open-lead="' + esc(pl.id) + '">' +
+        'Open Prospect</button></div></div>';
+    }
+
     var moves = MOVES[a.status] || [];
     html += '<div class="dsect"><h4>Review and Approval</h4>' +
       '<div class="fld"><label>Status</label><div class="statusrow">' +
@@ -3886,6 +4073,13 @@ a series deal is counted once, at its full amount.</div>
       "quiet is usually one nobody put a date against. Set one below.";
     else if(tasksForLead(l).length) note = "<b>Follow-up is due.</b> " + fmtDate(l.nextFollowUpDate) +
       " has come and gone. Add a note once you've reached out, and set the next follow-up date.";
+
+    /* applied: say so, and when it comes back (October 3, 2026) */
+    var run = l.id === leadDraft ? null : runningApp(l);
+    if(run) note = "<b>Sponsoring now \u2014 off the Prospects list.</b> " + esc(appLine(run.a)) +
+      ". It comes back here to renew the day after the sponsorship ends (" + esc(fmtDate(iso(run.ends))) +
+      "), with everything below kept. <span class=\"taker\" data-open=\"" + esc(run.a.id) + "\" " +
+      "style=\"cursor:pointer;text-decoration:underline;\">Open the application</span>";
 
     var html = "";
     if(note) html += '<div class="dnote">' + note + '</div>';
@@ -5632,7 +5826,7 @@ a series deal is counted once, at its full amount.</div>
         if(draft) keep = apps.filter(function(a){ return a.id === draft; });
         apps = copyDocs(snap);
         keep.forEach(function(a){ if(!apps.some(function(x){ return x.id === a.id; })) apps.push(a); });
-        appsLoaded = true;
+        appsLoaded = true; appsSeen = true;
         renderAll();
         takeInbox();
       }catch(err){ loadFailed("reading the records", err && err.message); }
@@ -5674,6 +5868,7 @@ a series deal is counted once, at its full amount.</div>
         if(leadDraft) keep = leads.filter(function(l){ return l.id === leadDraft; });
         leads = copyDocs(snap);
         keep.forEach(function(l){ if(!leads.some(function(x){ return x.id === l.id; })) leads.push(l); });
+        leadsSeen = true;
         renderAll();
       }catch(err){ loadFailed("reading the prospects", err && err.message); }
     }, failed("loading the prospects"));

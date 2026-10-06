@@ -568,6 +568,12 @@
   .ro{font-size:13.5px; padding:8px 0;}
   .statusrow{display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:3px 0;}
   .fldnote{font-size:12px; color:var(--ink-3); margin-top:6px;}
+  .custgrid{display:grid; gap:10px; margin-top:10px;}
+  .custrow{display:grid; grid-template-columns:62px 1fr 1.6fr 1fr; gap:10px; align-items:end;
+    padding:10px 12px; border:1px solid var(--border); border-radius:6px; background:var(--surface-2);}
+  .custs{font-weight:600; font-size:13px; color:var(--ink); padding-bottom:9px;}
+  .custrow .fld{margin:0;}
+  @media (max-width:640px){ .custrow{grid-template-columns:1fr 1fr;} .custs{grid-column:1 / -1; padding-bottom:0;} }
   .dnote{font-size:12.5px; color:var(--ink-2); background:var(--sky-wash); border-left:3px solid var(--sky);
     border-radius:0 5px 5px 0; padding:10px 12px; margin-bottom:14px;}
   .dfoot{border-top:1px solid var(--border); padding:13px 20px; display:flex; gap:9px; align-items:center; flex-wrap:wrap;}
@@ -2022,8 +2028,9 @@ a series deal is counted once, at its full amount.</div>
       listStatus: LIST_STATUS[a.status] || "New",
       listReference: plain(prospectusRef(a) || a.appNo),
       listProgram: /series/i.test(a.event || "") ? "Summit Series" : "Winter Summit",
-      listTier: plain(tierLabel(levelOf(a))),
-      listOpportunity: plain(String(a.opportunity || "").replace(/\s*[\u2014\u2013-]\s*(Monday|Tuesday|Wednesday|Thursday|Friday)\b.*$/i, "")),
+      /* a custom Series package is sent as its Winter line (October 6, 2026) */
+      listTier: plain(tierLabel(listSlot(a).tier)),
+      listOpportunity: plain(String(listSlot(a).opp || "").replace(/\s*[\u2014\u2013-]\s*(Monday|Tuesday|Wednesday|Thursday|Friday)\b.*$/i, "")),
       listDay: plain(dayOf(a)),
       status:"queued", queuedAt: now.toISOString(), queuedBy: whoAmI()};
     outbox.push(Object.assign({id:id}, doc));
@@ -2146,6 +2153,31 @@ a series deal is counted once, at its full amount.</div>
 
   function whoAmI(){ return (user && user.name) || "MISMO"; }
 
+  /* the Package section: redraw when a choice changes, re-add up the split as amounts are typed */
+  document.addEventListener("change", function(ev){
+    var el = ev.target;
+    if(!el || !el.closest || !el.closest("#x-cust") || !current) return;
+    var rec = collectDrawer();
+    if(el.id === "x-cmode" && el.value === "Custom" && !(rec.custom || []).length){
+      /* start from what was applied for, at every summit */
+      var lv = levelOf(rec) || "GOLD", list = catalogItems(2027) || [];
+      var slot = slotFor(list, rec);
+      rec.custom = SEASONS.map(function(se){
+        return {s:se, tier:lv, opp: slot && slot.tier.name === lv ? slot.item.opp : OPP_TBD, amount:""}; });
+    }
+    if(/^x-ctier-/.test(el.id)){
+      (rec.custom || []).forEach(function(l){
+        if("x-ctier-" + l.s === el.id && customOppChoices(l.tier).indexOf(l.opp) < 0) l.opp = OPP_TBD; });
+    }
+    $("x-cust").innerHTML = customSectionHtml(rec);
+    paintCustomSplit();
+  });
+  document.addEventListener("input", function(ev){
+    var el = ev.target;
+    if(!el || !current) return;
+    if(el.id === "x-amountDue" || (el.closest && el.closest("#x-cust"))) paintCustomSplit();
+  });
+
   /* ---------------- persistence ---------------- */
   function appDoc(a){
     var d = {};
@@ -2153,7 +2185,7 @@ a series deal is counted once, at its full amount.</div>
      "opportunity","dateSubmitted","approvedDate","contractAccepted","acceptanceName","acceptanceDate",
      "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate","paymentStatus",
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
-     "invoiceRequestSentAt","logoRequestSentAt","prospectusRef",
+     "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom",
      "updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
     return d;
   }
@@ -2949,9 +2981,52 @@ a series deal is counted once, at its full amount.</div>
   var RE_SUMMIT = /^(Winter|Spring|Fall)\s+(\d{4})$/;
   var RE_SERIES = /^(\d{4})\s+Series$/;
 
+  /* ---- a custom Series package (October 6, 2026) ----
+     Some Series deals are agreed off the price list: a different tier and opportunity at
+     each summit, for one negotiated price. a.custom holds one line per summit:
+       {s:"Winter"|"Spring"|"Fall", tier:"GOLD", opp:"Workshop Sponsor", amount:10000}
+     amount is that summit's share of Amount Due; lines left blank share what is left
+     evenly. The Money tab splits by these shares, Inventory takes each line's own slot,
+     and the Sponsorship Requests list is sent the Winter line (what the public page
+     shows as taken). */
+  var OPP_TBD = "Not Decided Yet";
+  function customLines(a){
+    if(!RE_SERIES.test(a.event || "") || !Array.isArray(a.custom)) return null;
+    var lines = a.custom.filter(function(l){ return l && l.s && l.tier; });
+    return lines.length ? lines : null;
+  }
+  function customShares(a){
+    var lines = customLines(a); if(!lines) return null;
+    var total = Number(a.amountDue || 0), set = 0, blank = 0;
+    lines.forEach(function(l){ if(l.amount !== "" && l.amount != null && isFinite(+l.amount)) set += +l.amount; else blank++; });
+    var each = blank ? Math.max(0, total - set) / blank : 0;
+    return lines.map(function(l){
+      var amt = (l.amount !== "" && l.amount != null && isFinite(+l.amount)) ? +l.amount : each;
+      return {line:l, amount:amt, share: total ? amt / total : 1 / lines.length};
+    });
+  }
+  var TIER_RANK = {DIAMOND:5, PLATINUM:4, GOLD:3, SILVER:2, BRONZE:1};
+  function tierWord(t){ t = String(t || ""); return t.charAt(0) + t.slice(1).toLowerCase(); }
+  function customSummary(a){
+    var lines = customLines(a); if(!lines) return "";
+    return "Custom Series \u2014 " + lines.map(function(l){
+      return l.s + ": " + tierWord(l.tier) + " " + (l.opp && l.opp !== OPP_TBD ? l.opp : "(opportunity to be decided)");
+    }).join(" \u00b7 ");
+  }
+  /* what the Sponsorship Requests list is told this sponsorship takes */
+  function listSlot(a){
+    var lines = customLines(a);
+    if(!lines) return {tier: levelOf(a), opp: a.opportunity || ""};
+    var decided = lines.filter(function(l){ return l.opp && l.opp !== OPP_TBD; });
+    var w = decided.filter(function(l){ return l.s === "Winter"; })[0] || decided[0] || lines[0];
+    return {tier: w.tier, opp: (w.opp && w.opp !== OPP_TBD) ? w.opp : customSummary(a)};
+  }
+
   function sharesOf(a){
     var ev = a.event || "";
     var s = RE_SERIES.exec(ev);
+    var cs = s ? customShares(a) : null;
+    if(cs) return cs.map(function(c){ return {summit: c.line.s + " " + s[1], share: c.share, series:true, line:c.line}; });
     if(s) return SEASONS.map(function(se){ return {summit: se + " " + s[1], share: 1/3, series:true}; });
     if(RE_SUMMIT.test(ev)) return [{summit: ev, share: 1, series:false}];
     return [];
@@ -2990,7 +3065,7 @@ a series deal is counted once, at its full amount.</div>
         else if(a.status === "Pending Payment"){ b.invoiced += due; }
         else if(a.status === "Approved"){ b.approved += due; }
         else { b.inReview += due; }
-        b.rows.push({a:a, share:sh.share, series:sh.series, due:due,
+        b.rows.push({a:a, share:sh.share, series:sh.series, due:due, line:sh.line || null,
                      paid: a.status === "Paid" ? paid : 0});
       });
     });
@@ -3321,14 +3396,18 @@ a series deal is counted once, at its full amount.</div>
       '<th>Status</th><th class="r">This Summit</th><th class="r hide-sm">Whole Deal</th></tr></thead><tbody>' +
       rows.map(function(r){
         var a = r.a;
+        /* a custom Series shows what it takes at THIS summit */
+        var lv = r.line ? r.line.tier : levelOf(a);
+        var op = r.line ? (r.line.opp && r.line.opp !== OPP_TBD ? r.line.opp : "Opportunity to be decided") : a.opportunity;
+        var lvCls = r.line ? tierClass({level2027: r.line.tier}) : tierClass(a);
         return '<tr data-open="' + esc(a.id) + '">' +
           '<td><b>' + esc(a.company) + '</b><div style="font-size:11.5px;color:var(--ink-3);">' + esc(a.appNo) +
-            (levelOf(a) ? '<span class="only-sm"> · ' + esc(levelOf(a)) + '</span>' : '') + '</div></td>' +
-          '<td class="hide-sm">' + (levelOf(a) ? '<span class="tag ' + tierClass(a) + '">' + esc(levelOf(a)) + '</span>' : '—') + '</td>' +
-          '<td class="hide-sm" style="font-size:12.5px;">' + esc(a.opportunity||"—") + '</td>' +
+            (lv ? '<span class="only-sm"> · ' + esc(lv) + '</span>' : '') + '</div></td>' +
+          '<td class="hide-sm">' + (lv ? '<span class="tag ' + lvCls + '">' + esc(lv) + '</span>' : '—') + '</td>' +
+          '<td class="hide-sm" style="font-size:12.5px;">' + esc(op||"—") + '</td>' +
           '<td><span class="st ' + stClass(a.status) + '">' + esc(a.status) + '</span></td>' +
           '<td class="r num">' + esc(money(r.due)) +
-            (r.series ? '<span class="sharenote">1 of 3 summits</span>' : '') + '</td>' +
+            (r.series ? '<span class="sharenote">' + (r.line ? 'custom share' : '1 of 3 summits') + '</span>' : '') + '</td>' +
           '<td class="r num hide-sm">' + esc(money(a.amountDue)) +
             (r.series ? '<span class="sharenote">' + esc(a.event) + '</span>' : '') + '</td>' +
         '</tr>';
@@ -3398,6 +3477,16 @@ a series deal is counted once, at its full amount.</div>
       if(!counts(a)) return;
       var mine = sharesOf(a).filter(function(sh){ return taken[sh.summit]; });
       if(!mine.length) return;
+      if(mine[0].line){
+        mine.forEach(function(sh){
+          if(!sh.line.opp || sh.line.opp === OPP_TBD) return;   // counted once it is decided
+          var ls = slotFor(list, {opportunity: sh.line.opp});
+          if(!ls){ if(unmatched.indexOf(a) < 0) unmatched.push(a); return; }
+          var lb = taken[sh.summit][ls.item.opp] = taken[sh.summit][ls.item.opp] || [];
+          lb.push({a:a, day:"", series:true});
+        });
+        return;
+      }
       var slot = slotFor(list, a);
       if(!slot){ unmatched.push(a); return; }
       mine.forEach(function(sh){
@@ -3680,6 +3769,10 @@ a series deal is counted once, at its full amount.</div>
       fld("2027 Level","level2027","select",["","BRONZE","SILVER","GOLD","PLATINUM","DIAMOND"]) +
       '</div>' + fld("Opportunity","opportunity") + '</div>';
 
+    if(RE_SERIES.test(a.event || "")){
+      html += '<div class="dsect"><h4>Package</h4><div id="x-cust">' + customSectionHtml(a) + '</div></div>';
+    }
+
     /* everything the team recorded while this sponsor was a prospect (October 3, 2026) */
     var pl = a.id === draft ? null : leadForApp(a);
     if(pl){
@@ -3826,6 +3919,7 @@ a series deal is counted once, at its full amount.</div>
     }
 
     $("d-body").innerHTML = html;
+    paintCustomSplit();
     $("scrim").classList.add("on");
     $("drawer").classList.add("on");
     $("drawer").setAttribute("aria-hidden","false");
@@ -3860,7 +3954,72 @@ a series deal is counted once, at its full amount.</div>
       if(el.type === "number") v = v === "" ? "" : Number(v);
       out[k] = v;
     });
+    var mode = $("x-cmode");
+    if(mode){
+      if(mode.value !== "Custom") out.custom = [];
+      else out.custom = SEASONS.map(function(se){
+        var t = $("x-ctier-" + se), o = $("x-copp-" + se), m = $("x-camt-" + se);
+        var tier = t ? t.value : "";
+        if(!tier || tier === "Not Included") return null;
+        return {s:se, tier:tier, opp: o ? o.value : OPP_TBD,
+                amount: m && m.value !== "" ? Number(m.value) : ""};
+      }).filter(Boolean);
+    }
     return out;
+  }
+
+  /* The package section in the record panel: Standard, or Custom with a tier,
+     opportunity and share for each summit. Redrawn in place when the choices change. */
+  function customOppChoices(tier){
+    var c = CATALOG[2027], out = [OPP_TBD];
+    (c ? c.tiers : []).forEach(function(t){
+      if(t.name === tier) t.items.forEach(function(it){ out.push(it.opp); });
+    });
+    return out;
+  }
+  function customSectionHtml(rec){
+    var on = Array.isArray(rec.custom) && rec.custom.length > 0;
+    var byS = {};
+    (rec.custom || []).forEach(function(l){ byS[l.s] = l; });
+    var opt = function(list, v){ return list.map(function(o){
+      return '<option' + (String(o) === String(v) ? " selected" : "") + '>' + esc(o) + '</option>'; }).join(""); };
+    var html = '<div class="fld"><label for="x-cmode">Package</label><select id="x-cmode" data-cust="1">' +
+      opt(["Standard", "Custom"], on ? "Custom" : "Standard") + '</select></div>' +
+      '<div class="fldnote">Standard: the same tier and opportunity at all three summits, with the price split evenly. ' +
+      'Custom: a deal agreed off the price list. Set a tier, an opportunity and a share of <b>Amount Due</b> for each ' +
+      'summit. A share left blank takes an even part of what is left.</div>';
+    if(!on) return html;
+    html += '<div class="custgrid">';
+    SEASONS.forEach(function(se){
+      var l = byS[se] || {s:se, tier:"Not Included", opp:OPP_TBD, amount:""};
+      html += '<div class="custrow"><div class="custs">' + esc(se) + '</div>' +
+        '<div class="fld"><label for="x-ctier-' + se + '">Tier</label><select id="x-ctier-' + se + '" data-cust="1">' +
+          opt(["Not Included","DIAMOND","PLATINUM","GOLD","SILVER","BRONZE"], l.tier || "Not Included") + '</select></div>' +
+        '<div class="fld"><label for="x-copp-' + se + '">Opportunity</label><select id="x-copp-' + se + '" data-cust="1"' +
+          (l.tier && l.tier !== "Not Included" ? '' : ' disabled') + '>' +
+          opt(customOppChoices(l.tier), l.opp || OPP_TBD) + '</select></div>' +
+        '<div class="fld"><label for="x-camt-' + se + '">This Summit\'s Share</label><input id="x-camt-' + se +
+          '" data-cust="1" type="number" min="0" step="1" placeholder="even split" value="' +
+          esc(l.amount === "" || l.amount == null ? "" : l.amount) + '"></div></div>';
+    });
+    html += '</div><div class="fldnote" id="x-csplit"></div>';
+    return html;
+  }
+  /* what the split comes to, worked out from the fields as typed */
+  function paintCustomSplit(){
+    var box = $("x-csplit"); if(!box || !current) return;
+    var rec = collectDrawer();
+    var cs = customShares(rec);
+    if(!cs){ box.innerHTML = "Pick a tier for at least one summit."; return; }
+    var total = Number(rec.amountDue || 0);
+    var sum = cs.reduce(function(x, c){ return x + c.amount; }, 0);
+    var bad = total && Math.abs(sum - total) > 0.5;
+    box.innerHTML = "Split of " + esc(money(total)) + ": " + cs.map(function(c){
+      return "<b>" + esc(c.line.s) + "</b> " + esc(money(c.amount)); }).join(" \u00b7 ") +
+      (bad ? ' <span style="color:var(--bad);font-weight:600;">\u2014 the shares come to ' + esc(money(sum)) +
+             ', not the Amount Due.</span>' : "") +
+      (cs.some(function(c){ return !c.line.opp || c.line.opp === OPP_TBD; })
+        ? "<br>A summit whose opportunity isn\'t decided yet doesn\'t take a slot on the Inventory tab until it is." : "");
   }
 
   /* Did anything really change? The rules only report what they fired, so a plain edit
@@ -3869,12 +4028,13 @@ a series deal is counted once, at its full amount.</div>
     "opportunity","dateSubmitted","approvedDate","contractAccepted","acceptanceName","acceptanceDate",
     "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate",
     "paymentStatus","paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes",
-    "comments","logoDone","prospectusRef"];
+    "comments","logoDone","prospectusRef","custom"];
   function changedFields(before, after){
     var out = [];
+    var str = function(v){ return (v === undefined || v === null) ? "" : (typeof v === "object" ? JSON.stringify(v) : String(v)); };
     TRACKED.forEach(function(k){
-      var b = (before[k] === undefined || before[k] === null) ? "" : String(before[k]);
-      var a = (after[k]  === undefined || after[k]  === null) ? "" : String(after[k]);
+      var b = str(before[k]), a = str(after[k]);
+      if(k === "custom"){ if(b === "[]") b = ""; if(a === "[]") a = ""; }
       if(b !== a) out.push(k);
     });
     return out;
@@ -3935,6 +4095,17 @@ a series deal is counted once, at its full amount.</div>
     before = before || {};
     var after = collectDrawer();
     if(after.prospectusRef) after.prospectusRef = String(after.prospectusRef).trim().toUpperCase();
+    /* a custom package names itself: the opportunity reads as the whole package and the
+       level is the highest tier in it, so lists, emails and searches all say what was sold */
+    var cl = customLines(after);
+    if(cl){
+      after.opportunity = customSummary(after);
+      var top = cl.slice().sort(function(x, y){ return (TIER_RANK[y.tier] || 0) - (TIER_RANK[x.tier] || 0); })[0];
+      if(top) after.level2027 = top.tier;
+    } else if(Array.isArray(after.custom) && !after.custom.length && Array.isArray(before.custom) && before.custom.length &&
+              /^Custom Series/.test(after.opportunity || "")){
+      after.opportunity = "";   // back to Standard: the package wording no longer applies
+    }
     var fired = applyRules(before, after);
 
     var alerts = [];

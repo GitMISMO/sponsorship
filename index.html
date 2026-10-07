@@ -1564,8 +1564,18 @@ a series deal is counted once, at its full amount.</div>
             "Paid":"paid","Declined":"declined","Written Off":"written"}[s] || "submitted";
   }
   function leadStClass(s){ return LEAD_TONE[s] || "new"; }
+  /* A number is never handed out twice (October 7, 2026): a deleted application's number
+     still sits on its emails and in the log, and reusing it made a new record show the
+     deleted one's emails. So the highest number ever seen anywhere is the floor. */
+  function usedNos(prefix){
+    var re = new RegExp("^" + prefix + "0*(\\d+)$"), max = 0;
+    function see(v){ var m = re.exec(String(v || "")); if(m) max = Math.max(max, +m[1]); }
+    (typeof outbox !== "undefined" ? outbox : []).forEach(function(o){ see(o.appNo); });
+    (typeof logEntries !== "undefined" ? logEntries : []).forEach(function(e){ see(e.appNo); });
+    return max;
+  }
   function nextAppNo(){
-    var max = 0;
+    var max = usedNos("AN");
     apps.forEach(function(a){
       var m = /^AN0*(\d+)$/.exec(a.appNo||""); if(m) max = Math.max(max, +m[1]);
     });
@@ -1573,7 +1583,7 @@ a series deal is counted once, at its full amount.</div>
     return "AN"+n;
   }
   function nextLeadNo(){
-    var max = 0;
+    var max = usedNos("PR");
     leads.forEach(function(l){
       var m = /^PR0*(\d+)$/.exec(l.leadNo||""); if(m) max = Math.max(max, +m[1]);
     });
@@ -1963,10 +1973,21 @@ a series deal is counted once, at its full amount.</div>
      whoever enters the request. It is how the alerts flow finds the sponsor's logo. */
   function prospectusRef(a){ return String(a.prospectusRef || "").trim().toUpperCase(); }
 
-  function outboxFor(appNo, kind){
+  /* Is this email request about this record? Requests queued since October 7, 2026 carry the
+     record's id. Older ones only carry its number, so they count only if queued on or after
+     the day the record was submitted — an email from before a record existed was about a
+     different, deleted record that once had the same number. */
+  function outboxBelongs(o, a){
+    if(!o || !a) return false;
+    if(o.appId) return o.appId === a.id;
+    if(o.appNo !== a.appNo) return false;
+    var since = String(a.dateSubmitted || "").slice(0, 10);
+    return !since || String(o.queuedAt || "").slice(0, 10) >= since;
+  }
+  function outboxFor(a, kind){
     var best = null;
     outbox.forEach(function(o){
-      if(o.appNo === appNo && (!kind || o.kind === kind) && (!best || String(o.queuedAt) > String(best.queuedAt))) best = o;
+      if(outboxBelongs(o, a) && (!kind || o.kind === kind) && (!best || String(o.queuedAt) > String(best.queuedAt))) best = o;
     });
     return best;
   }
@@ -2021,7 +2042,7 @@ a series deal is counted once, at its full amount.</div>
        ride along into an email. */
     function plain(v){ return String(v == null ? "" : v).replace(/[<>]/g, "").slice(0, 300); }
     var doc = {kind:kind, toNames: QUEUE_WHO[kind],
-      appNo: plain(a.appNo), company: plain(a.company), event: plain(a.event),
+      appId: plain(a.id), appNo: plain(a.appNo), company: plain(a.company), event: plain(a.event),
       level: plain(levelOf(a)), opportunity: plain(a.opportunity),
       amountDue: plain(money(a.amountDue)), billingName: plain(a.billingName),
       contactName: plain(a.contactName), contactEmail: plain(a.contactEmail),
@@ -2254,7 +2275,7 @@ a series deal is counted once, at its full amount.</div>
     /* An email still waiting in the outbox for this record would otherwise go out after it
        was deleted. Mark it cancelled; the messenger only sends "queued". */
     outbox.forEach(function(o){
-      if(o.appNo === a.appNo && o.status === "queued"){
+      if(outboxBelongs(o, a) && o.status === "queued"){
         db.doc("outbox/" + o.id).update({status:"cancelled"}).catch(function(){});
       }
     });
@@ -2564,13 +2585,13 @@ a series deal is counted once, at its full amount.</div>
         '. Nothing to do yet — the payment check is watching for the money.</div>';
     }
     if(s.key === "Approved" && a.invoiceRequestSentAt){
-      var obI = outboxFor(a.appNo, "invoice");
+      var obI = outboxFor(a, "invoice");
       extras += '<div class="srow-info">Invoice request ' + esc(obI ? outboxWord(obI) : "already sent") +
         (obI && obI.status === "failed" ? '' : ' — waiting on Bernie') + '.</div>';
     }
     if((s.key === "Approved" || s.key === "Pending Payment" || s.key === "Paid") &&
        !a.logoDone && a.logoRequestSentAt){
-      var obL = outboxFor(a.appNo, "logo");
+      var obL = outboxFor(a, "logo");
       extras += '<div class="srow-info">Logo request ' + esc(obL ? outboxWord(obL) : "already sent") +
         (obL && obL.status === "failed" ? '. ' : ' — waiting to be placed. ') +
         '<button class="btn ghost sm" data-done="' + esc(a.id) + '" style="margin-left:6px;">Mark Done</button></div>';
@@ -3899,7 +3920,7 @@ a series deal is counted once, at its full amount.</div>
       (AUTO_SEND && db && canWrite ? "Approving and marking paid email these automatically. Use these buttons to send one again — it goes out the same way, usually within a minute."
                       : "Opens the alert, addressed and written, in your mail app.") + '</div>' +
       (function(){
-        var mine = outbox.filter(function(o){ return o.appNo === a.appNo; })
+        var mine = outbox.filter(function(o){ return outboxBelongs(o, a); })
           .sort(function(x,y){ return String(y.queuedAt).localeCompare(String(x.queuedAt)); }).slice(0,8);
         if(!mine.length) return "";
         return '<div class="fld" style="margin-top:12px;"><label>Automatic Emails</label>' +

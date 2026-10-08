@@ -559,6 +559,7 @@
      gap the grid uses between its own rows (Also Invoiced As sat flush under Number of
      Comps, and Opportunity under 2027 Level). Not applied inside .grid2, where gap does it. */
   .grid2 + .fld, .dsect > .fld + .fld{margin-top:11px;}
+  .daywrap:not(:empty){margin-top:11px;}
   @media (max-width:520px){ .grid2{grid-template-columns:1fr;} }
   .fld label{display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); margin-bottom:4px;}
   .fld input, .fld select, .fld textarea{width:100%; border:1px solid var(--border); border-radius:5px; padding:8px 9px;
@@ -1641,7 +1642,7 @@ a series deal is counted once, at its full amount.</div>
        !a.logoDone && !a.logoRequestSentAt){
       t.push({kind:"logo", tone:"", owner:"Dillon Tidgewell and Jenny Moss",
         title:"Collect the Logo and Place the Sponsor",
-        why:levelOf(a) ? (levelOf(a) + " tier — " + (a.opportunity||"sponsorship") + ". Logo needs to go everywhere it belongs.")
+        why:levelOf(a) ? (levelOf(a) + " tier — " + (oppLabel(a)||"sponsorship") + ". Logo needs to go everywhere it belongs.")
                        : "Logo needs to go everywhere it belongs.",
         alert:"logo", action:"logoDone"});
     }
@@ -1745,7 +1746,7 @@ a series deal is counted once, at its full amount.</div>
   }
   function appLine(a){
     return a.appNo + " \u00b7 " + (a.event || "") +
-      ((levelOf(a) || a.opportunity) ? " \u00b7 " + [levelOf(a), a.opportunity].filter(Boolean).join(" ") : "");
+      ((levelOf(a) || a.opportunity) ? " \u00b7 " + [levelOf(a), oppLabel(a)].filter(Boolean).join(" ") : "");
   }
   /* the season a returning sponsor is renewed for: the year of the next summit still to
      come — once that year's Fall summit has been reached, that is next year */
@@ -1895,7 +1896,7 @@ a series deal is counted once, at its full amount.</div>
           "- Please enter the Sponsor comp code and number of comps in the applicable fields in the Sponsorship Portal.\n\n" +
           "Note: If the invoice is under a different company name, please indicate that name in the Also Invoiced As field.\n\n" +
           "Application: " + a.appNo +
-          "\nLevel: " + (lvl||"—") + "\nOpportunity: " + (a.opportunity||"—") +
+          "\nLevel: " + (lvl||"—") + "\nOpportunity: " + (oppLabel(a)||"—") +
           "\nAmount due: " + money(a.amountDue) +
           (a.billingName ? "\nInvoice to: " + a.billingName + " (the Aptify company record for this sponsor)" : "") +
           "\nContact: " + (a.contactName||"—") +
@@ -1908,7 +1909,7 @@ a series deal is counted once, at its full amount.</div>
         to:[PEOPLE.jonna, PEOPLE.amy, PEOPLE.dillon, PEOPLE.jenny, PEOPLE.kelly],
         subject: a.company + " is a " + (lvl||"") + " Tier sponsor of the " + a.event + " Summit",
         body: a.company + " is a " + (lvl||"") + " Tier sponsor of the " + a.event + " Summit. " +
-          "They will be sponsoring the " + (a.opportunity||"—") + ".\n\n" +
+          "They will be sponsoring the " + (oppLabel(a)||"—") + ".\n\n" +
           /* The portal opens this in the mail app, which can't attach files. The logo itself goes
              to the team, attached, from the "Sponsor Logo to Team" flow when the request is set to
              Approved in the Sponsorship Requests list; this email points to where it is filed. */
@@ -1927,7 +1928,7 @@ a series deal is counted once, at its full amount.</div>
            flow for a link straight to the file it finds in Sponsor Logos by logoRef. */
         autoBody: prospectusRef(a)
           ? "Hi Dillon and Jenny,\n\n" + a.company + " is a " + (lvl||"") + " Tier sponsor of the " + a.event +
-            " Summit. They will be sponsoring the " + (a.opportunity||"\u2014") + ".\n\n" +
+            " Summit. They will be sponsoring the " + (oppLabel(a)||"\u2014") + ".\n\n" +
             "Logo: [[LOGO LINK]]\n\n" +
             "Please add it everywhere needed, then mark the logo Done on the application in the Sponsorship Portal.\n\n" +
             "Application: " + a.appNo + "\nProspectus reference: " + prospectusRef(a) +
@@ -1954,7 +1955,7 @@ a series deal is counted once, at its full amount.</div>
         body:"Hi there Amy and Kelly,\n\nA new " + a.event + " sponsorship request has been received from " +
           a.company + ". Please review the details. When ready, please enter the Amount Due and update the " +
           "status to Approved. This will trigger the invoice request and move the application to Pending Payment.\n\n" +
-          "Level: " + (lvl||"—") + "\nOpportunity: " + (a.opportunity||"—") +
+          "Level: " + (lvl||"—") + "\nOpportunity: " + (oppLabel(a)||"—") +
           "\nContact: " + (a.contactName||"—") + " <" + (a.contactEmail||"") + ">\n\nThanks,\nMISMO Programs & Operations"
       };
     }
@@ -2043,7 +2044,7 @@ a series deal is counted once, at its full amount.</div>
     function plain(v){ return String(v == null ? "" : v).replace(/[<>]/g, "").slice(0, 300); }
     var doc = {kind:kind, toNames: QUEUE_WHO[kind],
       appId: plain(a.id), appNo: plain(a.appNo), company: plain(a.company), event: plain(a.event),
-      level: plain(levelOf(a)), opportunity: plain(a.opportunity),
+      level: plain(levelOf(a)), opportunity: plain(oppLabel(a)),
       amountDue: plain(money(a.amountDue)), billingName: plain(a.billingName),
       contactName: plain(a.contactName), contactEmail: plain(a.contactEmail),
       prospectusRef: plain(prospectusRef(a)), invoiceNumber: plain(a.invoiceNumber),
@@ -2201,6 +2202,10 @@ a series deal is counted once, at its full amount.</div>
     var el = ev.target;
     if(!el || !current) return;
     if(el.id === "x-amountDue" || (el.closest && el.closest("#x-cust"))) paintCustomSplit();
+    if(el.id === "x-opportunity" && $("x-daywrap")){
+      var dsel = $("x-day"), keep = dsel ? dsel.value : dayOf({opportunity: el.value});
+      $("x-daywrap").innerHTML = dayFieldHtml(el.value, keep);
+    }
   });
 
   /* ---------------- persistence ---------------- */
@@ -2210,7 +2215,7 @@ a series deal is counted once, at its full amount.</div>
      "opportunity","dateSubmitted","approvedDate","contractAccepted","acceptanceName","acceptanceDate",
      "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate","paymentStatus",
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
-     "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom",
+     "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day",
      "updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
     return d;
   }
@@ -2604,7 +2609,7 @@ a series deal is counted once, at its full amount.</div>
           '<span class="sr-co">' + esc(a.company) + '</span>' +
           '<span class="sr-meta">' + esc(a.appNo) + ' · ' + esc(a.event) +
             (levelOf(a) ? ' · ' + esc(levelOf(a)) : '') +
-            (a.opportunity ? ' · ' + esc(a.opportunity) : '') +
+            (a.opportunity ? ' · ' + esc(oppLabel(a)) : '') +
             (a.billingName ? ' · invoiced as ' + esc(a.billingName) : '') + '</span>' +
           (c.overdue
             ? '<span class="sr-flag">Invoiced ' + esc(fmtDate(a.invoiceDate)) + ', ' + c.days +
@@ -2693,7 +2698,7 @@ a series deal is counted once, at its full amount.</div>
             '<div style="font-size:11.5px;color:var(--ink-3);">' + esc(a.contactName||"") + '</div></td>' +
           '<td>' + esc(a.event) + '</td>' +
           '<td>' + (levelOf(a) ? '<span class="tag ' + tierClass(a) + '">' + esc(levelOf(a)) + '</span>' : '—') + '</td>' +
-          '<td style="font-size:12.5px;">' + esc(a.opportunity||"—") + '</td>' +
+          '<td style="font-size:12.5px;">' + esc(oppLabel(a)||"—") + '</td>' +
           '<td><span class="st ' + stClass(a.status) + '">' + esc(a.status) + '</span></td>' +
           '<td class="r num">' + esc(money(a.amountDue)) + '</td>' +
           '<td class="r num">' + esc(a.amountPaid ? money(a.amountPaid) : "—") + '</td>' +
@@ -3423,7 +3428,7 @@ a series deal is counted once, at its full amount.</div>
         var a = r.a;
         /* a custom Series shows what it takes at THIS summit */
         var lv = r.line ? r.line.tier : levelOf(a);
-        var op = r.line ? (r.line.opp && r.line.opp !== OPP_TBD ? r.line.opp : "Opportunity to be decided") : a.opportunity;
+        var op = r.line ? (r.line.opp && r.line.opp !== OPP_TBD ? r.line.opp : "Opportunity to be decided") : oppLabel(a);
         var lvCls = r.line ? tierClass({level2027: r.line.tier}) : tierClass(a);
         return '<tr data-open="' + esc(a.id) + '">' +
           '<td><b>' + esc(a.company) + '</b><div style="font-size:11.5px;color:var(--ink-3);">' + esc(a.appNo) +
@@ -3454,9 +3459,35 @@ a series deal is counted once, at its full amount.</div>
       .replace(/\(.*?\)/g, " ")
       .toLowerCase().replace(/[^a-z0-9]+/g, "");
   }
+  /* The day a sponsor has for a one-a-day opportunity (Reception, Breakfast, the breaks).
+     Recorded in its own Day field since October 8, 2026; older records and prospectus
+     submissions carried it in the opportunity text ("Breakfast Sponsor — Tuesday"). */
+  var DAY_RE = /\s*[\u2014\u2013-]\s*(Monday|Tuesday|Wednesday|Thursday|Friday)\b.*$/i;
   function dayOf(a){
-    var m = /[—–-]\s*(Monday|Tuesday|Wednesday|Thursday|Friday)\b/i.exec(a.opportunity || "");
-    return m ? m[1] : "";
+    if(a && a.day) return a.day;
+    var m = /[—–-]\s*(Monday|Tuesday|Wednesday|Thursday|Friday)\b/i.exec((a && a.opportunity) || "");
+    return m ? m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase() : "";
+  }
+  function oppBare(a){ return String((a && a.opportunity) || "").replace(DAY_RE, ""); }
+  /* the opportunity as people should read it, with its day when it has one */
+  function oppLabel(a){
+    var o = oppBare(a), d = dayOf(a);
+    return o && d ? o + " \u2014 " + d : o;
+  }
+  /* the days an opportunity runs on, from the 2027 price list; null if it isn't one-a-day */
+  function dayChoices(opp){
+    var list = catalogItems(2027);
+    var slot = list && opp ? slotFor(list, {opportunity: opp}) : null;
+    return slot && slot.item.days ? slot.item.days : null;
+  }
+  function dayFieldHtml(opp, v){
+    var days = dayChoices(opp);
+    if(!days) return "";
+    if(v && days.indexOf(v) < 0) days = days.concat([v]);
+    return '<div class="grid2"><div class="fld"><label for="x-day">Day</label>' +
+      '<select id="x-day" data-key="day"><option value=""' + (v ? "" : " selected") + '>Not Picked Yet</option>' +
+      days.map(function(d){ return '<option' + (d === v ? " selected" : "") + '>' + esc(d) + '</option>'; }).join("") +
+      '</select></div></div>';
   }
   function counts(a){
     // Written Off is included: the sponsor had the slot even though the money
@@ -3792,7 +3823,8 @@ a series deal is counted once, at its full amount.</div>
       fld("Contact Name","contactName") + fld("Contact Email","contactEmail","email") +
       (a.level2026 ? fld("2026 Level","level2026","select",["","BRONZE","SILVER","GOLD","PLATINUM","DIAMOND"]) : "") +
       fld("2027 Level","level2027","select",["","BRONZE","SILVER","GOLD","PLATINUM","DIAMOND"]) +
-      '</div>' + fld("Opportunity","opportunity") + '</div>';
+      '</div>' + fld("Opportunity","opportunity") +
+      '<div class="daywrap" id="x-daywrap">' + dayFieldHtml(current.opportunity, dayOf(current)) + '</div></div>';
 
     if(RE_SERIES.test(a.event || "")){
       html += '<div class="dsect"><h4>Package</h4><div id="x-cust">' + customSectionHtml(a) + '</div></div>';
@@ -3979,6 +4011,10 @@ a series deal is counted once, at its full amount.</div>
       if(el.type === "number") v = v === "" ? "" : Number(v);
       out[k] = v;
     });
+    if($("x-daywrap")){
+      if($("x-day")) out.opportunity = String(out.opportunity || "").replace(DAY_RE, "");
+      else out.day = "";
+    }
     var mode = $("x-cmode");
     if(mode){
       if(mode.value !== "Custom") out.custom = [];
@@ -6009,7 +6045,8 @@ a series deal is counted once, at its full amount.</div>
     var submitted = /^\d{4}-\d{2}-\d{2}/.test(String(r.submittedAt || "")) ? String(r.submittedAt).slice(0, 10) : iso(today());
     return {id: "app-" + refKey(ref), appNo: nextAppNo(), event: series ? year + " Series" : "Winter " + year,
       status: "Submitted", company: txt(r.company), contactName: txt(r.contactName),
-      contactEmail: txt(r.contactEmail), level2027: txt(r.tier).toUpperCase(), opportunity: opp,
+      contactEmail: txt(r.contactEmail), level2027: txt(r.tier).toUpperCase(), opportunity: opp.replace(DAY_RE, ""),
+      day: /^(Monday|Tuesday|Wednesday|Thursday|Friday)$/i.test(txt(r.day)) ? txt(r.day) : dayOf({opportunity: opp}),
       dateSubmitted: submitted, contractAccepted: r.agreed ? "Yes" : "",
       acceptanceName: txt(r.signerName), acceptanceDate: txt(r.signedDate) || (r.signerName ? submitted : ""),
       amountDue: isFinite(due) && due > 0 ? due : "", prospectusRef: ref, comments: notes.join(" "),
@@ -6031,7 +6068,7 @@ a series deal is counted once, at its full amount.</div>
       saveApp(a);
       db.doc("inbox-taken/" + k).set({at: new Date().toISOString(), appNo: a.appNo, by: whoAmI()}).catch(function(){});
       addLog(a.appNo, "received from the online prospectus (" + a.prospectusRef + ") \u2014 " +
-             (a.company || "") + ", " + (a.level2027 || "") + " " + (a.opportunity || ""), "Online prospectus");
+             (a.company || "") + ", " + (a.level2027 || "") + " " + (oppLabel(a) || ""), "Online prospectus");
     });
     toast(fresh.length === 1
             ? (txt(fresh[0].company) + " applied through the online prospectus. It's on the Pipeline under Submitted.")

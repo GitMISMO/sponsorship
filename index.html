@@ -3956,6 +3956,9 @@ a series deal is counted once, at its full amount.</div>
       '<button class="btn ghost sm" data-alert="invoice" data-id="' + esc(a.id) + '">Invoice Request</button>' +
       '<button class="btn ghost sm" data-alert="logo" data-id="' + esc(a.id) + '">Logo Request</button>' +
       '<button class="btn ghost sm" data-alert="paid" data-id="' + esc(a.id) + '">Payment Made</button>' +
+      (AUTO_SEND && db && canWrite && typeof QUEUE_KINDS !== "undefined" && QUEUE_KINDS.status &&
+         typeof stillToCome === "function" && stillToCome(a)
+        ? '<button class="btn ghost sm" data-alert="status" data-id="' + esc(a.id) + '">List Update</button>' : '') +
       '</div>' +
       '<div style="font-size:12px;color:var(--ink-3);margin-top:8px;">' +
       (AUTO_SEND && db && canWrite ? "Approving and marking paid email these automatically. Use these buttons to send one again — it goes out the same way, usually within a minute."
@@ -6126,11 +6129,30 @@ a series deal is counted once, at its full amount.</div>
     for(var i = 0; i < apps.length; i++){ if(apps[i].id === a.id){ prev = apps[i]; break; } }
     var was = prev ? prev.status : null;
     var p = saveAppRaw(a);
-    if(was && was !== a.status && AUTO_SEND && db && canWrite){
+    /* October 8, 2026: a change to what the list shows — day, opportunity, tier or program —
+       is sent on too, not only a status change (Experian's day stayed Monday on the list).
+       Only for a sponsorship whose summits are still to come, so editing an old record never
+       touches what the public page counts. */
+    var listMoved = prev && listSig(prev) !== listSig(a) && stillToCome(a);
+    if(((was && was !== a.status) || listMoved) && AUTO_SEND && db && canWrite){
       queueAlert("status", a).then(function(){ renderAll(); }, function(){});
     }
     return p;
   };
+  function listSig(a){
+    var sl = listSlot(a);
+    return [/series/i.test(a.event || "") ? "S" : "W", tierLabel(sl.tier),
+            String(sl.opp || "").replace(DAY_RE, ""), dayOf(a)].join("|");
+  }
+  function stillToCome(a){
+    var t = iso(today()), any = false;
+    sharesOf(a).forEach(function(sh){
+      var o = (SUMMITS[sh.summit] || {}).opens;
+      var y = (/(20\d\d)/.exec(sh.summit) || [])[1];
+      if(o ? o >= t : (y && +y > today().getFullYear())) any = true;
+    });
+    return any;
+  }
 
   var started = false;
   /* Signing in and being refused use the shared screens every resources.mismo.org tool

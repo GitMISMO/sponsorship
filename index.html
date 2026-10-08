@@ -574,7 +574,8 @@
     padding:10px 12px; border:1px solid var(--border); border-radius:6px; background:var(--surface-2);}
   .custs{font-weight:600; font-size:13px; color:var(--ink); padding-bottom:9px;}
   .custrow .fld{margin:0;}
-  @media (max-width:640px){ .custrow{grid-template-columns:1fr 1fr;} .custs{grid-column:1 / -1; padding-bottom:0;} }
+  .custrow .custws{grid-column:2 / -1;}
+  @media (max-width:640px){ .custrow{grid-template-columns:1fr 1fr;} .custs{grid-column:1 / -1; padding-bottom:0;} .custrow .custws{grid-column:1 / -1;} }
   .dnote{font-size:12.5px; color:var(--ink-2); background:var(--sky-wash); border-left:3px solid var(--sky);
     border-radius:0 5px 5px 0; padding:10px 12px; margin-bottom:14px;}
   .dfoot{border-top:1px solid var(--border); padding:13px 20px; display:flex; gap:9px; align-items:center; flex-wrap:wrap;}
@@ -2191,10 +2192,6 @@ a series deal is counted once, at its full amount.</div>
       rec.custom = SEASONS.map(function(se){
         return {s:se, tier:lv, opp: slot && slot.tier.name === lv ? slot.item.opp : OPP_TBD, amount:""}; });
     }
-    if(/^x-ctier-/.test(el.id)){
-      (rec.custom || []).forEach(function(l){
-        if("x-ctier-" + l.s === el.id && customOppChoices(l.tier).indexOf(l.opp) < 0) l.opp = OPP_TBD; });
-    }
     $("x-cust").innerHTML = customSectionHtml(rec);
     paintCustomSplit();
   });
@@ -2204,7 +2201,8 @@ a series deal is counted once, at its full amount.</div>
     if(el.id === "x-amountDue" || (el.closest && el.closest("#x-cust"))) paintCustomSplit();
     if(el.id === "x-opportunity" && $("x-daywrap")){
       var dsel = $("x-day"), keep = dsel ? dsel.value : dayOf({opportunity: el.value});
-      $("x-daywrap").innerHTML = dayFieldHtml(el.value, keep);
+      var wsel = $("x-workshopName"), wkeep = wsel ? wsel.value : (current.workshopName || "");
+      $("x-daywrap").innerHTML = dayFieldHtml(el.value, keep, wkeep);
     }
   });
 
@@ -2215,7 +2213,7 @@ a series deal is counted once, at its full amount.</div>
      "opportunity","dateSubmitted","approvedDate","contractAccepted","acceptanceName","acceptanceDate",
      "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate","paymentStatus",
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
-     "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day",
+     "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day","workshopName",
      "updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
     return d;
   }
@@ -3040,7 +3038,8 @@ a series deal is counted once, at its full amount.</div>
   function customSummary(a){
     var lines = customLines(a); if(!lines) return "";
     return "Custom Series \u2014 " + lines.map(function(l){
-      return l.s + ": " + tierWord(l.tier) + " " + (l.opp && l.opp !== OPP_TBD ? l.opp : "(opportunity to be decided)");
+      return l.s + ": " + tierWord(l.tier) + " " + (l.opp && l.opp !== OPP_TBD ? l.opp : "(opportunity to be decided)") +
+        (l.workshop && isWorkshop(l.opp) ? " (" + l.workshop + ")" : "");
     }).join(" \u00b7 ");
   }
   /* what the Sponsorship Requests list is told this sponsorship takes */
@@ -3471,23 +3470,33 @@ a series deal is counted once, at its full amount.</div>
   function oppBare(a){ return String((a && a.opportunity) || "").replace(DAY_RE, ""); }
   /* the opportunity as people should read it, with its day when it has one */
   function oppLabel(a){
-    var o = oppBare(a), d = dayOf(a);
+    var o = oppBare(a), d = dayOf(a), w = String((a && a.workshopName) || "").trim();
+    if(o && w && isWorkshop(o)) o += " \u2014 " + w;
     return o && d ? o + " \u2014 " + d : o;
   }
+  /* a workshop sponsorship carries the workshop's name (October 8, 2026) */
+  function isWorkshop(opp){ return /workshop/i.test(String(opp || "")); }
   /* the days an opportunity runs on, from the 2027 price list; null if it isn't one-a-day */
   function dayChoices(opp){
     var list = catalogItems(2027);
     var slot = list && opp ? slotFor(list, {opportunity: opp}) : null;
     return slot && slot.item.days ? slot.item.days : null;
   }
-  function dayFieldHtml(opp, v){
-    var days = dayChoices(opp);
-    if(!days) return "";
-    if(v && days.indexOf(v) < 0) days = days.concat([v]);
-    return '<div class="grid2"><div class="fld"><label for="x-day">Day</label>' +
-      '<select id="x-day" data-key="day"><option value=""' + (v ? "" : " selected") + '>Not Picked Yet</option>' +
-      days.map(function(d){ return '<option' + (d === v ? " selected" : "") + '>' + esc(d) + '</option>'; }).join("") +
-      '</select></div></div>';
+  function dayFieldHtml(opp, v, ws){
+    var days = dayChoices(opp), out = "";
+    if(days){
+      if(v && days.indexOf(v) < 0) days = days.concat([v]);
+      out += '<div class="fld"><label for="x-day">Day</label>' +
+        '<select id="x-day" data-key="day"><option value=""' + (v ? "" : " selected") + '>Not Picked Yet</option>' +
+        days.map(function(d){ return '<option' + (d === v ? " selected" : "") + '>' + esc(d) + '</option>'; }).join("") +
+        '</select></div>';
+    }
+    if(isWorkshop(opp)){
+      out += '<div class="fld"><label for="x-workshopName">Workshop Name</label>' +
+        '<input id="x-workshopName" data-key="workshopName" type="text" placeholder="Not named yet" value="' +
+        esc(ws || "") + '"></div>';
+    }
+    return out ? '<div class="grid2">' + out + '</div>' : "";
   }
   function counts(a){
     // Written Off is included: the sponsor had the slot even though the money
@@ -3824,7 +3833,7 @@ a series deal is counted once, at its full amount.</div>
       (a.level2026 ? fld("2026 Level","level2026","select",["","BRONZE","SILVER","GOLD","PLATINUM","DIAMOND"]) : "") +
       fld("2027 Level","level2027","select",["","BRONZE","SILVER","GOLD","PLATINUM","DIAMOND"]) +
       '</div>' + fld("Opportunity","opportunity") +
-      '<div class="daywrap" id="x-daywrap">' + dayFieldHtml(current.opportunity, dayOf(current)) + '</div></div>';
+      '<div class="daywrap" id="x-daywrap">' + (customLines(current) ? "" : dayFieldHtml(current.opportunity, dayOf(current), current.workshopName)) + '</div></div>';
 
     if(RE_SERIES.test(a.event || "")){
       html += '<div class="dsect"><h4>Package</h4><div id="x-cust">' + customSectionHtml(a) + '</div></div>';
@@ -4014,16 +4023,19 @@ a series deal is counted once, at its full amount.</div>
     if($("x-daywrap")){
       if($("x-day")) out.opportunity = String(out.opportunity || "").replace(DAY_RE, "");
       else out.day = "";
+      if(!$("x-workshopName")) out.workshopName = "";
     }
     var mode = $("x-cmode");
     if(mode){
       if(mode.value !== "Custom") out.custom = [];
       else out.custom = SEASONS.map(function(se){
-        var t = $("x-ctier-" + se), o = $("x-copp-" + se), m = $("x-camt-" + se);
+        var t = $("x-ctier-" + se), o = $("x-copp-" + se), m = $("x-camt-" + se), w = $("x-cws-" + se);
         var tier = t ? t.value : "";
         if(!tier || tier === "Not Included") return null;
-        return {s:se, tier:tier, opp: o ? o.value : OPP_TBD,
+        var line = {s:se, tier:tier, opp: o ? o.value : OPP_TBD,
                 amount: m && m.value !== "" ? Number(m.value) : ""};
+        if(w && isWorkshop(line.opp) && w.value.trim()) line.workshop = w.value.trim();
+        return line;
       }).filter(Boolean);
     }
     return out;
@@ -4031,12 +4043,37 @@ a series deal is counted once, at its full amount.</div>
 
   /* The package section in the record panel: Standard, or Custom with a tier,
      opportunity and share for each summit. Redrawn in place when the choices change. */
-  function customOppChoices(tier){
-    var c = CATALOG[2027], out = [OPP_TBD];
+  /* Every opportunity still available at that summit, from every tier (October 8, 2026 —
+     Jonna: a custom deal can pair any tier with any opportunity that is left). Slots this
+     record already holds don't count against it; its current choice always stays listed. */
+  function customOppChoices(tier, season, rec){
+    var c = CATALOG[2027], groups = [];
+    var yr = (RE_SERIES.exec((rec && rec.event) || "") || [])[1];
+    var inv = yr ? inventoryFor(+yr) : null;
+    var taken = inv && season ? (inv.taken[season + " " + yr] || {}) : {};
+    var mine = rec && rec.id;
     (c ? c.tiers : []).forEach(function(t){
-      if(t.name === tier) t.items.forEach(function(it){ out.push(it.opp); });
+      var items = [];
+      t.items.forEach(function(it){
+        var used = (taken[it.opp] || []).filter(function(x){ return !mine || x.a.id !== mine; }).length;
+        items.push({opp: it.opp, full: it.cap !== null && it.cap !== undefined && used >= it.cap});
+      });
+      groups.push({tier: t.name, items: items});
     });
-    return out;
+    return groups;
+  }
+  function customOppOptions(tier, season, rec, v){
+    v = v || OPP_TBD;
+    var html = '<option' + (v === OPP_TBD ? " selected" : "") + '>' + esc(OPP_TBD) + '</option>', seen = false;
+    customOppChoices(tier, season, rec).forEach(function(g){
+      var opts = g.items.filter(function(it){ return !it.full || it.opp === v; });
+      if(!opts.length) return;
+      html += '<optgroup label="' + esc(tierWord(g.tier)) + '">' + opts.map(function(it){
+        if(it.opp === v) seen = true;
+        return '<option' + (it.opp === v ? " selected" : "") + '>' + esc(it.opp) + '</option>'; }).join("") + '</optgroup>';
+    });
+    if(!seen && v !== OPP_TBD) html += '<option selected>' + esc(v) + '</option>';
+    return html;
   }
   function customSectionHtml(rec){
     var on = Array.isArray(rec.custom) && rec.custom.length > 0;
@@ -4048,7 +4085,7 @@ a series deal is counted once, at its full amount.</div>
       opt(["Standard", "Custom"], on ? "Custom" : "Standard") + '</select></div>' +
       '<div class="fldnote">Standard: the same tier and opportunity at all three summits, with the price split evenly. ' +
       'Custom: a deal agreed off the price list. Set a tier, an opportunity and a share of <b>Amount Due</b> for each ' +
-      'summit. A share left blank takes an even part of what is left.</div>';
+      'summit. Any opportunity still open at that summit can be picked, whatever the tier. A share left blank takes an even part of what is left.</div>';
     if(!on) return html;
     html += '<div class="custgrid">';
     SEASONS.forEach(function(se){
@@ -4058,10 +4095,14 @@ a series deal is counted once, at its full amount.</div>
           opt(["Not Included","DIAMOND","PLATINUM","GOLD","SILVER","BRONZE"], l.tier || "Not Included") + '</select></div>' +
         '<div class="fld"><label for="x-copp-' + se + '">Opportunity</label><select id="x-copp-' + se + '" data-cust="1"' +
           (l.tier && l.tier !== "Not Included" ? '' : ' disabled') + '>' +
-          opt(customOppChoices(l.tier), l.opp || OPP_TBD) + '</select></div>' +
+          customOppOptions(l.tier, se, rec, l.opp) + '</select></div>' +
         '<div class="fld"><label for="x-camt-' + se + '">This Summit\'s Share</label><input id="x-camt-' + se +
           '" data-cust="1" type="number" min="0" step="1" placeholder="even split" value="' +
-          esc(l.amount === "" || l.amount == null ? "" : l.amount) + '"></div></div>';
+          esc(l.amount === "" || l.amount == null ? "" : l.amount) + '"></div>' +
+        (l.tier && l.tier !== "Not Included" && isWorkshop(l.opp)
+          ? '<div class="fld custws"><label for="x-cws-' + se + '">Workshop Name</label><input id="x-cws-' + se +
+            '" data-cust="1" type="text" placeholder="Not named yet" value="' + esc(l.workshop || "") + '"></div>' : '') +
+        '</div>';
     });
     html += '</div><div class="fldnote" id="x-csplit"></div>';
     return html;
@@ -4089,7 +4130,7 @@ a series deal is counted once, at its full amount.</div>
     "opportunity","dateSubmitted","approvedDate","contractAccepted","acceptanceName","acceptanceDate",
     "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate",
     "paymentStatus","paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes",
-    "comments","logoDone","prospectusRef","custom"];
+    "comments","logoDone","prospectusRef","custom","day","workshopName"];
   function changedFields(before, after){
     var out = [];
     var str = function(v){ return (v === undefined || v === null) ? "" : (typeof v === "object" ? JSON.stringify(v) : String(v)); };

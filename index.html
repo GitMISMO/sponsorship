@@ -2058,7 +2058,10 @@ a series deal is counted once, at its full amount.</div>
       /* a custom Series package is sent as its Winter line (October 6, 2026) */
       listTier: plain(tierLabel(listSlot(a).tier)),
       listOpportunity: plain(String(listSlot(a).opp || "").replace(/\s*[\u2014\u2013-]\s*(Monday|Tuesday|Wednesday|Thursday|Friday)\b.*$/i, "")),
-      listDay: plain(dayOf(a)),
+      /* "none" tells the flow to clear the list's Day: the opportunity sent isn't a one-a-day
+         one (a custom package's Winter line, or a change away from a breakfast). A blank day on
+         a one-a-day opportunity keeps whatever the list already holds (October 8, 2026). */
+      listDay: dayChoices(listSlot(a).opp) ? plain(customLines(a) ? "" : dayOf(a)) : "none",
       status:"queued", queuedAt: now.toISOString(), queuedBy: whoAmI()};
     outbox.push(Object.assign({id:id}, doc));
     return db.doc("outbox/" + id).set(doc).then(function(){

@@ -1634,11 +1634,18 @@ a series deal is counted once, at its full amount.</div>
     if(a.status === "Pending Payment"){
       var c = chaseState(a);
       if(c.overdue){
-        t.push({kind:"chase", tone:"bad", owner:"Bernardo Jordan",
+        /* Sending the alert isn't the chase (Jonna, Oct 8, 2026): Bernie still enters the
+           follow-up date once he has chased. Until he does, say the alert has gone. */
+        var sentO = outboxFor(a, "chase");
+        var sentDay = sentO && sentO.queuedAt ? iso(new Date(sentO.queuedAt)) : "";   // local date, not UTC
+        var sentOn = sentDay && c.nextDue && sentDay >= iso(c.nextDue) ? sentDay : "";
+        t.push({kind:"chase", tone:"bad", owner:"Bernardo Jordan", alertLabel: sentOn ? "Send Again" : "Send Alert",
           title: c.count ? ("Follow Up Again — Chase " + (c.count+1)) : "Payment Is Overdue — First Follow-Up",
           why:"Invoiced " + fmtDate(a.invoiceDate) + ", " + c.days + " days ago" +
               (c.count ? (a.lastFollowUpDate ? ". Last chased " + fmtDate(a.lastFollowUpDate) + "." : ". The last chase date wasn\u2019t recorded.") : ", past the 30-day mark.") +
-              summitWarn(a), field:"paymentReceivedDate", alert:"chase"});
+              summitWarn(a) +
+              (sentOn ? " Alert sent " + fmtDate(sentOn) + " \u2014 enter the follow-up date once the sponsor has been chased." : ""),
+          field:"lastFollowUpDate", alert:"chase"});
       }
     }
     if((a.status === "Approved" || a.status === "Pending Payment" || a.status === "Paid") &&
@@ -1947,7 +1954,7 @@ a series deal is counted once, at its full amount.</div>
         body:"Hi there,\n\n" + a.company + " was invoiced on " + fmtDate(a.invoiceDate) + " for " +
           money(a.amountDue) + " (Order ID " + (a.invoiceNumber||"—") + ") and payment has not been received " +
           c.days + " days on." + summitWarn(a) + "\n\n" +
-          "This is follow-up " + (c.count+1) + ". Please chase the sponsor and record the outcome in the portal.\n\n" +
+          "This is follow-up " + (c.count+1) + ". Please chase the sponsor, then enter the follow-up date in the portal.\n\n" +
           "Contact: " + (a.contactName||"—") + " <" + (a.contactEmail||"") + ">\n\nThanks,\nMISMO Programs & Operations"
       };
     }
@@ -2083,10 +2090,7 @@ a series deal is counted once, at its full amount.</div>
 
   function sendAlert(kind, a){
     if(AUTO_SEND && db && canWrite && QUEUE_KINDS[kind]){
-      queueAlert(kind, a).then(function(){
-        if(kind === "chase") logChase(a.id);   // the email is the chase: count it and set the next one
-        renderAll();
-      }, function(){ openMailFor(kind, a); });
+      queueAlert(kind, a).then(function(){ renderAll(); }, function(){ openMailFor(kind, a); });
       return;
     }
     openMailFor(kind, a);
@@ -2574,7 +2578,7 @@ a series deal is counted once, at its full amount.</div>
       '<div class="srow-acts">' +
         (t.kind === "invoice" || t.kind === "logo"
           ? '<button class="btn ghost sm" data-alertclear="' + t.alert + '" data-id="' + esc(a.id) + '">Send Alert &amp; Clear</button>'
-          : (t.alert ? '<button class="btn ghost sm" data-alert="' + t.alert + '" data-id="' + esc(a.id) + '">Send Alert</button>' : '')) +
+          : (t.alert ? '<button class="btn ghost sm" data-alert="' + t.alert + '" data-id="' + esc(a.id) + '">' + esc(t.alertLabel || "Send Alert") + '</button>' : '')) +
         (t.action === "logoDone"
           ? '<button class="btn sm" data-done="' + esc(a.id) + '">Mark Done</button>'
           : '<button class="btn sm" data-open="' + esc(a.id) + '" data-focus="' + esc(t.field||"") + '">Open</button>') +

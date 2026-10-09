@@ -1383,9 +1383,11 @@ a series deal is counted once, at its full amount.</div>
   /* "status" (September 28, 2026) is not an email: every time a record's status changes, the
      flow copies it onto the matching row of the Sponsorship Requests list (or adds a row for a
      sponsorship typed in by hand), which is what the public prospectus reads availability from. */
-  var QUEUE_KINDS = {invoice:true, logo:true, paid:true, status:true};
+  /* "chase" (October 8, 2026): the Send Alert button for a payment follow-up goes through the
+     flow like the others, instead of opening Outlook. */
+  var QUEUE_KINDS = {invoice:true, logo:true, paid:true, status:true, chase:true};
   var QUEUE_WHO = {invoice:"Bernie", logo:"Dillon and Jenny", paid:"Jonna, Amy and Kelly",
-                   status:"the Sponsorship Requests list"};
+                   status:"the Sponsorship Requests list", chase:"Bernie, Jonna and Kelly"};
   var outboxSent = {};       // id -> {sentAt} from data/outbox-sent.json, written by the flow
   var ALERT_SECRET   = "mismo-sponsorship-portal";
 
@@ -1635,7 +1637,7 @@ a series deal is counted once, at its full amount.</div>
         t.push({kind:"chase", tone:"bad", owner:"Bernardo Jordan",
           title: c.count ? ("Follow Up Again — Chase " + (c.count+1)) : "Payment Is Overdue — First Follow-Up",
           why:"Invoiced " + fmtDate(a.invoiceDate) + ", " + c.days + " days ago" +
-              (c.count ? (". Last chased " + fmtDate(a.lastFollowUpDate) + ".") : ", past the 30-day mark.") +
+              (c.count ? (a.lastFollowUpDate ? ". Last chased " + fmtDate(a.lastFollowUpDate) + "." : ". The last chase date wasn\u2019t recorded.") : ", past the 30-day mark.") +
               summitWarn(a), field:"paymentReceivedDate", alert:"chase"});
       }
     }
@@ -2050,6 +2052,11 @@ a series deal is counted once, at its full amount.</div>
       contactName: plain(a.contactName), contactEmail: plain(a.contactEmail),
       prospectusRef: plain(prospectusRef(a)), invoiceNumber: plain(a.invoiceNumber),
       amountPaid: plain(money(a.amountPaid || a.amountDue)),
+      /* payment follow-up facts (October 8, 2026) */
+      invoiceDateText: plain(fmtDate(a.invoiceDate)),
+      daysSince: plain(chaseState(a).days),
+      followUpNumber: plain(Number(a.followUpCount || 0) + 1),
+      summitNote: plain(summitWarn(a).trim()),
       /* the same record in the Sponsorship Requests list's own wording, so the flow can
          write it into the list's Status, Program and Tier choices with no conversion */
       listStatus: LIST_STATUS[a.status] || "New",
@@ -2076,7 +2083,10 @@ a series deal is counted once, at its full amount.</div>
 
   function sendAlert(kind, a){
     if(AUTO_SEND && db && canWrite && QUEUE_KINDS[kind]){
-      queueAlert(kind, a).then(function(){ renderAll(); }, function(){ openMailFor(kind, a); });
+      queueAlert(kind, a).then(function(){
+        if(kind === "chase") logChase(a.id);   // the email is the chase: count it and set the next one
+        renderAll();
+      }, function(){ openMailFor(kind, a); });
       return;
     }
     openMailFor(kind, a);

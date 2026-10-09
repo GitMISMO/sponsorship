@@ -1387,7 +1387,7 @@ a series deal is counted once, at its full amount.</div>
      flow like the others, instead of opening Outlook. */
   var QUEUE_KINDS = {invoice:true, logo:true, paid:true, status:true, chase:true};
   var QUEUE_WHO = {invoice:"Bernie", logo:"Dillon and Jenny", paid:"Jonna, Amy and Kelly",
-                   status:"the Sponsorship Requests list", chase:"Bernie, Jonna and Kelly"};
+                   status:"the Sponsorship Requests list", chase:"Bernie, Jonna, Amy and Kelly"};
   var outboxSent = {};       // id -> {sentAt} from data/outbox-sent.json, written by the flow
   var ALERT_SECRET   = "mismo-sponsorship-portal";
 
@@ -1942,7 +1942,7 @@ a series deal is counted once, at its full amount.</div>
     if(kind === "chase"){
       var c = chaseState(a);
       return {
-        to:[PEOPLE.bernie, PEOPLE.jonna, PEOPLE.kelly],
+        to:[PEOPLE.bernie, PEOPLE.jonna, PEOPLE.amy, PEOPLE.kelly],
         subject:"Payment follow-up — " + a.company + " — " + a.appNo,
         body:"Hi there,\n\n" + a.company + " was invoiced on " + fmtDate(a.invoiceDate) + " for " +
           money(a.amountDue) + " (Order ID " + (a.invoiceNumber||"—") + ") and payment has not been received " +

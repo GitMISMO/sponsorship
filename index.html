@@ -2088,9 +2088,32 @@ a series deal is counted once, at its full amount.</div>
     });
   }
 
-  function sendAlert(kind, a){
+  /* Every click says what happened (October 8, 2026 — a click that showed nothing was clicked
+     again and the follow-up went out twice). The button reads "Sending…" while it saves, a
+     message confirms who it's going to, and the same alert for the same record within two
+     minutes isn't sent again. */
+  function sendAlert(kind, a, btn){
     if(AUTO_SEND && db && canWrite && QUEUE_KINDS[kind]){
-      queueAlert(kind, a).then(function(){ renderAll(); }, function(){ openMailFor(kind, a); });
+      var label = ALERT_LABEL[kind] || kind, who = QUEUE_WHO[kind] || "the team";
+      var last = null;
+      outbox.forEach(function(o){
+        if(o.kind === kind && outboxBelongs(o, a) && (!last || String(o.queuedAt) > String(last.queuedAt))) last = o;
+      });
+      var ago = last ? Date.now() - Date.parse(last.queuedAt || 0) : Infinity;
+      if(ago < 120000){
+        toast("It went to " + who + " " + (ago < 60000 ? "less than a minute" : "a minute") +
+              " ago, so it hasn't been sent again.", "warn", label + " Already Sent");
+        return;
+      }
+      if(btn){ btn.disabled = true; btn.textContent = "Sending\u2026"; }
+      queueAlert(kind, a).then(function(){
+        toast((kind === "status" ? "On its way to " : "Emailing ") + who + " \u2014 usually within a minute.",
+              "", label + " Sent \u2014 " + (a.company || a.appNo));
+        renderAll();
+      }, function(){
+        if(btn){ btn.disabled = false; btn.textContent = "Send Alert"; }
+        openMailFor(kind, a);
+      });
       return;
     }
     openMailFor(kind, a);
@@ -3936,6 +3959,7 @@ a series deal is counted once, at its full amount.</div>
       fld("Amount Paid","amountPaid","number") +
       fld("Payment Received","paymentReceivedDate","date") +
       fld("Last Follow-Up","lastFollowUpDate","date") +
+      fld("Follow-Ups Logged","followUpCount","number") +
       '</div>';
     if(a.status === "Pending Payment"){
       html += '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">' +
@@ -5511,7 +5535,7 @@ a series deal is counted once, at its full amount.</div>
     }
     if((el = ev.target.closest("[data-alert]"))){
       var id = el.getAttribute("data-id");
-      for(var i=0;i<apps.length;i++){ if(apps[i].id===id){ sendAlert(el.getAttribute("data-alert"), apps[i]); break; } }
+      for(var i=0;i<apps.length;i++){ if(apps[i].id===id){ sendAlert(el.getAttribute("data-alert"), apps[i], el); break; } }
       ev.stopPropagation(); return;
     }
     if((el = ev.target.closest("[data-done]"))){

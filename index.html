@@ -889,6 +889,23 @@
   .lgd b{color:var(--ink); font-weight:700;}
 
   /* the page header is the width of the page, above the navy band */
+  /* Help (October 23, 2026): collapsible sections, closed by default; the whole row opens and closes it */
+  .helppanel{padding:4px 22px;}
+  .hsec{border-bottom:1px solid var(--rule);}
+  .hsec:last-child{border-bottom:0;}
+  .hsec > summary{list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:15px 0; font-size:15px; font-weight:700; color:var(--ink);}
+  .hsec > summary::-webkit-details-marker{display:none;}
+  .hsec > summary::after{content:""; flex:0 0 auto; width:8px; height:8px; border-right:2px solid var(--ink-3);
+    border-bottom:2px solid var(--ink-3); transform:rotate(45deg); margin:-4px 4px 0 0; transition:transform .15s;}
+  .hsec[open] > summary::after{transform:rotate(-135deg); margin-top:4px;}
+  .hsec > summary:hover{color:var(--accent, var(--ink));}
+  .hbody{padding:0 0 16px; font-size:13.5px; line-height:1.6; color:var(--ink-2);}
+  .hbody p{margin:0 0 10px;}
+  .hbody ul, .hbody ol{margin:0 0 10px; padding-left:20px;}
+  .hbody li{margin:0 0 6px;}
+  .hbody b{color:var(--ink);}
+  @media (max-width:560px){ .helppanel{padding:2px 16px;} .hsec > summary{font-size:14px;} }
   #pagehead{display:block; margin:0 0 18px;}
   #pagehead h2{font-size:26px; font-weight:700;}
   #pagehead .psub{margin:6px 0 0; font-size:14px; color:var(--ink-2); max-width:none;}
@@ -1024,6 +1041,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 <symbol id="ico-stock" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M1.9 5.4 8 2.2l6.1 3.2L8 8.6z"/><path d="M1.9 5.4v5.2L8 13.8l6.1-3.2V5.4"/><path d="M8 8.6v5.2"/></g></symbol>
 <symbol id="ico-money" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6.1"/><path d="M8 4.2v7.6"/><path d="M10 6.1C9.5 5.4 8.8 5.1 8 5.1c-1.1 0-2 .6-2 1.4 0 2 4 1 4 3 0 .9-.9 1.5-2 1.5-.9 0-1.6-.3-2.1-1"/></g></symbol>
 <symbol id="ico-log" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.1"/><path d="M8 4.4V8l2.5 1.6"/></g></symbol>
+<symbol id="ico-help" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.1"/><path d="M6.2 6.3a1.9 1.9 0 0 1 3.7.5c0 1.3-1.9 1.6-1.9 2.8"/><path d="M8 11.4h.01"/></g></symbol>
 <symbol id="ico-moon" viewBox="0 0 16 16"><path d="M13.4 9.6A5.6 5.6 0 0 1 6.4 2.6a5.8 5.8 0 1 0 7 7z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
 <symbol id="ico-sun" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="3.1"/><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"/></g></symbol>
 <symbol id="ico-search" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6.9" cy="6.9" r="4.6"/><path d="M10.3 10.3 14 14"/></g></symbol>
@@ -1064,6 +1082,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="navgrp">Records</div>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
+    <div class="navgrp">Help</div>
+    <button class="tab" data-view="help" type="button" title="Help"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-help"/></svg><span class="tlbl">Help</span></button>
   </nav>
   <div class="side-ft">
     <button class="theme-btn" id="theme-btn" type="button">
@@ -1224,6 +1244,165 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
       <div id="summit-body"></div>
     </div>
   </section>
+
+  <!-- ================= HELP (October 23, 2026) =================
+       How the portal works, end to end, and its limits. Plain language for the team.
+       Keep it in step with programs/summits/PROGRAM.md when the process changes. -->
+  <section class="view" id="view-help">
+    <div class="panel helppanel">
+
+      <details class="hsec">
+        <summary>How It All Fits Together</summary>
+        <div class="hbody">
+          <p>Five pieces work together. None of them needs anyone to copy information from one to another by hand.</p>
+          <ul>
+            <li><b>The prospectus</b> (resources.mismo.org/Sponsorship-Prospectus) is the public page. Sponsors build a sponsorship, sign the contract and submit there.</li>
+            <li><b>This portal</b> is where the team works every sponsorship from application to payment. Only people with Sponsorship access can open it.</li>
+            <li><b>The Sponsorship Requests list</b> in SharePoint (MISMO Summits site) holds one row per sponsorship. The prospectus reads it to show sponsors what is already sold.</li>
+            <li><b>The Sponsorship Team Emails flow</b> in Power Automate sends the portal&rsquo;s emails, keeps the Sponsorship Requests list in step with the portal, and copies booked sponsors to Summit HQ&rsquo;s People tab.</li>
+            <li><b>MISMO Money</b> (the Financial System) tells the portal which invoices Aptify shows as paid.</li>
+          </ul>
+          <p>The portal&rsquo;s records are kept in MISMO&rsquo;s private data store. Every save is shared with everyone else using the portal within about 20 seconds.</p>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>The Sponsorship Process, Step by Step</summary>
+        <div class="hbody">
+          <ol>
+            <li><b>Submitted.</b> A sponsor applies on the prospectus, or someone adds a New Application here. Amy and Kelly review it and set the <b>Amount Due</b>.</li>
+            <li><b>Approved.</b> Amy or Kelly clicks <b>Approved</b>. That emails Bernie the invoice request and emails Dillon and Jenny the logo request, and the opportunity comes off the public page.</li>
+            <li><b>Pending Payment.</b> Bernie raises the invoice in Aptify and enters the <b>Aptify order ID</b>, the invoice date, the comp code and the number of comps. Entering the order ID moves it to Pending Payment.</li>
+            <li><b>Paid.</b> When Aptify shows the invoice paid, MISMO Money tells the portal and the record is marked Paid on its own (see <b>Payments from MISMO Money</b>). It can also be marked Paid by hand on the record. Jonna, Amy and Kelly get the Payment Made email.</li>
+          </ol>
+          <p><b>Declined</b> closes a request that won&rsquo;t go ahead. <b>Written Off</b> is a sponsorship that went ahead but was never paid. It keeps the slot taken and counts as committed, but not as collected.</p>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>When a Sponsor Applies on the Prospectus</summary>
+        <div class="hbody">
+          <ul>
+            <li>The sponsor gets a reference number on screen (like SP-20260918-K3QT). The same number is saved on the record as its <b>Prospectus Reference</b>.</li>
+            <li>A row is added to the Sponsorship Requests list with status <b>New</b>, and the sponsor&rsquo;s logo is saved to the <b>Sponsor Logos</b> library on the MISMO Summits site.</li>
+            <li>The application appears here under <b>Submitted</b> the next time anyone on the team opens the portal, with a message saying it came from the prospectus.</li>
+            <li>If the company is already a prospect, the two are linked, and the application shows everything recorded while it was a prospect.</li>
+            <li>The day the sponsor picked (for breakfasts, breaks and receptions) fills in the record&rsquo;s <b>Day</b> field.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>Payments from MISMO Money</summary>
+        <div class="hbody">
+          <p>MISMO Money loads Aptify payments each morning, from the daily payments email, and whenever someone adds payment files to it. Each time, it gives the portal a list of paid sponsorship orders. It matches on the <b>Aptify order ID</b>, which this portal holds as the invoice number.</p>
+          <p>The next time anyone who can edit opens the portal, every payment that changes something is recorded automatically:</p>
+          <ul>
+            <li>a matched order still awaiting payment is marked <b>Paid</b>, with the amount received and the date paid;</li>
+            <li>a refund on an order already marked Paid corrects the <b>Amount Paid</b>;</li>
+            <li>where Aptify bills a different company name (Innovis for Factual Data, for example), it is filled in as <b>Also Invoiced As</b>.</li>
+          </ul>
+          <p>A notice at the top of the portal lists what was recorded. Jonna, Amy and Kelly get the usual Payment Made email for each record marked Paid, and each record&rsquo;s history says it came from MISMO Money.</p>
+          <p>Sponsorship payments that match no record here get their own notice. Click <b>See Them</b> to look. It usually means an order ID is missing from a record, or a sponsor was billed under another company name.</p>
+          <p><b>It never marks anything unpaid.</b> A payment missing from MISMO Money is not evidence that it wasn&rsquo;t paid.</p>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>Chasing Payment</summary>
+        <div class="hbody">
+          <ul>
+            <li>Payment is chased <b>30 days after the invoice</b>, then <b>every 10 business days</b> until it clears. The aim is to collect before the summit.</li>
+            <li>When a chase is due, the record&rsquo;s card on the Pipeline turns red and says so.</li>
+            <li><b>Send Alert</b> emails the payment follow-up to Bernie, Jonna, Amy and Kelly. The button says <b>Sending&hellip;</b>, then a message confirms it went. Clicking it again within two minutes does nothing, so it can&rsquo;t go out twice.</li>
+            <li>Sending the alert is <b>not</b> the chase. Once Bernie has actually chased the sponsor, he clicks <b>Log a Follow-Up</b> on the record. That records today&rsquo;s date and starts the 10-business-day count to the next one.</li>
+            <li>If the count is ever wrong, correct <b>Follow-Ups Logged</b> and <b>Last Follow-Up</b> in the record&rsquo;s Payment section and click <b>Save</b>.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>The Automatic Emails</summary>
+        <div class="hbody">
+          <ul>
+            <li><b>Invoice Request</b>: to Bernie, Jonna copied. Sent when a sponsorship is approved.</li>
+            <li><b>Logo Request</b>: to Dillon and Jenny, Jonna, Amy and Kelly copied. Sent when a sponsorship is approved, with a link to the logo in Sponsor Logos when the sponsor uploaded one.</li>
+            <li><b>Payment Made</b>: to Jonna, Amy and Kelly. Sent when a record is marked Paid, by hand or from MISMO Money.</li>
+            <li><b>Payment Follow-Up</b>: to Bernie, Jonna, Amy and Kelly. Sent when someone clicks Send Alert on a chase.</li>
+            <li><b>List Update</b>: no email. It updates the Sponsorship Requests list.</li>
+          </ul>
+          <p>They usually go out within a minute. Each record&rsquo;s <b>Alerts</b> section lists every one, with &ldquo;on its way&rdquo; or &ldquo;emailed&rdquo; and the date. The buttons there send one again.</p>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>The Public Page and the Sponsorship Requests List</summary>
+        <div class="hbody">
+          <ul>
+            <li>The prospectus counts a slot as sold when its row on the list is <b>Approved</b>, <b>Pending Payment</b> or <b>Paid</b>. Sponsors see the change the next time they load the page.</li>
+            <li>The portal updates the list on its own whenever a sponsorship&rsquo;s status, tier, opportunity or day changes. This only happens for sponsorships with a summit still to come, so editing an old record never changes what sponsors see.</li>
+            <li>A sponsorship entered straight into the portal gets its row on its first update.</li>
+            <li>The <b>List Update</b> button in a record&rsquo;s Alerts section sends it to the list again by hand.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>Days, Workshops and Custom Packages</summary>
+        <div class="hbody">
+          <ul>
+            <li><b>Day.</b> Receptions (Monday or Tuesday), breakfasts and both breaks (Monday to Thursday) are one sponsor a day. Pick the day under Opportunity. It shows on lists, emails, Inventory and the public page.</li>
+            <li><b>Workshop Name.</b> Any workshop sponsorship has a field for the workshop&rsquo;s name.</li>
+            <li><b>Custom package.</b> For a Series deal off the price list, set <b>Package</b> to <b>Custom</b>. Then give Winter, Spring and Fall each a tier, an opportunity (any one still open at that summit) and a share of the Amount Due.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>Prospects</summary>
+        <div class="hbody">
+          <ul>
+            <li>Everyone the Strategic Growth Team is cultivating. Give each one a <b>Next Follow-Up</b> date, and it turns up under <b>Needs Follow-Up</b> when that day comes.</li>
+            <li>A prospect who applies comes off the list while the sponsorship runs (see <b>Sponsoring Now</b>). The day after it ends, it comes back ready to renew, with every note kept.</li>
+            <li>Every sponsor gets a prospect record, so past sponsors show up to renew. <b>Delete Prospect</b> removes one for good, and the portal won&rsquo;t add it back on its own.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>Limits and Known Gaps</summary>
+        <div class="hbody">
+          <ul>
+            <li><b>MISMO Money payments are recorded when the portal is opened.</b> The recording happens inside the portal. Payments are recorded the next time anyone who can edit opens it, not the moment MISMO Money loads them. If nobody opens the portal, nothing is recorded until someone does. Someone who can only view the portal doesn&rsquo;t trigger it.</li>
+            <li><b>Some payments never reach MISMO Money.</b> Aptify payments recorded as an MBA ACH payment or by credit memo aren&rsquo;t in its payment exports. Kastle AI&rsquo;s $15,000 was one. Mark those Paid by hand on the record by entering the <b>Payment Received</b> date.</li>
+            <li><b>MISMO Money covers recent payments only.</b> It covers payments from 1 January 2025 on. Older payments are already on their records.</li>
+            <li><b>Payment follow-ups need a click.</b> They don&rsquo;t send themselves on a timer. Claude&rsquo;s safety rules won&rsquo;t set up anything that emails people with nobody choosing to send it. The card shows when one is due.</li>
+            <li><b>Custom packages show one summit publicly.</b> The Sponsorship Requests list holds one row per sponsorship, so for a custom Series it carries the Winter choice. Spring and Fall choices show here on Inventory but not on the public page.</li>
+            <li><b>The price list is kept in two places.</b> Tiers, prices and opportunities are in the prospectus <b>and</b> in this portal (for Inventory and custom packages). A change to one needs the same change in the other.</li>
+            <li><b>The prospectus and this portal count availability separately.</b> The prospectus counts the Sponsorship Requests list; Inventory counts this portal&rsquo;s records. They agree as long as every change reaches the list.</li>
+            <li><b>New versions of this portal are uploaded by hand.</b> Claude builds the page, and Jonna uploads it to GitHub. Changes made straight to the live file are lost the next time it&rsquo;s rebuilt, so changes go through Claude.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>Where Things Live</summary>
+        <div class="hbody">
+          <ul>
+            <li><b>This portal&rsquo;s page:</b> GitHub, GitMISMO/sponsorship.</li>
+            <li><b>Its records:</b> GitHub, GitMISMO/sponsorship-data (private). That&rsquo;s applications, prospects, the email requests and the payments file MISMO Money writes, which the portal only reads.</li>
+            <li><b>The prospectus:</b> GitHub, GitMISMO/Sponsorship-Prospectus.</li>
+            <li><b>SharePoint, MISMO Summits site:</b> the Sponsorship Requests list and the Sponsor Logos library.</li>
+            <li><b>Power Automate:</b> the intake flow (prospectus to list), the availability flow (list to prospectus) and the Sponsorship Team Emails flow (emails, list updates, Summit HQ).</li>
+            <li><b>Sign-in and access:</b> MISMO Resources accounts, with Sponsorship access given per person.</li>
+            <li><b>The full record of decisions:</b> the MISMO Sponsorships project in Claude (programs/summits/PROGRAM.md).</li>
+          </ul>
+        </div>
+      </details>
+
+    </div>
+  </section>
+
 
   <!-- The Activity tab was removed on September 30, 2026 (Jonna: not needed). The portal
        still notes each change in data/log.json behind the scenes; nothing shows it. -->
@@ -2422,7 +2601,10 @@ a series deal is counted once, at its full amount.</div>
         "as taken once it is Approved \u2014 the same moment it should come off the public page."},
     money: {t:"Where the Money Is",
       s:"Every summit side by side. Pick a year and a season below to open one on its own."},
-    log: {t:"Activity", s:"Every status change and every alert sent, most recent first."}
+    log: {t:"Activity", s:"Every status change and every alert sent, most recent first."},
+    help: {t:"How the Sponsorship Portal Works",
+      s:"The process from application to payment, what happens automatically, who gets which email, " +
+        "and the limits worth knowing. Select a section to open it."}
   };
   var moneyHead = null;   // {t,s} while the Money tab is showing one summit
   function paintPageHead(){
@@ -5089,7 +5271,7 @@ a series deal is counted once, at its full amount.</div>
     openImport();
     impSource = "money";
     impPlan = p;
-    $("imp-title").textContent = "From MISMO Money, Payments Through " +
+    $("imp-title").textContent = "From MISMO Money, Payments through " +
       (moneyFeed.paymentsThrough ? fmtDate(String(moneyFeed.paymentsThrough).slice(0, 10)) : "the Latest Load");
     $("imp-sub").textContent = "Paid Aptify orders from MISMO Money, matched on the Aptify order ID, which this " +
       "portal holds as the invoice number. The export boxes below still work if you need them.";
@@ -5790,7 +5972,7 @@ a series deal is counted once, at its full amount.</div>
     /* Activity is a log — a band saying what is owed on a page of past events would be
        answering a question nobody asked there. Money, Inventory and Prospects carry their
        own bands instead. */
-    var hide = (v === "money" || v === "stock" || v === "leads" || v === "log") ? "none" : "";
+    var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help") ? "none" : "";
     $("headline").style.display = hide;
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.id === "view-"+v); });
     if(v !== "pipeline" && stageKey) closeStage();

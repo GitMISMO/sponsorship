@@ -1078,6 +1078,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 <div class="wrap">
 
   <div id="conn-banner" class="banner" style="display:none;"></div>
+  <div id="money-banner" class="banner" style="display:none;"></div>
 
   <div class="vhead" id="pagehead"><div>
     <h2 id="ph-title">Pipeline</h2>
@@ -1242,8 +1243,8 @@ a series deal is counted once, at its full amount.</div>
 <aside class="drawer impdrawer" id="imp" aria-hidden="true" aria-label="Import Aptify payments">
   <div class="dhead">
     <div>
-      <h3>Import Aptify Payments</h3>
-      <div class="dsub">The same two exports you give the Financial System. Matched on the Aptify
+      <h3 id="imp-title">Import Aptify Payments</h3>
+      <div class="dsub" id="imp-sub">The same two exports you give the Financial System. Matched on the Aptify
         order ID, which this portal holds as the invoice number.</div>
     </div>
     <button class="dclose" id="imp-close" type="button" aria-label="Close">&times;</button>
@@ -4950,13 +4951,23 @@ a series deal is counted once, at its full amount.</div>
     return byOrder;
   }
 
+  /* A summit sponsorship line, 2026 season onward. "MISMO 2027 Series; …" lines name no summit,
+     so a Series line counts too; webinar sponsorships and the 2024–25 seasons (which the portal
+     deliberately doesn't hold) are left out so the list shows only what is worth looking at. */
   function looksLikeSponsorship(g){
-    return g.productList.some(function(p){ return RE_SPONSORSHIP.test(p) && RE_SUMMIT_PROD.test(p); });
+    return g.productList.some(function(p){
+      if(!RE_SPONSORSHIP.test(p) || /webinar/i.test(p)) return false;
+      if(!(RE_SUMMIT_PROD.test(p) || /series/i.test(p))) return false;
+      var yrs = p.match(/20\d\d/g) || [];
+      return !yrs.length || yrs.some(function(y){ return +y >= 2026; });
+    });
   }
 
-  /* Work out what the files would change, without changing anything. */
-  function buildPlan(){
-    var byOrder = groupOrders();
+  /* Work out what the files would change, without changing anything. byOrder is the
+     per-order groups: from the dropped exports (groupOrders) or from MISMO Money's file
+     (moneyGroups, October 23, 2026). */
+  function buildPlan(byOrder){
+    byOrder = byOrder || groupOrders();
     var byInvoice = {};
     apps.forEach(function(a){
       var inv = String(a.invoiceNumber == null ? "" : a.invoiceNumber).trim();
@@ -5038,12 +5049,59 @@ a series deal is counted once, at its full amount.</div>
             orders:Object.keys(byOrder).length};
   }
 
+  /* ---- MISMO Money (October 23, 2026) ----
+     MISMO Money (the Financial System) writes data/mismo-money-paid.json into the private
+     sponsorship-data repo whenever it loads new Aptify payments: every sponsorship order paid
+     since 1 Jan 2025, plus any order whose number is an application's invoice number, with the
+     date paid and the NET received (each payment counted once per order — never add up the
+     lines). The portal only reads it, never writes it. Its orders become the same per-order
+     groups the export import builds, and go through the same buildPlan(), so a record already
+     Paid at that amount is never proposed again and nothing is ever marked unpaid. */
+  var impSource = "export";   // "export" | "money" — what the drawer's plan came from
+  var moneyFeed = null;
+  function moneyGroups(feed){
+    var out = {}, list = feed && feed.orders;
+    /* only the copy MISMO Money built for this portal (feed-format.md: "for") */
+    if(!list || (feed["for"] && feed["for"] !== "sponsorship")) return out;
+    var items = Array.isArray(list) ? list.map(function(o){ return [o && o.order, o]; })
+                                    : Object.keys(list).map(function(k){ return [list[k] && list[k].order || k, list[k]]; });
+    items.forEach(function(it){
+      var o = it[1] || {}, oid = String(it[0] == null ? "" : it[0]).trim();
+      if(!oid) return;
+      var products = {};
+      (o.lines || []).forEach(function(l){ if(l && l.product) products[String(l.product).trim()] = 1; });
+      var last = String(o.lastPaidOn || "").slice(0, 10), first = String(o.firstPaidOn || "").slice(0, 10);
+      var refundDays = (o.payments || []).filter(function(x){ return x && Number(x.amount) < 0 && x.on; })
+        .map(function(x){ return String(x.on).slice(0, 10); }).sort();
+      out[oid] = {orderId: oid, company: String(o.company || "").trim(),
+        net: Math.round(Number(o.net || 0) * 100) / 100, refunds: Number(o.refunded || 0),
+        firstDate: first, lastDate: last, lastRefund: refundDays[refundDays.length - 1] || "", dates: last ? [last] : [],
+        productList: Object.keys(products), sourceList: ["MISMO Money"]};
+    });
+    return out;
+  }
+  function moneyPlan(){
+    if(!moneyFeed || !moneyFeed.orders || (moneyFeed["for"] && moneyFeed["for"] !== "sponsorship")) return null;
+    return buildPlan(moneyGroups(moneyFeed));
+  }
+  function openMoneyReview(){
+    var p = moneyPlan(); if(!p) return;
+    openImport();
+    impSource = "money";
+    impPlan = p;
+    $("imp-title").textContent = "From MISMO Money, Payments Through " +
+      (moneyFeed.paymentsThrough ? fmtDate(String(moneyFeed.paymentsThrough).slice(0, 10)) : "the Latest Load");
+    $("imp-sub").textContent = "Paid Aptify orders from MISMO Money, matched on the Aptify order ID, which this " +
+      "portal holds as the invoice number. The export boxes below still work if you need them.";
+    renderPlan();
+  }
+
   function renderPlan(){
     var p = impPlan;
     if(!p){ $("imp-body2").innerHTML = ""; return; }
     var html = "";
 
-    html += '<div class="impstat">Read <b>' + p.orders + '</b> Aptify order' + (p.orders===1?"":"s") +
+    html += '<div class="impstat">' + (impSource === "money" ? 'MISMO Money has <b>' : 'Read <b>') + p.orders + '</b> paid Aptify order' + (p.orders===1?"":"s") +
             '. <b>' + p.matched + '</b> matched a record here. <b>' + p.changes.length +
             '</b> would change.</div>';
 
@@ -5067,7 +5125,7 @@ a series deal is counted once, at its full amount.</div>
             '</span></label>';
         }).join("");
     } else {
-      html += '<div class="empty">Nothing in these files disagrees with what is recorded here.</div>';
+      html += '<div class="empty">Nothing in ' + (impSource === "money" ? "MISMO Money" : "these files") + ' disagrees with what is recorded here.</div>';
     }
 
     if(p.unmatched.length){
@@ -5155,17 +5213,22 @@ a series deal is counted once, at its full amount.</div>
       var after = JSON.parse(JSON.stringify(c.app));
       Object.keys(c.fields).forEach(function(k){ after[k] = c.fields[k]; });
       var said = [];
-      if(c.fields.status) said.push("marked Paid from the Aptify export");
+      if(c.fields.status) said.push(impSource === "money" ? "marked Paid from MISMO Money" : "marked Paid from the Aptify export");
       if(c.fields.amountPaid !== undefined) said.push("amount paid set to " + money(c.fields.amountPaid));
       if(c.fields.billingName) said.push("billing name set to " + c.fields.billingName);
       saveApp(after);
       addLog(after.appNo, said.join("; ") + " (order " + c.g.orderId + ")", whoAmI());
+      /* marking Paid here tells the team, the same as marking it Paid on the record */
+      if(c.fields.status === "Paid" && AUTO_SEND && db && canWrite && typeof QUEUE_KINDS !== "undefined" && QUEUE_KINDS.paid){
+        queueAlert("paid", after).catch(function(){});
+      }
     });
 
-    var n = picked.length;
+    var n = picked.length, from = impSource === "money" ? "MISMO Money" : "the Aptify export";
     closeImport();
-    toast(n + " record" + (n===1?"":"s") + " updated from the Aptify export.",
-          "", "Import applied");
+    if(typeof paintMoneyBanner === "function") setTimeout(paintMoneyBanner, 300);
+    toast(n + " record" + (n===1?"":"s") + " updated from " + from + ".",
+          "", "Payments Applied");
   }
 
   /* ================= importing the prospects spreadsheet =================
@@ -5509,6 +5572,10 @@ a series deal is counted once, at its full amount.</div>
   }
 
   function openImport(){
+    impSource = "export";
+    if($("imp-title")) $("imp-title").textContent = "Import Aptify Payments";
+    if($("imp-sub")) $("imp-sub").textContent = "The same two exports you give the Financial System. Matched on the Aptify " +
+      "order ID, which this portal holds as the invoice number.";
     impSay("");
     $("imp-body2").innerHTML = "";
     impPlan = null; impFiles = {};
@@ -5981,6 +6048,7 @@ a series deal is counted once, at its full amount.</div>
       });
     }
     function clean(content, kind){
+      if(kind === "raw") return content == null ? null : content;   // read-only feeds, kept exactly as written
       var c = content && typeof content === "object" ? content : {};
       if(kind === "log") return {entries: Array.isArray(c.entries) ? c.entries : []};
       if(kind === "list"){   // outbox-sent {list:[{id,sentAt}]} and inbox {list:[{reference,...}]}: flow-written
@@ -5993,7 +6061,10 @@ a series deal is counted once, at its full amount.</div>
       }
       return {docs: (c.docs && typeof c.docs === "object") ? c.docs : {}};
     }
-    function kindOf(name){ return name === "log" ? "log" : ((name === "outbox-sent" || name === "inbox") ? "list" : "docs"); }
+    function kindOf(name){
+      if(name === "mismo-money-paid") return "raw";   // written by MISMO Money only (October 23, 2026)
+      return name === "log" ? "log" : ((name === "outbox-sent" || name === "inbox") ? "list" : "docs");
+    }
     function notify(f){ f.listeners.forEach(function(fn){ try{ fn(f.data); }catch(e){} }); }
     /* A background re-read that started before one of this screen's saves can arrive after
        it, carrying the file as it was. Believing it put the old record back on screen, and the
@@ -6086,6 +6157,15 @@ a series deal is counted once, at its full amount.</div>
           }); },
           delete: function(){ return mutate(name, function(d){ delete d.docs[id]; }); }
         };
+      },
+      /* A file this page only reads and never writes, handed over exactly as stored
+         (null until whoever owns it has written it). There is deliberately no save. */
+      raw: function(name, cb){
+        var f = file(name);
+        f.listeners.push(function(){ cb(f.data); });
+        load(name).catch(function(e){
+          if(e && e.status === 404){ f.data = null; f.loaded = true; cb(null); }
+        });
       },
       /* The relay has no push, so everyone's screen catches up by re-reading every 20 seconds.
          A file only re-renders when its version actually changed. */
@@ -6180,6 +6260,26 @@ a series deal is counted once, at its full amount.</div>
     }
     return p;
   };
+  /* When MISMO Money has payments that would change records here, people who can edit are
+     told at the top of the page and can review them. Nothing changes until Apply. */
+  var moneyDismissed = "";
+  function paintMoneyBanner(){
+    var b = $("money-banner"); if(!b) return;
+    var p = (canWrite && appsLoaded) ? moneyPlan() : null;
+    var n = p ? p.changes.length : 0;
+    var key = n + "|" + ((moneyFeed && moneyFeed.paymentsThrough) || "");
+    if(!n || moneyDismissed === key){ b.style.display = "none"; return; }
+    var through = moneyFeed.paymentsThrough ? fmtDate(String(moneyFeed.paymentsThrough).slice(0, 10)) : "";
+    b.className = "banner";
+    b.innerHTML = "<b>MISMO Money has " + n + " payment" + (n === 1 ? "" : "s") + " to record here" +
+      (through ? " (payments through " + esc(through) + ")" : "") + ".</b> Review them before anything changes." +
+      '<div style="margin-top:9px;display:flex;gap:8px;flex-wrap:wrap;">' +
+      '<button class="btn sm" type="button" id="money-review">Review Payments</button>' +
+      '<button class="btn ghost sm" type="button" id="money-later">Not Now</button></div>';
+    b.style.display = "";
+    $("money-review").onclick = function(){ openMoneyReview(); };
+    $("money-later").onclick = function(){ moneyDismissed = key; b.style.display = "none"; };
+  }
   function listSig(a){
     var sl = listSlot(a);
     return [/series/i.test(a.event || "") ? "S" : "W", tierLabel(sl.tier),
@@ -6236,6 +6336,7 @@ a series deal is counted once, at its full amount.</div>
         appsLoaded = true; appsSeen = true;
         renderAll();
         takeInbox();
+        paintMoneyBanner();
       }catch(err){ loadFailed("reading the records", err && err.message); }
     }, failed("loading the records"));
     d.doc("log/main").onSnapshot(function(snap){
@@ -6262,6 +6363,8 @@ a series deal is counted once, at its full amount.</div>
       takeInboxReady = true;
       takeInbox();
     }, function(){});
+    /* Paid Aptify orders from MISMO Money (October 23, 2026). Read only. */
+    d.raw("mismo-money-paid", function(content){ moneyFeed = content; paintMoneyBanner(); });
     d.collection("outbox-sent").onSnapshot(function(snap){
       try{
         outboxSent = {};

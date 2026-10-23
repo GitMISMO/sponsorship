@@ -5204,25 +5204,32 @@ a series deal is counted once, at its full amount.</div>
     });
   }
 
-  function applyImport(){
-    if(!impPlan || !canWrite) return;
-    var picked = impPlan.changes.filter(function(c){ return c.on; });
-    if(!picked.length) return;
-
+  /* Save a set of payment changes (from the drawer's Apply, or applied automatically from
+     MISMO Money). Marking Paid tells the team, the same as marking it Paid on the record. */
+  function applyPaymentChanges(picked, source, by){
     picked.forEach(function(c){
       var after = JSON.parse(JSON.stringify(c.app));
       Object.keys(c.fields).forEach(function(k){ after[k] = c.fields[k]; });
       var said = [];
-      if(c.fields.status) said.push(impSource === "money" ? "marked Paid from MISMO Money" : "marked Paid from the Aptify export");
+      if(c.fields.status) said.push(source === "money" ? "marked Paid from MISMO Money" : "marked Paid from the Aptify export");
       if(c.fields.amountPaid !== undefined) said.push("amount paid set to " + money(c.fields.amountPaid));
       if(c.fields.billingName) said.push("billing name set to " + c.fields.billingName);
       saveApp(after);
-      addLog(after.appNo, said.join("; ") + " (order " + c.g.orderId + ")", whoAmI());
-      /* marking Paid here tells the team, the same as marking it Paid on the record */
+      addLog(after.appNo, said.join("; ") + " (order " + c.g.orderId + ")", by || whoAmI());
       if(c.fields.status === "Paid" && AUTO_SEND && db && canWrite && typeof QUEUE_KINDS !== "undefined" && QUEUE_KINDS.paid){
-        queueAlert("paid", after).catch(function(){});
+        var recent = outbox.some(function(o){ return o.kind === "paid" && outboxBelongs(o, after) &&
+                                                     Date.now() - Date.parse(o.queuedAt || 0) < 3600000; });
+        if(!recent) queueAlert("paid", after).catch(function(){});
       }
     });
+    return picked.length;
+  }
+
+  function applyImport(){
+    if(!impPlan || !canWrite) return;
+    var picked = impPlan.changes.filter(function(c){ return c.on; });
+    if(!picked.length) return;
+    applyPaymentChanges(picked, impSource);
 
     var n = picked.length, from = impSource === "money" ? "MISMO Money" : "the Aptify export";
     closeImport();
@@ -6260,25 +6267,65 @@ a series deal is counted once, at its full amount.</div>
     }
     return p;
   };
-  /* When MISMO Money has payments that would change records here, people who can edit are
-     told at the top of the page and can review them. Nothing changes until Apply. */
-  var moneyDismissed = "";
+  /* Payments from MISMO Money are recorded automatically (Jonna, October 23, 2026). The first
+     time a person who can edit opens the portal after MISMO Money has loaded new payments, every
+     change buildPlan() proposes is saved — a matched order marked Paid with its amount and date,
+     a billing name filled in, a refund's new amount — the Payment Made email goes to Jonna, Amy and
+     Kelly as usual, each record's history says "from MISMO Money", and a notice at the top lists
+     what was recorded. Nothing is ever marked unpaid. */
+  var moneyApplied = null, moneyBusy = false, outboxLoaded = false;
+  function autoApplyMoney(){
+    if(moneyBusy || !canWrite || !appsLoaded || !outboxLoaded || !AUTO_SEND) return false;
+    var p = moneyPlan();
+    if(!p || !p.changes.length) return false;
+    moneyBusy = true;
+    var done = p.changes.map(function(c){
+      return {company: c.app.company || c.app.appNo, appNo: c.app.appNo, paid: !!c.fields.status,
+              amount: c.fields.amountPaid, on: c.fields.paymentReceivedDate || "", billing: c.fields.billingName || ""};
+    });
+    applyPaymentChanges(p.changes, "money", "MISMO Money");
+    moneyApplied = (moneyApplied || []).concat(done);
+    setTimeout(function(){ moneyBusy = false; }, 30000);   // let the saves land before looking again
+    return true;
+  }
   function paintMoneyBanner(){
     var b = $("money-banner"); if(!b) return;
+    autoApplyMoney();
+    if(moneyApplied && moneyApplied.length){
+      var through = moneyFeed && moneyFeed.paymentsThrough ? fmtDate(String(moneyFeed.paymentsThrough).slice(0, 10)) : "";
+      b.className = "banner";
+      b.innerHTML = "<b>MISMO Money recorded " + moneyApplied.length + " payment" + (moneyApplied.length === 1 ? "" : "s") +
+        (through ? " (payments through " + esc(through) + ")" : "") + ".</b>" +
+        '<ul style="margin:6px 0 0 18px;padding:0;">' + moneyApplied.map(function(x){
+          return "<li><b>" + esc(x.company) + "</b> " + esc(x.appNo) + " \u2014 " +
+            (x.paid ? "marked Paid" : (x.amount !== undefined ? "amount corrected" : "billing name added")) +
+            (x.amount !== undefined ? ", " + esc(money(x.amount)) : "") + (x.on ? " on " + esc(fmtDate(x.on)) : "") +
+            (x.billing ? "; invoiced as " + esc(x.billing) : "") + "</li>";
+        }).join("") + "</ul>" +
+        '<div style="margin-top:6px;">Jonna, Amy and Kelly get the usual Payment Made email for each one marked Paid.</div>' +
+        '<div style="margin-top:9px;"><button class="btn ghost sm" type="button" id="money-ok">Got It</button></div>';
+      b.style.display = "";
+      $("money-ok").onclick = function(){ moneyApplied = null; b.style.display = "none"; };
+      return;
+    }
+    /* Sponsorship payments that match no record here — the check that found Innovis and
+       Schwartz Manente. Shown once per set of orders; "Not Now" is remembered in this browser. */
     var p = (canWrite && appsLoaded) ? moneyPlan() : null;
-    var n = p ? p.changes.length : 0;
-    var key = n + "|" + ((moneyFeed && moneyFeed.paymentsThrough) || "");
-    if(!n || moneyDismissed === key){ b.style.display = "none"; return; }
-    var through = moneyFeed.paymentsThrough ? fmtDate(String(moneyFeed.paymentsThrough).slice(0, 10)) : "";
+    var un = p ? p.unmatched : [];
+    var key = "mismo.sponsorship.moneyUnmatched";
+    var ids = un.map(function(g){ return g.orderId; }).sort().join(",");
+    var seen = ""; try{ seen = localStorage.getItem(key) || ""; }catch(e){}
+    if(!un.length || seen === ids){ b.style.display = "none"; return; }
     b.className = "banner";
-    b.innerHTML = "<b>MISMO Money has " + n + " payment" + (n === 1 ? "" : "s") + " to record here" +
-      (through ? " (payments through " + esc(through) + ")" : "") + ".</b> Review them before anything changes." +
+    b.innerHTML = "<b>MISMO Money has " + un.length + " sponsorship payment" + (un.length === 1 ? "" : "s") +
+      " that match" + (un.length === 1 ? "es" : "") + " no record here.</b> Usually an order number missing from a record, " +
+      "or a sponsor billed under another company name." +
       '<div style="margin-top:9px;display:flex;gap:8px;flex-wrap:wrap;">' +
-      '<button class="btn sm" type="button" id="money-review">Review Payments</button>' +
+      '<button class="btn sm" type="button" id="money-review">See Them</button>' +
       '<button class="btn ghost sm" type="button" id="money-later">Not Now</button></div>';
     b.style.display = "";
     $("money-review").onclick = function(){ openMoneyReview(); };
-    $("money-later").onclick = function(){ moneyDismissed = key; b.style.display = "none"; };
+    $("money-later").onclick = function(){ try{ localStorage.setItem(key, ids); }catch(e){} b.style.display = "none"; };
   }
   function listSig(a){
     var sl = listSlot(a);
@@ -6346,7 +6393,7 @@ a series deal is counted once, at its full amount.</div>
       }catch(err){ loadFailed("reading the activity log", err && err.message); }
     }, failed("loading the activity log"));
     d.collection("outbox").onSnapshot(function(snap){
-      try{ outbox = copyDocs(snap); renderAll(); }catch(err){}
+      try{ outbox = copyDocs(snap); outboxLoaded = true; renderAll(); paintMoneyBanner(); }catch(err){}
     }, function(){});
     /* Requests from the online prospectus. The intake flow adds each one to
        data/inbox.json (a file only the flow writes). The first signed-in person with

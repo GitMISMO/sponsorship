@@ -719,6 +719,10 @@
   .side-ft .theme-btn:hover{background:rgba(255,255,255,.09); color:#fff;
     border-color:transparent;}
   .side-ft .theme-btn .ico{width:17px; height:17px; opacity:.85;}
+  .side-stamp{padding:2px 10px 8px; font-size:11px; line-height:1.4; color:rgba(255,255,255,.6);}
+  .side-stamp b{color:rgba(255,255,255,.88); font-weight:600;}
+  .side-stamp.stale b{color:#f2b84b;}
+  .side.mini .side-stamp{display:none;}
 
   /* ---- the page ---- */
   .wrap{padding:24px 22px 90px;}
@@ -1086,6 +1090,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <button class="tab" data-view="help" type="button" title="Help"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-help"/></svg><span class="tlbl">Help</span></button>
   </nav>
   <div class="side-ft">
+    <!-- when MISMO Money last sent payments (October 26, 2026; like Member 360's "Payments updated") -->
+    <div class="side-stamp" id="money-stamp" hidden></div>
     <button class="theme-btn" id="theme-btn" type="button">
       <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-moon" id="theme-ico"/></svg>
       <span class="tlbl" id="theme-lab">Dark Mode</span>
@@ -1304,6 +1310,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
           </ul>
           <p>A notice at the top of the portal lists what was recorded. Jonna, Amy and Kelly get the usual Payment Made email for each record marked Paid, and each record&rsquo;s history says it came from MISMO Money.</p>
           <p>Sponsorship payments that match no record here get their own notice. Click <b>See Them</b> to look. It usually means an order ID is missing from a record, or a sponsor was billed under another company name.</p>
+          <p>The foot of the left panel shows <b>Payments updated</b> with the date and time MISMO Money last sent payment information. Point at it to see the latest payment date it covers. It turns amber if it&rsquo;s more than three days old, since MISMO Money normally updates every weekday morning.</p>
           <p><b>It never marks anything unpaid.</b> A payment missing from MISMO Money is not evidence that it wasn&rsquo;t paid.</p>
         </div>
       </details>
@@ -6470,8 +6477,27 @@ a series deal is counted once, at its full amount.</div>
     setTimeout(function(){ moneyBusy = false; }, 30000);   // let the saves land before looking again
     return true;
   }
+  /* "Payments updated …" at the foot of the left panel (October 26, 2026): when MISMO Money last
+     wrote its payments file (writtenAt), in this browser's time. Over three days old shows amber,
+     since MISMO Money normally writes it every weekday morning. */
+  function paintMoneyStamp(){
+    var el = $("money-stamp"); if(!el) return;
+    var w = moneyFeed && (moneyFeed.writtenAt || moneyFeed.savedAt);
+    var when = w ? new Date(w) : null;
+    if(when && isNaN(when)) when = null;
+    var through = moneyFeed && moneyFeed.paymentsThrough ? fmtDate(String(moneyFeed.paymentsThrough).slice(0, 10)) : "";
+    el.innerHTML = "Payments updated <b>" + (when
+      ? esc(when.toLocaleDateString("en-US", {month:"short", day:"numeric"}) + ", " +
+            when.toLocaleTimeString("en-US", {hour:"numeric", minute:"2-digit"}))
+      : "not yet") + "</b>";
+    el.title = when ? "From MISMO Money" + (through ? " \u00b7 payments through " + through : "")
+                    : "MISMO Money hasn\u2019t sent payment information yet";
+    el.classList.toggle("stale", !!when && (Date.now() - when.getTime()) > 3 * 864e5);
+    el.hidden = false;
+  }
   function paintMoneyBanner(){
     var b = $("money-banner"); if(!b) return;
+    paintMoneyStamp();
     autoApplyMoney();
     if(moneyApplied && moneyApplied.length){
       var through = moneyFeed && moneyFeed.paymentsThrough ? fmtDate(String(moneyFeed.paymentsThrough).slice(0, 10)) : "";

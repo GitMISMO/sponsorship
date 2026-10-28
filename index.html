@@ -1277,7 +1277,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div class="hbody">
           <ol>
             <li><b>Submitted.</b> A sponsor applies on the prospectus, or someone adds a New Application here. Amy and Kelly review it and set the <b>Amount Due</b>.</li>
-            <li><b>Approved.</b> Amy or Kelly clicks <b>Approved</b>. That emails Bernie the invoice request and emails Dillon and Jenny the logo request, and the opportunity comes off the public page.</li>
+            <li><b>Approved.</b> Amy or Kelly clicks <b>Approved</b>. That emails Bernie the invoice request and emails Vanessa and Jenny the logo request, and the opportunity comes off the public page.</li>
             <li><b>Pending Payment.</b> Bernie raises the invoice in Aptify and enters the <b>Aptify order ID</b>, the invoice date, the comp code and the number of comps. Entering the order ID moves it to Pending Payment.</li>
             <li><b>Paid.</b> When Aptify shows the invoice paid, MISMO Money tells the portal and the record is marked Paid on its own (see <b>Payments from MISMO Money</b>). It can also be marked Paid by hand on the record. Jonna, Amy and Kelly get the Payment Made email.</li>
           </ol>
@@ -1333,7 +1333,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div class="hbody">
           <ul>
             <li><b>Invoice Request</b>: to Bernie, Jonna copied. Sent when a sponsorship is approved.</li>
-            <li><b>Logo Request</b>: to Dillon and Jenny, Jonna, Amy and Kelly copied. Sent when a sponsorship is approved, with a link to the logo in Sponsor Logos when the sponsor uploaded one.</li>
+            <li><b>Logo Request</b>: to Vanessa and Jenny, Jonna, Amy and Kelly copied. Sent when a sponsorship is approved, with a link to the logo in Sponsor Logos when the sponsor uploaded one.</li>
             <li><b>Payment Made</b>: to Jonna, Amy and Kelly. Sent when a record is marked Paid, by hand or from MISMO Money.</li>
             <li><b>Payment Follow-Up</b>: to Bernie, Jonna, Amy and Kelly. Sent when someone clicks Send Alert on a chase.</li>
             <li><b>List Update</b>: no email. It updates the Sponsorship Requests list.</li>
@@ -1573,7 +1573,7 @@ a series deal is counted once, at its full amount.</div>
   /* "chase" (October 8, 2026): the Send Alert button for a payment follow-up goes through the
      flow like the others, instead of opening Outlook. */
   var QUEUE_KINDS = {invoice:true, logo:true, paid:true, status:true, chase:true};
-  var QUEUE_WHO = {invoice:"Bernie", logo:"Dillon and Jenny", paid:"Jonna, Amy and Kelly",
+  var QUEUE_WHO = {invoice:"Bernie", logo:"Vanessa and Jenny", paid:"Jonna, Amy and Kelly",
                    status:"the Sponsorship Requests list", chase:"Bernie, Jonna, Amy and Kelly"};
   var outboxSent = {};       // id -> {sentAt} from data/outbox-sent.json, written by the flow
   var ALERT_SECRET   = "mismo-sponsorship-portal";
@@ -1583,7 +1583,7 @@ a series deal is counted once, at its full amount.</div>
     kelly:   {name:"Kelly Bradshaw",   email:"kbradshaw@mismo.org"},
     jonna:   {name:"Jonna Critchley",  email:"jcritchley@mismo.org"},
     bernie:  {name:"Bernardo Jordan",  email:"bjordan@mba.org"},
-    dillon:  {name:"Dillon Tidgewell", email:"dtidgewell@mismo.org"},
+    vanessa: {name:"Vanessa Rios",     email:"vrios@mismo.org"},
     jenny:   {name:"Jenny Moss",       email:"jmoss@mismo.org"},
     rosalyn: {name:"Rosalyn Milliken", email:"rmilliken@mba.org"},
     perry:   {name:"Perry Williams",   email:"pwilliams@mismo.org"}
@@ -1837,7 +1837,7 @@ a series deal is counted once, at its full amount.</div>
     }
     if((a.status === "Approved" || a.status === "Pending Payment" || a.status === "Paid") &&
        !a.logoDone && !a.logoRequestSentAt){
-      t.push({kind:"logo", tone:"", owner:"Dillon Tidgewell and Jenny Moss",
+      t.push({kind:"logo", tone:"", owner:"Vanessa Rios and Jenny Moss",
         title:"Collect the Logo and Place the Sponsor",
         why:levelOf(a) ? (levelOf(a) + " tier — " + (oppLabel(a)||"sponsorship") + ". Logo needs to go everywhere it belongs.")
                        : "Logo needs to go everywhere it belongs.",
@@ -2103,7 +2103,7 @@ a series deal is counted once, at its full amount.</div>
     }
     if(kind === "logo"){
       return {
-        to:[PEOPLE.jonna, PEOPLE.amy, PEOPLE.dillon, PEOPLE.jenny, PEOPLE.kelly],
+        to:[PEOPLE.jonna, PEOPLE.amy, PEOPLE.vanessa, PEOPLE.jenny, PEOPLE.kelly],
         subject: a.company + " is a " + (lvl||"") + " Tier sponsor of the " + a.event + " Summit",
         body: a.company + " is a " + (lvl||"") + " Tier sponsor of the " + a.event + " Summit. " +
           "They will be sponsoring the " + (oppLabel(a)||"—") + ".\n\n" +
@@ -2124,7 +2124,7 @@ a series deal is counted once, at its full amount.</div>
         /* The version the messenger sends. [[LOGO LINK]] is swapped by the Sponsorship Alerts
            flow for a link straight to the file it finds in Sponsor Logos by logoRef. */
         autoBody: prospectusRef(a)
-          ? "Hi Dillon and Jenny,\n\n" + a.company + " is a " + (lvl||"") + " Tier sponsor of the " + a.event +
+          ? "Hi Vanessa and Jenny,\n\n" + a.company + " is a " + (lvl||"") + " Tier sponsor of the " + a.event +
             " Summit. They will be sponsoring the " + (oppLabel(a)||"\u2014") + ".\n\n" +
             "Logo: [[LOGO LINK]]\n\n" +
             "Please add it everywhere needed, then mark the logo Done on the application in the Sponsorship Portal.\n\n" +

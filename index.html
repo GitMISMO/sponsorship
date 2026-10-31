@@ -1309,7 +1309,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li>where Aptify bills a different company name (Innovis for Factual Data, for example), it is filled in as <b>Also Invoiced As</b>.</li>
           </ul>
           <p>A notice at the top of the portal lists what was recorded. Jonna, Amy and Kelly get the usual Payment Made email for each record marked Paid, and each record&rsquo;s history says it came from MISMO Money.</p>
-          <p>Sponsorship payments that match no record here get their own notice. Click <b>See Them</b> to look. It usually means an order ID is missing from a record, or a sponsor was billed under another company name.</p>
+          <p>Sponsorship payments that match no record here get their own notice. Click <b>See Them</b> to look. It usually means an order ID is missing from a record, or a sponsor was billed under another company name. An order is left off the notice when a record for the same company and the same summit or series is already Paid.</p>
           <p>The foot of the left panel shows <b>Payments updated</b> with the date and time MISMO Money last sent payment information. Point at it to see the latest payment date it covers. It turns amber if it&rsquo;s more than three days old, since MISMO Money normally updates every weekday morning.</p>
           <p><b>It never marks anything unpaid.</b> A payment missing from MISMO Money is not evidence that it wasn&rsquo;t paid.</p>
         </div>
@@ -5151,6 +5151,48 @@ a series deal is counted once, at its full amount.</div>
     });
   }
 
+  /* A Paid record with no invoice number, for the same company and the same summit or series
+     (Jonna, 31 Oct 2026). The 2026 records (AN00017-AN00038) were entered before invoice
+     numbers were kept, so their Aptify orders matched no record and filled the "match no record
+     here" notice with sponsorships already recorded as paid. Such an order is not listed. It is
+     never linked or changed either: adding the order number is what links a record, and the
+     amounts can differ (one Aptify order can carry more than the sponsorship). Each record
+     answers for one order. */
+  function nameWords(n){
+    return String(n || "").toLowerCase().replace(/[^a-z0-9]+/g, " ")
+      .split(" ").filter(function(w){ return w && !/^(llc|inc|corp|corporation|co|company|ltd|the|formerly)$/.test(w); });
+  }
+  function sameCompany(x, y){
+    var a = nameWords(x), b = nameWords(y);
+    if(!a.length || !b.length) return false;
+    if(a.length > b.length){ var t = a; a = b; b = t; }
+    for(var i = 0; i + a.length <= b.length; i++){
+      if(a.every(function(w, j){ return b[i + j] === w; })) return true;
+    }
+    return false;
+  }
+  function orderEvents(g){
+    var out = {};
+    g.productList.forEach(function(p){
+      var m = /(Winter|Spring|Fall)\s+Summit\s+(20\d\d)/i.exec(p);
+      if(m) out[m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase() + " " + m[2]] = 1;
+      m = /(20\d\d)\s+Series/i.exec(p);
+      if(m) out[m[1] + " Series"] = 1;
+    });
+    return out;
+  }
+  function paidRecordFor(g, used){
+    var ev = orderEvents(g);
+    return apps.some(function(a){
+      if(used[a.id] || a.status !== "Paid") return false;
+      if(String(a.invoiceNumber == null ? "" : a.invoiceNumber).trim()) return false;
+      if(!ev[String(a.event || "").trim()]) return false;
+      if(!sameCompany(g.company, a.company) && !sameCompany(g.company, a.billingName)) return false;
+      used[a.id] = 1;
+      return true;
+    });
+  }
+
   /* Work out what the files would change, without changing anything. byOrder is the
      per-order groups: from the dropped exports (groupOrders) or from MISMO Money's file
      (moneyGroups, October 23, 2026). */
@@ -5162,12 +5204,12 @@ a series deal is counted once, at its full amount.</div>
       if(inv) byInvoice[inv] = a;
     });
 
-    var changes = [], notes = [], unmatched = [], matched = 0;
+    var changes = [], notes = [], unmatched = [], matched = 0, usedPaid = {};
 
     Object.keys(byOrder).sort().forEach(function(oid){
       var g = byOrder[oid], a = byInvoice[oid];
       if(!a){
-        if(looksLikeSponsorship(g)) unmatched.push(g);
+        if(looksLikeSponsorship(g) && !paidRecordFor(g, usedPaid)) unmatched.push(g);
         return;
       }
       matched++;

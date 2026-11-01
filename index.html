@@ -5162,7 +5162,7 @@ a series deal is counted once, at its full amount.</div>
     return String(n || "").toLowerCase().replace(/[^a-z0-9]+/g, " ")
       .split(" ").filter(function(w){ return w && !/^(llc|inc|corp|corporation|co|company|ltd|the|formerly)$/.test(w); });
   }
-  function sameCompany(x, y){
+  function sameSponsor(x, y){
     var a = nameWords(x), b = nameWords(y);
     if(!a.length || !b.length) return false;
     if(a.length > b.length){ var t = a; a = b; b = t; }
@@ -5187,7 +5187,7 @@ a series deal is counted once, at its full amount.</div>
       if(used[a.id] || a.status !== "Paid") return false;
       if(String(a.invoiceNumber == null ? "" : a.invoiceNumber).trim()) return false;
       if(!ev[String(a.event || "").trim()]) return false;
-      if(!sameCompany(g.company, a.company) && !sameCompany(g.company, a.billingName)) return false;
+      if(!sameSponsor(g.company, a.company) && !sameSponsor(g.company, a.billingName)) return false;
       used[a.id] = 1;
       return true;
     });
@@ -6558,13 +6558,15 @@ a series deal is counted once, at its full amount.</div>
       return;
     }
     /* Sponsorship payments that match no record here — the check that found Innovis and
-       Schwartz Manente. Shown once per set of orders; "Not Now" is remembered in this browser. */
+       Schwartz Manente. "Not Now" is remembered in this browser. */
     var p = (canWrite && appsLoaded) ? moneyPlan() : null;
     var un = p ? p.unmatched : [];
     var key = "mismo.sponsorship.moneyUnmatched";
-    var ids = un.map(function(g){ return g.orderId; }).sort().join(",");
     var seen = ""; try{ seen = localStorage.getItem(key) || ""; }catch(e){}
-    if(!un.length || seen === ids){ b.style.display = "none"; return; }
+    /* Not Now holds until an order turns up that wasn't on the list then (Jonna, 1 Nov 2026):
+       a list that only got shorter stays hidden. Every order put aside is remembered. */
+    var put = {}; seen.split(",").forEach(function(x){ if(x) put[x] = 1; });
+    if(!un.length || un.every(function(g){ return put[g.orderId]; })){ b.style.display = "none"; return; }
     b.className = "banner";
     b.innerHTML = "<b>MISMO Money has " + un.length + " sponsorship payment" + (un.length === 1 ? "" : "s") +
       " that match" + (un.length === 1 ? "es" : "") + " no record here.</b> Usually an order number missing from a record, " +
@@ -6574,7 +6576,11 @@ a series deal is counted once, at its full amount.</div>
       '<button class="btn ghost sm" type="button" id="money-later">Not Now</button></div>';
     b.style.display = "";
     $("money-review").onclick = function(){ openMoneyReview(); };
-    $("money-later").onclick = function(){ try{ localStorage.setItem(key, ids); }catch(e){} b.style.display = "none"; };
+    $("money-later").onclick = function(){
+      un.forEach(function(g){ put[g.orderId] = 1; });
+      try{ localStorage.setItem(key, Object.keys(put).sort().join(",")); }catch(e){}
+      b.style.display = "none";
+    };
   }
   function listSig(a){
     var sl = listSlot(a);

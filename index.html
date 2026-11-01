@@ -624,7 +624,7 @@
      Jonna's request, so the two pages read as siblings. Everything below
      overrides what is above it by source order; nothing above was deleted,
      so the older rules still document why each piece exists.
-     Reference: https://claude.ai/artifact/MD5K6uazNMNLD3pf2iqsqy
+     Reference: the Website Migration HQ page.
      ====================================================================== */
 
   /* ---- tokens, straight from Migration HQ ---- */
@@ -1383,11 +1383,11 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>MISMO Money payments are recorded when the portal is opened.</b> The recording happens inside the portal. Payments are recorded the next time anyone who can edit opens it, not the moment MISMO Money loads them. If nobody opens the portal, nothing is recorded until someone does. Someone who can only view the portal doesn&rsquo;t trigger it.</li>
             <li><b>Some payments never reach MISMO Money.</b> Aptify payments recorded as an MBA ACH payment or by credit memo aren&rsquo;t in its payment exports. Kastle AI&rsquo;s $15,000 was one. Mark those Paid by hand on the record by entering the <b>Payment Received</b> date.</li>
             <li><b>MISMO Money covers recent payments only.</b> It covers payments from 1 January 2025 on. Older payments are already on their records.</li>
-            <li><b>Payment follow-ups need a click.</b> They don&rsquo;t send themselves on a timer. Claude&rsquo;s safety rules won&rsquo;t set up anything that emails people with nobody choosing to send it. The card shows when one is due.</li>
+            <li><b>Payment follow-ups need a click.</b> They don&rsquo;t send themselves on a timer, because nothing here emails people without someone choosing to send it. The card shows when one is due.</li>
             <li><b>Custom packages show one summit publicly.</b> The Sponsorship Requests list holds one row per sponsorship, so for a custom Series it carries the Winter choice. Spring and Fall choices show here on Inventory but not on the public page.</li>
             <li><b>The price list is kept in two places.</b> Tiers, prices and opportunities are in the prospectus <b>and</b> in this portal (for Inventory and custom packages). A change to one needs the same change in the other.</li>
             <li><b>The prospectus and this portal count availability separately.</b> The prospectus counts the Sponsorship Requests list; Inventory counts this portal&rsquo;s records. They agree as long as every change reaches the list.</li>
-            <li><b>New versions of this portal are uploaded by hand.</b> Claude builds the page, and Jonna uploads it to GitHub. Changes made straight to the live file are lost the next time it&rsquo;s rebuilt, so changes go through Claude.</li>
+            <li><b>Changes to this portal go through its GitHub repository.</b> Each change is reviewed there before it goes live, so don&rsquo;t edit the live file directly.</li>
           </ul>
         </div>
       </details>
@@ -1402,7 +1402,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>SharePoint, MISMO Summits site:</b> the Sponsorship Requests list and the Sponsor Logos library.</li>
             <li><b>Power Automate:</b> the intake flow (prospectus to list), the availability flow (list to prospectus) and the Sponsorship Team Emails flow (emails, list updates, Summit HQ).</li>
             <li><b>Sign-in and access:</b> MISMO Resources accounts, with Sponsorship access given per person.</li>
-            <li><b>The full record of decisions:</b> the MISMO Sponsorships project in Claude (programs/summits/PROGRAM.md).</li>
+            <li><b>The full record of decisions:</b> the MISMO Sponsorships project notes (programs/summits/PROGRAM.md).</li>
           </ul>
         </div>
       </details>
@@ -1544,18 +1544,18 @@ a series deal is counted once, at its full amount.</div>
      post to it automatically instead, with no clicking.
      ============================================================ */
   // Tried September 25, 2026 with the Sponsorship Alerts flow's address, and it does not work:
-  // a published Claude page is not allowed to call outside web addresses, so every post was
+  // the page's earlier host did not allow calls to outside web addresses, so every post was
   // refused and the page fell back to opening the mail app. Left empty on purpose.
   //
   // What sends the alerts instead (September 25, 2026): the page writes each alert into the
-  // shared "outbox" collection. A scheduled Claude task ("Sponsorship Portal Email Messenger",
+  // shared "outbox" collection. A scheduled task ("Sponsorship Portal Email Messenger",
   // Jonna's account, weekdays hourly) reads every outbox document still "queued", posts it to
-  // the Sponsorship Alerts flow, and marks it "sent" (or "failed" after three tries). Claude's
+  // the Sponsorship Alerts flow, and marks it "sent" (or "failed" after three tries). That task's
   // own sessions may reach Power Automate because an Owner allowlisted the flow's host in
   // Admin settings -> Capabilities. The page itself still can't.
   var ALERT_ENDPOINT = "";
   /* Switched OFF September 25, 2026: the scheduled messenger's unattended runs were stopped by
-     Claude's safety check before they could post to the flow, so queued emails would never go
+     the host's safety check before they could post to the flow, so queued emails would never go
      out. With this false, alerts open in the mail app as before. The outbox code stays; set this
      back to true only once something is actually delivering the outbox. */
   var AUTO_SEND = false;
@@ -2378,7 +2378,7 @@ a series deal is counted once, at its full amount.</div>
   }
 
   /* A destructive click needs confirming twice, in the page itself — never with
-     window.confirm(). Published Claude pages run the page in a sandboxed frame
+     window.confirm(). The page's earlier host ran it in a sandboxed frame
      that does not reliably allow the browser's native confirm dialog: calling it
      can silently do nothing (so a "Remove" button that only fires after confirm()
      returns true never fires at all) or silently block nothing (so a warning meant
@@ -6237,7 +6237,7 @@ a series deal is counted once, at its full amount.</div>
      relay answers 409; the page re-reads, re-applies ITS OWN change on top, and saves again,
      so two people editing different records never overwrite each other.
 
-     relayDb() gives the rest of the page the same small interface the Claude database had
+     relayDb() gives the rest of the page the same small interface the earlier database had
      (collection(...).onSnapshot, doc(...).set/update/delete), so nothing else changed. */
   var RELAY_URL = "https://rgvdi67cg27o5kcmiytcqbqnrm0hmztx.lambda-url.us-east-1.on.aws";
   var RELAY_PROJECT = "sponsorship";

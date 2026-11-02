@@ -5179,6 +5179,12 @@ a series deal is counted once, at its full amount.</div>
       m = /(20\d\d)\s+Series/i.exec(p);
       if(m) out[m[1] + " Series"] = 1;
     });
+    /* all three summits of a year bought on one order is that year's Series (Optimal Blue
+       6186772: Winter, Spring and Fall 2026, recorded as AN00024 "2026 Series", Nov 2, 2026) */
+    Object.keys(out).forEach(function(k){
+      var y = (/(20\d\d)$/.exec(k) || [])[1];
+      if(y && out["Winter " + y] && out["Spring " + y] && out["Fall " + y]) out[y + " Series"] = 1;
+    });
     return out;
   }
   function paidRecordFor(g, used){

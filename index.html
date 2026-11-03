@@ -316,6 +316,9 @@
   .st.paid{background:rgba(15,123,92,.15); color:var(--good);}
   .st.declined{background:rgba(179,55,44,.14); color:var(--bad);}
   .st.written{background:rgba(122,157,180,.2); color:var(--ink-3); text-decoration:line-through;}
+  /* In kind: recognized, but outside the blue-amber-green money ladder, so it reads as its
+     own thing rather than as a step on the way to being paid. */
+  .st.inkind{background:transparent; color:var(--navy-mid); box-shadow:inset 0 0 0 1px var(--navy-mid);}
   .st.new{background:rgba(36,119,184,.14); color:var(--c1);}
   .st.contacted{background:rgba(80,164,219,.2); color:var(--navy-mid);}
   .st.interested{background:rgba(15,123,92,.15); color:var(--good);}
@@ -833,7 +836,10 @@
   /* ---- Migration HQ cards, segments and legends — 27 September 2026 ---- */
   .cards{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px;
     margin-bottom:22px;}
-  .cards.pipe{grid-template-columns:repeat(4,minmax(0,1fr));}
+  /* Five stages since In Kind was added (November 3, 2026) — one row across, then three,
+     then two, so a stage box never sits on a row by itself. */
+  .cards.pipe{grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px;}
+  @media (max-width:1240px){ .cards.pipe{grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px;} }
   @media (max-width:1100px){ .cards{grid-template-columns:repeat(2,minmax(0,1fr));}
     .cards.pipe{grid-template-columns:repeat(2,minmax(0,1fr));} }
   @media (max-width:620px){ .cards, .cards.pipe{grid-template-columns:1fr;} }
@@ -1190,8 +1196,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <select id="f-status">
           <option value="">All Statuses</option>
           <option>Submitted</option><option>Approved</option>
-          <option>Pending Payment</option><option>Paid</option><option>Declined</option>
-          <option>Written Off</option>
+          <option>Pending Payment</option><option>Paid</option><option>In Kind</option>
+          <option>Declined</option><option>Written Off</option>
         </select>
         <input type="search" id="f-search" placeholder="Company, contact, order ID or application no.">
         <button class="btn sm" id="new-app" type="button"
@@ -1281,6 +1287,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>Pending Payment.</b> Bernie raises the invoice in Aptify and enters the <b>Aptify order ID</b>, the invoice date, the comp code and the number of comps. Entering the order ID moves it to Pending Payment.</li>
             <li><b>Paid.</b> When Aptify shows the invoice paid, MISMO Money tells the portal and the record is marked Paid on its own (see <b>Payments from MISMO Money</b>). It can also be marked Paid by hand on the record. Jonna, Amy and Kelly get the Payment Made email.</li>
           </ol>
+          <p><b>In Kind</b> is a sponsor who is recognized but never charged. Set <b>Sponsorship Type</b> to <b>In Kind</b> on the record. Approving it skips invoicing and payment altogether and moves it straight to <b>In Kind</b>: Bernie gets no invoice request, nothing is ever chased, and none of it reaches Committed, Collected, Outstanding or Overdue. It takes no opportunity off the list either — Inventory and the public prospectus carry on offering it, because a free sponsorship is recognition rather than a slot someone has bought. Vanessa still gets the logo request. The day after the last summit it covers, the company goes back on the <b>Prospects</b> list, noted as a prior in-kind sponsor, so the team can try to convert them to a paid sponsorship.</p>
           <p><b>Declined</b> closes a request that won&rsquo;t go ahead. <b>Written Off</b> is a sponsorship that went ahead but was never paid. It keeps the slot taken and counts as committed, but not as collected.</p>
         </div>
       </details>
@@ -1347,6 +1354,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div class="hbody">
           <ul>
             <li>The prospectus counts a slot as sold when its row on the list is <b>Approved</b>, <b>Pending Payment</b> or <b>Paid</b>. Sponsors see the change the next time they load the page.</li>
+            <li>An <b>In Kind</b> sponsorship reaches the list as <b>New</b>, which the prospectus does not count as sold, so its opportunity stays on offer. A free sponsorship takes nothing off the list.</li>
             <li>The portal updates the list on its own whenever a sponsorship&rsquo;s status, tier, opportunity or day changes. This only happens for sponsorships with a summit still to come, so editing an old record never changes what sponsors see.</li>
             <li>A sponsorship entered straight into the portal gets its row on its first update.</li>
             <li>The <b>List Update</b> button in a record&rsquo;s Alerts section sends it to the list again by hand.</li>
@@ -1372,6 +1380,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li>Everyone the Strategic Growth Team is cultivating. Give each one a <b>Next Follow-Up</b> date, and it turns up under <b>Needs Follow-Up</b> when that day comes.</li>
             <li>A prospect who applies comes off the list while the sponsorship runs (see <b>Sponsoring Now</b>). The day after it ends, it comes back ready to renew, with every note kept.</li>
             <li>Every sponsor gets a prospect record, so past sponsors show up to renew. <b>Delete Prospect</b> removes one for good, and the portal won&rsquo;t add it back on its own.</li>
+            <li>An <b>In Kind</b> sponsor comes back the same way, with a note saying they were recognized at no charge and are worth approaching for a paid sponsorship. They are counted as Retention, like any other returning sponsor.</li>
           </ul>
         </div>
       </details>
@@ -1650,7 +1659,13 @@ a series deal is counted once, at its full amount.</div>
        as the money shows up against its Aptify order ID. Bernie owns the chase when an
        invoice goes past 30 days — that part is a person's job, not a lookup. */
     {key:"Pending Payment", name:"Pending Payment",  owner:"Bernardo Jordan chases if overdue", next:"Paid automatically when the money lands"},
-    {key:"Paid",            name:"Paid",             owner:"—",                            next:"Complete"}
+    {key:"Paid",            name:"Paid",             owner:"—",                            next:"Complete"},
+    /* In kind (Jonna, November 3, 2026): Crittora, California Mortgage Bankers and the like
+       are recognized exactly like any other sponsor but are never charged, so they never
+       enter the invoice and payment stages and sit here instead. The day after their last
+       summit ends the prospect sync puts them back on the Prospects list, to be worked for
+       a paid sponsorship. */
+    {key:"In Kind",         name:"In Kind",          owner:"—",                            next:"Complete · nothing to invoice"}
   ];
 
   /* The statuses a record can move to from where it is. The buttons in the record
@@ -1661,6 +1676,7 @@ a series deal is counted once, at its full amount.</div>
     "Approved":        ["Declined"],
     "Pending Payment": ["Written Off"],
     "Paid":            ["Pending Payment"],
+    "In Kind":         ["Declined"],
     "Declined":        ["Submitted"],
     "Written Off":     ["Pending Payment"]
   };
@@ -1669,6 +1685,7 @@ a series deal is counted once, at its full amount.</div>
     "Approved":        "Entering the Aptify order ID below moves this to Pending Payment by itself — there is no button for it.",
     "Pending Payment": "The payment check marks this Paid by itself once the money shows up in the Financial System. Use the Payment buttons below only to record it sooner. Write it off only when the money will never arrive.",
     "Paid":            "Moving it back to Pending Payment clears the payment date and the amount paid.",
+    "In Kind":         "Recognized as a sponsor at no charge — there is no invoice and nothing to chase. Switch Sponsorship Type back to Paid above to put it into the invoice flow.",
     "Declined":        "Moving it back to Submitted puts it in front of Amy and Kelly again.",
     "Written Off":     "Moving it back to Pending Payment puts it back in the chase."
   };
@@ -1751,7 +1768,7 @@ a series deal is counted once, at its full amount.</div>
   function tierLabel(k){ return String(k||"").charAt(0).toUpperCase() + String(k||"").slice(1).toLowerCase(); }
   function stClass(s){
     return {"Submitted":"submitted","Approved":"approved","Pending Payment":"pending",
-            "Paid":"paid","Declined":"declined","Written Off":"written"}[s] || "submitted";
+            "Paid":"paid","In Kind":"inkind","Declined":"declined","Written Off":"written"}[s] || "submitted";
   }
   function leadStClass(s){ return LEAD_TONE[s] || "new"; }
   /* A number is never handed out twice (October 7, 2026): a deleted application's number
@@ -1802,7 +1819,8 @@ a series deal is counted once, at its full amount.</div>
     if(a.status === "Submitted"){
       t.push({kind:"review", tone:"", owner:"Amy Moses and Kelly Bradshaw",
         title:"Review and Approve", why:"Waiting since " + fmtDate(a.dateSubmitted) +
-        (a.amountDue ? "" : " — the amount due has not been set yet."), field:"amountDue"});
+        (a.inKind ? " — in kind, so there is nothing to charge. Approving it moves it straight to In Kind."
+                  : (a.amountDue ? "" : " — the amount due has not been set yet.")), field:"amountDue"});
     }
     if(a.status === "Approved" && !a.invoiceRequestSentAt){
       t.push({kind:"invoice", tone:"warn", owner:"Bernardo Jordan",
@@ -1834,8 +1852,10 @@ a series deal is counted once, at its full amount.</div>
           field:"lastFollowUpDate", alert:"chase"});
       }
     }
-    if((a.status === "Approved" || a.status === "Pending Payment" || a.status === "Paid") &&
-       !a.logoDone && !a.logoRequestSentAt){
+    /* In Kind is in this list on purpose: an in-kind sponsor is recognized everywhere a
+       paying one is, so their logo still has to be collected and placed. */
+    if((a.status === "Approved" || a.status === "Pending Payment" || a.status === "Paid" ||
+        a.status === "In Kind") && !a.logoDone && !a.logoRequestSentAt){
       t.push({kind:"logo", tone:"", owner:"Vanessa Rios",
         title:"Collect the Logo and Place the Sponsor",
         why:levelOf(a) ? (levelOf(a) + " tier — " + (oppLabel(a)||"sponsorship") + ". Logo needs to go everywhere it belongs.")
@@ -2010,7 +2030,10 @@ a series deal is counted once, at its full amount.</div>
           engagementType:"Retention", contactName:a.contactName || "", contactEmail:a.contactEmail || "",
           status:"Converted to Application", linkedAppNo:a.appNo, createdDate:iso(t),
           history:[{at:iso(t), who:"Sponsorship Portal",
-            text:"Added from application " + appLine(a) + ", so it comes back here to renew when the sponsorship ends."}]};
+            text:"Added from " + (a.inKind ? "in-kind application " : "application ") + appLine(a) +
+                 (a.inKind
+                   ? ", so it comes back here when the sponsorship ends, to be worked for a paid sponsorship."
+                   : ", so it comes back here to renew when the sponsorship ends.")}]};
         leads.push(l); byCo[k] = 1; made++;
         changes.push(l);
       });
@@ -2030,9 +2053,16 @@ a series deal is counted once, at its full amount.</div>
         } else if(RETURN_FROM[l.status]){
           var past = lastEndedApp(l);
           if(past){
+            /* An in-kind sponsor comes back the same way a paying one does, but says so:
+               the point of having them here is to see whether they will pay next time
+               (Jonna, November 3, 2026). Acquisition and Retention keep their own meanings
+               (has this company sponsored before), so this stays Retention. */
             l.history = (l.history || []).concat([{at:iso(t), who:"Sponsorship Portal",
-              text:"Sponsorship " + appLine(past.a) + " ended " + fmtDate(iso(past.ends)) +
-                   ". Back on the Prospects list to renew."}]);
+              text:(past.a.inKind ? "In-kind sponsorship " : "Sponsorship ") + appLine(past.a) +
+                   " ended " + fmtDate(iso(past.ends)) +
+                   (past.a.inKind
+                     ? ". They were recognized at no charge. Back on the Prospects list — worth approaching for a paid sponsorship."
+                     : ". Back on the Prospects list to renew.")}]);
             l.status = "Follow Up"; l.engagementType = "Retention";
             l.season = renewSeason(past.ends); l.nextFollowUpDate = iso(t);
             l.linkedAppNo = past.a.appNo; changed = true;
@@ -2227,8 +2257,12 @@ a series deal is counted once, at its full amount.</div>
      so nothing is silently lost. */
   /* Portal status -> the list's Status choices. Written Off keeps the slot taken on the
      public page (the sponsor had it), so it goes to the list as Approved. */
+  /* In Kind goes to the list as New, which the prospectus does NOT count as sold
+     (Jonna, November 3, 2026): a free sponsorship takes no opportunity off the list, so
+     the public page has to go on offering it. Written Off still goes as Approved — that
+     sponsor did hold the slot. */
   var LIST_STATUS = {"Submitted":"New", "Approved":"Approved", "Pending Payment":"Pending Payment",
-                     "Paid":"Paid", "Declined":"Declined", "Written Off":"Approved"};
+                     "Paid":"Paid", "In Kind":"New", "Declined":"Declined", "Written Off":"Approved"};
   function queueAlert(kind, a){
     if(!QUEUE_KINDS[kind]) return Promise.reject(new Error("not an automatic email"));
     if(!db || !canWrite) return Promise.reject(new Error("not connected"));
@@ -2440,7 +2474,7 @@ a series deal is counted once, at its full amount.</div>
      "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate","paymentStatus",
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
      "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day","workshopName",
-     "updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
+     "inKind","updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
     return d;
   }
 
@@ -2626,13 +2660,16 @@ a series deal is counted once, at its full amount.</div>
 
   function totals(list){
     var t = {committed:0, collected:0, invoiced:0, approved:0, outstanding:0, overdue:0, overdueN:0,
-             live:0, written:0, writtenN:0};
+             live:0, written:0, writtenN:0, inKindN:0};
     (list || apps).forEach(function(a){
       if(a.status === "Declined") return;
       var due = Number(a.amountDue||0), paid = Number(a.amountPaid||0);
       // Written off: they committed and they had the sponsorship, but the money
       // will never arrive. It stays in Committed and counts as neither collected
       // nor outstanding, and it raises nothing to chase.
+      // In kind: recognized as a sponsor, never charged. It is not committed, not collected,
+      // not outstanding and not overdue, and it leaves nothing to chase (November 3, 2026).
+      if(a.status === "In Kind" || a.inKind){ t.inKindN++; return; }
       if(a.status === "Written Off"){ t.committed += due; t.written += due; t.writtenN++; return; }
       if(a.status === "Paid"){ t.committed += due; t.collected += paid || due; }
       else if(a.status === "Pending Payment"){ t.committed += due; t.invoiced += due; t.outstanding += due; }
@@ -2725,6 +2762,7 @@ a series deal is counted once, at its full amount.</div>
     $("stats").innerHTML =
       card("Committed", money(t.committed), list.length + " " + what + (list.length===1?"":"s") +
            (scopeYear === "all" ? "" : " for " + scopeYear) +
+           (t.inKindN ? " · " + t.inKindN + " in kind" : "") +
            (t.written ? " · " + money(t.written) + " written off" : ""), "") +
       card("Collected", money(t.collected), "cash received", "good") +
       card("Outstanding", money(t.outstanding), t.live + " not yet paid", "") +
@@ -2763,7 +2801,7 @@ a series deal is counted once, at its full amount.</div>
               (flags ? '<span class="chip ch-bad">' + flags + ' overdue</span>' : '') +
             '</div>' +
           '</div>' +
-          '<p class="next">' + esc(money(sum)) + '</p>' +
+          '<p class="next">' + esc(s.key === "In Kind" ? "No charge" : money(sum)) + '</p>' +
         '</div>' +
         '</button>';
     });
@@ -2821,8 +2859,8 @@ a series deal is counted once, at its full amount.</div>
       extras += '<div class="srow-info">Invoice request ' + esc(obI ? outboxWord(obI) : "already sent") +
         (obI && obI.status === "failed" ? '' : ' — waiting on Bernie') + '.</div>';
     }
-    if((s.key === "Approved" || s.key === "Pending Payment" || s.key === "Paid") &&
-       !a.logoDone && a.logoRequestSentAt){
+    if((s.key === "Approved" || s.key === "Pending Payment" || s.key === "Paid" ||
+        s.key === "In Kind") && !a.logoDone && a.logoRequestSentAt){
       var obL = outboxFor(a, "logo");
       extras += '<div class="srow-info">Logo request ' + esc(obL ? outboxWord(obL) : "already sent") +
         (obL && obL.status === "failed" ? '. ' : ' — waiting to be placed. ') +
@@ -2865,7 +2903,7 @@ a series deal is counted once, at its full amount.</div>
 
     $("s-name").textContent = s.name;
     $("s-sub").textContent = list.length + (list.length===1 ? " application · " : " applications · ") +
-      money(sum) + " · " + s.next + (s.owner !== "—" ? " · " + s.owner : "") +
+      (s.key === "In Kind" ? "no charge" : money(sum)) + " · " + s.next + (s.owner !== "—" ? " · " + s.owner : "") +
       (unscoped ? " · every season" : "");
 
     var note = unscoped
@@ -3318,6 +3356,7 @@ a series deal is counted once, at its full amount.</div>
         var due  = Number(a.amountDue||0) * sh.share;
         var paid = Number(a.amountPaid || a.amountDue || 0) * sh.share;
         if(a.status === "Declined"){ b.declined += due; }
+        else if(a.status === "In Kind" || a.inKind){ /* recognized, never charged: no money either way */ }
         else if(a.status === "Written Off"){ b.written += due; }
         else if(a.status === "Paid"){ b.collected += paid; }
         else if(a.status === "Pending Payment"){ b.invoiced += due; }
@@ -3458,7 +3497,7 @@ a series deal is counted once, at its full amount.</div>
     var allTier = {};
     rolls.forEach(function(r){
       r.b.rows.forEach(function(row){
-        if(row.a.status === "Declined") return;
+        if(row.a.status === "Declined" || row.a.inKind || row.a.status === "In Kind") return;
         var l = levelOf(row.a) || "Unassigned";
         var g = allTier[l] = allTier[l] || {collected:0, invoiced:0, approved:0, written:0, committed:0, n:0};
         if(row.a.status === "Paid") g.collected += row.paid;
@@ -3535,7 +3574,7 @@ a series deal is counted once, at its full amount.</div>
     var byCo = {};
     rolls.forEach(function(r){
       r.b.rows.forEach(function(row){
-        if(row.a.status === "Declined") return;
+        if(row.a.status === "Declined" || row.a.inKind || row.a.status === "In Kind") return;
         var co = row.a.company || "—";
         (byCo[co] = byCo[co] || {}); byCo[co][r.s.year] = (byCo[co][r.s.year]||0) + row.due;
       });
@@ -3629,7 +3668,7 @@ a series deal is counted once, at its full amount.</div>
     // tier mix for this summit
     var byTier = {};
     b.rows.forEach(function(r){
-      if(r.a.status === "Declined") return;
+      if(r.a.status === "Declined" || r.a.inKind || r.a.status === "In Kind") return;
       var l = levelOf(r.a) || "Unassigned";
       var g = byTier[l] = byTier[l] || {collected:0, invoiced:0, approved:0, written:0, committed:0, n:0};
       if(r.a.status === "Paid") g.collected += r.paid;
@@ -3730,6 +3769,10 @@ a series deal is counted once, at its full amount.</div>
   function counts(a){
     // Written Off is included: the sponsor had the slot even though the money
     // never came, so releasing it here could sell the same thing twice.
+    // In Kind is deliberately NOT included (Jonna, November 3, 2026): a free sponsorship
+    // is recognition, not an opportunity off the list. It takes no slot, so the same
+    // opportunity is still there to be sold to someone who will pay for it.
+    if(a.inKind) return false;
     return a.status === "Approved" || a.status === "Pending Payment" ||
            a.status === "Paid" || a.status === "Written Off";
   }
@@ -4038,7 +4081,9 @@ a series deal is counted once, at its full amount.</div>
     if(a.id === draft) note = "<b>Not saved yet.</b> This is a blank application, numbered " + esc(a.appNo) +
       " and dated today. Fill in the company, the contact and what they are sponsoring, then press Save — " +
       "nothing reaches the shared record until you do. Close this without saving and it is thrown away.";
-    else if(stage === "Submitted") note = "<b>Waiting on Amy and Kelly.</b> Set the amount due, then move the status to Approved — that raises the invoice request and moves it to Pending Payment.";
+    else if(stage === "Submitted") note = a.inKind
+      ? "<b>Waiting on Amy and Kelly.</b> This is an in-kind sponsorship, so there is no amount to set. Moving the status to Approved recognizes them and moves it straight to In Kind — no invoice, nothing to chase."
+      : "<b>Waiting on Amy and Kelly.</b> Set the amount due, then move the status to Approved — that raises the invoice request and moves it to Pending Payment.";
     else if(stage === "Approved") note = "<b>Waiting on Bernie.</b> Enter the Aptify order ID, the invoice date, the sponsor comp code and the number of comps. The status moves to Pending Payment once the order ID is in.";
     else if(stage === "Pending Payment"){
       var c = chaseState(a);
@@ -4046,6 +4091,15 @@ a series deal is counted once, at its full amount.</div>
         (c.overdue ? ("Overdue — chase " + (c.count+1) + " is due.") : (c.nextDue ? ("Next chase " + fmtDate(iso(c.nextDue)) + ".") : "")) +
         " The payment check looks for this four times a day on weekdays and marks it Paid on its own " +
         "once the money reaches the Financial System. Entering a payment received date does the same thing by hand.";
+    }
+    else if(stage === "In Kind"){
+      var ike = sponsorshipEnds(a);
+      note = "<b>Recognized in kind.</b> A free sponsorship: they are not charged, so no invoice is " +
+        "raised and nothing is chased, and it takes no opportunity off the list — Inventory and the " +
+        "public prospectus still offer it to anyone who will pay for it. The logo is still collected. " +
+        (ike ? ("The day after " + fmtDate(iso(ike)) + " they go back on the Prospects list")
+             : "Once their last summit has passed they go back on the Prospects list") +
+        ", to be worked for a paid sponsorship.";
     }
     else if(stage === "Paid") note = "<b>Complete.</b> Paid " + fmtDate(a.paymentReceivedDate) + ".";
     else if(stage === "Written Off") note = "<b>Written off as bad debt.</b> " + money(a.amountDue) +
@@ -4102,8 +4156,27 @@ a series deal is counted once, at its full amount.</div>
       '</div>' +
       (MOVE_HINT[a.status] ? '<div class="fldnote">' + esc(MOVE_HINT[a.status]) + '</div>' : '') +
       '</div>' +
+      /* Paid or in kind (Jonna, November 3, 2026). In kind is recognized exactly like any
+         other sponsorship but is never charged, so switching it here is what takes the
+         record out of the invoice and payment flow, not a separate status button. */
+      '<div class="fld" style="margin-top:12px;"><label>Sponsorship Type</label><div class="statusrow">' +
+        ["Paid","In Kind"].map(function(v){
+          var on = (v === "In Kind") === !!a.inKind;
+          return '<button class="btn ' + (on ? "" : "ghost ") + 'sm" type="button" ' +
+                 'data-setkind="' + esc(v) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+                 esc(v) + '</button>';
+        }).join("") +
+      '</div>' +
+      '<div class="fldnote">' + (a.inKind
+        ? 'A free sponsorship. No invoice is raised and nothing is chased, none of it reaches Committed, ' +
+          'Collected, Outstanding or Overdue, and no opportunity is taken off Inventory or the public ' +
+          'prospectus. The logo is still collected.'
+        : 'Switch to <b>In Kind</b> for a sponsor who is recognized but never charged — Crittora and ' +
+          'California Mortgage Bankers, for example. Approving an in-kind request skips invoicing entirely.') +
+      '</div></div>' +
       '<div class="grid2" style="margin-top:12px;">' +
-      fld("Amount Due","amountDue","number") +
+      (a.inKind ? roFld("Amount Due", "$0", "in kind — never charged")
+                : fld("Amount Due","amountDue","number")) +
       /* Next to Amount Due at Jonna's request (September 25, 2026), so Amy and Kelly fill in
          both from the new-request email in one place. */
       fld("Prospectus Reference","prospectusRef") +
@@ -4122,6 +4195,12 @@ a series deal is counted once, at its full amount.</div>
       fld("Acceptance Date","acceptanceDate","date") +
       '</div></div>';
 
+    if(a.inKind){
+      html += '<div class="dsect"><h4>Invoicing and Payment</h4>' +
+        '<div class="fldnote" style="margin-top:0;">Nothing to invoice. An in-kind sponsor is never billed, ' +
+        'so there is no Aptify order ID, no invoice date and no payment to chase. Switch <b>Sponsorship ' +
+        'Type</b> to <b>Paid</b> above if this sponsorship should be charged after all.</div></div>';
+    } else {
     html += '<div class="dsect"><h4>Invoicing</h4><div class="grid2">' +
       fld("Invoice Number (Aptify)","invoiceNumber") + fld("Invoice Date","invoiceDate","date") +
       fld("Sponsor Comp Code","compCode") + fld("Number of Comps","numComps","number") +
@@ -4157,6 +4236,7 @@ a series deal is counted once, at its full amount.</div>
         '</div>';
     }
     html += '</div>';
+    }   /* end of the invoicing and payment sections a paid sponsorship gets */
 
     var logoNow = a.logoDone ? "Done" : "Pending";
     html += '<div class="dsect"><h4>Logo</h4>' +
@@ -4363,7 +4443,7 @@ a series deal is counted once, at its full amount.</div>
     "opportunity","dateSubmitted","approvedDate","contractAccepted","acceptanceName","acceptanceDate",
     "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate",
     "paymentStatus","paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes",
-    "comments","logoDone","prospectusRef","custom","day","workshopName"];
+    "comments","logoDone","prospectusRef","custom","day","workshopName","inKind"];
   function changedFields(before, after){
     var out = [];
     var str = function(v){ return (v === undefined || v === null) ? "" : (typeof v === "object" ? JSON.stringify(v) : String(v)); };
@@ -4390,20 +4470,47 @@ a series deal is counted once, at its full amount.</div>
       fired.push("contract acceptance dated " + fmtDate(t));
     }
 
-    // 3. Approval stamps its date and asks Bernie for an invoice.
+    /* 2a. In kind carries no money at any stage (November 3, 2026). Clearing these here,
+       rather than only when the type is switched, means a record can never be left holding
+       an amount or an order ID that the money figures would then have to know to ignore. */
+    if(after.inKind){
+      after.amountDue = 0; after.amountPaid = ""; after.paymentStatus = "";
+      after.invoiceNumber = ""; after.invoiceDate = ""; after.paymentReceivedDate = "";
+      after.lastFollowUpDate = ""; after.followUpCount = "";
+    }
+
+    // 3. Approval stamps its date and asks Bernie for an invoice — unless it is in kind,
+    //    which is never invoiced, so only the logo request goes out.
     if(before.status !== "Approved" && after.status === "Approved"){
       if(!after.approvedDate) after.approvedDate = t;
-      fired.push("approved — invoice request raised for Bernie");
-      after.__alert_invoice = true;
+      if(after.inKind){
+        fired.push("approved in kind — no invoice raised");
+      } else {
+        fired.push("approved — invoice request raised for Bernie");
+        after.__alert_invoice = true;
+      }
       after.__alert_logo = true;
     }
 
     // 4. An order ID moves it from Approved to Pending Payment.
-    if(after.status === "Approved" && after.invoiceNumber){
+    if(!after.inKind && after.status === "Approved" && after.invoiceNumber){
       after.status = "Pending Payment";
       if(!after.invoiceDate) after.invoiceDate = t;
       if(!after.paymentStatus) after.paymentStatus = "Pending";
       fired.push("invoiced — now awaiting payment");
+    }
+
+    // 4a. An in-kind sponsorship skips invoicing and payment: approving it lands it in
+    //     In Kind, where it stays until its last summit has passed.
+    if(after.inKind && after.status === "Approved"){
+      after.status = "In Kind";
+      fired.push("recognized as an in-kind sponsor — nothing to invoice");
+    }
+
+    // 4b. Turning In Kind off puts the record back into the invoice flow at Approved.
+    if(!after.inKind && after.status === "In Kind"){
+      after.status = "Approved";
+      fired.push("no longer in kind — back to Approved for invoicing");
     }
 
     // 5. A payment received date marks the whole thing paid.
@@ -5941,6 +6048,25 @@ a series deal is counted once, at its full amount.</div>
         }
         setField("status", ns);
         doSave();
+      }
+      ev.stopPropagation(); return;
+    }
+    if((el = ev.target.closest("[data-setkind]"))){
+      if(current){
+        var wantInKind = el.getAttribute("data-setkind") === "In Kind";
+        if(!!current.inKind !== wantInKind){
+          /* Every money field is cleared through setField, not just on the record in memory,
+             so the inputs still on screen can't write their old values back on save. */
+          setField("inKind", wantInKind ? true : "");
+          if(wantInKind){
+            setField("amountDue", 0); setField("amountPaid", ""); setField("paymentStatus", "");
+            setField("invoiceNumber", ""); setField("invoiceDate", "");
+            setField("paymentReceivedDate", ""); setField("lastFollowUpDate", "");
+            setField("followUpCount", "");
+            if(current.status === "Pending Payment" || current.status === "Paid") setField("status", "Approved");
+          }
+          doSave();
+        }
       }
       ev.stopPropagation(); return;
     }

@@ -6735,6 +6735,10 @@ a series deal is counted once, at its full amount.</div>
      full and lets it be edited, and Send is the only thing that puts it in the outbox
      for the messenger to deliver (Jonna, November 3, 2026). */
   var BILL_CC = "jcritchley@mismo.org; amoses@mismo.org; kbradshaw@mismo.org";
+  /* the AI webinar series is run with MBA, so a past-due notice goes to David Upbin there
+     and to Amy, with Jonna copied (Jonna, November 3, 2026) */
+  var BILL_MBA_TO = "DUpbin@mba.org; amoses@mismo.org";
+  var BILL_MBA_CC = "jcritchley@mismo.org";
 
   function billDraft(kind, r){
     var cfg = BILL[kind];
@@ -6759,12 +6763,12 @@ a series deal is counted once, at its full amount.</div>
     var o = billOverdue(r);
     return {
       kind: "wb-pastdue",
-      to: r.draftTo || "",
-      cc: "jcritchley@mismo.org",
+      to: r.draftTo || BILL_MBA_TO,
+      cc: BILL_MBA_CC,
       subject: "Past Due — AI Webinar Sponsorship — " + (r.company || "") +
                (r.invoiceNumber ? " — Invoice " + r.invoiceNumber : ""),
-      body: "Hello,\n\n" +
-        "An AI webinar series sponsorship is past due and I wanted to flag it for your team.\n\n" +
+      body: "Hi David and Amy,\n\n" +
+        "An AI webinar series sponsorship is past due and I wanted to flag it.\n\n" +
         "Sponsor: " + (r.company || "") + "\n" +
         "Webinar: " + (r.webinar || "") + "\n" +
         "Invoice: " + (r.invoiceNumber || "—") +
@@ -6807,7 +6811,7 @@ a series deal is counted once, at its full amount.</div>
       '<div class="fldnote" style="margin-top:0;">' + why + '</div>' +
       '<div class="grid2" style="margin-top:12px;">' +
         '<div class="fld"><label for="bx-draftTo">To</label><input id="bx-draftTo" data-bkey="draftTo" type="text" value="' + esc(d.to) + '"' +
-          (kind === "webinar" && !d.to ? ' placeholder="MBA contact for the series"' : '') + '></div>' +
+          '></div>' +
         '<div class="fld"><label for="bx-draftCc">Cc</label><input id="bx-draftCc" data-bkey="draftCc" type="text" value="' + esc(d.cc) + '"></div>' +
       '</div>' +
       '<div class="fld"><label for="bx-draftSubject">Subject</label>' +

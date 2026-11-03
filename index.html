@@ -6821,9 +6821,31 @@ a series deal is counted once, at its full amount.</div>
       (d.attach ? '<div class="fldnote">Attached when it goes out: ' + esc(d.attach) + '.</div>' : '') +
       '<input type="hidden" data-bkey="draftKind" value="' + esc(d.kind) + '">' +
       '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">' +
-        '<button class="btn sm" type="button" id="bd-send">Send</button>' +
+        '<button class="btn sm" type="button" id="bd-send">Send from the Portal</button>' +
+        '<button class="btn ghost sm" type="button" id="bd-outlook">Open in Outlook</button>' +
         '<button class="btn ghost sm" type="button" id="bd-redraft">Start the Draft Again</button>' +
-      '</div>' + sent + '</div>';
+      '</div>' +
+      '<div class="fldnote">Either way nothing goes until you press one. <b>Send from the Portal</b> queues it for the ' +
+      'messenger to deliver as written. <b>Open in Outlook</b> hands it to your mail app, addressed and written, ' +
+      'for you to send as yourself.</div>' + sent + '</div>';
+  }
+
+  /* The same drafted message, handed to the mail app instead of the messenger. Nothing is
+     queued and nothing is recorded as sent until it actually goes \u2014 pressing this marks
+     the draft as handed over so the record says what happened (November 3, 2026). */
+  function billOutlook(){
+    if(!billCur) return;
+    var kind = billCurKind, after = collectBill();
+    var q = "?cc=" + encodeURIComponent(after.draftCc || "") +
+            "&subject=" + encodeURIComponent(after.draftSubject || "") +
+            "&body=" + encodeURIComponent(after.draftBody || "");
+    window.location.href = "mailto:" + encodeURIComponent(after.draftTo || "").replace(/%40/g, "@") + q;
+    after.sentAt = new Date().toISOString();
+    after.sentBy = whoAmI() + " (opened in Outlook)";
+    saveBill(kind, after);
+    addLog(after.no, "opened the " + (kind === "workgroup" ? "invoice email" : "past-due notice") +
+      " in Outlook for " + (after.draftTo || ""), whoAmI());
+    billCur = after; openBill(kind, after.id);
   }
 
   function billSend(){
@@ -6845,6 +6867,11 @@ a series deal is counted once, at its full amount.</div>
       /* this one carries its own wording: the person approved exactly this text */
       to: plain(after.draftTo), cc: plain(after.draftCc),
       subject: plain(after.draftSubject, 300), bodyText: plain(after.draftBody, 6000),
+      /* The messenger drops the text straight into an HTML email, where a line break is
+         nothing at all \u2014 so the line breaks are made into <br> here rather than in the
+         flow, where the expression editor is unreliable (November 3, 2026). The plain
+         text above is kept for anyone reading the outbox. */
+      bodyHtml: plain(after.draftBody, 6000).replace(/\n/g, "<br>"),
       recordNo: plain(after.no), company: plain(after.company),
       invoiceNumber: plain(after.invoiceNumber), amountDue: plain(money(after.amountDue)),
       line: kind === "workgroup" ? "Workgroup Sponsorship" : "AI Webinar Series",
@@ -6892,6 +6919,7 @@ a series deal is counted once, at its full amount.</div>
       saveBillDrawer(); ev.stopPropagation(); return;
     }
     if(ev.target.closest("#bd-send")){ billSend(); ev.stopPropagation(); return; }
+    if(ev.target.closest("#bd-outlook")){ billOutlook(); ev.stopPropagation(); return; }
     if(ev.target.closest("#bd-redraft")){
       ["draftTo","draftCc","draftSubject","draftBody","draftKind"].forEach(function(k){ billCur[k] = ""; });
       var k2 = billCurKind, id2 = billCur.id;

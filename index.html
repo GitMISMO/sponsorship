@@ -319,6 +319,14 @@
   /* In kind: recognized, but outside the blue-amber-green money ladder, so it reads as its
      own thing rather than as a step on the way to being paid. */
   .st.inkind{background:transparent; color:var(--navy-mid); box-shadow:inset 0 0 0 1px var(--navy-mid);}
+  /* the second line inside a cell on the billing tables */
+  .sub2{font-size:12px; color:var(--ink-3); margin-top:2px; white-space:nowrap;}
+  .sub2.bad{color:var(--bad); font-weight:600;}
+  .farch{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-2);
+    white-space:nowrap; flex:0 0 auto; cursor:pointer;}
+  /* .filters input gives every box a 190px floor; a tick box must not take that */
+  .filters .farch input{min-width:0; width:14px; height:14px; padding:0; margin:0; flex:0 0 auto;
+    border-radius:3px; accent-color:var(--c1);}
   .st.new{background:rgba(36,119,184,.14); color:var(--c1);}
   .st.contacted{background:rgba(80,164,219,.2); color:var(--navy-mid);}
   .st.interested{background:rgba(15,123,92,.15); color:var(--good);}
@@ -1089,6 +1097,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="navgrp">Work</div>
     <button class="tab on" data-view="pipeline" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pipe"/></svg><span class="tlbl">Pipeline</span><span class="pip quiet" id="pip-pipe">0</span></button>
     <button class="tab" data-view="leads" type="button" title="Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Prospects</span></button>
+    <button class="tab" data-view="workgroup" type="button" title="Workgroup Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-apps"/></svg><span class="tlbl">Workgroups</span><span class="pip quiet" id="pip-workgroup">0</span></button>
+    <button class="tab" data-view="webinar" type="button" title="AI Webinar Series"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">AI Webinars</span><span class="pip quiet" id="pip-webinar">0</span></button>
     <div class="navgrp">Records</div>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
@@ -1180,6 +1190,61 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <th>Next Follow-Up</th><th>Last Contact</th>
           </tr></thead>
           <tbody id="leads-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ================= WORKGROUP SPONSORSHIPS ================= -->
+  <section class="view" id="view-workgroup">
+    <div class="headline">
+      <div class="hl-top"><div class="hl-date" id="bill-date-workgroup"></div></div>
+      <div class="hl-say" id="bill-say-workgroup"></div>
+      <div class="stats" id="bill-stats-workgroup"></div>
+    </div>
+    <div class="panel">
+      <div class="filters">
+        <select id="f-bill-status-workgroup" aria-label="Status">
+          <option value="">All Statuses</option>
+          <option>Draft</option><option>Pending Payment</option><option>Paid</option>
+          <option>Cancelled</option><option>Waived</option>
+        </select>
+        <input type="search" id="f-bill-search-workgroup" placeholder="Company, contact, group or order ID">
+        <label class="farch"><input type="checkbox" id="f-bill-archived-workgroup"> Show Archived</label>
+        <button class="btn sm" data-newbill="workgroup" type="button" title="Opens a blank record">New Sponsorship</button>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>No.</th><th>Company</th><th>MISMO Group</th><th>Status</th><th class="r">Amount</th><th class="r">Paid</th><th>Invoice</th><th>Invoice Date</th></tr></thead>
+          <tbody id="bill-body-workgroup"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AI WEBINAR SERIES ================= -->
+  <section class="view" id="view-webinar">
+    <div class="headline">
+      <div class="hl-top"><div class="hl-date" id="bill-date-webinar"></div></div>
+      <div class="hl-say" id="bill-say-webinar"></div>
+      <div class="stats" id="bill-stats-webinar"></div>
+    </div>
+    <div class="panel">
+      <div class="filters">
+        <select id="f-bill-status-webinar" aria-label="Status">
+          <option value="">All Statuses</option>
+          <option>Draft</option><option>Pending Payment</option><option>Paid</option>
+          <option>Cancelled</option><option>Waived</option>
+        </select>
+        <input type="search" id="f-bill-search-webinar" placeholder="Company, contact, webinar or order ID">
+        
+        <button class="btn sm" data-newbill="webinar" type="button" title="Opens a blank record">New Webinar Sponsorship</button>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>No.</th><th>Company</th><th>Webinar</th><th>Status</th><th class="r">Invoiced</th><th class="r">MISMO Half</th><th class="r">Paid</th><th>Invoice</th></tr></thead>
+          <tbody id="bill-body-webinar"></tbody>
         </table>
       </div>
     </div>
@@ -1374,6 +1439,34 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
       </details>
 
       <details class="hsec">
+        <summary>Workgroup Sponsorships</summary>
+        <div class="hbody">
+          <ul>
+            <li>A company sponsoring one MISMO group for a term. The first one is the <b>Initial</b>; each cycle after it is a numbered <b>Renewal</b>. Cadence is Annual or Quarterly.</li>
+            <li><b>None of it touches the summits.</b> No prospectus, no event, no tier, no inventory. It is its own revenue line and its own tab.</li>
+            <li><b>Draft</b> means no invoice is out yet. Entering the <b>Aptify order ID</b> moves it to <b>Pending Payment</b> by itself, exactly like a summit sponsorship.</li>
+            <li><b>Payment arrives on its own.</b> MISMO Money matches on the Aptify order ID, which these records hold as the invoice number, and marks the record Paid. No one watches for it by hand.</li>
+            <li><b>The invoice email is drafted, never sent.</b> The record shows the message in full &mdash; recipients, subject, body. Read it, change anything, then press <b>Send</b>. Nothing leaves until you do.</li>
+            <li><b>Raise the Next Renewal On</b> is the date the following cycle should be invoiced, carried over from the tracker.</li>
+            <li>Archived sponsors are hidden until you tick <b>Show Archived</b>, and the figures follow whatever is on screen.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>The AI Webinar Series with MBA</summary>
+        <div class="hbody">
+          <ul>
+            <li>The joint MISMO and MBA series. <b>MISMO raises the invoice and the revenue is split in half.</b> Every figure shows what was invoiced and what MISMO keeps.</li>
+            <li>Terms are <b>net 30</b>. The due date is taken from the record, or counted 30 days from the invoice date when there isn&rsquo;t one.</li>
+            <li>An invoice past its due date is flagged on the row and in the figures, and the rail carries the count.</li>
+            <li><b>The past-due notice to MBA&rsquo;s team is drafted, never sent.</b> It names the sponsor, the webinar, the invoice, the due date, how many days over and the split. Read it, add the recipient, then press <b>Send</b>. It refuses to send without a recipient.</li>
+            <li>Payment arrives from MISMO Money the same way it does everywhere else in this portal &mdash; matched on the Aptify order ID. A webinar sponsorship marked Paid raises no sponsor email; only summit sponsorships do that.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
         <summary>Prospects</summary>
         <div class="hbody">
           <ul>
@@ -1406,7 +1499,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div class="hbody">
           <ul>
             <li><b>This portal&rsquo;s page:</b> GitHub, GitMISMO/sponsorship.</li>
-            <li><b>Its records:</b> GitHub, GitMISMO/sponsorship-data (private). That&rsquo;s applications, prospects, the email requests and the payments file MISMO Money writes, which the portal only reads.</li>
+            <li><b>Its records:</b> GitHub, GitMISMO/sponsorship-data (private). That&rsquo;s applications, prospects, workgroup sponsorships, webinar sponsorships, the email requests and the payments file MISMO Money writes, which the portal only reads.</li>
             <li><b>The prospectus:</b> GitHub, GitMISMO/Sponsorship-Prospectus.</li>
             <li><b>SharePoint, MISMO Summits site:</b> the Sponsorship Requests list and the Sponsor Logos library.</li>
             <li><b>Power Automate:</b> the intake flow (prospectus to list), the availability flow (list to prospectus) and the Sponsorship Team Emails flow (emails, list updates, Summit HQ).</li>
@@ -1524,6 +1617,23 @@ a series deal is counted once, at its full amount.</div>
 </aside>
 
 <div class="scrim" id="lead-scrim"></div>
+<aside class="drawer" id="bill-drawer" aria-hidden="true">
+  <div class="dhead">
+    <div>
+      <h3 id="bd-company">—</h3>
+      <div class="dsub" id="bd-sub">—</div>
+    </div>
+<button class="widebtn" type="button" data-wide="1" aria-pressed="false" aria-label="Expand the panel" title="Expand"><svg class="i-max" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-expand"/></svg><svg class="i-min" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-shrink"/></svg></button>
+    <button class="dclose" id="bd-close" type="button" aria-label="Close">&times;</button>
+  </div>
+  <div class="dbody" id="bd-body"></div>
+  <div class="dfoot">
+    <button class="btn" id="bd-save" type="button">Save</button>
+    <button class="btn ghost" id="bd-cancel" type="button">Cancel</button>
+    <span class="savemsg" id="bd-msg"></span>
+  </div>
+</aside>
+
 <aside class="drawer" id="lead-drawer" aria-hidden="true">
   <div class="dhead">
     <div>
@@ -2641,6 +2751,14 @@ a series deal is counted once, at its full amount.</div>
         "as taken once it is Approved \u2014 the same moment it should come off the public page."},
     money: {t:"Where the Money Is",
       s:"Every summit side by side. Pick a year and a season below to open one on its own."},
+    workgroup: {t:"Workgroup Sponsorships",
+      s:"A company sponsoring one MISMO group for a term — Initial, then a numbered Renewal each cycle. " +
+        "None of it comes from the public prospectus and none of it touches summit inventory. Payments arrive " +
+        "from MISMO Money against the Aptify order ID, the same as a summit sponsorship. Select a row to open its record."},
+    webinar: {t:"AI Webinar Series",
+      s:"The joint MISMO and MBA series. MISMO raises the invoice and the revenue is split in half, so every figure " +
+        "shows what was invoiced and what MISMO keeps. Terms are net 30; a past-due notice for MBA\u2019s team is " +
+        "drafted on the record for you to approve. Select a row to open its record."},
     log: {t:"Activity", s:"Every status change and every alert sent, most recent first."},
     help: {t:"How the Sponsorship Portal Works",
       s:"The process from application to payment, what happens automatically, who gets which email, " +
@@ -2656,7 +2774,7 @@ a series deal is counted once, at its full amount.</div>
   }
 
   /* ---------------- rendering ---------------- */
-  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); scheduleProspectSync(); }
+  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); renderBilling(); scheduleProspectSync(); }
 
   function totals(list){
     var t = {committed:0, collected:0, invoiced:0, approved:0, outstanding:0, overdue:0, overdueN:0,
@@ -5312,9 +5430,12 @@ a series deal is counted once, at its full amount.</div>
   function buildPlan(byOrder){
     byOrder = byOrder || groupOrders();
     var byInvoice = {};
-    apps.forEach(function(a){
+    /* Workgroup sponsorships and webinar sponsorships are matched here too (November 3,
+       2026): they carry an Aptify order ID in exactly the same field, so one pass over all
+       three kinds is all it takes. applyPaymentChanges saves each one back to its own store. */
+    apps.concat(typeof billAll === "function" ? billAll() : []).forEach(function(a){
       var inv = String(a.invoiceNumber == null ? "" : a.invoiceNumber).trim();
-      if(inv) byInvoice[inv] = a;
+      if(inv && !byInvoice[inv]) byInvoice[inv] = a;
     });
 
     var changes = [], notes = [], unmatched = [], matched = 0, usedPaid = {};
@@ -5461,7 +5582,8 @@ a series deal is counted once, at its full amount.</div>
             '<input type="checkbox" data-imp="' + i + '"' + (c.on ? " checked" : "") + '>' +
             '<span class="impmain">' +
               '<span class="impco">' + esc(c.app.company || "—") + '</span>' +
-              '<span class="impmeta">' + esc(c.app.appNo) + ' · ' + esc(c.app.event) +
+              '<span class="impmeta">' + esc(c.app.appNo || c.app.no || "") + ' · ' +
+                esc(c.app.event || (c.app.__kind === "webinar" ? "AI Webinar Series" : "Workgroup Sponsorship")) +
                 ' · order ' + esc(c.g.orderId) + '</span>' +
               '<span class="impwhy">' + c.why.map(esc).join(" ") + '</span>' +
               '<span class="impdelta">' + bits.join(" · ") + '</span>' +
@@ -5557,6 +5679,14 @@ a series deal is counted once, at its full amount.</div>
       if(c.fields.status) said.push(source === "money" ? "marked Paid from MISMO Money" : "marked Paid from the Aptify export");
       if(c.fields.amountPaid !== undefined) said.push("amount paid set to " + money(c.fields.amountPaid));
       if(c.fields.billingName) said.push("billing name set to " + c.fields.billingName);
+      /* a workgroup or webinar sponsorship goes back to its own store, and raises no
+         sponsor email — the Payment Made note is a summit thing */
+      if(after.__kind){
+        var bk = after.__kind; delete after.__kind;
+        saveBill(bk, after);
+        addLog(after.no, said.join("; ") + " (order " + c.g.orderId + ")", by || whoAmI());
+        return;
+      }
       saveApp(after);
       addLog(after.appNo, said.join("; ") + " (order " + c.g.orderId + ")", by || whoAmI());
       if(c.fields.status === "Paid" && AUTO_SEND && db && canWrite && typeof QUEUE_KINDS !== "undefined" && QUEUE_KINDS.paid){
@@ -6140,6 +6270,648 @@ a series deal is counted once, at its full amount.</div>
     }
   });
 
+
+  /* ============================================================
+     BILLING LINES (November 3, 2026)
+     Two revenue streams that have nothing to do with the summit prospectus:
+
+       Workgroup Sponsorships — a company sponsors one MISMO group for a term,
+       Initial and then a numbered Renewal each cycle. Came off the Workgroup
+       Sponsorship Tracker spreadsheet.
+
+       AI Webinar Series — the joint MISMO/MBA series. MISMO raises the invoice
+       and MISMO and MBA split the money in half. Net 30, and MBA's team is told
+       when one goes past due. Came off the MISMO_MBA AI Webinar tracker.
+
+     Underneath they are the same thing: a company, an Aptify invoice, an amount
+     and a payment. So they share this one module, differing only in their field
+     list and their email. Payments reach them exactly the way they reach a summit
+     sponsorship — matched on the Aptify order ID, which these records hold as the
+     invoice number (see buildPlan).
+
+     Nothing here ever emails anyone on its own. Every message is drafted onto the
+     record, shown in full, and sent only when someone presses Send (Jonna,
+     November 3, 2026).
+     ============================================================ */
+
+  var BILL_STATUSES = ["Draft", "Pending Payment", "Paid", "Cancelled", "Waived"];
+  var BILL_MOVES = {
+    "Draft":           ["Cancelled"],
+    "Pending Payment": ["Paid", "Cancelled"],
+    "Paid":            ["Pending Payment"],
+    "Cancelled":       ["Draft"],
+    "Waived":          ["Draft"]
+  };
+  var BILL_HINT = {
+    "Draft":           "No invoice is out yet. Entering the Aptify order ID below moves this to Pending Payment by itself.",
+    "Pending Payment": "The payment check marks this Paid on its own once the money reaches the Financial System, the same as a summit sponsorship. Use the Payment buttons only to record it sooner.",
+    "Paid":            "Moving it back to Pending Payment clears the payment date and the amount paid.",
+    "Cancelled":       "Nothing is chased and none of it counts as money. Moving it back to Draft puts it in the run again.",
+    "Waived":          "Given at no charge. It counts as a sponsorship but never as money."
+  };
+  var BILL_GRACE = 30;   // net 30 on both lines
+
+  var BILL = {
+    workgroup: {
+      key:"workgroup", coll:"workgroups", prefix:"WG",
+      name:"Workgroup Sponsorships", one:"workgroup sponsorship",
+      sub:"A company sponsoring one MISMO group for a term — Initial, then a numbered Renewal each cycle. " +
+          "Nothing here comes from the public prospectus, and none of it touches summit inventory. Payments " +
+          "arrive from MISMO Money against the Aptify order ID, the same as a summit sponsorship.",
+      titleOf: function(r){ return r.workgroup || "—"; },
+      termOf: function(r){
+        var t = String(r.term || "").trim();
+        if(/^renewal/i.test(t)) return "Renewal " + (r.renewalNumber || "");
+        return t || "Initial";
+      },
+      /* half the money is MISMO's on the webinar line; all of it is here */
+      share: 1
+    },
+    webinar: {
+      key:"webinar", coll:"webinars", prefix:"WB",
+      name:"AI Webinar Series", one:"webinar sponsorship",
+      sub:"The joint MISMO and MBA series. MISMO raises the invoice and the revenue is split in half, so every " +
+          "figure below shows what was invoiced and what MISMO keeps. Terms are net 30, and a past-due notice " +
+          "for MBA's team is drafted here for approval — it is never sent on its own.",
+      titleOf: function(r){ return r.webinar || "—"; },
+      termOf: function(r){ return "Webinar"; },
+      share: 0.5
+    }
+  };
+
+  var wgs = [], webinars = [];
+  var wgsSeen = false, webinarsSeen = false;
+  function billList(kind){ return kind === "webinar" ? webinars : wgs; }
+  function billSet(kind, arr){ if(kind === "webinar") webinars = arr; else wgs = arr; }
+  function billKindOf(r){ return r && r.__kind === "webinar" ? "webinar" : "workgroup"; }
+
+  /* every record in the portal that carries an Aptify invoice, whatever kind it is.
+     buildPlan matches payments across all of them on the order ID. */
+  function billAll(){
+    return wgs.map(function(r){ r.__kind = "workgroup"; return r; })
+      .concat(webinars.map(function(r){ r.__kind = "webinar"; return r; }));
+  }
+
+  function billNo(kind){
+    var cfg = BILL[kind], max = 0, re = new RegExp("^" + cfg.prefix + "0*(\\d+)$");
+    billList(kind).forEach(function(r){ var m = re.exec(r.no || ""); if(m) max = Math.max(max, +m[1]); });
+    var n = String(max + 1); while(n.length < 5) n = "0" + n;
+    return cfg.prefix + n;
+  }
+
+  /* when the money is owed by: the due date on the record, else net 30 from the invoice */
+  function billDue(r){
+    if(r.dueDate) return parseDate(r.dueDate);
+    var inv = parseDate(r.invoiceDate); if(!inv) return null;
+    var d = new Date(inv); d.setDate(d.getDate() + BILL_GRACE); return d;
+  }
+  function billOverdue(r){
+    if(r.status !== "Pending Payment") return {late:false, days:0, due:null};
+    var due = billDue(r); if(!due) return {late:false, days:0, due:null};
+    var t = today();
+    return {late: t > due, days: Math.max(0, daysBetween(due, t)), due:due};
+  }
+  function billMoney(r){ return Number(r.amountDue || 0); }
+  function billShare(kind, v){ return Math.round(v * BILL[kind].share * 100) / 100; }
+
+  /* The records the figures describe: the same set the table is showing, so Invoiced
+     never counts years of archived history that is not on screen (November 3, 2026).
+     The status and search boxes narrow the table only — the cards would jump about. */
+  function billScope(kind){
+    var f = billFilter[kind];
+    return billList(kind).filter(function(r){
+      return !(kind === "workgroup" && !f.archived && r.archived);
+    });
+  }
+  function billTotals(kind){
+    var t = {invoiced:0, collected:0, outstanding:0, overdue:0, overdueN:0, n:0, draft:0, waived:0};
+    billScope(kind).forEach(function(r){
+      if(r.status === "Cancelled") return;
+      t.n++;
+      var due = billMoney(r);
+      if(r.status === "Waived"){ t.waived++; return; }
+      if(r.status === "Draft"){ t.draft += due; return; }
+      t.invoiced += due;
+      if(r.status === "Paid"){ t.collected += Number(r.amountPaid || due); return; }
+      t.outstanding += due;
+      var o = billOverdue(r);
+      if(o.late){ t.overdue += due; t.overdueN++; }
+    });
+    return t;
+  }
+
+  /* ---------------- persistence ---------------- */
+  var BILL_FIELDS = ["no","company","status","invoiceNumber","invoiceDate","dueDate","amountDue",
+    "amountPaid","paymentReceivedDate","aptifyCustomerId","contactName","contactEmail","statusNotes",
+    "systemNotes","archived","updatedAt",
+    /* workgroup only */ "workgroup","cadence","term","renewalNumber","periodStart","periodEnd",
+    "renewalInvoiceDate","sponsorName","sponsorAddress","logoMismo","logoConnect","logoAgendas",
+    /* webinar only */ "webinar",
+    /* the drafted message, and when it was approved and sent */
+    "draftTo","draftCc","draftSubject","draftBody","draftKind","sentAt","sentBy"];
+  function billDoc(r){
+    var d = {};
+    BILL_FIELDS.forEach(function(k){ if(r[k] !== undefined && r[k] !== "") d[k] = r[k]; });
+    return d;
+  }
+  function saveBill(kind, r){
+    r.updatedAt = new Date().toISOString();
+    if(billDraftId === r.id) billDraftId = null;
+    var arr = billList(kind), i = -1;
+    for(var k = 0; k < arr.length; k++){ if(arr[k].id === r.id){ i = k; break; } }
+    if(i >= 0) arr[i] = r; else arr.push(r);
+    renderBilling();
+    if(!db || !canWrite) return Promise.resolve();
+    return db.doc(BILL[kind].coll + "/" + r.id).set(billDoc(r)).catch(function(e){
+      if(e && e.code === "invalid_argument"){ canWrite = false; readOnlyNotice(); }
+    });
+  }
+
+  /* ---------------- the field list each kind shows ---------------- */
+  function billSpec(kind, r){
+    var common = {
+      sponsor: [["Company","company","text"], ["Contact Name","contactName","text"],
+                ["Contact Email","contactEmail","email"], ["Aptify Customer ID","aptifyCustomerId","text"]],
+      invoicing: [["Invoice Number (Aptify)","invoiceNumber","text"], ["Invoice Date","invoiceDate","date"],
+                  ["Amount Due","amountDue","number"], ["Payment Due","dueDate","date"]],
+      payment: [["Amount Paid","amountPaid","number"], ["Payment Received","paymentReceivedDate","date"]],
+      notes: [["Status Notes","statusNotes","textarea"], ["System Notes","systemNotes","textarea"]]
+    };
+    if(kind === "workgroup"){
+      common.detail = [["MISMO Group","workgroup","text"],
+        ["Cadence","cadence","select",["","Annual","Quarterly"]],
+        ["Initial or Renewal","term","select",["","Initial","Renewal"]],
+        ["Renewal Number","renewalNumber","number"],
+        ["Invoice Period Starts","periodStart","date"],
+        ["Invoice Period Ends","periodEnd","date"],
+        ["Raise the Next Renewal On","renewalInvoiceDate","date"]];
+      common.contract = [["Sponsor Name on Contract","sponsorName","text"],
+        ["Sponsor Address on Contract","sponsorAddress","textarea"]];
+    } else {
+      common.detail = [["Webinar","webinar","text"]];
+    }
+    return common;
+  }
+
+  /* ---------------- rendering ---------------- */
+  var billFilter = {workgroup:{status:"", q:"", archived:false}, webinar:{status:"", q:""}};
+
+  function billRows(kind){
+    var f = billFilter[kind], q = (f.q || "").toLowerCase();
+    return billList(kind).filter(function(r){
+      if(kind === "workgroup" && !f.archived && r.archived) return false;
+      if(f.status && r.status !== f.status) return false;
+      if(q){
+        var hay = [r.no, r.company, r.contactName, r.contactEmail, r.invoiceNumber,
+                   BILL[kind].titleOf(r)].join(" ").toLowerCase();
+        if(hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    }).sort(function(x, y){
+      var a = x.invoiceDate || x.periodStart || "", b = y.invoiceDate || y.periodStart || "";
+      if(a !== b) return a < b ? 1 : -1;
+      return (y.no || "") < (x.no || "") ? -1 : 1;
+    });
+  }
+
+  function billStats(kind){
+    var t = billTotals(kind), cfg = BILL[kind], half = cfg.share !== 1;
+    var el = $("bill-stats-" + kind); if(!el) return;
+    el.innerHTML =
+      card("Invoiced", money(t.invoiced),
+           t.n + (t.n === 1 ? " sponsorship" : " sponsorships") +
+           (t.draft ? " · " + money(t.draft) + " not yet invoiced" : "") +
+           (t.waived ? " · " + t.waived + " waived" : ""), "") +
+      card(half ? "Collected · MISMO Keeps Half" : "Collected",
+           money(t.collected) + (half ? " · " + money(billShare(kind, t.collected)) : ""),
+           half ? "cash received, and MISMO's share" : "cash received", "good") +
+      card("Outstanding", money(t.outstanding) + (half ? " · " + money(billShare(kind, t.outstanding)) : ""),
+           (t.overdueN ? t.overdueN + " past due" : "none past due"), "") +
+      card("Past Due", money(t.overdue), t.overdueN + " over the " + BILL_GRACE + "-day mark",
+           t.overdueN ? "alert" : "");
+  }
+
+  function billHeadline(kind){
+    var t = billTotals(kind), el = $("bill-say-" + kind); if(!el) return;
+    var late = billScope(kind).filter(function(r){ return billOverdue(r).late; })
+      .sort(function(x, y){ return billOverdue(y).days - billOverdue(x).days; });
+    var say;
+    if(late.length){
+      say = "<em class=\"hl-late\">" + late.length + "</em> invoice" + (late.length === 1 ? " is" : "s are") +
+        " past due — <b>" + esc(late[0].company || late[0].no) + "</b> the longest, " +
+        billOverdue(late[0]).days + " days over.";
+    } else if(t.draft){
+      say = "<em>" + money(t.draft) + "</em> is ready to invoice and not out yet.";
+    } else if(t.outstanding){
+      say = "<em>" + money(t.outstanding) + "</em> is out and awaiting payment, none of it past due.";
+    } else if(t.collected){
+      say = "Everything invoiced has been collected — <em>" + money(t.collected) + "</em>.";
+    } else {
+      say = "Nothing is recorded here yet.";
+    }
+    $("bill-date-" + kind).textContent = "Today · " + new Date().toLocaleDateString("en-US",
+      {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+    el.innerHTML = say;
+  }
+
+  function billTable(kind){
+    var el = $("bill-body-" + kind); if(!el) return;
+    var list = billRows(kind), cfg = BILL[kind], half = cfg.share !== 1;
+    if(!list.length){
+      el.innerHTML = '<tr><td colspan="' + (half ? 8 : 8) + '"><div class="empty">No ' +
+        esc(cfg.one) + 's match.</div></td></tr>';
+      return;
+    }
+    el.innerHTML = list.map(function(r){
+      var o = billOverdue(r);
+      return '<tr data-bill="' + esc(kind) + '" data-billid="' + esc(r.id) + '">' +
+        '<td>' + esc(r.no || "—") + '</td>' +
+        '<td><b>' + esc(r.company || "—") + '</b>' +
+          (r.contactName ? '<div class="sub2">' + esc(r.contactName) + '</div>' : '') + '</td>' +
+        '<td>' + esc(cfg.titleOf(r)) +
+          (kind === "workgroup" ? '<div class="sub2">' + esc(cfg.termOf(r)) +
+             (r.cadence ? " · " + esc(r.cadence) : "") + '</div>' : '') + '</td>' +
+        '<td><span class="st ' + billClass(r.status) + '">' + esc(r.status || "Draft") + '</span>' +
+          (o.late ? '<div class="sub2 bad">' + o.days + ' days past due</div>' : '') + '</td>' +
+        '<td class="r num">' + esc(money(r.amountDue)) + '</td>' +
+        (half ? '<td class="r num">' + esc(money(billShare(kind, billMoney(r)))) + '</td>' : '') +
+        '<td class="r num">' + (r.amountPaid ? esc(money(r.amountPaid)) : "—") + '</td>' +
+        '<td>' + (r.invoiceNumber ? esc(r.invoiceNumber) : "—") + '</td>' +
+        (half ? '' : '<td>' + (r.invoiceDate ? esc(fmtDate(r.invoiceDate)) : "—") + '</td>') +
+        '</tr>';
+    }).join("");
+  }
+  function billClass(s){
+    return {"Draft":"submitted", "Pending Payment":"pending", "Paid":"paid",
+            "Cancelled":"declined", "Waived":"inkind"}[s] || "submitted";
+  }
+  function renderBilling(){
+    ["workgroup","webinar"].forEach(function(k){
+      billStats(k); billHeadline(k); billTable(k);
+      /* the rail count is what is waiting on someone: not invoiced yet, or past due */
+      var n = billScope(k).filter(function(r){
+        return r.status === "Draft" || billOverdue(r).late;
+      }).length;
+      var pip = $("pip-" + k);
+      if(pip){ pip.textContent = n; pip.className = "pip" + (n ? "" : " quiet"); }
+    });
+  }
+
+  /* ---------------- the record panel ---------------- */
+  var billCur = null, billCurKind = null, billDraftId = null;
+
+  function billFld(label, key, type, opts){
+    var v = billCur[key];
+    v = (v === undefined || v === null) ? "" : v;
+    var id = 'bx-' + key;
+    if(type === "textarea"){
+      return '<div class="fld"><label for="' + id + '">' + esc(label) + '</label>' +
+        '<textarea id="' + id + '" data-bkey="' + esc(key) + '" rows="3">' + esc(v) + '</textarea></div>';
+    }
+    if(type === "select"){
+      return '<div class="fld"><label for="' + id + '">' + esc(label) + '</label><select id="' + id +
+        '" data-bkey="' + esc(key) + '">' + (opts || []).map(function(o){
+          return '<option' + (String(o) === String(v) ? " selected" : "") + '>' + esc(o) + '</option>';
+        }).join("") + '</select></div>';
+    }
+    return '<div class="fld"><label for="' + id + '">' + esc(label) + '</label>' +
+      '<input id="' + id + '" data-bkey="' + esc(key) + '" type="' + (type || "text") + '" value="' + esc(v) + '"></div>';
+  }
+  function billSect(title, fields){
+    if(!fields || !fields.length) return "";
+    var wide = fields.filter(function(f){ return f[2] === "textarea"; });
+    var grid = fields.filter(function(f){ return f[2] !== "textarea"; });
+    return '<div class="dsect"><h4>' + esc(title) + '</h4>' +
+      (grid.length ? '<div class="grid2">' + grid.map(function(f){ return billFld(f[0], f[1], f[2], f[3]); }).join("") + '</div>' : '') +
+      wide.map(function(f){ return billFld(f[0], f[1], f[2]); }).join("") + '</div>';
+  }
+
+  function openBill(kind, id){
+    closeDrawer(); closeLeadDrawer();
+    var r = null, arr = billList(kind);
+    for(var i = 0; i < arr.length; i++){ if(arr[i].id === id){ r = arr[i]; break; } }
+    if(!r) return;
+    billCur = JSON.parse(JSON.stringify(r)); billCurKind = kind;
+    var cfg = BILL[kind], o = billOverdue(r);
+    $("bd-company").textContent = r.company || "New record";
+    $("bd-sub").textContent = (r.no || "") + " · " + cfg.titleOf(r) +
+      (kind === "workgroup" ? " · " + cfg.termOf(r) : "");
+    $("bd-msg").textContent = ""; $("bd-msg").className = "savemsg";
+
+    var note = "";
+    if(r.id === billDraftId) note = "<b>Not saved yet.</b> This is a blank " + esc(cfg.one) +
+      ", numbered " + esc(r.no) + ". Fill it in and press Save — nothing reaches the shared record until you do.";
+    else if(r.status === "Draft") note = "<b>Not invoiced yet.</b> Enter the Aptify order ID and it moves to " +
+      "Pending Payment by itself. The invoice email is drafted below for you to read before it goes anywhere.";
+    else if(r.status === "Pending Payment" && o.late) note = "<b>" + o.days + " days past due.</b> Invoiced " +
+      (r.invoiceDate ? fmtDate(r.invoiceDate) : "—") + ", payment was due " +
+      (o.due ? fmtDate(iso(o.due)) : "—") + "." +
+      (kind === "webinar" ? " A notice for MBA's team is drafted below — read it, then press Send." : "");
+    else if(r.status === "Pending Payment") note = "<b>Awaiting payment.</b> Invoiced " +
+      (r.invoiceDate ? fmtDate(r.invoiceDate) : "—") + (o.due ? ", due " + fmtDate(iso(o.due)) : "") +
+      ". The payment check marks this Paid on its own once the money reaches the Financial System.";
+    else if(r.status === "Paid") note = "<b>Complete.</b> Paid " +
+      (r.paymentReceivedDate ? fmtDate(r.paymentReceivedDate) : "—") + "." +
+      (cfg.share !== 1 ? " MISMO's half is " + money(billShare(kind, Number(r.amountPaid || r.amountDue || 0))) + "." : "");
+    else if(r.status === "Waived") note = "<b>Waived.</b> Given at no charge — it counts as a sponsorship, never as money.";
+    else if(r.status === "Cancelled") note = "<b>Cancelled.</b> Nothing is chased and none of it counts as money.";
+
+    var spec = billSpec(kind, r);
+    var html = "";
+    if(note) html += '<div class="dnote">' + note + '</div>';
+    html += billSect(kind === "workgroup" ? "Sponsorship" : "Webinar", spec.detail);
+    html += billSect("Sponsor", spec.sponsor);
+
+    var moves = BILL_MOVES[r.status] || [];
+    html += '<div class="dsect"><h4>Status</h4>' +
+      '<div class="fld"><label>Status</label><div class="statusrow">' +
+        '<span class="st ' + billClass(r.status) + '">' + esc(r.status || "Draft") + '</span>' +
+        moves.map(function(m){
+          return '<button class="btn ghost sm" type="button" data-bstatus="' + esc(m) + '">' + esc(m) + '</button>';
+        }).join("") + '</div>' +
+      (BILL_HINT[r.status] ? '<div class="fldnote">' + esc(BILL_HINT[r.status]) + '</div>' : '') +
+      '</div></div>';
+
+    html += billSect("Invoicing", spec.invoicing);
+    if(cfg.share !== 1){
+      html += '<div class="dsect"><h4>Revenue Split</h4><div class="grid2">' +
+        roFld("Invoiced in Full", money(r.amountDue), "what the sponsor is billed") +
+        roFld("MISMO Keeps", money(billShare(kind, billMoney(r))), "half, under the MBA partnership") +
+        '</div></div>';
+    }
+    html += billSect("Payment", spec.payment);
+    if(spec.contract) html += billSect("Contract", spec.contract);
+    if(kind === "workgroup"){
+      html += '<div class="dsect"><h4>Logo Placement</h4><div class="grid2">' +
+        ["logoMismo","logoConnect","logoAgendas"].map(function(k, i){
+          var lab = ["MISMO.org Group Page","Connect Group Page","Group Agendas and Minutes"][i];
+          var on = !!billCur[k];
+          return '<div class="fld"><label>' + esc(lab) + '</label><div class="statusrow">' +
+            ["Pending","Done"].map(function(v){
+              var sel = (v === "Done") === on;
+              return '<button class="btn ' + (sel ? "" : "ghost ") + 'sm" type="button" data-blogo="' + k +
+                     '" data-blogov="' + v + '" aria-pressed="' + (sel ? "true" : "false") + '">' + v + '</button>';
+            }).join("") + '</div></div>';
+        }).join("") + '</div></div>';
+    }
+    html += billEmailSection(kind, r);
+    html += billSect("Notes", spec.notes);
+    $("bd-body").innerHTML = html;
+    $("bill-drawer").classList.add("on");
+    $("bill-drawer").setAttribute("aria-hidden", "false");
+  }
+
+  function closeBill(){
+    if(billDraftId){
+      var arr = billList(billCurKind).filter(function(x){ return x.id !== billDraftId; });
+      billSet(billCurKind, arr); billDraftId = null; renderBilling();
+    }
+    billCur = null; billCurKind = null;
+    $("bill-drawer").classList.remove("on");
+    $("bill-drawer").setAttribute("aria-hidden", "true");
+  }
+
+  function collectBill(){
+    var out = JSON.parse(JSON.stringify(billCur));
+    $("bd-body").querySelectorAll("[data-bkey]").forEach(function(el){
+      var k = el.getAttribute("data-bkey"), v = el.value;
+      if(el.type === "number") v = v === "" ? "" : Number(v);
+      out[k] = v;
+    });
+    return out;
+  }
+  function billSetField(k, v){
+    if(!billCur) return;
+    billCur[k] = v;
+    var el = $("bx-" + k);
+    if(el) el.value = (v === null || v === undefined) ? "" : v;
+  }
+
+  /* the rules, the same shape as a summit sponsorship's */
+  function billRules(before, after){
+    var fired = [], t = iso(today());
+    if(after.invoiceNumber && after.status === "Draft"){
+      after.status = "Pending Payment";
+      if(!after.invoiceDate) after.invoiceDate = t;
+      fired.push("invoiced — now awaiting payment");
+    }
+    if(after.status !== "Draft" && after.invoiceDate && !after.dueDate){
+      var d = parseDate(after.invoiceDate);
+      if(d){ var x = new Date(d); x.setDate(x.getDate() + BILL_GRACE); after.dueDate = iso(x); }
+    }
+    if(after.paymentReceivedDate && before.paymentReceivedDate !== after.paymentReceivedDate){
+      after.status = "Paid";
+      if(!after.amountPaid) after.amountPaid = after.amountDue;
+      fired.push("payment received — marked Paid");
+    }
+    if(before.status === "Paid" && after.status !== "Paid" &&
+       after.paymentReceivedDate === before.paymentReceivedDate){
+      after.paymentReceivedDate = ""; after.amountPaid = "";
+    }
+    if(before.status && before.status !== after.status){
+      fired.unshift("status " + before.status + " → " + after.status);
+    }
+    return fired;
+  }
+
+  function saveBillDrawer(){
+    if(!billCur) return;
+    var kind = billCurKind, before = null, arr = billList(kind);
+    for(var i = 0; i < arr.length; i++){ if(arr[i].id === billCur.id){ before = arr[i]; break; } }
+    before = before || {};
+    var after = collectBill();
+    var fired = billRules(before, after);
+    saveBill(kind, after).then(function(){
+      $("bd-msg").textContent = "Saved"; $("bd-msg").className = "savemsg ok";
+      setTimeout(function(){ $("bd-msg").textContent = ""; }, 2600);
+    });
+    if(fired.length) addLog(after.no, fired.join("; "), whoAmI());
+    billCur = after;
+    openBill(kind, after.id);
+  }
+
+  /* ---------------- the drafted message ----------------
+     Nothing here sends by itself. The portal writes the draft, the panel shows it in
+     full and lets it be edited, and Send is the only thing that puts it in the outbox
+     for the messenger to deliver (Jonna, November 3, 2026). */
+  var BILL_CC = "jcritchley@mismo.org; amoses@mismo.org; kbradshaw@mismo.org";
+
+  function billDraft(kind, r){
+    var cfg = BILL[kind];
+    if(kind === "workgroup"){
+      var term = cfg.termOf(r);
+      return {
+        kind: "wg-invoice",
+        to: r.contactEmail || "",
+        cc: BILL_CC,
+        subject: "MISMO Workgroup Sponsorship " + term + " Invoice — " + (r.workgroup || ""),
+        body: "Good Morning " + (r.company || "") + " Team,\n\n" +
+          "Please see attached for your Workgroup Sponsorship " + term + " invoice for sponsorship of the " +
+          (r.workgroup || "") + (r.periodStart && r.periodEnd
+            ? ", covering " + fmtDate(r.periodStart) + " to " + fmtDate(r.periodEnd) : "") + ".\n\n" +
+          "The amount due is " + money(r.amountDue) +
+          (r.invoiceNumber ? ", under invoice " + r.invoiceNumber : "") + ". Instructions on how to make a " +
+          "payment are included on the invoice. We will be in touch once payment has been made with next steps.\n\n" +
+          "Reach out with questions.\n\nThank you,\nMISMO",
+        attach: "The Aptify invoice PDF"
+      };
+    }
+    var o = billOverdue(r);
+    return {
+      kind: "wb-pastdue",
+      to: r.draftTo || "",
+      cc: "jcritchley@mismo.org",
+      subject: "Past Due — AI Webinar Sponsorship — " + (r.company || "") +
+               (r.invoiceNumber ? " — Invoice " + r.invoiceNumber : ""),
+      body: "Hello,\n\n" +
+        "An AI webinar series sponsorship is past due and I wanted to flag it for your team.\n\n" +
+        "Sponsor: " + (r.company || "") + "\n" +
+        "Webinar: " + (r.webinar || "") + "\n" +
+        "Invoice: " + (r.invoiceNumber || "—") +
+          (r.invoiceDate ? ", raised " + fmtDate(r.invoiceDate) : "") + "\n" +
+        "Payment due: " + (o.due ? fmtDate(iso(o.due)) : "—") + " (net " + BILL_GRACE + ")\n" +
+        "Days past due: " + o.days + "\n" +
+        "Amount: " + money(r.amountDue) + " invoiced · " +
+          money(billShare(kind, billMoney(r))) + " to each of MISMO and MBA\n\n" +
+        "Nothing has reached MISMO against this invoice. Let me know if your team has anything on it, " +
+        "or if you would like us to follow up with the sponsor directly.\n\n" +
+        "Thank you,\nMISMO",
+      attach: ""
+    };
+  }
+
+  function billEmailSection(kind, r){
+    var cfg = BILL[kind], o = billOverdue(r);
+    var wanted = (kind === "workgroup") ? (r.status === "Draft" || r.status === "Pending Payment")
+                                        : o.late;
+    var d = (r.draftSubject || r.draftBody)
+      ? {kind:r.draftKind || "", to:r.draftTo || "", cc:r.draftCc || "", subject:r.draftSubject || "",
+         body:r.draftBody || "", attach:(kind === "workgroup" ? "The Aptify invoice PDF" : "")}
+      : billDraft(kind, r);
+    var title = kind === "workgroup" ? "Invoice Email" : "Past-Due Notice to MBA";
+    var why = kind === "workgroup"
+      ? "The invoice email to the sponsor. Read it, change anything you want, then press <b>Send</b>. It does not go anywhere until you do."
+      : "A notice for MBA's team that this sponsorship is past due. Read it, change anything you want, then press <b>Send</b>. It does not go anywhere until you do.";
+
+    var sent = r.sentAt
+      ? '<div class="fldnote">Sent ' + esc(fmtDate(String(r.sentAt).slice(0, 10))) +
+        (r.sentBy ? ' by ' + esc(r.sentBy) : '') + '. Sending again queues a fresh copy.</div>'
+      : '';
+    if(!wanted && !r.sentAt){
+      return '<div class="dsect"><h4>' + esc(title) + '</h4><div class="fldnote" style="margin-top:0;">' +
+        (kind === "workgroup"
+          ? "Nothing to send — this sponsorship is " + esc(String(r.status).toLowerCase()) + "."
+          : "Nothing to send — this invoice is not past due.") + '</div></div>';
+    }
+    return '<div class="dsect"><h4>' + esc(title) + '</h4>' +
+      '<div class="fldnote" style="margin-top:0;">' + why + '</div>' +
+      '<div class="grid2" style="margin-top:12px;">' +
+        '<div class="fld"><label for="bx-draftTo">To</label><input id="bx-draftTo" data-bkey="draftTo" type="text" value="' + esc(d.to) + '"' +
+          (kind === "webinar" && !d.to ? ' placeholder="MBA contact for the series"' : '') + '></div>' +
+        '<div class="fld"><label for="bx-draftCc">Cc</label><input id="bx-draftCc" data-bkey="draftCc" type="text" value="' + esc(d.cc) + '"></div>' +
+      '</div>' +
+      '<div class="fld"><label for="bx-draftSubject">Subject</label>' +
+        '<input id="bx-draftSubject" data-bkey="draftSubject" type="text" value="' + esc(d.subject) + '"></div>' +
+      '<div class="fld"><label for="bx-draftBody">Message</label>' +
+        '<textarea id="bx-draftBody" data-bkey="draftBody" rows="12">' + esc(d.body) + '</textarea></div>' +
+      (d.attach ? '<div class="fldnote">Attached when it goes out: ' + esc(d.attach) + '.</div>' : '') +
+      '<input type="hidden" data-bkey="draftKind" value="' + esc(d.kind) + '">' +
+      '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">' +
+        '<button class="btn sm" type="button" id="bd-send">Send</button>' +
+        '<button class="btn ghost sm" type="button" id="bd-redraft">Start the Draft Again</button>' +
+      '</div>' + sent + '</div>';
+  }
+
+  function billSend(){
+    if(!billCur) return;
+    var kind = billCurKind, after = collectBill();
+    if(!String(after.draftTo || "").trim()){
+      $("bd-msg").textContent = "Add a recipient first."; $("bd-msg").className = "savemsg bad";
+      return;
+    }
+    if(!db || !canWrite){
+      $("bd-msg").textContent = "Not connected — nothing was sent."; $("bd-msg").className = "savemsg bad";
+      return;
+    }
+    var now = new Date();
+    var id = "ob-" + String(after.no || "x").toLowerCase().replace(/[^a-z0-9]/g, "") + "-" +
+             (after.draftKind || "note") + "-" + now.getTime();
+    function plain(v, n){ return String(v == null ? "" : v).replace(/[<>]/g, "").slice(0, n || 300); }
+    var doc = {kind: after.draftKind || "note", queuedAt: now.toISOString(), status: "queued",
+      /* this one carries its own wording: the person approved exactly this text */
+      to: plain(after.draftTo), cc: plain(after.draftCc),
+      subject: plain(after.draftSubject, 300), bodyText: plain(after.draftBody, 6000),
+      recordNo: plain(after.no), company: plain(after.company),
+      invoiceNumber: plain(after.invoiceNumber), amountDue: plain(money(after.amountDue)),
+      line: kind === "workgroup" ? "Workgroup Sponsorship" : "AI Webinar Series",
+      approvedBy: plain(whoAmI())};
+    db.doc("outbox/" + id).set(doc).then(function(){
+      after.sentAt = now.toISOString(); after.sentBy = whoAmI();
+      saveBill(kind, after);
+      addLog(after.no, "approved and sent the " +
+        (kind === "workgroup" ? "invoice email" : "past-due notice") + " to " + doc.to, whoAmI());
+      billCur = after; openBill(kind, after.id);
+      toast("It is queued for the messenger and goes out, as written, usually within a minute.",
+            "", "Sent — " + (after.company || after.no), true);
+    }, function(){
+      $("bd-msg").textContent = "It could not be queued — nothing was sent."; $("bd-msg").className = "savemsg bad";
+    });
+  }
+
+  /* ---------------- new records, and the wiring ---------------- */
+  function newBill(kind){
+    var id = "b-" + kind + "-" + Date.now();
+    var r = {id:id, no:billNo(kind), company:"", status:"Draft", amountDue:""};
+    if(kind === "workgroup"){ r.term = "Initial"; r.cadence = "Annual"; }
+    billList(kind).push(r);
+    billDraftId = id;
+    renderBilling();
+    openBill(kind, id);
+  }
+
+  document.addEventListener("click", function(ev){
+    var el;
+    if((el = ev.target.closest("[data-newbill]"))){
+      newBill(el.getAttribute("data-newbill")); ev.stopPropagation(); return;
+    }
+    if((el = ev.target.closest("tr[data-billid]"))){
+      openBill(el.getAttribute("data-bill"), el.getAttribute("data-billid"));
+      ev.stopPropagation(); return;
+    }
+    if(!billCur) return;
+    if((el = ev.target.closest("[data-bstatus]"))){
+      billSetField("status", el.getAttribute("data-bstatus"));
+      saveBillDrawer(); ev.stopPropagation(); return;
+    }
+    if((el = ev.target.closest("[data-blogo]"))){
+      billSetField(el.getAttribute("data-blogo"), el.getAttribute("data-blogov") === "Done");
+      saveBillDrawer(); ev.stopPropagation(); return;
+    }
+    if(ev.target.closest("#bd-send")){ billSend(); ev.stopPropagation(); return; }
+    if(ev.target.closest("#bd-redraft")){
+      ["draftTo","draftCc","draftSubject","draftBody","draftKind"].forEach(function(k){ billCur[k] = ""; });
+      var k2 = billCurKind, id2 = billCur.id;
+      var arr = billList(k2);
+      for(var i = 0; i < arr.length; i++){ if(arr[i].id === id2){ arr[i] = billCur; break; } }
+      openBill(k2, id2); ev.stopPropagation(); return;
+    }
+  });
+
+  ["workgroup","webinar"].forEach(function(k){
+    var wire = function(id, prop, fn){
+      var el = $(id); if(!el) return;
+      el.addEventListener(prop === "search" ? "input" : "change", function(){ fn(el.value); renderBilling(); });
+    };
+    wire("f-bill-status-" + k, "change", function(v){ billFilter[k].status = v; });
+    wire("f-bill-search-" + k, "search", function(v){ billFilter[k].q = v; });
+    var arch = $("f-bill-archived-" + k);
+    if(arch) arch.addEventListener("change", function(){ billFilter[k].archived = arch.checked; renderBilling(); });
+  });
+
+  $("bd-close").addEventListener("click", closeBill);
+  $("bd-cancel").addEventListener("click", closeBill);
+  $("bd-save").addEventListener("click", saveBillDrawer);
+
   function showView(v){
     currentView = v;
     paintPageHead();
@@ -6152,12 +6924,14 @@ a series deal is counted once, at its full amount.</div>
     /* Activity is a log — a band saying what is owed on a page of past events would be
        answering a question nobody asked there. Money, Inventory and Prospects carry their
        own bands instead. */
-    var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help") ? "none" : "";
+    var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help" ||
+                v === "workgroup" || v === "webinar") ? "none" : "";
     $("headline").style.display = hide;
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.id === "view-"+v); });
     if(v !== "pipeline" && stageKey) closeStage();
     if(v !== "money" && $("imp").classList.contains("on")) closeImport();
     if(v !== "leads" && $("lead-drawer").classList.contains("on")) closeLeadDrawer();
+    if(v !== "workgroup" && v !== "webinar" && $("bill-drawer").classList.contains("on")) closeBill();
   }
 
   $("tabband").addEventListener("click", function(ev){
@@ -6642,7 +7416,8 @@ a series deal is counted once, at its full amount.</div>
     if(!p || !p.changes.length) return false;
     moneyBusy = true;
     var done = p.changes.map(function(c){
-      return {company: c.app.company || c.app.appNo, appNo: c.app.appNo, paid: !!c.fields.status,
+      return {company: c.app.company || c.app.appNo || c.app.no,
+              appNo: c.app.appNo || c.app.no || "", summit: !c.app.__kind, paid: !!c.fields.status,
               amount: c.fields.amountPaid, on: c.fields.paymentReceivedDate || "", billing: c.fields.billingName || ""};
     });
     applyPaymentChanges(p.changes, "money", "MISMO Money");
@@ -6683,7 +7458,12 @@ a series deal is counted once, at its full amount.</div>
             (x.amount !== undefined ? ", " + esc(money(x.amount)) : "") + (x.on ? " on " + esc(fmtDate(x.on)) : "") +
             (x.billing ? "; invoiced as " + esc(x.billing) : "") + "</li>";
         }).join("") + "</ul>" +
-        '<div style="margin-top:6px;">Jonna, Amy and Kelly get the usual Payment Made email for each one marked Paid.</div>' +
+        (moneyApplied.some(function(x){ return x.summit && x.paid; })
+          ? '<div style="margin-top:6px;">Jonna, Amy and Kelly get the usual Payment Made email for each summit sponsorship marked Paid.</div>'
+          : '') +
+        (moneyApplied.some(function(x){ return !x.summit; })
+          ? '<div style="margin-top:6px;">Workgroup and webinar sponsorships are recorded quietly \u2014 no email goes out for those.</div>'
+          : '') +
         '<div style="margin-top:9px;"><button class="btn ghost sm" type="button" id="money-ok">Got It</button></div>';
       b.style.display = "";
       $("money-ok").onclick = function(){ moneyApplied = null; b.style.display = "none"; };
@@ -6779,6 +7559,24 @@ a series deal is counted once, at its full amount.</div>
         if(Array.isArray(e)){ logEntries = e.slice(); renderLog(); }
       }catch(err){ loadFailed("reading the activity log", err && err.message); }
     }, failed("loading the activity log"));
+    ["workgroups","webinars"].forEach(function(cname){
+      var kind = cname === "webinars" ? "webinar" : "workgroup";
+      d.collection(cname).onSnapshot(function(snap){
+        try{
+          var keep = billDraftId ? billList(kind).filter(function(r){ return r.id === billDraftId; }) : [];
+          var fresh = copyDocs(snap);
+          keep.forEach(function(r){ if(!fresh.some(function(x){ return x.id === r.id; })) fresh.push(r); });
+          billSet(kind, fresh);
+          if(kind === "webinar") webinarsSeen = true; else wgsSeen = true;
+          renderBilling();
+        }catch(err){ loadFailed("reading the " + cname, err && err.message); }
+      }, function(e){
+        /* a store that has never been written yet is simply empty, not a failure */
+        if(e && e.status === 404) return;
+        if(e && e.code === "NO_ACCESS") return;
+        loadFailed("loading the " + cname, e && (e.message || e.code));
+      });
+    });
     d.collection("outbox").onSnapshot(function(snap){
       try{ outbox = copyDocs(snap); outboxLoaded = true; renderAll(); paintMoneyBanner(); }catch(err){}
     }, function(){});

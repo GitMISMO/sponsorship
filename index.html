@@ -591,7 +591,7 @@
     border-radius:0 5px 5px 0; padding:10px 12px; margin-bottom:14px;}
   .dfoot{border-top:1px solid var(--border); padding:13px 20px; display:flex; gap:9px; align-items:center; flex-wrap:wrap;}
   .savemsg{font-size:12px; color:var(--ink-3); margin-left:auto;}
-  .savemsg.ok{color:var(--good);} .savemsg.err{color:var(--bad);}
+  .savemsg.ok{color:var(--good);} .savemsg.err{color:var(--bad);} .savemsg.warn{color:var(--warn);}
 
   /* Centred, not right-aligned: the record panel takes the right-hand 560px, and a
      toast in that corner sits on top of the sponsor's name. */
@@ -2599,15 +2599,116 @@ a series deal is counted once, at its full amount.</div>
     return d;
   }
 
+  /* ---- saving without overwriting anyone (November 5, 2026) ----------------------------
+     A record panel can sit open for hours. Saving used to write the whole record exactly as
+     the panel had it, so anything someone else saved in the meantime was quietly undone
+     (FICO went from Approved back to Submitted that way). Now a save carries only what was
+     changed here. Everything else keeps its newest value, in this browser and in the data
+     store, where the change is merged into the latest copy at the moment it is written. If
+     two people changed the same field, the person saving is asked which to keep, and an open
+     panel says so when someone else saves the same record. */
+  var OPENED = {};   // record id -> the record as it was when its panel was opened (or last saved)
+  function noteOpened(rec){ if(rec && rec.id) OPENED[rec.id] = JSON.parse(JSON.stringify(rec)); }
+  function normVal(v){
+    if(v === undefined || v === null || v === "") return "";
+    if(typeof v === "number" || typeof v === "boolean") return String(v);
+    if(typeof v === "string") return v;
+    return JSON.stringify(v);
+  }
+  function sameVal(x, y){ return normVal(x) === normVal(y); }
+  var LIST_MERGE = {history:true};   // lists two people can both add to: a prospect's notes
+  function mergeList(cur, mine, base){
+    cur = Array.isArray(cur) ? cur : []; mine = Array.isArray(mine) ? mine : []; base = Array.isArray(base) ? base : [];
+    var key = function(x){ return JSON.stringify(x); };
+    var had = {}, keep = {}, have = {};
+    base.forEach(function(x){ had[key(x)] = 1; });
+    mine.forEach(function(x){ keep[key(x)] = 1; });
+    var out = cur.filter(function(x){ return !(had[key(x)] && !keep[key(x)]); });   // what was removed here
+    out.forEach(function(x){ have[key(x)] = 1; });
+    mine.forEach(function(x){ if(!had[key(x)] && !have[key(x)]) out.push(x); });     // what was added here
+    return out;
+  }
+  function mergeRecord(cur, mine, base){
+    if(!cur || !base) return mine;
+    var out = JSON.parse(JSON.stringify(cur)), keys = {};
+    Object.keys(mine).forEach(function(k){ keys[k] = 1; });
+    Object.keys(base).forEach(function(k){ keys[k] = 1; });
+    Object.keys(keys).forEach(function(k){
+      if(sameVal(mine[k], base[k])) return;            // not changed here: the newest value stands
+      if(LIST_MERGE[k]) out[k] = mergeList(cur[k], mine[k], base[k]);
+      else if(mine[k] === undefined) delete out[k];
+      else out[k] = JSON.parse(JSON.stringify(mine[k]));
+    });
+    return out;
+  }
+  function clashFields(cur, mine, base){
+    if(!cur || !mine || !base) return [];
+    var keys = {};
+    Object.keys(mine).concat(Object.keys(base)).forEach(function(k){ keys[k] = 1; });
+    return Object.keys(keys).filter(function(k){
+      return k !== "updatedAt" && !LIST_MERGE[k] && !sameVal(mine[k], base[k]) &&
+             !sameVal(cur[k], base[k]) && !sameVal(cur[k], mine[k]);
+    });
+  }
+  function findById(list, id){
+    for(var i = 0; i < (list || []).length; i++){ if(list[i].id === id) return list[i]; }
+    return null;
+  }
+  /* the panel's record laid over the newest copy: only what was changed in the panel wins */
+  function rebase(raw, list){
+    var opened = raw && OPENED[raw.id], latest = raw && findById(list, raw.id);
+    return (opened && latest) ? mergeRecord(latest, raw, opened) : raw;
+  }
+  /* Two people changed the same field: ask. OK keeps what is in the panel; Cancel keeps
+     theirs for those fields, and the panel's other changes still save. */
+  function askAboutClashes(raw, list, bodyId, who){
+    var opened = raw && OPENED[raw.id], latest = raw && findById(list, raw.id);
+    var cl = clashFields(latest, raw, opened);
+    if(!cl.length) return;
+    var label = function(k){
+      var body = $(bodyId);
+      var el = body && body.querySelector('[data-key="' + k + '"],[data-lkey="' + k + '"],[data-bkey="' + k + '"]');
+      var lb = el && el.id ? document.querySelector('label[for="' + el.id + '"]') : null;
+      return lb ? lb.textContent.trim() : k.replace(/([A-Z])/g, " $1").replace(/^./, function(c){ return c.toUpperCase(); });
+    };
+    var show = function(v){ var t = normVal(v); return t === "" ? "(blank)" : t.slice(0, 80); };
+    var msg = "While you had " + who + " open, someone else saved a different value in the same " +
+      (cl.length === 1 ? "field" : "fields") + ":\n\n" +
+      cl.map(function(k){ return "• " + label(k) + " — theirs: " + show(latest[k]) + "   ·   yours: " + show(raw[k]); }).join("\n") +
+      "\n\nOK keeps yours. Cancel keeps theirs for " + (cl.length === 1 ? "this field" : "these fields") +
+      " — your other changes still save.";
+    if(!window.confirm(msg)){
+      cl.forEach(function(k){ OPENED[raw.id][k] = raw[k] === undefined ? undefined : JSON.parse(JSON.stringify(raw[k])); });
+    }
+  }
+  /* an open panel says so when someone else saves the same record */
+  var staleSaid = {};
+  setInterval(function(){
+    [[current, apps, "drawer", "d-msg"], [currentLead, leads, "lead-drawer", "ld-msg"],
+     [billCur, billCur ? billList(billCurKind) : [], "bill-drawer", "bd-msg"]].forEach(function(p){
+      var rec = p[0], box = $(p[2]);
+      if(!rec || !box || !box.classList.contains("on")) return;
+      var opened = OPENED[rec.id], latest = findById(p[1], rec.id);
+      if(!opened || !latest || sameVal(latest.updatedAt, opened.updatedAt)) return;
+      if(staleSaid[rec.id] === latest.updatedAt) return;
+      staleSaid[rec.id] = latest.updatedAt;
+      var m = $(p[3]);
+      if(m){ m.textContent = "Someone else just saved this record. Saving keeps their changes and adds yours.";
+             m.className = "savemsg warn"; }
+    });
+  }, 3000);
+
   function saveApp(a){
     a.updatedAt = new Date().toISOString();
     if(draft === a.id) draft = null;   // it is a real record now
     var i = -1;
     for(var k=0;k<apps.length;k++){ if(apps[k].id===a.id){ i=k; break; } }
+    var was = i >= 0 ? apps[i] : null;
     if(i>=0) apps[i] = a; else apps.push(a);
+    if(OPENED[a.id]) noteOpened(a);
     renderAll();
     if(!db || !canWrite) return Promise.resolve();
-    return db.doc("applications/" + a.id).set(appDoc(a)).catch(function(e){
+    return db.doc("applications/" + a.id).merge(appDoc(a), was && was !== a ? appDoc(was) : null).catch(function(e){
       if(e && e.code === "invalid_argument"){ canWrite = false; readOnlyNotice(); }
     });
   }
@@ -2662,10 +2763,12 @@ a series deal is counted once, at its full amount.</div>
     if(leadDraft === l.id) leadDraft = null;   // it is a real record now
     var i = -1;
     for(var k=0;k<leads.length;k++){ if(leads[k].id===l.id){ i=k; break; } }
+    var was = i >= 0 ? leads[i] : null;
     if(i>=0) leads[i] = l; else leads.push(l);
+    if(OPENED[l.id]) noteOpened(l);
     renderAll();
     if(!db || !canWrite) return Promise.resolve();
-    return db.doc("leads/" + l.id).set(leadDoc(l)).catch(function(e){
+    return db.doc("leads/" + l.id).merge(leadDoc(l), was && was !== l ? leadDoc(was) : null).catch(function(e){
       if(e && e.code === "invalid_argument"){ canWrite = false; readOnlyNotice(); }
     });
   }
@@ -4213,6 +4316,7 @@ a series deal is counted once, at its full amount.</div>
     for(var i=0;i<apps.length;i++){ if(apps[i].id===id){ a = apps[i]; break; } }
     if(!a) return;
     current = JSON.parse(JSON.stringify(a));
+    noteOpened(a);
     focusField = focus || null;
     $("d-company").textContent = a.company || "New application";
     $("d-sub").textContent = a.appNo + " · " + (a.event||"—") + " · submitted " + fmtDate(a.dateSubmitted);
@@ -4467,7 +4571,7 @@ a series deal is counted once, at its full amount.</div>
     if(el) el.value = (v === null || v === undefined) ? "" : v;
   }
 
-  function collectDrawer(){
+  function collectDrawer(raw){
     var out = JSON.parse(JSON.stringify(current));
     $("d-body").querySelectorAll("[data-key]").forEach(function(el){
       var k = el.getAttribute("data-key");
@@ -4493,7 +4597,7 @@ a series deal is counted once, at its full amount.</div>
         return line;
       }).filter(Boolean);
     }
-    return out;
+    return raw ? out : rebase(out, apps);
   }
 
   /* The package section in the record panel: Standard, or Custom with a tier,
@@ -4685,6 +4789,7 @@ a series deal is counted once, at its full amount.</div>
 
   function doSave(){
     if(!current) return;
+    askAboutClashes(collectDrawer(true), apps, "d-body", current.company || current.appNo || "this record");
     var before = null;
     for(var i=0;i<apps.length;i++){ if(apps[i].id===current.id){ before = apps[i]; break; } }
     before = before || {};
@@ -4878,6 +4983,7 @@ a series deal is counted once, at its full amount.</div>
     for(var i=0;i<leads.length;i++){ if(leads[i].id===id){ l = leads[i]; break; } }
     if(!l) return;
     currentLead = JSON.parse(JSON.stringify(l));
+    noteOpened(l);
     focusLeadField = focus || null;
     $("ld-company").textContent = l.company || "New prospect";
     $("ld-sub").textContent = l.leadNo + (l.status ? " · " + l.status : "") +
@@ -5015,12 +5121,12 @@ a series deal is counted once, at its full amount.</div>
     if(el) el.value = (v === null || v === undefined) ? "" : v;
   }
 
-  function collectLeadDrawer(){
+  function collectLeadDrawer(raw){
     var out = JSON.parse(JSON.stringify(currentLead));
     $("ld-body").querySelectorAll("[data-lkey]").forEach(function(el){
       out[el.getAttribute("data-lkey")] = el.value;
     });
-    return out;
+    return raw ? out : rebase(out, leads);
   }
 
   var TRACKED_LEAD = ["company","season","engagementType","contactName","contactRole","contactEmail","contactPhone","owner",
@@ -5037,6 +5143,7 @@ a series deal is counted once, at its full amount.</div>
 
   function doSaveLead(){
     if(!currentLead) return;
+    askAboutClashes(collectLeadDrawer(true), leads, "ld-body", currentLead.company || currentLead.leadNo || "this prospect");
     var before = null;
     for(var i=0;i<leads.length;i++){ if(leads[i].id===currentLead.id){ before = leads[i]; break; } }
     before = before || {};
@@ -6159,8 +6266,9 @@ a series deal is counted once, at its full amount.</div>
         armDangerButton(el, "note:" + currentLead.id + ":" + delIdx, "Click Again to Remove", function(){
           /* Saves the fields as typed, and puts a half-written note back in its box after
              the redraw, so removing an old note never costs anything new (September 29, 2026). */
-          var afterDel = collectLeadDrawer();
+          var afterDel = collectLeadDrawer(true);
           afterDel.history = afterDel.history.slice(0, delIdx).concat(afterDel.history.slice(delIdx + 1));
+          afterDel = rebase(afterDel, leads);
           var typedNote = $("y-newnote") ? $("y-newnote").value : "";
           saveLead(afterDel);
           addLog(afterDel.leadNo, "a note was removed (prospect)", whoAmI());
@@ -6454,10 +6562,12 @@ a series deal is counted once, at its full amount.</div>
     if(billDraftId === r.id) billDraftId = null;
     var arr = billList(kind), i = -1;
     for(var k = 0; k < arr.length; k++){ if(arr[k].id === r.id){ i = k; break; } }
+    var was = i >= 0 ? arr[i] : null;
     if(i >= 0) arr[i] = r; else arr.push(r);
+    if(OPENED[r.id]) noteOpened(r);
     renderBilling();
     if(!db || !canWrite) return Promise.resolve();
-    return db.doc(BILL[kind].coll + "/" + r.id).set(billDoc(r)).catch(function(e){
+    return db.doc(BILL[kind].coll + "/" + r.id).merge(billDoc(r), was && was !== r ? billDoc(was) : null).catch(function(e){
       if(e && e.code === "invalid_argument"){ canWrite = false; readOnlyNotice(); }
     });
   }
@@ -6627,6 +6737,7 @@ a series deal is counted once, at its full amount.</div>
     for(var i = 0; i < arr.length; i++){ if(arr[i].id === id){ r = arr[i]; break; } }
     if(!r) return;
     billCur = JSON.parse(JSON.stringify(r)); billCurKind = kind;
+    noteOpened(r);
     var cfg = BILL[kind], o = billOverdue(r);
     $("bd-company").textContent = r.company || "New record";
     $("bd-sub").textContent = (r.no || "") + " · " + cfg.titleOf(r) +
@@ -6706,14 +6817,14 @@ a series deal is counted once, at its full amount.</div>
     $("bill-drawer").setAttribute("aria-hidden", "true");
   }
 
-  function collectBill(){
+  function collectBill(raw){
     var out = JSON.parse(JSON.stringify(billCur));
     $("bd-body").querySelectorAll("[data-bkey]").forEach(function(el){
       var k = el.getAttribute("data-bkey"), v = el.value;
       if(el.type === "number") v = v === "" ? "" : Number(v);
       out[k] = v;
     });
-    return out;
+    return raw ? out : rebase(out, billList(billCurKind));
   }
   function billSetField(k, v){
     if(!billCur) return;
@@ -6751,6 +6862,7 @@ a series deal is counted once, at its full amount.</div>
 
   function saveBillDrawer(){
     if(!billCur) return;
+    askAboutClashes(collectBill(true), billList(billCurKind), "bd-body", billCur.company || billCur.no || "this record");
     var kind = billCurKind, before = null, arr = billList(kind);
     for(var i = 0; i < arr.length; i++){ if(arr[i].id === billCur.id){ before = arr[i]; break; } }
     before = before || {};
@@ -7362,6 +7474,11 @@ a series deal is counted once, at its full amount.</div>
         }
         return {
           set: function(obj){ return mutate(name, function(d){ d.docs[id] = obj; }); },
+          /* only what differs from `base` (the copy the change started from) is written;
+             everything else keeps what is stored now (November 5, 2026) */
+          merge: function(obj, base){ return mutate(name, function(d){
+            d.docs[id] = base ? mergeRecord(d.docs[id], obj, base) : obj;
+          }); },
           update: function(patch){ return mutate(name, function(d){
             d.docs[id] = Object.assign({}, d.docs[id] || {}, patch);
           }); },

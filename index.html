@@ -4625,13 +4625,24 @@ a series deal is counted once, at its full amount.</div>
     //    which is never invoiced, so only the logo request goes out.
     if(before.status !== "Approved" && after.status === "Approved"){
       if(!after.approvedDate) after.approvedDate = t;
+      /* November 5, 2026 (FICO): a record approved once, then put back to Submitted by an
+         older open copy of the portal saving over it, is approved again without emailing
+         Bernie or the logo team a second time — the request already in the outbox stands. */
+      var sentInv = outboxFor(after, "invoice"), sentLogo = outboxFor(after, "logo");
       if(after.inKind){
         fired.push("approved in kind — no invoice raised");
+      } else if(sentInv){
+        if(!after.invoiceRequestSentAt) after.invoiceRequestSentAt = sentInv.queuedAt;
+        fired.push("approved — invoice request already went to Bernie " + fmtDate(String(sentInv.queuedAt || "").slice(0, 10)) + ", not sent again");
       } else {
         fired.push("approved — invoice request raised for Bernie");
         after.__alert_invoice = true;
       }
-      after.__alert_logo = true;
+      if(sentLogo){
+        if(!after.logoRequestSentAt) after.logoRequestSentAt = sentLogo.queuedAt;
+      } else {
+        after.__alert_logo = true;
+      }
     }
 
     // 4. An order ID moves it from Approved to Pending Payment.

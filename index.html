@@ -2398,8 +2398,11 @@ a series deal is counted once, at its full amount.</div>
          write it into the list's Status, Program and Tier choices with no conversion */
       listStatus: LIST_STATUS[a.status] || "New",
       listReference: plain(prospectusRef(a) || a.appNo),
-      listProgram: /series/i.test(a.event || "") ? "Summit Series" : "Winter Summit",
-      /* a custom Series package is sent as its Winter line (October 6, 2026) */
+      listProgram: listProgramOf(a),
+      /* a custom Series package is sent as its Winter line (October 6, 2026), and since
+         November 2026 every summit's line goes too, in Summit Lines, so the Spring and Fall
+         prospectuses count the slot it holds at their summit */
+      listSummitLines: listLinesOf(a),
       listTier: plain(tierLabel(listSlot(a).tier)),
       listOpportunity: plain(String(listSlot(a).opp || "").replace(/\s*[\u2014\u2013-]\s*(Monday|Tuesday|Wednesday|Thursday|Friday)\b.*$/i, "")),
       /* "none" tells the flow to clear the list's Day: the opportunity sent isn't a one-a-day
@@ -3434,6 +3437,27 @@ a series deal is counted once, at its full amount.</div>
     var decided = lines.filter(function(l){ return l.opp && l.opp !== OPP_TBD; });
     var w = decided.filter(function(l){ return l.s === "Winter"; })[0] || decided[0] || lines[0];
     return {tier: w.tier, opp: (w.opp && w.opp !== OPP_TBD) ? w.opp : customSummary(a)};
+  }
+
+  /* the list's Program choice for a record (November 2026: Spring and Fall have their own
+     prospectuses, so a single-summit sponsorship is no longer always Winter) */
+  function listProgramOf(a){
+    var ev = a.event || "";
+    if(RE_SERIES.test(ev) || /series/i.test(ev)) return "Summit Series";
+    var m = RE_SUMMIT.exec(ev);
+    return (m ? m[1] : "Winter") + " Summit";
+  }
+  /* a custom Series package's slot at each summit, as the list's Summit Lines text:
+     [{"s":"Spring","tier":"PLATINUM","opp":"AI Demo / Case Study Sponsor","day":""}].
+     Blank for everything else. Lines whose opportunity isn't decided yet are left out. */
+  function listLinesOf(a){
+    var lines = customLines(a);
+    if(!lines) return "";
+    var out = lines.filter(function(l){ return l.opp && l.opp !== OPP_TBD; }).map(function(l){
+      var opp = String(l.opp).replace(DAY_RE, "");
+      return {s: l.s, tier: String(l.tier || ""), opp: opp, day: l.day || dayOf({opportunity: String(l.opp)}) || ""};
+    });
+    return out.length ? JSON.stringify(out) : "";
   }
 
   function sharesOf(a){
@@ -7373,7 +7397,12 @@ a series deal is counted once, at its full amount.</div>
     var ref = txt(r.reference).toUpperCase();
     var year = (/(20\d\d)/.exec(r.programLabel || "") || /(20\d\d)/.exec(r.submittedAt || "") || [])[1] ||
                String(today().getFullYear() + 1);
-    var series = /series/i.test(String(r.program || ""));   // "series" before 28 Sep 2026, "Summit Series" after
+    var prog = String((r.program && typeof r.program === "object") ? (r.program.Value || r.program.value || "") : (r.program || ""));
+    var series = /series/i.test(prog);   // "series" before 28 Sep 2026, "Summit Series" after
+    /* Spring and Fall have their own prospectuses (November 2026): "Spring Summit" and
+       "Fall Summit" land on that summit; anything else single-summit is Winter, as before. */
+    var season = (/(Winter|Spring|Fall)/i.exec(prog) || /(Winter|Spring|Fall)/i.exec(String(r.programLabel || "")) || [])[1] || "Winter";
+    season = season.charAt(0).toUpperCase() + season.slice(1).toLowerCase();
     var opp = txt(r.opportunity);
     if(/^diamond$/i.test(String(r.tier || "")) || /diamond exclusive/i.test(opp)) opp = "Exclusive";
     var due = Number(String(r.price || "").replace(/[^0-9.]/g, ""));
@@ -7383,7 +7412,7 @@ a series deal is counted once, at its full amount.</div>
                                      (txt(r.signerTitle) ? ", " + txt(r.signerTitle) : "") + ".");
     if(r.multiDayInterest) notes.push("Asked about sponsoring more days \u2014 strategic growth to follow up with pricing.");
     var submitted = /^\d{4}-\d{2}-\d{2}/.test(String(r.submittedAt || "")) ? String(r.submittedAt).slice(0, 10) : iso(today());
-    return {id: "app-" + refKey(ref), appNo: nextAppNo(), event: series ? year + " Series" : "Winter " + year,
+    return {id: "app-" + refKey(ref), appNo: nextAppNo(), event: series ? year + " Series" : season + " " + year,
       status: "Submitted", company: txt(r.company), contactName: txt(r.contactName),
       contactEmail: txt(r.contactEmail), level2027: txt(r.tier).toUpperCase(), opportunity: opp.replace(DAY_RE, ""),
       day: /^(Monday|Tuesday|Wednesday|Thursday|Friday)$/i.test(txt(r.day)) ? txt(r.day) : dayOf({opportunity: opp}),
@@ -7528,8 +7557,8 @@ a series deal is counted once, at its full amount.</div>
   }
   function listSig(a){
     var sl = listSlot(a);
-    return [/series/i.test(a.event || "") ? "S" : "W", tierLabel(sl.tier),
-            String(sl.opp || "").replace(DAY_RE, ""), dayOf(a)].join("|");
+    return [listProgramOf(a), tierLabel(sl.tier),
+            String(sl.opp || "").replace(DAY_RE, ""), dayOf(a), listLinesOf(a)].join("|");
   }
   function stillToCome(a){
     var t = iso(today()), any = false;

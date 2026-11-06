@@ -176,6 +176,8 @@
     background:var(--rail-pip); color:#fff; font-size:10.5px; font-weight:600; line-height:17px;
     text-align:center; flex:0 0 auto;}
   .tab .pip.quiet{background:rgba(255,255,255,.14); color:rgba(255,255,255,.72);}
+  /* a count only shows when there is something to do: no "0" on the rail (Jonna, November 6, 2026) */
+  .tab .pip.quiet{display:none;}
   /* collapsed, the count becomes a dot on the icon rather than disappearing */
   .side.mini .pip{position:absolute; top:4px; right:9px; width:7px; height:7px; min-width:0;
     padding:0; border-radius:50%; font-size:0; line-height:0;}
@@ -6547,6 +6549,10 @@ a series deal is counted once, at its full amount.</div>
   var BILL_FIELDS = ["no","company","status","invoiceNumber","invoiceDate","dueDate","amountDue",
     "amountPaid","paymentReceivedDate","aptifyCustomerId","contactName","contactEmail","statusNotes",
     "systemNotes","archived","updatedAt",
+    /* the Aptify company an order is billed to when it isn't the company name (November 6, 2026:
+       it wasn't kept before, so MISMO Money re-recorded Addy AI's billing name on every visit
+       and the notice came back after Got It) */
+    "billingName",
     /* workgroup only */ "workgroup","cadence","term","renewalNumber","periodStart","periodEnd",
     "renewalInvoiceDate","sponsorName","sponsorAddress","logoMismo","logoConnect","logoAgendas",
     /* webinar only */ "webinar",

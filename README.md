@@ -49,9 +49,10 @@ shows its own. Ticks are saved as one field per item (`bf:<summit>:<item>`), so 
 overwrite each other. Items another system already does tick themselves:
 
 - **Registrations:** from the comp code on the record.
-- **Agenda:** from Summit HQ (read only): the sponsor's person record on People marked on the agenda
-  for that summit's venue, or the sponsor card's Mark on Agenda (`sponsor-agenda`). The venue for
-  each summit is `hq` in `SUMMITS`. It needs the person to have Summit HQ access as well.
+- **Agenda:** never a to-do; approved sponsors go onto the website's agenda automatically (the
+  Summit Sponsor Feed). Where Summit HQ has the sponsor marked on the agenda (read only: the person
+  record on People for that summit's venue, or the sponsor card's Mark on Agenda), it says so. The
+  venue for each summit is `hq` in `SUMMITS`.
 - **Weekly registration list:** never a to-do; the "Registration List to Sponsors" flow sends it
   every Monday from seven weeks out.
 - **Logo:** see below.

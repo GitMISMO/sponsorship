@@ -1806,9 +1806,14 @@ a series deal is counted once, at its full amount.</div>
   /* Rosalyn works from Summit HQ only, not the portal (Jonna, November 7, 2026) */
   var BENEFIT_OWNERS = ["Kelly Bradshaw", "Amy Moses", "Jonna Critchley", "Vanessa Rios", "Bernardo Jordan"];
   var BENEFIT_TASKS = [
-    /* ticks itself when Summit HQ has the sponsor marked on the agenda (see loadHqAgenda) */
-    {k:"agenda",    owner:"Jonna Critchley",  due:-30, label:function(){ return "Added to the agenda in Summit HQ"; },
-                    auto:function(a, sm){ return hqAgendaOf(a, sm) ? "Done (on the agenda in Summit HQ)" : ""; }},
+    /* November 7, 2026 (Jonna): approved sponsors go onto the website's agenda automatically (the
+       Summit Sponsor Feed, the same as the logo), so this is never a to-do. It shows where it is
+       known: marked in Summit HQ (see loadHqAgenda) or on the website's sponsor list. */
+    {k:"agenda",    owner:"Jonna Critchley",  due:-30, label:function(){ return "On the summit agenda"; },
+                    auto:function(a, sm){
+                      if(hqAgendaOf(a, sm)) return "Done (on the agenda in Summit HQ)";
+                      return logoOnWeb(a, sm) ? "Done (on the website agenda)" : "Automatic (website sponsor feed)";
+                    }},
     {k:"comps",     owner:"Bernardo Jordan",  due:-30, label:function(t){ return (t && t.comps ? t.comps + " complimentary" : "Complimentary") + " registrations: comp code sent"; },
                     auto:function(a){ return String(a.compCode || "").trim() && Number(a.numComps) > 0 ? "Done (comp code on the record)" : ""; }},
     /* November 7, 2026 (Jonna): the logo goes onto the website automatically (the site's Summit

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-07: Sponsor Benefits: the agenda is never a to-do (sponsors go onto the website's agenda automatically).
 - 2026-11-07: Sponsor Benefits: the agenda ticks itself from Summit HQ, the weekly registration list is shown as automatic, To Do holds only the next 45 days (the rest folded under Coming Later), and Rosalyn is no longer listed (Summit HQ only).
 - 2026-11-07: Sponsor Benefits: the logo ticks itself from the website's sponsor list (the logo goes on automatically); it is a to-do only when the website shows a sponsor's name with no logo file.
 - 2026-11-07: Sponsor Benefits: a checklist for every approved sponsor at each summit, from their tier, with owners and due dates; on its own page and on each record.

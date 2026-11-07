@@ -183,6 +183,23 @@
     padding:0; border-radius:50%; font-size:0; line-height:0;}
   .side.mini .pip.quiet{display:none;}
 
+  /* ---------- the Prospectuses tab (November 7, 2026) ---------- */
+  .pcards{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-bottom:28px;}
+  @media (max-width:1100px){ .pcards{grid-template-columns:minmax(0,1fr);} }
+  .pcard{display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--border);
+    border-top:3px solid var(--sky); border-radius:8px; padding:18px 20px;}
+  .pc-eb{font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3);}
+  .pc-title{margin:4px 0 12px; font-size:17px; font-weight:700; color:var(--ink);}
+  .pc-rows{margin:0 0 14px; flex:1 1 auto;}
+  .pc-rows div{display:grid; grid-template-columns:64px 1fr; gap:8px; padding:6px 0; border-top:1px solid var(--border);}
+  .pc-rows dt{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); padding-top:1px;}
+  .pc-rows dd{margin:0; font-size:13px; color:var(--ink-2); line-height:1.4;}
+  .pc-url{font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:11.5px; color:var(--ink-2); background:var(--surface-2);
+    border:1px solid var(--border); border-radius:6px; padding:7px 9px; margin-bottom:12px; overflow-wrap:anywhere;
+    line-height:1.45; user-select:all;}
+  .pc-acts{display:flex; gap:8px;}
+  .pc-acts .btn{flex:1 1 0; text-align:center; text-decoration:none;}
+
   /* ---------- the foot of the panel: light / dark ---------- */
   .side-ft{flex:0 0 auto; padding:10px 12px 14px; border-top:1px solid rgba(80,164,219,.2);}
   /* styled as one more row in the list rather than a chip, to match the other MISMO pages */
@@ -1061,6 +1078,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 <symbol id="ico-stock" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M1.9 5.4 8 2.2l6.1 3.2L8 8.6z"/><path d="M1.9 5.4v5.2L8 13.8l6.1-3.2V5.4"/><path d="M8 8.6v5.2"/></g></symbol>
 <symbol id="ico-money" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6.1"/><path d="M8 4.2v7.6"/><path d="M10 6.1C9.5 5.4 8.8 5.1 8 5.1c-1.1 0-2 .6-2 1.4 0 2 4 1 4 3 0 .9-.9 1.5-2 1.5-.9 0-1.6-.3-2.1-1"/></g></symbol>
 <symbol id="ico-log" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.1"/><path d="M8 4.4V8l2.5 1.6"/></g></symbol>
+<symbol id="ico-doc" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M8 4.2C6.6 3 4.6 2.6 2 2.8v9.6c2.6-.2 4.6.2 6 1.4 1.4-1.2 3.4-1.6 6-1.4V2.8c-2.6-.2-4.6.2-6 1.4z"/><path d="M8 4.2v9.6"/></g></symbol>
 <symbol id="ico-help" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.1"/><path d="M6.2 6.3a1.9 1.9 0 0 1 3.7.5c0 1.3-1.9 1.6-1.9 2.8"/><path d="M8 11.4h.01"/></g></symbol>
 <symbol id="ico-moon" viewBox="0 0 16 16"><path d="M13.4 9.6A5.6 5.6 0 0 1 6.4 2.6a5.8 5.8 0 1 0 7 7z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
 <symbol id="ico-sun" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="3.1"/><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"/></g></symbol>
@@ -1104,6 +1122,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="navgrp">Records</div>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
+    <button class="tab" data-view="prospectus" type="button" title="Prospectuses"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-doc"/></svg><span class="tlbl">Prospectuses</span></button>
     <div class="navgrp">Help</div>
     <button class="tab" data-view="help" type="button" title="Help"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-help"/></svg><span class="tlbl">Help</span></button>
   </nav>
@@ -1327,6 +1346,33 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
   <!-- ================= HELP (October 23, 2026) =================
        How the portal works, end to end, and its limits. Plain language for the team.
        Keep it in step with programs/summits/PROGRAM.md when the process changes. -->
+  <!-- The three public prospectuses, to open or to copy the link for a sponsor (November 7, 2026) -->
+  <section class="view" id="view-prospectus">
+    <div class="pcards">
+      <article class="pcard">
+        <div class="pc-eb">Series + Winter</div>
+        <h3 class="pc-title">2027 Summit Series &amp; Winter</h3>
+        <dl class="pc-rows"><div><dt>Winter</dt><dd>January 11&ndash;14, 2027 &middot; InterContinental New Orleans</dd></div><div><dt>Series</dt><dd>Winter, Spring and Fall, 10% off individual rates</dd></div><div><dt>Sells</dt><dd>Winter Summit tiers and the 2027 Summit Series</dd></div></dl>
+        <div class="pc-url" title="https://resources.mismo.org/Sponsorship-Prospectus/">resources.mismo.org/Sponsorship-Prospectus/</div>
+        <div class="pc-acts"><a class="btn sm" href="https://resources.mismo.org/Sponsorship-Prospectus/" target="_blank" rel="noopener">Open</a><button class="btn ghost sm" type="button" data-copy="https://resources.mismo.org/Sponsorship-Prospectus/" data-name="2027 Series and Winter Summit">Copy Link</button></div>
+      </article>
+      <article class="pcard">
+        <div class="pc-eb">Spring</div>
+        <h3 class="pc-title">Spring 2027 Summit</h3>
+        <dl class="pc-rows"><div><dt>Dates</dt><dd>June 7&ndash;10, 2027</dd></div><div><dt>Where</dt><dd>Salt Lake Marriott Downtown at City Creek, Salt Lake City, UT</dd></div><div><dt>Sells</dt><dd>Spring Summit tiers, $5,000 to $22,500</dd></div></dl>
+        <div class="pc-url" title="https://resources.mismo.org/Sponsorship-Prospectus/spring-2027/">resources.mismo.org/Sponsorship-Prospectus/spring-2027/</div>
+        <div class="pc-acts"><a class="btn sm" href="https://resources.mismo.org/Sponsorship-Prospectus/spring-2027/" target="_blank" rel="noopener">Open</a><button class="btn ghost sm" type="button" data-copy="https://resources.mismo.org/Sponsorship-Prospectus/spring-2027/" data-name="Spring 2027 Summit">Copy Link</button></div>
+      </article>
+      <article class="pcard">
+        <div class="pc-eb">Fall</div>
+        <h3 class="pc-title">Fall 2027 Summit</h3>
+        <dl class="pc-rows"><div><dt>Dates</dt><dd>September 13&ndash;16, 2027</dd></div><div><dt>Where</dt><dd>The Bethesdan Hotel, Bethesda, MD</dd></div><div><dt>Sells</dt><dd>Fall Summit tiers, $5,000 to $22,500</dd></div></dl>
+        <div class="pc-url" title="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/">resources.mismo.org/Sponsorship-Prospectus/fall-2027/</div>
+        <div class="pc-acts"><a class="btn sm" href="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/" target="_blank" rel="noopener">Open</a><button class="btn ghost sm" type="button" data-copy="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/" data-name="Fall 2027 Summit">Copy Link</button></div>
+      </article>
+    </div>
+  </section>
+
   <section class="view" id="view-help">
     <div class="panel helppanel">
 
@@ -2861,6 +2907,10 @@ a series deal is counted once, at its full amount.</div>
     stock: {t:"What\u2019s Still Open to Sell",
       s:"Every opportunity in the prospectus, and whether anyone has taken it. A sponsorship counts " +
         "as taken once it is Approved \u2014 the same moment it should come off the public page."},
+    prospectus: {t:"Prospectuses",
+      s:"The public pages sponsors use to pick a sponsorship, sign the contract and apply. Open one " +
+        "to see what a sponsor sees, or copy its link to send to a sponsor. Applications from all " +
+        "three land on the Pipeline under Submitted."},
     money: {t:"Where the Money Is",
       s:"Every summit side by side. Pick a year and a season below to open one on its own."},
     workgroup: {t:"Workgroup Sponsorships",
@@ -7115,7 +7165,7 @@ a series deal is counted once, at its full amount.</div>
     /* Activity is a log — a band saying what is owed on a page of past events would be
        answering a question nobody asked there. Money, Inventory and Prospects carry their
        own bands instead. */
-    var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help" ||
+    var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help" || v === "prospectus" ||
                 v === "workgroup" || v === "webinar") ? "none" : "";
     $("headline").style.display = hide;
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.id === "view-"+v); });
@@ -7124,6 +7174,21 @@ a series deal is counted once, at its full amount.</div>
     if(v !== "leads" && $("lead-drawer").classList.contains("on")) closeLeadDrawer();
     if(v !== "workgroup" && v !== "webinar" && $("bill-drawer").classList.contains("on")) closeBill();
   }
+
+  /* Copy Link on a prospectus card puts its address on the clipboard, ready to paste into an
+     email to a sponsor (November 7, 2026) */
+  document.querySelectorAll("#view-prospectus [data-copy]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var u = b.getAttribute("data-copy"), nm = b.getAttribute("data-name");
+      var done = function(){
+        var was = b.textContent; b.textContent = "Copied"; setTimeout(function(){ b.textContent = was; }, 1800);
+        toast("Paste it into an email or a chat to send it to a sponsor.", "", "Link copied \u2014 " + nm);
+      };
+      var ask = function(){ window.prompt("Copy this link to the " + nm + " prospectus:", u); };
+      if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(done, ask);
+      else ask();
+    });
+  });
 
   $("tabband").addEventListener("click", function(ev){
     var b = ev.target.closest(".tab"); if(!b) return;

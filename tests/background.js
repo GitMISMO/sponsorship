@@ -162,7 +162,8 @@ async function signIn() {
     gate: !!document.querySelector('.rs-scrim, [data-rs-gate].rs-locked'),
     conn: (() => { const b = document.getElementById('conn-banner'); return b && b.style.display !== 'none' ? b.textContent.trim() : ''; })(),
     money: (() => { const b = document.getElementById('money-banner'); return b && b.style.display !== 'none' ? b.innerText.trim() : ''; })(),
-    stamp: (document.getElementById('money-stamp') || {}).textContent || ''
+    stamp: (document.getElementById('money-stamp') || {}).textContent || '',
+    list: ((document.getElementById('stock-body') || {}).textContent || '').match(/The Sponsorship Requests list[^.]*(\.|\))[^.]*\.?/) || ['']
   }));
   await page.waitForTimeout(10000);   // the saves the jobs started
   await browser.close();
@@ -173,6 +174,7 @@ async function signIn() {
   const fromInbox = toasts.filter(t => /online prospectus/i.test(t));
   say(fromInbox.length ? 'New applications: ' + fromInbox.join(' ') : 'No new applications from the prospectuses.');
   say(/recorded/i.test(state.money) ? state.money.replace(/\s*Got It$/, '').replace(/\n+/g, ' ') : 'No new payments from MISMO Money. ' + state.stamp.trim() + '.');
+  if (state.list[0]) say(state.list[0].trim());
   if (errors.length) { say('Page errors: ' + errors.join(' | ')); finish(1); }
   finish(state.conn ? 1 : 0);
 })().catch(e => { say('Could not run: ' + e.message); finish(1); });

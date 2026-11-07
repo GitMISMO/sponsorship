@@ -273,6 +273,31 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(invoice.length === 1, invoice.length + ' invoice requests went to Bernie');
   });
 
+  await check('the Sponsorship Requests list is checked against the records and put right', async () => {
+    if (!HAVE_PROS) return;   // it reads the Availability flow's address from the prospectus
+    await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
+    await portal.waitForTimeout(300);
+    await portal.click('.tab[data-view="stock"]');
+    await portal.waitForFunction(() => !/Checking the Sponsorship Requests list/.test(document.getElementById('stock-body').textContent), null, { timeout: 25000 }).catch(() => {});
+    let note = await P(portal, () => (document.getElementById('view-stock') || document.body).textContent);
+    expect(/Sponsorship Requests list matches these records/.test(note), 'the list check did not say the list matches: ' + (note.match(/Sponsorship Requests list[^.]*\./) || ['(nothing)'])[0]);
+    /* a missed flow run: Fabrikam's row is lost and a stray sold slot appears */
+    await P(portal, () => window.__practice.setList(list => {
+      const i = list.findIndex(r => r.reference === 'MS27-T0003'); list.splice(i, 1);
+      list.push({ reference: 'MS27-STRAY', program: 'Fall Summit', tier: 'Silver', opportunity: 'Banner Sponsor', day: null, status: 'Approved', lines: null });
+    }));
+    await portal.reload(); await portal.waitForTimeout(13000);
+    await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
+    await portal.click('.tab[data-view="stock"]');
+    await portal.waitForFunction(() => !/Checking the Sponsorship Requests list/.test(document.getElementById('stock-body').textContent), null, { timeout: 25000 }).catch(() => {});
+    await portal.waitForTimeout(2000);
+    note = await P(portal, () => (document.getElementById('view-stock') || document.body).textContent);
+    expect(/doesn.t match these records/.test(note) && /Fabrikam Title/.test(note) && /Banner Sponsor/.test(note), 'the mismatch was not reported: ' + (note.match(/Sponsorship Requests list[\s\S]{0,300}/) || ['(nothing)'])[0]);
+    const row = (await P(portal, () => window.__practice.list())).find(r => r.reference === 'MS27-T0003');
+    expect(row && row.status === 'Approved', 'Fabrikam was not sent to the list again');
+    await portal.click('.tab[data-view="pipeline"]').catch(() => {});
+  });
+
   await check('nothing reaches a real address', async () => {
     const out = [...new Set(portal.outside)];
     expect(!out.length, 'the page tried to reach ' + out.join(', '));

@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-11-07: Sponsor Benefits: a checklist for every approved sponsor at each summit, from their tier, with owners and due dates; on its own page and on each record.
+- 2026-11-07: Activity history from September on recovered from the data repo's history into the monthly files.
 - 2026-11-07: Full activity history kept in monthly files (data/log-YYYY-MM.json); a History section on every record; log entries from two screens no longer wipe each other out.
 - 2026-11-07: The Sponsorship Requests list is checked against the portal's records on every open; anything it has wrong is sent to it again, and stray sold slots are shown on Inventory.
 - 2026-11-07: Likely spam is held at the top of the Pipeline for Take It In or Not a Sponsor, instead of becoming a record.

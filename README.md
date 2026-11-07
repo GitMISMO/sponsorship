@@ -37,6 +37,16 @@ reads the list through the Availability flow and compares it with the records. A
 has wrong or missing is sent to it again (at most once a day each), and a sold slot the list holds
 that no record accounts for is shown on Inventory to be cleared in SharePoint.
 
+## Sponsor benefits
+
+Every sponsor that is Approved, Pending Payment, Paid, In Kind or Written Off gets a checklist
+for each of its summits, from its tier: registrations (comp code), logo, the LinkedIn post,
+attendee lists, the opportunity itself, and the tier's extras (chair drop, giveaway, Mic'd Up,
+main-stage recognition). Each item has an owner and a due date counted from the summit's opening
+day (`BENEFIT_TASKS` in index.html). The Benefits page lists them by summit and owner; each record
+shows its own. Ticks are saved as one field per item (`bf:<summit>:<item>`), so two people never
+overwrite each other. Registrations and the logo tick themselves from the record.
+
 ## Activity history
 
 `data/log.json` keeps the latest 300 entries; every entry is also kept for good in that month's

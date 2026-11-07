@@ -845,6 +845,15 @@
   .banner.bad{background:var(--bad-soft); border-left-color:var(--bad);}
   .histrow{display:flex; gap:10px; font-size:12.5px; padding:4px 0; border-bottom:1px solid var(--rule);}
   .histrow .hwhen{flex:none; width:150px; color:var(--ink-3);} .histrow .hwho2{color:var(--ink-3);}
+  .bentable td{vertical-align:middle;} .bentable .bdue{white-space:nowrap;}
+  .bentable tr.over td.bdue{color:var(--bad); font-weight:600;} .bentable tr.done td{color:var(--ink-3);}
+  .bentable select{font:inherit; font-size:12.5px; padding:3px 6px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--ink);}
+  .benlist{display:grid; gap:4px;} .benrow{display:flex; gap:8px; align-items:center; font-size:13px; padding:5px 0; border-bottom:1px solid var(--rule); flex-wrap:wrap;}
+  .benrow .bwhat{flex:1 1 220px;} .benrow .bmeta{font-size:12px; color:var(--ink-3);} .benrow.over .bmeta{color:var(--bad);}
+  .benrow.done .bwhat{color:var(--ink-3); text-decoration:line-through;}
+  #drawer .benrow select{width:auto; min-width:150px; flex:none; padding:4px 8px; font-size:12.5px;}
+  #drawer .benrow .btn{flex:none;}
+  .bensum{margin-bottom:8px;} .bensum > summary{cursor:pointer; font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-2); padding:4px 0;}
   .contractline{font-size:12.5px; color:var(--ink-2); margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 8px; align-items:center;}
   .contractline .muted{color:var(--ink-3);}
   .banner.warn{background:var(--warn-soft); border-left-color:var(--warn);}
@@ -1129,6 +1138,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <button class="tab" data-view="leads" type="button" title="Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Prospects</span></button>
     <button class="tab" data-view="workgroup" type="button" title="Workgroup Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-apps"/></svg><span class="tlbl">Workgroups</span><span class="pip quiet" id="pip-workgroup">0</span></button>
     <button class="tab" data-view="webinar" type="button" title="AI Webinar Series"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">AI Webinars</span><span class="pip quiet" id="pip-webinar">0</span></button>
+    <button class="tab" data-view="benefits" type="button" title="Sponsor Benefits"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Benefits</span><span class="pip quiet" id="pip-benefits">0</span></button>
     <div class="navgrp">Records</div>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
@@ -1358,6 +1368,18 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
        How the portal works, end to end, and its limits. Plain language for the team.
        Keep it in step with programs/summits/PROGRAM.md when the process changes. -->
   <!-- The public prospectuses, to open or to copy the link for a sponsor (November 7, 2026) -->
+  <!-- What each sponsor is owed, summit by summit (November 7, 2026) -->
+  <section class="view" id="view-benefits">
+    <div class="toolbar" style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <label for="ben-summit" style="font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink-2);">SUMMIT</label>
+      <select id="ben-summit" aria-label="Summit"></select>
+      <label for="ben-owner" style="font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink-2);margin-left:8px;">OWNER</label>
+      <select id="ben-owner" aria-label="Owner"></select>
+    </div>
+    <div class="stats" id="ben-stats"></div>
+    <div id="ben-body"></div>
+  </section>
+
   <section class="view" id="view-prospectus">
     <div class="pcards">
       <article class="pcard">
@@ -1781,6 +1803,25 @@ a series deal is counted once, at its full amount.</div>
   /* the Sponsorship Requests list check (see checkListSync); here so the first render has it */
   var listSync = {state: "waiting", resend: [], extra: [], at: null, err: ""};
   var LIST_COUNTS = {"Approved":1, "Pending Payment":1, "Paid":1};
+  /* sponsor benefits (see benefitsOf); here so the first render has them */
+  var BENEFIT_OWNERS = ["Kelly Bradshaw", "Amy Moses", "Jonna Critchley", "Vanessa Rios", "Bernardo Jordan", "Rosalyn Milliken"];
+  var BENEFIT_TASKS = [
+    {k:"agenda",    owner:"Jonna Critchley",  due:-30, label:function(){ return "Added to the agenda in Summit HQ"; }},
+    {k:"comps",     owner:"Bernardo Jordan",  due:-30, label:function(t){ return (t && t.comps ? t.comps + " complimentary" : "Complimentary") + " registrations: comp code sent"; },
+                    auto:function(a){ return !!(String(a.compCode || "").trim() && Number(a.numComps) > 0); }},
+    {k:"logo",      owner:"Vanessa Rios",     due:-30, label:function(){ return "Logo on the website and event materials"; },
+                    auto:function(a){ return !!a.logoDone; }},
+    {k:"micdup",    owner:"Kelly Bradshaw",   due:-30, tiers:["DIAMOND","PLATINUM"], label:function(){ return "Invited to appear on MISMO Mic\u2019d Up"; }},
+    {k:"exclusive", owner:"Kelly Bradshaw",   due:-30, tiers:["DIAMOND"], label:function(){ return "Opening Remarks or moderator/panelist role confirmed"; }},
+    {k:"listspre",  owner:"Vanessa Rios",     due:-21, label:function(){ return "Pre-event attendee lists (weekly, from Kelly)"; }},
+    {k:"linkedin",  owner:"Kelly Bradshaw",   due:-14, label:function(){ return "Dedicated LinkedIn recognition post"; }},
+    {k:"opp",       owner:"Rosalyn Milliken", due:0,   label:function(t, l){ return "The opportunity itself: " + (l.opp || "to be decided") + (l.day ? " (" + l.day + ")" : ""); }},
+    {k:"chair",     owner:"Kelly Bradshaw",   due:0,   tiers:["DIAMOND","PLATINUM","GOLD"], label:function(){ return "Branded swag chair drop on General Session Day"; }},
+    {k:"giveaway",  owner:"Kelly Bradshaw",   due:0,   tiers:["SILVER"], label:function(){ return "Branded giveaway near the registration area"; }},
+    {k:"stage",     owner:"Kelly Bradshaw",   due:0,   tiers:["DIAMOND"], label:function(){ return "Recognition from the main stage"; }},
+    {k:"listspost", owner:"Vanessa Rios",     due:13,  label:function(){ return "Post-event attendee list"; }}
+  ];
+  var BENEFIT_STATUSES = {"Approved":1, "Pending Payment":1, "Paid":1, "In Kind":1, "Written Off":1};
   var SUMMITS = {
     "Winter 2026":  {opens:"",           label:"Winter 2026 Summit"},
     "Spring 2026":  {opens:"",           label:"Spring 2026 Summit"},
@@ -2664,6 +2705,8 @@ a series deal is counted once, at its full amount.</div>
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
      "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day","workshopName",
      "inKind","priceFlag","priceSent","contractVersion","acceptanceTitle","package","updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
+    /* benefit checklist items, one field each so two people ticking different ones never clash */
+    Object.keys(a).forEach(function(k){ if(/^bf:/.test(k) && a[k]) d[k] = a[k]; });
     return d;
   }
 
@@ -2984,6 +3027,10 @@ a series deal is counted once, at its full amount.</div>
     stock: {t:"What\u2019s Still Open to Sell",
       s:"Every opportunity in the prospectus, and whether anyone has taken it. A sponsorship counts " +
         "as taken once it is Approved \u2014 the same moment it should come off the public page."},
+    benefits: {t:"Sponsor Benefits",
+      s:"What every approved sponsor is owed at each summit, from their tier: registrations, logo, the " +
+        "LinkedIn post, attendee lists, the chair drop and the rest. Each one has an owner and a due date " +
+        "counted back from the summit. Mark it done here or on the sponsor's record."},
     prospectus: {t:"Prospectuses",
       s:"The public pages sponsors use to pick a sponsorship, sign the contract and apply. Open one " +
         "to see what a sponsor sees, or copy its link to send to a sponsor. Applications from all " +
@@ -3013,7 +3060,7 @@ a series deal is counted once, at its full amount.</div>
   }
 
   /* ---------------- rendering ---------------- */
-  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); renderBilling(); scheduleProspectSync(); }
+  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); renderBilling(); renderBenefits(); scheduleProspectSync(); }
 
   function totals(list){
     var t = {committed:0, collected:0, invoiced:0, approved:0, outstanding:0, overdue:0, overdueN:0,
@@ -4669,6 +4716,8 @@ a series deal is counted once, at its full amount.</div>
               esc(outboxWord(o)) + '</span></div>';
           }).join("") + '</div>';
       })() + '</div>';
+
+    html += benefitsSection(a);
 
     /* History (November 7, 2026): this record's entries from the activity log, newest first */
     if(a.id !== draft){
@@ -7260,7 +7309,7 @@ a series deal is counted once, at its full amount.</div>
     /* Activity is a log — a band saying what is owed on a page of past events would be
        answering a question nobody asked there. Money, Inventory and Prospects carry their
        own bands instead. */
-    var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help" || v === "prospectus" ||
+    var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help" || v === "prospectus" || v === "benefits" ||
                 v === "workgroup" || v === "webinar") ? "none" : "";
     $("headline").style.display = hide;
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.id === "view-"+v); });
@@ -7712,6 +7761,133 @@ a series deal is counted once, at its full amount.</div>
   var appsLoaded = false, inboxItems = null, inboxTaken = {}, takeInboxReady = false;
   function refKey(ref){ return String(ref || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
   function txt(v){ return String(v == null ? "" : v).replace(/[<>]/g, "").trim().slice(0, 300); }
+  /* ---- sponsor benefits (November 7, 2026) ----
+     Everything a sponsor is owed at a summit, from their tier (the prospectus's benefit lists),
+     each with an owner and a due date counted back from the summit's opening day. A custom
+     package gets each summit's own tier and opportunity. Ticked items are kept on the record as
+     "bf:<summit>:<item>" fields, one each, so two people working the list never overwrite each
+     other. Registrations and the logo tick themselves when the record shows they're done. */
+  function addDays(isoDay, n){ var d = parseDate(isoDay); if(!d) return ""; d.setDate(d.getDate() + n); return iso(d); }
+  /* every benefit owed on one record: [{a, summit, key, label, owner, due, done, doneBy, auto}] */
+  function benefitsOf(a){
+    if(!a || a.id === draft || !BENEFIT_STATUSES[a.status]) return [];
+    var out = [], cat = CATALOG[2027];
+    sharesOf(a).forEach(function(sh){
+      var opens = (SUMMITS[sh.summit] || {}).opens; if(!opens) return;
+      var tierName = String((sh.line && sh.line.tier) || a.level2027 || "").toUpperCase();
+      var t = null; (cat ? cat.tiers : []).forEach(function(x){ if(x.name === tierName) t = x; });
+      var l = sh.line ? {opp: sh.line.opp && sh.line.opp !== OPP_TBD ? String(sh.line.opp).replace(DAY_RE, "") : "", day: sh.line.day || ""}
+                      : {opp: oppBare(a), day: dayOf(a)};
+      BENEFIT_TASKS.forEach(function(bt){
+        if(bt.tiers && bt.tiers.indexOf(tierName) < 0) return;
+        var key = "bf:" + sh.summit + ":" + bt.k, rec = a[key] || {};
+        var auto = bt.auto ? bt.auto(a) : false;
+        out.push({a:a, summit:sh.summit, key:key, k:bt.k, label:bt.label(t, l), owner:rec.owner || bt.owner,
+                  due:addDays(opens, bt.due), done:!!(rec.done || auto), doneOn:rec.done || "", doneBy:rec.by || (auto ? "from the record" : ""), auto:auto});
+      });
+    });
+    return out;
+  }
+  function setBenefit(id, key, patch){
+    var a = findById(apps, id); if(!a || !db || !canWrite) return;
+    var rec = Object.assign({}, a[key] || {}, patch);
+    Object.keys(rec).forEach(function(k){ if(rec[k] === null || rec[k] === "") delete rec[k]; });
+    var next = Object.assign({}, a); next[key] = rec;
+    if(current && current.id === id) current[key] = rec;      // the open record keeps up, so its Save can't undo this
+    saveApp(next);
+    var bits = key.split(":");
+    if(patch.done !== undefined) addLog(a.appNo, (patch.done ? "benefit done" : "benefit reopened") + " \u2014 " + bits[1] + ": " + benefitLabel(next, key), whoAmI());
+    else if(patch.owner) addLog(a.appNo, "benefit owner set to " + patch.owner + " \u2014 " + bits[1] + ": " + benefitLabel(next, key), whoAmI());
+  }
+  function benefitLabel(a, key){ var hit = benefitsOf(a).filter(function(b){ return b.key === key; })[0]; return hit ? hit.label : key; }
+  document.addEventListener("click", function(ev){
+    var b = ev.target && ev.target.closest && ev.target.closest("[data-ben-done]");
+    if(!b) return;
+    var done = b.getAttribute("data-ben-state") !== "done";
+    setBenefit(b.getAttribute("data-ben-id"), b.getAttribute("data-ben-done"), done ? {done: iso(today()), by: whoAmI()} : {done: null, by: null});
+  });
+  document.addEventListener("change", function(ev){
+    var s = ev.target;
+    if(s && s.getAttribute && s.getAttribute("data-ben-owner")) setBenefit(s.getAttribute("data-ben-id"), s.getAttribute("data-ben-owner"), {owner: s.value});
+    if(s && (s.id === "ben-summit" || s.id === "ben-owner")) renderBenefits();
+  });
+  function ownerSelect(b){
+    var list = BENEFIT_OWNERS.indexOf(b.owner) < 0 ? BENEFIT_OWNERS.concat([b.owner]) : BENEFIT_OWNERS;
+    return '<select data-ben-owner="' + esc(b.key) + '" data-ben-id="' + esc(b.a.id) + '" aria-label="Owner"' + (canWrite ? "" : " disabled") + '>' +
+      list.map(function(o){ return '<option' + (o === b.owner ? " selected" : "") + '>' + esc(o) + '</option>'; }).join("") + '</select>';
+  }
+  function doneButton(b){
+    if(b.auto) return '<span class="bmeta">Done (' + esc(b.k === "comps" ? "comp code on the record" : "logo marked done") + ')</span>';
+    if(!canWrite) return b.done ? '<span class="bmeta">Done</span>' : '';
+    return '<button class="btn ' + (b.done ? "ghost " : "") + 'sm" type="button" data-ben-done="' + esc(b.key) + '" data-ben-id="' + esc(b.a.id) +
+      '" data-ben-state="' + (b.done ? "done" : "open") + '">' + (b.done ? "Reopen" : "Done") + '</button>';
+  }
+  /* the summits that still have something to look after (from a month before to two weeks after) */
+  function benefitSummits(){
+    var t = iso(today()), set = {};
+    apps.forEach(function(a){ benefitsOf(a).forEach(function(b){ set[b.summit] = 1; }); });
+    return Object.keys(set).filter(function(sm){ var o = (SUMMITS[sm] || {}).opens; return o && addDays(o, 17) >= t; })
+      .sort(function(x, y){ return String(SUMMITS[x].opens).localeCompare(String(SUMMITS[y].opens)); });
+  }
+  function renderBenefits(){
+    if(!$("ben-body")) return;
+    var t = iso(today()), soon = addDays(t, 30), sel = $("ben-summit"), own = $("ben-owner");
+    var summits = benefitSummits();
+    var all = []; apps.forEach(function(a){ all = all.concat(benefitsOf(a)); });
+    var open = all.filter(function(b){ return !b.done && summits.indexOf(b.summit) >= 0; });
+    var over = open.filter(function(b){ return b.due < t; });
+    if($("pip-benefits")){ $("pip-benefits").textContent = over.length; $("pip-benefits").classList.toggle("quiet", !over.length); }
+    var keep = sel.value;
+    sel.innerHTML = summits.map(function(sm){ return '<option value="' + esc(sm) + '">' + esc((SUMMITS[sm] || {}).label || sm) + '</option>'; }).join("") ||
+      '<option value="">No summits coming up</option>';
+    if(keep && summits.indexOf(keep) >= 0) sel.value = keep;
+    var ko = own.value;
+    own.innerHTML = '<option value="">Everyone</option>' + BENEFIT_OWNERS.map(function(o){ return '<option>' + esc(o) + '</option>'; }).join("");
+    if(ko) own.value = ko;
+    var sm = sel.value, who = own.value;
+    var list = all.filter(function(b){ return b.summit === sm && (!who || b.owner === who); });
+    var lo = list.filter(function(b){ return !b.done; });
+    var nOver = lo.filter(function(b){ return b.due < t; }).length, nSoon = lo.filter(function(b){ return b.due >= t && b.due <= soon; }).length;
+    var sponsors = {}; list.forEach(function(b){ sponsors[b.a.id] = 1; });
+    $("ben-stats").innerHTML = [
+      [Object.keys(sponsors).length, "Sponsors", (SUMMITS[sm] || {}).label || ""],
+      [nOver, "Overdue", nOver ? "past their due date" : "nothing late"],
+      [nSoon, "Due in 30 Days", "still to do"],
+      [list.length - lo.length, "Done", "of " + list.length]
+    ].map(function(x, i){ return '<div class="stat' + (i === 1 ? (x[0] ? " alert" : " good") : "") + '"><div class="lab">' + esc(x[1]) + '</div><div class="val">' + x[0] + '</div><div class="sub">' + esc(x[2]) + '</div></div>'; }).join("");
+    if(!list.length){ $("ben-body").innerHTML = '<div class="empty">No approved sponsors' + (who ? " with items for " + esc(who) : "") + ' for this summit yet.</div>'; return; }
+    function rows(items){
+      return items.sort(function(x, y){ return x.due.localeCompare(y.due) || String(x.a.company).localeCompare(String(y.a.company)); }).map(function(b){
+        return '<tr class="' + (b.done ? "done" : (b.due < t ? "over" : "")) + '"><td class="bdue">' + esc(fmtDate(b.due)) + '</td>' +
+          '<td><span class="taker" data-open="' + esc(b.a.id) + '">' + esc(b.a.company) + '</span></td><td>' + esc(b.label) + '</td>' +
+          '<td>' + ownerSelect(b) + '</td><td class="r">' + doneButton(b) + '</td></tr>';
+      }).join("");
+    }
+    var head = '<thead><tr><th>Due</th><th>Sponsor</th><th>What They\u2019re Owed</th><th>Owner</th><th></th></tr></thead>';
+    var html = '';
+    if(lo.length) html += '<h4 class="subhead">To Do</h4><div class="tablewrap"><table class="bentable">' + head + '<tbody>' + rows(lo) + '</tbody></table></div>';
+    var dn = list.filter(function(b){ return b.done; });
+    if(dn.length) html += '<h4 class="subhead" style="margin-top:22px;">Done</h4><div class="tablewrap"><table class="bentable">' + head + '<tbody>' + rows(dn) + '</tbody></table></div>';
+    $("ben-body").innerHTML = html;
+  }
+  function benefitsSection(a){
+    var list = benefitsOf(a); if(!list.length) return "";
+    var t = iso(today()), by = {};
+    list.forEach(function(b){ (by[b.summit] = by[b.summit] || []).push(b); });
+    /* the next summit opens; the others stay folded */
+    var next = Object.keys(by).filter(function(sm){ return addDays((SUMMITS[sm] || {}).opens, 17) >= t; })
+      .sort(function(x, y){ return String((SUMMITS[x] || {}).opens).localeCompare(String((SUMMITS[y] || {}).opens)); })[0];
+    return '<div class="dsect"><h4>Benefits</h4>' + Object.keys(by).map(function(sm){
+      var items = by[sm], left = items.filter(function(b){ return !b.done; }).length;
+      return '<details class="bensum"' + (sm === next ? " open" : "") + '><summary>' + esc((SUMMITS[sm] || {}).label || sm) + ' \u00b7 ' + (left ? left + " to do" : "all done") + '</summary><div class="benlist">' +
+        items.map(function(b){
+          return '<div class="benrow' + (b.done ? " done" : (b.due < t ? " over" : "")) + '"><span class="bwhat">' + esc(b.label) +
+            '<br><span class="bmeta">Due ' + esc(fmtDate(b.due)) + (b.done && b.doneOn ? " \u00b7 done " + esc(fmtDate(b.doneOn)) + (b.doneBy ? " by " + esc(b.doneBy) : "") : "") + '</span></span>' +
+            ownerSelect(b) + doneButton(b) + '</div>';
+        }).join("") + '</div></details>';
+    }).join("") + '</div>';
+  }
+
   /* ---- the price list (November 7, 2026) ----
      Sponsorship-Prospectus/catalog.json is the one place tiers, prices, slot counts and days
      are set. The three prospectuses and the CATALOG above are checked against it after every

@@ -8,25 +8,71 @@
    person would, lets it do those jobs with its own code, and closes it. Nothing is duplicated
    here, so the jobs can never drift from what the portal does when a person opens it.
 
-   GitHub runs it every hour (.github/workflows/background.yml). It needs two repository
-   secrets, set once by a GitHub admin (Settings > Secrets and variables > Actions):
-       SPONSORSHIP_ROBOT_EMAIL      the robot account's email
-       SPONSORSHIP_ROBOT_PASSWORD   its password
-   The account needs Staff access to the Sponsorship Portal. Until both secrets are set this
-   does nothing and says so.
+   GitHub runs it every hour from the site repo (GitMISMO.github.io,
+   .github/workflows/sponsorship-background.yml), with the same data key the Summit Sponsor
+   Feed uses (the SPONSOR_DATA_TOKEN secret there). With that key the portal's saves go
+   straight into the private sponsorship-data repo as commits, worded the way the relay words
+   them ("Update APPLICATIONS dashboard data (saved by Sponsorship Robot)"), and the
+   repo's webhook still wakes the Team Emails flow for any email they queue.
+
+   Either of these turns it on:
+       SPONSORSHIP_DATA_TOKEN       a GitHub key that can read and write GitMISMO/sponsorship-data
+       SPONSORSHIP_ROBOT_EMAIL and SPONSORSHIP_ROBOT_PASSWORD
+                                    a relay account with Staff access (signs in like a person)
+   Without either it does nothing and says so.
 
    Try it on practice data:   node background.js --practice   (serves this folder locally) */
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path'), http = require('http');
 
 const RELAY = 'https://rgvdi67cg27o5kcmiytcqbqnrm0hmztx.lambda-url.us-east-1.on.aws';
-const PORTAL_URL = 'https://resources.mismo.org/sponsorship/';
+const PORTAL_URL = process.env.SPONSORSHIP_PORTAL_URL || 'https://resources.mismo.org/sponsorship/';
 const PRACTICE = process.argv.includes('--practice');
 const summary = [];
 function say(line) { console.log(line); summary.push(line); }
 function finish(code) {
   if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, '### Sponsorship background work\n\n' + summary.map(l => '- ' + l).join('\n') + '\n');
   process.exit(code);
+}
+
+/* ---- the data key: the relay's two calls, answered from GitHub ---- */
+const DATA_REPO = 'GitMISMO/sponsorship-data', ROBOT = 'Sponsorship Robot';
+const GH = (process.env.SPONSORSHIP_GH_API || 'https://api.github.com') + '/repos/' + DATA_REPO;
+function gh(token, url, opts = {}) {
+  return fetch(url, Object.assign({}, opts, { headers: Object.assign({
+    'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'sponsorship-background' }, opts.headers || {}) }));
+}
+async function canWrite(token) {
+  /* an unreferenced blob changes nothing and is cleaned up by GitHub; it needs write access */
+  const r = await gh(token, GH + '/git/blobs', { method: 'POST', body: JSON.stringify({ content: 'write check', encoding: 'utf-8' }) });
+  return r.status === 201 ? true : (r.status === 403 || r.status === 404 ? false : null);
+}
+async function relayGet(token, name) {
+  const r = await gh(token, GH + '/contents/data/' + encodeURIComponent(name) + '.json?ref=main');
+  if (r.status === 404) return { status: 404, body: { error: 'NOT_FOUND' } };
+  if (!r.ok) return { status: r.status, body: { error: 'HTTP_' + r.status } };
+  const f = await r.json();
+  let text;
+  if (f.encoding === 'base64' && f.content) text = Buffer.from(f.content, 'base64').toString('utf8');
+  else {   // files over 1 MB come back without content
+    const b = await gh(token, GH + '/git/blobs/' + f.sha);
+    const bj = await b.json();
+    text = Buffer.from(bj.content || '', 'base64').toString('utf8');
+  }
+  let data = null; try { data = JSON.parse(text); } catch (e) { data = null; }
+  return { status: 200, body: { data, sha: f.sha } };
+}
+async function relayPut(token, name, body) {
+  let b = {}; try { b = JSON.parse(body || '{}'); } catch (e) {}
+  const r = await gh(token, GH + '/contents/data/' + encodeURIComponent(name) + '.json', { method: 'PUT', body: JSON.stringify({
+    message: 'Update ' + name.toUpperCase() + ' dashboard data (saved by ' + ROBOT + ')',
+    content: Buffer.from(JSON.stringify(b.content, null, 2) + '\n', 'utf8').toString('base64'),
+    sha: b.sha || undefined, branch: 'main' }) });
+  const j = await r.json().catch(() => ({}));
+  if (r.ok) return { status: 200, body: { sha: j.content && j.content.sha } };
+  if (r.status === 409 || r.status === 422) return { status: 409, body: { error: 'CONFLICT' } };   // someone saved in between
+  return { status: r.status, body: { error: 'HTTP_' + r.status, message: j.message } };
 }
 
 async function signIn() {
@@ -42,7 +88,7 @@ async function signIn() {
 }
 
 (async () => {
-  let session = null, url = PORTAL_URL, server = null;
+  let session = null, url = PORTAL_URL, server = null, dataToken = null;
   if (PRACTICE) {
     const root = path.resolve(__dirname, '..'), pros = path.resolve(root, '..', 'Sponsorship-Prospectus');
     server = http.createServer((q, res) => {
@@ -55,18 +101,38 @@ async function signIn() {
     url = 'http://localhost:8799/sponsorship/?practice';
     say('Practice run on test data.');
   } else {
-    try { session = await signIn(); } catch (e) { say('Could not run: ' + e.message); finish(1); }
-    if (!session) { say('Not set up yet: add the SPONSORSHIP_ROBOT_EMAIL and SPONSORSHIP_ROBOT_PASSWORD secrets to turn this on.'); finish(0); }
-    if (!/^(admin|staff)$/.test(String(session.access.sponsorship || ''))) {
-      /* the access map from sign-in can be partial; the portal asks the relay itself, so carry on and let it decide */
+    if (process.env.SPONSORSHIP_DATA_TOKEN) {
+      const ok = await canWrite(process.env.SPONSORSHIP_DATA_TOKEN).catch(() => null);
+      if (ok === false) { say('Could not run: the data key can read the sponsorship records but not save them. Give it Contents: Read and write on GitMISMO/sponsorship-data.'); finish(1); }
+      if (ok === null) { say('Could not run: GitHub did not answer the data key check. The next run will try again.'); finish(1); }
+      dataToken = process.env.SPONSORSHIP_DATA_TOKEN;
+    } else {
+      try { session = await signIn(); } catch (e) { say('Could not run: ' + e.message); finish(1); }
+      if (!session) { say('Not set up yet: no data key and no robot account, so nothing ran.'); finish(0); }
     }
   }
 
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
   if (session) await ctx.addInitScript(s => { try { localStorage.setItem('resources:session', s); } catch (e) {} }, JSON.stringify(session));
+  if (dataToken) {
+    /* who the portal thinks is signed in; session.js keeps the first ResourcesSession it finds */
+    await ctx.addInitScript(name => {
+      const who = { name, email: 'robot@resources.mismo.org', token: 'data-key', role: 'staff' };
+      window.ResourcesSession = { current: () => who, token: () => 'data-key', requireAccess: () => Promise.resolve('staff'),
+        requireSignIn: () => Promise.resolve(who), signIn: () => Promise.resolve(who), signOut() {}, onChange() {},
+        mount(el) { if (el) el.textContent = name; }, role: () => 'staff', canEdit: () => true, isAdmin: () => false, isPlatformAdmin: () => false };
+    }, ROBOT);
+    await ctx.route(/\.on\.aws\/sponsorship\/data\/[a-z0-9-]+$/, async route => {
+      const req = route.request(), name = req.url().split('/').pop();
+      const out = req.method() === 'GET' ? await relayGet(dataToken, name)
+                : req.method() === 'PUT' ? await relayPut(dataToken, name, req.postData()) : { status: 405, body: { error: 'METHOD' } };
+      if (req.method() === 'PUT' && out.status === 200) saves.push(name);
+      await route.fulfill({ status: out.status, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(out.body) });
+    });
+  }
   const page = await ctx.newPage();
-  const errors = [], toasts = [];
+  const errors = [], toasts = [], saves = [];
   page.on('pageerror', e => errors.push(String(e).split('\n')[0]));
   page.on('dialog', d => d.dismiss());          // never answer a question for a person
   await page.exposeFunction('__robotToast', t => toasts.push(t));

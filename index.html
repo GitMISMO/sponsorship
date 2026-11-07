@@ -1793,7 +1793,6 @@ a series deal is counted once, at its full amount.</div>
     jonna:   {name:"Jonna Critchley",  email:"jcritchley@mismo.org"},
     bernie:  {name:"Bernardo Jordan",  email:"bjordan@mba.org"},
     vanessa: {name:"Vanessa Rios",     email:"vrios@mismo.org"},
-    rosalyn: {name:"Rosalyn Milliken", email:"rmilliken@mba.org"},
     perry:   {name:"Perry Williams",   email:"pwilliams@mismo.org"}
   };
 
@@ -1804,9 +1803,12 @@ a series deal is counted once, at its full amount.</div>
   var listSync = {state: "waiting", resend: [], extra: [], at: null, err: ""};
   var LIST_COUNTS = {"Approved":1, "Pending Payment":1, "Paid":1};
   /* sponsor benefits (see benefitsOf); here so the first render has them */
-  var BENEFIT_OWNERS = ["Kelly Bradshaw", "Amy Moses", "Jonna Critchley", "Vanessa Rios", "Bernardo Jordan", "Rosalyn Milliken"];
+  /* Rosalyn works from Summit HQ only, not the portal (Jonna, November 7, 2026) */
+  var BENEFIT_OWNERS = ["Kelly Bradshaw", "Amy Moses", "Jonna Critchley", "Vanessa Rios", "Bernardo Jordan"];
   var BENEFIT_TASKS = [
-    {k:"agenda",    owner:"Jonna Critchley",  due:-30, label:function(){ return "Added to the agenda in Summit HQ"; }},
+    /* ticks itself when Summit HQ has the sponsor marked on the agenda (see loadHqAgenda) */
+    {k:"agenda",    owner:"Jonna Critchley",  due:-30, label:function(){ return "Added to the agenda in Summit HQ"; },
+                    auto:function(a, sm){ return hqAgendaOf(a, sm) ? "Done (on the agenda in Summit HQ)" : ""; }},
     {k:"comps",     owner:"Bernardo Jordan",  due:-30, label:function(t){ return (t && t.comps ? t.comps + " complimentary" : "Complimentary") + " registrations: comp code sent"; },
                     auto:function(a){ return String(a.compCode || "").trim() && Number(a.numComps) > 0 ? "Done (comp code on the record)" : ""; }},
     /* November 7, 2026 (Jonna): the logo goes onto the website automatically (the site's Summit
@@ -1821,26 +1823,32 @@ a series deal is counted once, at its full amount.</div>
                     }},
     {k:"micdup",    owner:"Kelly Bradshaw",   due:-30, tiers:["DIAMOND","PLATINUM"], label:function(){ return "Invited to appear on MISMO Mic\u2019d Up"; }},
     {k:"exclusive", owner:"Kelly Bradshaw",   due:-30, tiers:["DIAMOND"], label:function(){ return "Opening Remarks or moderator/panelist role confirmed"; }},
-    {k:"listspre",  owner:"Vanessa Rios",     due:-21, label:function(){ return "Pre-event attendee lists (weekly, from Kelly)"; }},
+    /* sent by the "Registration List to Sponsors" flow every Monday from seven weeks out, from
+       Summit HQ's registrant list (feeds/sponsor-list), so it is never a to-do */
+    {k:"listspre",  owner:"Vanessa Rios",     due:-49, label:function(){ return "Weekly registration list (Mondays from seven weeks out)"; },
+                    auto:function(){ return "Automatic (Registration List to Sponsors flow)"; }},
     {k:"linkedin",  owner:"Kelly Bradshaw",   due:-14, label:function(){ return "Dedicated LinkedIn recognition post"; }},
-    {k:"opp",       owner:"Rosalyn Milliken", due:0,   label:function(t, l){ return "The opportunity itself: " + (l.opp || "to be decided") + (l.day ? " (" + l.day + ")" : ""); }},
+    {k:"opp",       owner:"Jonna Critchley",  due:0,   label:function(t, l){ return "The opportunity itself: " + (l.opp || "to be decided") + (l.day ? " (" + l.day + ")" : ""); }},
     {k:"chair",     owner:"Kelly Bradshaw",   due:0,   tiers:["DIAMOND","PLATINUM","GOLD"], label:function(){ return "Branded swag chair drop on General Session Day"; }},
     {k:"giveaway",  owner:"Kelly Bradshaw",   due:0,   tiers:["SILVER"], label:function(){ return "Branded giveaway near the registration area"; }},
     {k:"stage",     owner:"Kelly Bradshaw",   due:0,   tiers:["DIAMOND"], label:function(){ return "Recognition from the main stage"; }},
     {k:"listspost", owner:"Vanessa Rios",     due:13,  label:function(){ return "Post-event attendee list"; }}
   ];
+  var BENEFIT_WINDOW = 45;   // days ahead the Benefits page's To Do looks
   var BENEFIT_STATUSES = {"Approved":1, "Pending Payment":1, "Paid":1, "In Kind":1, "Written Off":1};
   /* the website's sponsor list for each summit (see loadWebFeeds); here so the first render has it */
   var webFeeds = {};
+  /* Summit HQ's agenda marks for each summit (see loadHqAgenda) */
+  var hqAgenda = {};
   var SUMMITS = {
     "Winter 2026":  {opens:"",           label:"Winter 2026 Summit"},
     "Spring 2026":  {opens:"",           label:"Spring 2026 Summit"},
     "2026 Series":  {opens:"",           label:"2026 Summit Series"},
     "Fall 2026":    {opens:"2026-09-13", label:"Fall 2026 Summit"},
-    "Winter 2027":  {opens:"2027-01-11", label:"Winter 2027 Summit"},
+    "Winter 2027":  {opens:"2027-01-11", label:"Winter 2027 Summit", hq:"nola"},
     "2027 Series":  {opens:"2027-01-11", label:"2027 Summit Series (opens at Winter)"},
-    "Spring 2027":  {opens:"2027-06-07", label:"Spring 2027 Summit"},
-    "Fall 2027":    {opens:"2027-09-13", label:"Fall 2027 Summit"}
+    "Spring 2027":  {opens:"2027-06-07", label:"Spring 2027 Summit", hq:"slc"},
+    "Fall 2027":    {opens:"2027-09-13", label:"Fall 2027 Summit", hq:"bethesda"}
   };
 
   /* ============================================================
@@ -3040,7 +3048,7 @@ a series deal is counted once, at its full amount.</div>
     benefits: {t:"Sponsor Benefits",
       s:"What every approved sponsor is owed at each summit, from their tier: registrations, logo, the " +
         "LinkedIn post, attendee lists, the chair drop and the rest. Each one has an owner and a due date " +
-        "counted back from the summit. Mark it done here or on the sponsor's record."},
+        "counted back from the summit. What Summit HQ, the website and the flows already do ticks itself; the rest, mark done here or on the sponsor's record."},
     prospectus: {t:"Prospectuses",
       s:"The public pages sponsors use to pick a sponsorship, sign the contract and apply. Open one " +
         "to see what a sponsor sees, or copy its link to send to a sponsor. Applications from all " +
@@ -7826,6 +7834,47 @@ a series deal is counted once, at its full amount.</div>
       }catch(e){}
     });
   }
+  /* Summit HQ keeps who is on the agenda (read here, never written): a sponsor's person record
+     on its People tab has steps.agenda for that summit's venue, and the sponsor card's
+     "Mark on Agenda" is kept in sponsor-agenda/<venue>.on[<appNo>] (false = taken off). The
+     venue for each summit is SUMMITS[...].hq. Needs the person to have Summit HQ access too;
+     without it, the agenda item is just ticked by hand. */
+  function hqAgendaOf(a, sm){
+    var h = hqAgenda[sm]; if(!h || !a) return "";
+    var no = String(a.appNo || "").trim();
+    if(no && Object.prototype.hasOwnProperty.call(h.apps, no)) return h.apps[no] || "";
+    var em = String(a.contactEmail || "").trim().toLowerCase();
+    return (em && h.emails[em]) || "";
+  }
+  function loadHqAgenda(){
+    var tok = RS && RS.token && RS.token(); if(!tok) return;
+    var get = function(n){
+      return fetch(RELAY_URL + "/summit-hq/data/" + n, {cache:"no-store", headers:{"Authorization":"Bearer " + tok}})
+        .then(function(r){ return r.ok ? r.json() : null; }).then(function(b){ return (b && b.data && b.data.docs) || {}; }, function(){ return {}; });
+    };
+    try{
+      Promise.all([get("people-0"), get("people-1"), get("people-2"), get("people-3"), get("sponsor-agenda")]).then(function(res){
+        var byVenue = {};
+        var v = function(id){ return byVenue[id] = byVenue[id] || {emails:{}, apps:{}}; };
+        res.slice(0, 4).forEach(function(docs){
+          Object.keys(docs).forEach(function(k){
+            var p = docs[k], em = p && String(p.e || "").trim().toLowerCase(); if(!em || !p.st) return;
+            Object.keys(p.st).forEach(function(ven){
+              var st = p.st[ven]; if(st && st.on !== false && st.steps && st.steps.agenda) v(ven).emails[em] = st.steps.agenda;
+            });
+          });
+        });
+        var marks = res[4];
+        Object.keys(marks).forEach(function(k){
+          var on = marks[k] && marks[k].on; if(!on) return;
+          var x = v(k.split("/").pop());
+          Object.keys(on).forEach(function(no){ x.apps[no] = on[no]; });
+        });
+        Object.keys(SUMMITS).forEach(function(sm){ if(SUMMITS[sm].hq && byVenue[SUMMITS[sm].hq]) hqAgenda[sm] = byVenue[SUMMITS[sm].hq]; });
+        renderBenefits();
+      });
+    }catch(e){}
+  }
   function setBenefit(id, key, patch){
     var a = findById(apps, id); if(!a || !db || !canWrite) return;
     var rec = Object.assign({}, a[key] || {}, patch);
@@ -7902,10 +7951,15 @@ a series deal is counted once, at its full amount.</div>
       }).join("");
     }
     var head = '<thead><tr><th>Due</th><th>Sponsor</th><th>What They\u2019re Owed</th><th>Owner</th><th></th></tr></thead>';
-    var html = '';
-    if(lo.length) html += '<h4 class="subhead">To Do</h4><div class="tablewrap"><table class="bentable">' + head + '<tbody>' + rows(lo) + '</tbody></table></div>';
+    /* To Do holds what is late or due in the next 45 days; the rest waits, folded, under Coming Later */
+    var near = addDays(t, BENEFIT_WINDOW);
+    var now = lo.filter(function(b){ return b.due <= near; }), later = lo.filter(function(b){ return b.due > near; });
     var dn = list.filter(function(b){ return b.done; });
-    if(dn.length) html += '<h4 class="subhead" style="margin-top:22px;">Done</h4><div class="tablewrap"><table class="bentable">' + head + '<tbody>' + rows(dn) + '</tbody></table></div>';
+    var table = function(items){ return '<div class="tablewrap"><table class="bentable">' + head + '<tbody>' + rows(items) + '</tbody></table></div>'; };
+    var html = '<h4 class="subhead" id="ben-todo-head">To Do</h4>' + (now.length ? table(now)
+      : '<div class="empty">Nothing due in the next ' + BENEFIT_WINDOW + ' days' + (later.length ? '; the next item is due ' + esc(fmtDate(later.map(function(b){ return b.due; }).sort()[0])) : '') + '.</div>');
+    if(later.length) html += '<details class="bensum benlater" style="margin-top:18px;"><summary>Coming Later \u00b7 ' + later.length + ' due after ' + esc(fmtDate(near)) + '</summary>' + table(later) + '</details>';
+    if(dn.length) html += '<details class="bensum bendone" style="margin-top:10px;"><summary>Done \u00b7 ' + dn.length + '</summary>' + table(dn) + '</details>';
     $("ben-body").innerHTML = html;
   }
   function benefitsSection(a){
@@ -8065,6 +8119,7 @@ a series deal is counted once, at its full amount.</div>
   }
   loadPriceList();
   loadWebFeeds();
+  loadHqAgenda();
 
   function fromProspectus(r){
     var ref = txt(r.reference).toUpperCase();

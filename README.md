@@ -46,7 +46,18 @@ attendee lists, the opportunity itself, and the tier's extras (chair drop, givea
 main-stage recognition). Each item has an owner and a due date counted from the summit's opening
 day (`BENEFIT_TASKS` in index.html). The Benefits page lists them by summit and owner; each record
 shows its own. Ticks are saved as one field per item (`bf:<summit>:<item>`), so two people never
-overwrite each other. Registrations tick themselves from the comp code on the record.
+overwrite each other. Items another system already does tick themselves:
+
+- **Registrations:** from the comp code on the record.
+- **Agenda:** from Summit HQ (read only): the sponsor's person record on People marked on the agenda
+  for that summit's venue, or the sponsor card's Mark on Agenda (`sponsor-agenda`). The venue for
+  each summit is `hq` in `SUMMITS`. It needs the person to have Summit HQ access as well.
+- **Weekly registration list:** never a to-do; the "Registration List to Sponsors" flow sends it
+  every Monday from seven weeks out.
+- **Logo:** see below.
+
+The Benefits page's To Do holds only what is late or due in the next 45 days (`BENEFIT_WINDOW`);
+the rest is folded under Coming Later. Rosalyn works from Summit HQ only, so she is not an owner here.
 
 The logo is not a task: the site's Summit Sponsor Feed (GitMISMO.github.io,
 `sponsors/build-sponsors.mjs`) puts every approved sponsor on the website within the hour, with its

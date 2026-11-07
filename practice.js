@@ -149,7 +149,8 @@
     var body = init && init.body;
     var u; try{ u = new URL(url, location.href); }catch(e){ return Promise.reject(new TypeError("bad address")); }
     var m = /^\/([a-z0-9-]+)\/data\/([a-z0-9-]+)$/.exec(u.pathname);
-    if(/\.on\.aws$/.test(u.hostname) && m) return relay(method, m[2], body);
+    /* another system's files (Summit HQ's, say) are kept apart as "<project>:<name>" */
+    if(/\.on\.aws$/.test(u.hostname) && m) return relay(method, m[1] === "sponsorship" ? m[2] : m[1] + ":" + m[2], body);
     if(/powerplatform\.com$|logic\.azure\.com$/.test(u.hostname)){
       if(/269b42e0741b/.test(u.pathname)) return availability();
       if(method === "POST" && /b11fe7bcb027/.test(u.pathname)) return intake(body);

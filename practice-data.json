@@ -24,6 +24,8 @@
       {"reference": "MS27-T0009", "program": "Winter Summit", "programLabel": "Winter 2027 Summit", "tier": "Bronze", "opportunity": "Livestream Sponsor", "price": "$5,000", "company": "Cheap Pills Online", "contactName": "Bot", "contactEmail": "bot@example.org", "signerName": "Bot", "signerTitle": "Bot", "signedDate": "{{today-1}}", "agreed": true, "hp": "http://example.org/spam", "secondsOnPage": 40, "submittedAt": "{{today-1}}T17:00:00.000Z", "about": "the hidden spam box was filled in: the portal must hold it, not make a record"},
       {"reference": "MS27-T0011", "program": "Spring Summit", "programLabel": "Spring 2027 Summit", "tier": "Silver", "opportunity": "Banner Sponsor", "price": "$7,500", "company": "Contoso Fast Test", "contactName": "Kai Test", "contactEmail": "kai@example.org", "signerName": "Kai Test", "signerTitle": "Owner", "signedDate": "{{today-1}}", "agreed": true, "hp": "", "secondsOnPage": 2, "submittedAt": "{{today-1}}T18:00:00.000Z", "about": "sent 2 seconds after the page opened: held"}
     ]},
+    "summit-hq:people-0": {"docs": {"people/avery-test": {"n": "Avery Test", "e": "avery@example.org", "c": "Northwind Lending", "st": {"nola": {"on": true, "role": "sponsor", "steps": {"agenda": "{{today-3}}"}}}}}},
+    "summit-hq:sponsor-agenda": {"docs": {"sponsor-agenda/nola": {"on": {"AN90002": "{{today-1}}"}}}},
     "inbox-taken": {"docs": {}},
     "prospects-removed": {"docs": {}},
     "workgroups": {"docs": {}},

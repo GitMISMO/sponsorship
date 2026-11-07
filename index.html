@@ -843,6 +843,8 @@
   .banner, .dnote, .quickfilter{border-radius:0 6px 6px 0; background:var(--info-soft);
     border-left:3px solid var(--c1);}
   .banner.bad{background:var(--bad-soft); border-left-color:var(--bad);}
+  .contractline{font-size:12.5px; color:var(--ink-2); margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 8px; align-items:center;}
+  .contractline .muted{color:var(--ink-3);}
   .dnote.warn{background:var(--warn-soft); border-left-color:var(--warn); color:var(--ink);}
   .impmsg{background:var(--info-soft);}
   .impmsg.warn{background:var(--warn-soft);}
@@ -2641,7 +2643,7 @@ a series deal is counted once, at its full amount.</div>
      "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate","paymentStatus",
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
      "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day","workshopName",
-     "inKind","priceFlag","priceSent","updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
+     "inKind","priceFlag","priceSent","contractVersion","acceptanceTitle","updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
     return d;
   }
 
@@ -4500,7 +4502,7 @@ a series deal is counted once, at its full amount.</div>
       fld("Accepted","contractAccepted","select",["","Yes","No"]) +
       fld("Accepted By","acceptanceName") +
       fld("Acceptance Date","acceptanceDate","date") +
-      '</div></div>';
+      '</div>' + (a.id === draft ? '' : contractLine(a)) + '</div>';
 
     if(a.inKind){
       html += '<div class="dsect"><h4>Invoicing and Payment</h4>' +
@@ -7609,9 +7611,10 @@ a series deal is counted once, at its full amount.</div>
      change (tests/checks.js); here the portal reads it when it opens, so Inventory and the
      price check below always use the file, with the copy above only as a fallback. */
   var PRICE_LIST_URL = "/Sponsorship-Prospectus/catalog.json";
-  var priceListReady = false, priceListFrom = "built in";
+  var priceListReady = false, priceListFrom = "built in", priceListWaiting = 2;
   function loadPriceList(){
-    var done = function(){ priceListReady = true; takeInbox(); };
+    var done = function(){ if(--priceListWaiting <= 0){ priceListReady = true; takeInbox(); } };
+    loadContractVersions(done);
     try{
       fetch(PRICE_LIST_URL, {cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; }).then(function(c){
         if(c && c.year && Array.isArray(c.tiers) && c.tiers.length){
@@ -7633,6 +7636,89 @@ a series deal is counted once, at its full amount.</div>
       }, done);
     }catch(e){ done(); }
   }
+  /* ---- the contract wording (November 7, 2026) ----
+     Every version of the Sponsor Contract a sponsor can agree to is kept, unchanged, in
+     Sponsorship-Prospectus/contracts/ and listed in versions.json with the day it went up.
+     Each application records which version it agreed to (contractVersion: sent by the
+     prospectus, or the version that was up the day it was signed). The record shows it,
+     and Print Signed Copy puts the record's details and that exact wording on one page. */
+  var CONTRACTS_URL = "/Sponsorship-Prospectus/contracts/";
+  var contractVersions = null;
+  function loadContractVersions(done){
+    try{
+      fetch(CONTRACTS_URL + "versions.json", {cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; }).then(function(v){
+        if(v && Array.isArray(v.versions)) contractVersions = v.versions.slice().sort(function(x, y){ return x.from < y.from ? -1 : 1; });
+        done();
+      }, done);
+    }catch(e){ done(); }
+  }
+  function contractVersionAt(day){
+    var best = "";
+    (contractVersions || []).forEach(function(v){ if(!day || v.from <= String(day).slice(0, 10)) best = v.version; });
+    return best;
+  }
+  function contractFile(version){
+    var f = "";
+    (contractVersions || []).forEach(function(v){ if(v.version === version) f = v.file; });
+    return f;
+  }
+  /* {version, derived} for a record agreed through a prospectus; null for one signed elsewhere */
+  function contractOf(a){
+    if(a.contractVersion) return {version:a.contractVersion, derived:false};
+    if(a.contractAccepted !== "Yes" || !a.prospectusRef) return null;
+    var v = contractVersionAt(a.acceptanceDate || a.dateSubmitted);
+    return v ? {version:v, derived:true} : null;
+  }
+  function contractLine(a){
+    var cv = contractOf(a);
+    if(!cv) return '<div class="contractline">No online contract on file. Signed outside the prospectus, if at all.</div>';
+    var file = contractFile(cv.version);
+    return '<div class="contractline">Wording agreed to: <b>Version ' + esc(cv.version) + '</b>' +
+      (cv.derived ? ' <span class="muted">(the version on the prospectus the day they signed)</span>' : '') +
+      (file ? ' &middot; <a href="' + esc(CONTRACTS_URL + file) + '" target="_blank" rel="noopener">Read It</a>' : '') +
+      ' <button type="button" class="btn ghost sm" id="x-print-contract">Print Signed Copy</button></div>';
+  }
+  function printContract(a){
+    var cv = contractOf(a), file = cv && contractFile(cv.version);
+    var w = window.open("", "_blank");
+    if(!w){ toast("Your browser blocked the new window. Allow pop-ups for this page and try again.", "warn", "Couldn't Open the Signed Copy"); return; }
+    w.document.write("<!DOCTYPE html><title>Preparing\u2026</title><p style='font:14px system-ui;padding:24px'>Preparing the signed copy\u2026</p>");
+    if(!file){ w.document.body.innerHTML = "<p style='font:14px system-ui;padding:24px'>This record has no online contract on file.</p>"; return; }
+    fetch(CONTRACTS_URL + file, {cache:"force-cache"}).then(function(r){ return r.text(); }).then(function(html){
+      var doc = new DOMParser().parseFromString(html, "text/html");
+      var terms = doc.querySelector(".contract-terms");
+      var title = (/Contract signed by [^,.]+, ([^.]+)\./.exec(a.comments || "") || [])[1] || a.acceptanceTitle || "";
+      var rows = [["Sponsor", a.company], ["Billed As", a.billingName], ["Contact", [a.contactName, a.contactEmail].filter(Boolean).join(", ")],
+        ["Summit", (SUMMITS[a.event] || {}).label || a.event], ["Level", levelOf(a)], ["Opportunity", oppLabel(a)],
+        ["Amount", money(a.amountDue)], ["Application", a.appNo], ["Prospectus Reference", prospectusRef(a)],
+        ["Agreed Online", a.contractAccepted === "Yes" ? "Yes, by checking the agreement box and submitting" : (a.contractAccepted || "")],
+        ["Signed By", [a.acceptanceName, title].filter(Boolean).join(", ")], ["Date Signed", fmtDate(a.acceptanceDate)],
+        ["Contract Version", cv.version + (cv.derived ? " (the version on the prospectus that day)" : "")]];
+      w.document.open();
+      w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>' + esc((a.company || "Sponsor") + " \u2014 Signed Sponsor Contract") + '</title>' +
+        '<style>body{margin:0;color:#3b4b5c;font:13.5px/1.6 Georgia,serif;}main{max-width:760px;margin:0 auto;padding:36px 24px 60px;}' +
+        'h1{font:700 22px/1.25 system-ui,sans-serif;color:#0d314c;margin:0 0 4px;}.sub{font:12px system-ui,sans-serif;color:#6b7b8c;margin:0 0 20px;}' +
+        'table{border-collapse:collapse;width:100%;margin:0 0 26px;font:13px/1.45 system-ui,sans-serif;}th,td{text-align:left;padding:6px 10px;border-bottom:1px solid #d5dde5;vertical-align:top;}' +
+        'th{width:34%;color:#0d314c;font-weight:600;}h2{font:700 16px system-ui,sans-serif;color:#0d314c;margin:0 0 12px;}p{margin:0 0 12px;}strong{color:#0d314c;}' +
+        '.bar{font:13px system-ui,sans-serif;margin:0 0 22px;}.bar button{font:inherit;padding:6px 14px;border-radius:6px;border:1px solid #0d314c;background:#0d314c;color:#fff;cursor:pointer;}' +
+        '.foot{font:11.5px/1.5 system-ui,sans-serif;color:#6b7b8c;margin-top:26px;border-top:1px solid #d5dde5;padding-top:12px;}@media print{.bar{display:none;}main{padding:0;}}</style></head><body><main>' +
+        '<div class="bar"><button type="button" onclick="print()">Print or Save as PDF</button></div>' +
+        '<h1>MISMO Event Sponsor Contract</h1><p class="sub">Signed copy from the Sponsorship Portal</p>' +
+        '<table>' + rows.filter(function(r){ return r[1]; }).map(function(r){ return '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join("") + '</table>' +
+        '<h2>Terms</h2>' + (terms ? terms.innerHTML : "<p>The contract wording couldn\u2019t be read.</p>") +
+        '<p class="foot">Made ' + esc(new Date().toLocaleDateString("en-US", {month:"long", day:"numeric", year:"numeric"})) +
+        ' from the Sponsorship Portal. The terms above are version ' + esc(cv.version) + ', kept unchanged at resources.mismo.org' +
+        esc(CONTRACTS_URL + file) + '.</p></main></body></html>');
+      w.document.close();
+    }, function(){
+      w.document.body.innerHTML = "<p style='font:14px system-ui;padding:24px'>The contract wording couldn\u2019t be loaded. Check your connection and try again.</p>";
+    });
+  }
+  document.addEventListener("click", function(ev){
+    var b = ev.target && ev.target.closest && ev.target.closest("#x-print-contract");
+    if(b && current) printContract(current);
+  });
+
   /* What the price list says this record should cost, and anything about it that doesn't fit:
      {expected, problems:[...]}. null when there is no price list for its year. */
   function priceCheck(a){
@@ -7679,6 +7765,8 @@ a series deal is counted once, at its full amount.</div>
       day: /^(Monday|Tuesday|Wednesday|Thursday|Friday)$/i.test(txt(r.day)) ? txt(r.day) : dayOf({opportunity: opp}),
       dateSubmitted: submitted, contractAccepted: r.agreed ? "Yes" : "",
       acceptanceName: txt(r.signerName), acceptanceDate: txt(r.signedDate) || (r.signerName ? submitted : ""),
+      acceptanceTitle: txt(r.signerTitle),
+      contractVersion: r.agreed ? (txt(r.contractVersion) || contractVersionAt(txt(r.signedDate) || submitted)) : "",
       amountDue: isFinite(due) && due > 0 ? due : "", prospectusRef: ref, comments: notes.join(" "),
       followUpCount: 0};
   }

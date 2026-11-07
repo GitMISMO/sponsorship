@@ -1350,11 +1350,11 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div class="hbody">
           <ol>
             <li><b>Submitted.</b> A sponsor applies on the prospectus, or someone adds a New Application here. Amy and Kelly review it and set the <b>Amount Due</b>.</li>
-            <li><b>Approved.</b> Amy or Kelly clicks <b>Approved</b>. That emails Bernie the invoice request and emails Vanessa the logo request, and the opportunity comes off the public page.</li>
+            <li><b>Approved.</b> Amy or Kelly clicks <b>Approved</b>. That emails Bernie the invoice request, and the opportunity comes off the public page. The logo goes onto the website automatically, so Vanessa is no longer emailed a logo request.</li>
             <li><b>Pending Payment.</b> Bernie raises the invoice in Aptify and enters the <b>Aptify order ID</b>, the invoice date, the comp code and the number of comps. Entering the order ID moves it to Pending Payment.</li>
             <li><b>Paid.</b> When Aptify shows the invoice paid, MISMO Money tells the portal and the record is marked Paid on its own (see <b>Payments from MISMO Money</b>). It can also be marked Paid by hand on the record. Jonna, Amy and Kelly get the Payment Made email.</li>
           </ol>
-          <p><b>In Kind</b> is a sponsor who is recognized but never charged. Set <b>Sponsorship Type</b> to <b>In Kind</b> on the record. Approving it skips invoicing and payment altogether and moves it straight to <b>In Kind</b>: Bernie gets no invoice request, nothing is ever chased, and none of it reaches Committed, Collected, Outstanding or Overdue. It takes no opportunity off the list either — Inventory and the public prospectus carry on offering it, because a free sponsorship is recognition rather than a slot someone has bought. Vanessa still gets the logo request. The day after the last summit it covers, the company goes back on the <b>Prospects</b> list, noted as a prior in-kind sponsor, so the team can try to convert them to a paid sponsorship.</p>
+          <p><b>In Kind</b> is a sponsor who is recognized but never charged. Set <b>Sponsorship Type</b> to <b>In Kind</b> on the record. Approving it skips invoicing and payment altogether and moves it straight to <b>In Kind</b>: Bernie gets no invoice request, nothing is ever chased, and none of it reaches Committed, Collected, Outstanding or Overdue. It takes no opportunity off the list either — Inventory and the public prospectus carry on offering it, because a free sponsorship is recognition rather than a slot someone has bought. Its logo goes onto the website automatically, the same as a paid sponsor&rsquo;s. The day after the last summit it covers, the company goes back on the <b>Prospects</b> list, noted as a prior in-kind sponsor, so the team can try to convert them to a paid sponsorship.</p>
           <p><b>Declined</b> closes a request that won&rsquo;t go ahead. <b>Written Off</b> is a sponsorship that went ahead but was never paid. It keeps the slot taken and counts as committed, but not as collected.</p>
         </div>
       </details>
@@ -1407,7 +1407,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div class="hbody">
           <ul>
             <li><b>Invoice Request</b>: to Bernie, Jonna copied. Sent when a sponsorship is approved.</li>
-            <li><b>Logo Request</b>: to Vanessa, Jonna, Amy and Kelly copied. Sent when a sponsorship is approved, with a link to the logo in Sponsor Logos when the sponsor uploaded one.</li>
+            <li><b>Logo Request</b>: to Vanessa, Jonna, Amy and Kelly copied, with a link to the logo in Sponsor Logos when the sponsor uploaded one. No longer sent on approval (the logo now goes onto the website automatically); it only goes if someone presses <b>Logo Request</b> on a record.</li>
             <li><b>Payment Made</b>: to Jonna, Amy and Kelly. Sent when a record is marked Paid, by hand or from MISMO Money.</li>
             <li><b>Payment Follow-Up</b>: to Bernie, Jonna, Amy and Kelly. Sent when someone clicks Send Alert on a chase.</li>
             <li><b>List Update</b>: no email. It updates the Sponsorship Requests list.</li>
@@ -1680,6 +1680,8 @@ a series deal is counted once, at its full amount.</div>
      out. With this false, alerts open in the mail app as before. The outbox code stays; set this
      back to true only once something is actually delivering the outbox. */
   var AUTO_SEND = false;
+  /* November 6, 2026 (Jonna): the logo request to Vanessa is off; set true to bring it back */
+  var LOGO_TASK = false;
   /* RELAY VERSION (September 26, 2026): the outbox is ON. Approving or marking paid saves an
      email request into data/outbox.json through the relay. That save is a commit to the
      private sponsorship-data repo, and the repo's webhook wakes the "Sponsorship Team Emails"
@@ -1966,7 +1968,9 @@ a series deal is counted once, at its full amount.</div>
     }
     /* In Kind is in this list on purpose: an in-kind sponsor is recognized everywhere a
        paying one is, so their logo still has to be collected and placed. */
-    if((a.status === "Approved" || a.status === "Pending Payment" || a.status === "Paid" ||
+    /* November 6, 2026 (Jonna): the logo now goes onto the website automatically, so
+       Vanessa is no longer asked to place it and no task is raised for her. */
+    if(LOGO_TASK && (a.status === "Approved" || a.status === "Pending Payment" || a.status === "Paid" ||
         a.status === "In Kind") && !a.logoDone && !a.logoRequestSentAt){
       t.push({kind:"logo", tone:"", owner:"Vanessa Rios",
         title:"Collect the Logo and Place the Sponsor",
@@ -4744,9 +4748,11 @@ a series deal is counted once, at its full amount.</div>
         fired.push("approved — invoice request raised for Bernie");
         after.__alert_invoice = true;
       }
+      /* November 6, 2026 (Jonna): approving no longer emails Vanessa the logo request —
+         the logo goes onto the website automatically now. */
       if(sentLogo){
         if(!after.logoRequestSentAt) after.logoRequestSentAt = sentLogo.queuedAt;
-      } else {
+      } else if(LOGO_TASK){
         after.__alert_logo = true;
       }
     }

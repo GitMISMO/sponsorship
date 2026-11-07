@@ -9,7 +9,8 @@ The public prospectuses that feed it are in the Sponsorship-Prospectus repo.
 | `index.html` | The portal. |
 | `practice.js` | The practice copy. Without `?practice` in the address it does nothing. |
 | `practice-data.json` | Made-up test data for the practice copy and the checks. Every company and person in it is fictional. |
-| `tests/checks.js` | Automated checks of the portal and all three prospectuses. |
+| `tests/checks.js` | Automated checks of the portal and all the prospectuses. |
+| `tests/fixtures/` | Made-up copies of other systems' files the checks read (the website's sponsor list). |
 | `tests/apply-catalog.js` | Carries the price list onto every page (see below). |
 | `.github/workflows/checks.yml` | Runs the checks on GitHub after every change and every Monday. |
 | `tests/background.js` | Opens the portal every hour, so its background work happens without anyone opening it (see below). |
@@ -45,7 +46,14 @@ attendee lists, the opportunity itself, and the tier's extras (chair drop, givea
 main-stage recognition). Each item has an owner and a due date counted from the summit's opening
 day (`BENEFIT_TASKS` in index.html). The Benefits page lists them by summit and owner; each record
 shows its own. Ticks are saved as one field per item (`bf:<summit>:<item>`), so two people never
-overwrite each other. Registrations and the logo tick themselves from the record.
+overwrite each other. Registrations tick themselves from the comp code on the record.
+
+The logo is not a task: the site's Summit Sponsor Feed (GitMISMO.github.io,
+`sponsors/build-sponsors.mjs`) puts every approved sponsor on the website within the hour, with its
+logo. The portal reads the feed's published list (`/sponsors/<summit>-2027.json`) and ticks the logo
+from it. The only time it shows as a to-do is when the website lists a sponsor with its name but
+no logo file; then the file is saved once in the site repo as `sponsors/logos/<company-name>.png`.
+The checks use a made-up copy of that list in `tests/fixtures/sponsors/`.
 
 ## Activity history
 

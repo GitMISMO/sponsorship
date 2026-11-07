@@ -1808,9 +1808,17 @@ a series deal is counted once, at its full amount.</div>
   var BENEFIT_TASKS = [
     {k:"agenda",    owner:"Jonna Critchley",  due:-30, label:function(){ return "Added to the agenda in Summit HQ"; }},
     {k:"comps",     owner:"Bernardo Jordan",  due:-30, label:function(t){ return (t && t.comps ? t.comps + " complimentary" : "Complimentary") + " registrations: comp code sent"; },
-                    auto:function(a){ return !!(String(a.compCode || "").trim() && Number(a.numComps) > 0); }},
-    {k:"logo",      owner:"Vanessa Rios",     due:-30, label:function(){ return "Logo on the website and event materials"; },
-                    auto:function(a){ return !!a.logoDone; }},
+                    auto:function(a){ return String(a.compCode || "").trim() && Number(a.numComps) > 0 ? "Done (comp code on the record)" : ""; }},
+    /* November 7, 2026 (Jonna): the logo goes onto the website automatically (the site's Summit
+       Sponsor Feed), so it is never a to-do, except when the website shows the sponsor's name with
+       no logo file: then the file has to be saved once in the site repo (sponsors/logos/). */
+    {k:"logo",      owner:"Jonna Critchley",  due:-30,
+                    label:function(t, l, a, sm){ return logoOnWeb(a, sm) === "noimage" ? "Logo file for the website (the Sponsors page shows the name only until it is saved)" : "Logo on the website"; },
+                    auto:function(a, sm){
+                      if(a.logoDone) return "Done (logo marked done)";
+                      var w = logoOnWeb(a, sm);
+                      return w === "shown" ? "Done (on the website with its logo)" : w === "noimage" ? "" : "Automatic (website sponsor feed)";
+                    }},
     {k:"micdup",    owner:"Kelly Bradshaw",   due:-30, tiers:["DIAMOND","PLATINUM"], label:function(){ return "Invited to appear on MISMO Mic\u2019d Up"; }},
     {k:"exclusive", owner:"Kelly Bradshaw",   due:-30, tiers:["DIAMOND"], label:function(){ return "Opening Remarks or moderator/panelist role confirmed"; }},
     {k:"listspre",  owner:"Vanessa Rios",     due:-21, label:function(){ return "Pre-event attendee lists (weekly, from Kelly)"; }},
@@ -1822,6 +1830,8 @@ a series deal is counted once, at its full amount.</div>
     {k:"listspost", owner:"Vanessa Rios",     due:13,  label:function(){ return "Post-event attendee list"; }}
   ];
   var BENEFIT_STATUSES = {"Approved":1, "Pending Payment":1, "Paid":1, "In Kind":1, "Written Off":1};
+  /* the website's sponsor list for each summit (see loadWebFeeds); here so the first render has it */
+  var webFeeds = {};
   var SUMMITS = {
     "Winter 2026":  {opens:"",           label:"Winter 2026 Summit"},
     "Spring 2026":  {opens:"",           label:"Spring 2026 Summit"},
@@ -7766,7 +7776,8 @@ a series deal is counted once, at its full amount.</div>
      each with an owner and a due date counted back from the summit's opening day. A custom
      package gets each summit's own tier and opportunity. Ticked items are kept on the record as
      "bf:<summit>:<item>" fields, one each, so two people working the list never overwrite each
-     other. Registrations and the logo tick themselves when the record shows they're done. */
+     other. Registrations tick themselves from the comp code; the logo from the website's sponsor
+     list (see logoOnWeb), so it is only a to-do when the website shows a name with no logo. */
   function addDays(isoDay, n){ var d = parseDate(isoDay); if(!d) return ""; d.setDate(d.getDate() + n); return iso(d); }
   /* every benefit owed on one record: [{a, summit, key, label, owner, due, done, doneBy, auto}] */
   function benefitsOf(a){
@@ -7781,12 +7792,39 @@ a series deal is counted once, at its full amount.</div>
       BENEFIT_TASKS.forEach(function(bt){
         if(bt.tiers && bt.tiers.indexOf(tierName) < 0) return;
         var key = "bf:" + sh.summit + ":" + bt.k, rec = a[key] || {};
-        var auto = bt.auto ? bt.auto(a) : false;
-        out.push({a:a, summit:sh.summit, key:key, k:bt.k, label:bt.label(t, l), owner:rec.owner || bt.owner,
+        var auto = bt.auto ? bt.auto(a, sh.summit) : "";
+        out.push({a:a, summit:sh.summit, key:key, k:bt.k, label:bt.label(t, l, a, sh.summit), owner:rec.owner || bt.owner,
                   due:addDays(opens, bt.due), done:!!(rec.done || auto), doneOn:rec.done || "", doneBy:rec.by || (auto ? "from the record" : ""), auto:auto});
       });
     });
     return out;
+  }
+  /* The Summit Sponsor Feed (site repo, GitMISMO.github.io: sponsors/build-sponsors.mjs) reads these
+     records every hour and publishes /sponsors/<summit>-2027.json with each sponsor's name, link
+     and logo. The portal only reads it: "shown" = on the website with its logo, "noimage" = on the
+     website with the name only, "" = not listed (no feed for that summit yet, or not picked up yet). */
+  function webHost(u){ try{ return new URL(u).hostname.replace(/^www\./, "").toLowerCase(); }catch(e){ return ""; } }
+  function webNorm(s){ return String(s || "").toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, ""); }
+  /* names the website shows differently (the same list as NAMES in build-sponsors.mjs) */
+  var WEB_NAMES = {"California Mortgage Bankers": "California MBA"};
+  function logoOnWeb(a, sm){
+    var f = webFeeds[sm]; if(!f || !a) return "";
+    var co = String(a.company || "").trim();
+    var dom = String(a.contactEmail || "").split("@")[1] || "", name = webNorm(WEB_NAMES[co] || co);
+    dom = dom.toLowerCase().replace(/^www\./, "");
+    var hit = f.filter(function(s){ return (name && webNorm(s.name) === name) || (dom && webHost(s.url) === dom); })[0];
+    return !hit ? "" : (hit.logo ? "shown" : "noimage");
+  }
+  function loadWebFeeds(){
+    var t = iso(today());
+    Object.keys(SUMMITS).forEach(function(sm){
+      var o = SUMMITS[sm].opens; if(!o || /Series/.test(sm) || addDays(o, 17) < t) return;
+      try{
+        fetch("/sponsors/" + sm.toLowerCase().replace(/\s+/g, "-") + ".json", {cache:"no-cache"})
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(j){ if(j && Array.isArray(j.sponsors)){ webFeeds[sm] = j.sponsors; renderBenefits(); } }, function(){});
+      }catch(e){}
+    });
   }
   function setBenefit(id, key, patch){
     var a = findById(apps, id); if(!a || !db || !canWrite) return;
@@ -7817,7 +7855,7 @@ a series deal is counted once, at its full amount.</div>
       list.map(function(o){ return '<option' + (o === b.owner ? " selected" : "") + '>' + esc(o) + '</option>'; }).join("") + '</select>';
   }
   function doneButton(b){
-    if(b.auto) return '<span class="bmeta">Done (' + esc(b.k === "comps" ? "comp code on the record" : "logo marked done") + ')</span>';
+    if(b.auto) return '<span class="bmeta">' + esc(b.auto) + '</span>';
     if(!canWrite) return b.done ? '<span class="bmeta">Done</span>' : '';
     return '<button class="btn ' + (b.done ? "ghost " : "") + 'sm" type="button" data-ben-done="' + esc(b.key) + '" data-ben-id="' + esc(b.a.id) +
       '" data-ben-state="' + (b.done ? "done" : "open") + '">' + (b.done ? "Reopen" : "Done") + '</button>';
@@ -8026,6 +8064,7 @@ a series deal is counted once, at its full amount.</div>
     return {expected:expected, problems:problems};
   }
   loadPriceList();
+  loadWebFeeds();
 
   function fromProspectus(r){
     var ref = txt(r.reference).toUpperCase();

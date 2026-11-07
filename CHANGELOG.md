@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-07: Sponsor Benefits: the logo ticks itself from the website's sponsor list (the logo goes on automatically); it is a to-do only when the website shows a sponsor's name with no logo file.
 - 2026-11-07: Sponsor Benefits: a checklist for every approved sponsor at each summit, from their tier, with owners and due dates; on its own page and on each record.
 - 2026-11-07: Activity history from September on recovered from the data repo's history into the monthly files.
 - 2026-11-07: Full activity history kept in monthly files (data/log-YYYY-MM.json); a History section on every record; log entries from two screens no longer wipe each other out.

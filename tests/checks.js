@@ -344,9 +344,9 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(!/Logo on the website/.test(todo), 'a logo the website handles is still on the To Do list');
     expect(/Contoso Mortgage\s*Logo file for the website/.test(todo), 'the missing logo file is not on the To Do list');
     /* the agenda ticks itself from Summit HQ: Northwind by its person record, Contoso by the sponsor card's mark */
-    expect(!/Northwind Lending\s*Added to the agenda/.test(todo) && !/Contoso Mortgage\s*Added to the agenda/.test(todo), 'a sponsor Summit HQ has on the agenda is still on the To Do list');
-    expect(/Woodgrove Title\s*Added to the agenda/.test(todo), 'a sponsor Summit HQ has not put on the agenda is missing from the To Do list');
-    expect(/Done \(on the agenda in Summit HQ\)/.test(body), 'the agenda did not tick itself from Summit HQ');
+    /* the agenda is never a to-do (the website adds sponsors to it); it shows Summit HQ's mark where there is one */
+    expect(!/On the summit agenda/.test(todo), 'the agenda is on the To Do list, but the website adds sponsors to it automatically');
+    expect(/Done \(on the agenda in Summit HQ\)/.test(body), 'the agenda did not show Summit HQ\'s mark');
     /* the weekly registration list is sent by a flow, and To Do only holds what is due in the next 45 days */
     expect(!/Weekly registration list/.test(todo), 'the weekly registration list (sent by a flow) is on the To Do list');
     const late = await P(portal, () => { const lim = new Date(); lim.setDate(lim.getDate() + 45); const h = document.getElementById('ben-todo-head'); const t = h && h.nextElementSibling;

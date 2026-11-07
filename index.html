@@ -1776,6 +1776,9 @@ a series deal is counted once, at its full amount.</div>
   /* packages of some summits at a discount (Kelly, November 2026: Spring & Fall at 10% off).
      Sold on their own prospectus; recorded as a Series with only those summits in its Package. */
   var PACKAGES = {springfall: {name:"Spring & Fall", summits:["Spring","Fall"], discount:0.10}};
+  /* the Sponsorship Requests list check (see checkListSync); here so the first render has it */
+  var listSync = {state: "waiting", resend: [], extra: [], at: null, err: ""};
+  var LIST_COUNTS = {"Approved":1, "Pending Payment":1, "Paid":1};
   var SUMMITS = {
     "Winter 2026":  {opens:"",           label:"Winter 2026 Summit"},
     "Spring 2026":  {opens:"",           label:"Spring 2026 Summit"},
@@ -4325,9 +4328,10 @@ a series deal is counted once, at its full amount.</div>
         }).join("") + '</div></div>';
     }
 
+    html += listSyncHtml();
     html += '<p class="psub" style="margin-top:20px;">Counts come from ' + esc(inv.source) +
-      '. They are typed into this page, not read from the prospectus, so if a tier or a count ' +
-      'changes there it has to change here too.</p>';
+      (priceListFrom === "catalog.json" ? '. Change a tier, a price or a count there, never here.</p>'
+        : '. The price list (Sponsorship-Prospectus/catalog.json) didn\u2019t load, so this is the copy kept in the portal.</p>');
 
     $("stock-body").innerHTML = html;
   }
@@ -7826,6 +7830,109 @@ a series deal is counted once, at its full amount.</div>
     }
     return a;
   }
+  /* ---- the Sponsorship Requests list, kept in step with the portal (November 7, 2026) ----
+     The portal is the one true record. The list is a copy the Team Emails flow keeps for the
+     prospectuses to count sold slots from, so a missed or failed run used to leave it wrong
+     with nobody knowing. Each time the portal opens (the robot opens it every hour), it reads
+     what the list says is sold, through the same Availability flow the prospectuses use, and
+     compares it with what the records here say should be: for every record whose summits are
+     still to come, its program, tier, opportunity, day and Summit Lines, if its status counts
+     (Approved, Pending Payment, Paid, Written Off). A record the list has wrong, or is missing,
+     is sent to the list again (at most once a day each). A slot the list holds that no record
+     here accounts for is shown on Inventory for someone to clear in SharePoint. */
+  function syncOpp(o){
+    var raw = String(o || "").replace(DAY_RE, "").trim();
+    var list = catalogItems(2027), sl = list && raw ? slotFor(list, {opportunity: raw}) : null;
+    return sl ? sl.item.opp : raw.toLowerCase();
+  }
+  function syncLines(v){
+    var a = v; if(typeof v === "string"){ try{ a = v.trim() ? JSON.parse(v) : null; }catch(e){ a = null; } }
+    if(!Array.isArray(a) || !a.length) return "";
+    return JSON.stringify(a.map(function(l){
+      return [String(l.s || ""), String(l.tier || "").toUpperCase(), syncOpp(l.opp), String(l.day || "")];
+    }).sort(function(x, y){ return x[0] < y[0] ? -1 : 1; }));
+  }
+  function syncKey(program, tier, opp, day, lines){
+    var ln = syncLines(lines);
+    return [String(program || ""), tierLabel(tier), syncOpp(opp), ln ? "" : String(day || ""), ln].join("|");
+  }
+  function appSyncKey(a){
+    var sl = listSlot(a);
+    var bare = String(sl.opp || "").replace(DAY_RE, "");
+    return syncKey(listProgramOf(a), sl.tier, bare, dayChoices(bare) && !customLines(a) ? dayOf(a) : "", listLinesOf(a));
+  }
+  function availUrl(){
+    if(availUrl.v) return Promise.resolve(availUrl.v);
+    return fetch("/Sponsorship-Prospectus/", {cache:"no-cache"}).then(function(r){ return r.text(); }).then(function(h){
+      var m = /AVAIL_ENDPOINT = "([^"]+)"/.exec(h);
+      if(!m) throw new Error("the prospectus has no Availability flow address");
+      return (availUrl.v = m[1]);
+    });
+  }
+  function checkListSync(){
+    if(listSync.state === "checking") return;
+    if(!appsLoaded || !outboxLoaded || !priceListReady){ setTimeout(checkListSync, 3000); return; }
+    listSync.state = "checking";
+    availUrl().then(function(u){
+      return fetch(u, {method:"POST", headers:{"Content-Type":"text/plain"}, body:"{}"});
+    }).then(function(r){ if(!r.ok) throw new Error("the Availability flow answered " + r.status); return r.json(); })
+    .then(function(j){
+      var rows = Array.isArray(j) ? j : (j && j.value) || [];
+      var pool = {};
+      rows.forEach(function(r){ var k = syncKey(r.program, r.tier, r.opportunity, r.day, r.lines); (pool[k] = pool[k] || []).push(r); });
+      var resend = [], waiting = [];
+      apps.filter(function(a){ return a.id !== draft && stillToCome(a); }).forEach(function(a){
+        var k = appSyncKey(a), counts = !!LIST_COUNTS[LIST_STATUS[a.status]];
+        if(counts){
+          if(pool[k] && pool[k].length) pool[k].pop(); else resend.push(a);
+        } else waiting.push({a:a, k:k});
+      });
+      /* a record that no longer counts (declined, in kind) but whose slot the list still holds */
+      waiting.forEach(function(w){ if(pool[w.k] && pool[w.k].length){ pool[w.k].pop(); resend.push(w.a); } });
+      var extra = [];
+      Object.keys(pool).forEach(function(k){ pool[k].forEach(function(r){ extra.push(r); }); });
+      listSync = {state: (resend.length || extra.length) ? "off" : "ok", resend: resend, extra: extra, at: new Date(), err: ""};
+      fixListSync(false);
+      renderAll();
+    }).catch(function(e){
+      listSync = {state: "error", resend: [], extra: [], at: new Date(), err: (e && e.message) || String(e)};
+      renderAll();
+    });
+  }
+  /* send each record the list has wrong again, unless a list update for it went in the last day */
+  function fixListSync(byHand){
+    if(!AUTO_SEND || !db || !canWrite) return;
+    var dayAgo = new Date(Date.now() - 864e5).toISOString(), sent = 0;
+    listSync.resend.forEach(function(a){
+      var recent = outbox.some(function(o){ return o.kind === "status" && outboxBelongs(o, a) && String(o.queuedAt || "") > dayAgo; });
+      if(recent && !byHand) return;
+      sent++;
+      queueAlert("status", a).then(function(){
+        addLog(a.appNo, "the Sponsorship Requests list had this wrong; sent again", byHand ? whoAmI() : "List check");
+      }, function(){});
+    });
+    if(byHand) toast(sent ? sent + " record" + (sent === 1 ? "" : "s") + " sent to the list again. It usually catches up within a minute."
+                          : "Nothing to send.", "", "Sponsorship Requests List");
+  }
+  function listSyncHtml(){
+    var s = listSync, when = s.at ? s.at.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}) : "";
+    if(s.state === "waiting" || s.state === "checking") return '<div class="dnote" style="margin-top:22px;">Checking the Sponsorship Requests list against these records\u2026</div>';
+    if(s.state === "error") return '<div class="dnote warn" style="margin-top:22px;"><b>The Sponsorship Requests list couldn\u2019t be checked</b> (' + esc(s.err) + '). The daily health check also watches the Availability flow.</div>';
+    if(s.state === "ok") return '<div class="dnote" style="margin-top:22px;"><b>The Sponsorship Requests list matches these records.</b> Checked at ' + esc(when) + '; the prospectuses show what is here.</div>';
+    var html = '<div class="dnote warn" style="margin-top:22px;"><b>The Sponsorship Requests list doesn\u2019t match these records</b> (checked at ' + esc(when) + ').';
+    if(s.resend.length) html += '<div style="margin-top:6px;">The list has these wrong or missing, so they were sent to it again: ' +
+      s.resend.map(function(a){ return '<span class="taker" data-open="' + esc(a.id) + '">' + esc(a.company || a.appNo) + '</span>'; }).join(", ") +
+      '. <button class="btn ghost sm" type="button" id="list-resend">Send Again Now</button></div>';
+    if(s.extra.length) html += '<div style="margin-top:6px;">The list counts ' + s.extra.length + ' slot' + (s.extra.length === 1 ? "" : "s") +
+      ' no record here accounts for, so the prospectuses show ' + (s.extra.length === 1 ? "it" : "them") + ' as sold: ' +
+      s.extra.map(function(r){ return esc([r.program, r.tier, r.opportunity, r.day].filter(Boolean).join(" \u00b7 ")); }).join("; ") +
+      '. Set ' + (s.extra.length === 1 ? "that row" : "those rows") + ' to Declined in the SharePoint list, or add the record here.</div>';
+    return html + '</div>';
+  }
+  document.addEventListener("click", function(ev){
+    if(ev.target && ev.target.id === "list-resend"){ fixListSync(true); }
+  });
+
   /* ---- likely spam (November 7, 2026) ----
      The Intake flow's address is in the public page, so anything can post to it. An application
      that looks automated is not made into a record: it is held, and listed at the top of the
@@ -8131,7 +8238,8 @@ a series deal is counted once, at its full amount.</div>
       });
     });
     d.collection("outbox").onSnapshot(function(snap){
-      try{ outbox = copyDocs(snap); outboxLoaded = true; renderAll(); paintMoneyBanner(); }catch(err){}
+      try{ outbox = copyDocs(snap); outboxLoaded = true; renderAll(); paintMoneyBanner();
+           if(listSync.state === "waiting") setTimeout(checkListSync, 8000); }catch(err){}
     }, function(){});
     /* Requests from the online prospectus. The intake flow adds each one to
        data/inbox.json (a file only the flow writes). The first signed-in person with

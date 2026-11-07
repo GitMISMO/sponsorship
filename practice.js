@@ -237,6 +237,8 @@
     /* someone else saving in between, the way a second person or a flow would */
     write: function(n, fn){ var s = store(), f = s.files[n]; fn(f.data); f.sha++; keep(); },
     list: function(){ return JSON.parse(JSON.stringify(store().list)); },
+    /* change the practice Sponsorship Requests list the way a missed flow run would leave it */
+    setList: function(fn){ fn(store().list); keep(); },
     sent: function(){ return JSON.parse(JSON.stringify(store().sent)); }
   };
 })();

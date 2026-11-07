@@ -29,6 +29,14 @@ Sponsorship-Prospectus repo, run the checks, and publish every changed file.
 New prospectuses are made from one template; see the Sponsorship-Prospectus README.
 The checks fail if any page disagrees with the price list.
 
+## The Sponsorship Requests list
+
+The portal is the one true record; the SharePoint list is a copy the Team Emails flow keeps so
+the prospectuses can count sold slots. Every time the portal opens (the robot opens it hourly) it
+reads the list through the Availability flow and compares it with the records. A record the list
+has wrong or missing is sent to it again (at most once a day each), and a sold slot the list holds
+that no record accounts for is shown on Inventory to be cleared in SharePoint.
+
 ## Likely spam
 
 The Intake flow's address is in the public page, so anything can post to it. An application

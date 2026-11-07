@@ -83,6 +83,29 @@ const appBy = async (page, test) => (await apps(page)).find(test);
         const d = L.comparePages(PROS, cat);
         expect(!d.length, d.join('; ') + '. Run node apply-catalog.js to fix.');
       });
+      await check('each prospectus shows exactly the contract wording it says it shows', async () => {
+        const crypto = require('crypto');
+        const norm = h => h.replace(/\s+/g, ' ').trim();
+        const sha = h => crypto.createHash('sha256').update(norm(h)).digest('hex');
+        const vf = path.join(PROS, 'contracts', 'versions.json');
+        expect(fs.existsSync(vf), 'contracts/versions.json is missing');
+        const versions = JSON.parse(fs.readFileSync(vf, 'utf8')).versions;
+        for (const v of versions) {
+          const f = path.join(PROS, 'contracts', v.file);
+          expect(fs.existsSync(f), 'the saved wording for ' + v.version + ' (' + v.file + ') is missing');
+          const t = fs.readFileSync(f, 'utf8'), m = /<div class="contract-terms"[^>]*>([\s\S]*?)\n<\/div>/.exec(t);
+          expect(m && sha(m[1]) === v.sha256, 'the saved wording for ' + v.version + ' has been changed. A signed version must never change; save new wording as a new version');
+        }
+        for (const pg of L.PAGES) {
+          const t = fs.readFileSync(path.join(PROS, pg.file), 'utf8');
+          const m = /<div class="contract-box" data-contract-version="([^"]+)">([\s\S]*?)<\/div>/.exec(t);
+          expect(m, pg.file + ': the contract box has no data-contract-version');
+          const v = versions.find(x => x.version === m[1]);
+          expect(v, pg.file + ' says it shows contract ' + m[1] + ', which is not in contracts/versions.json');
+          expect(sha(m[2]) === v.sha256, pg.file + ': the contract wording differs from version ' + m[1] + '. If the contract changed, save it as a new version in contracts/ and point the page at it');
+          expect(/contractVersion:/.test(t), pg.file + ' does not send the contract version with an application');
+        }
+      });
       await check('the portal matches the price list', async () => {
         const d = L.comparePortal(path.join(PORTAL, 'index.html'), cat);
         expect(!d.length, d.join('; ') + '. Run node apply-catalog.js to fix.');
@@ -122,6 +145,26 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(a.day === 'Wednesday', 'day is ' + a.day);
     const all = await apps(portal);
     expect(new Set(all.map(x => x.appNo)).size === all.length, 'two records share an application number');
+  });
+
+  await check('each application records which contract wording it agreed to, and prints a signed copy', async () => {
+    const a = await appBy(portal, x => x.prospectusRef === 'MS27-T0006');
+    if (HAVE_PROS) expect(a.contractVersion === '2027-v1', 'the contract version recorded is "' + a.contractVersion + '"');
+    expect(a.acceptanceTitle === 'VP Marketing', 'the signer\'s title was not kept ("' + a.acceptanceTitle + '")');
+    if (!HAVE_PROS) return;
+    await portal.click('tr[data-open="' + a.id + '"]');
+    await portal.waitForTimeout(400);
+    const line = await P(portal, () => (document.querySelector('#drawer .contractline') || {}).textContent || '');
+    expect(/Version 2027-v1/.test(line), 'the record does not show the contract version: "' + line + '"');
+    const [pop] = await Promise.all([portal.waitForEvent('popup'), portal.click('#x-print-contract')]);
+    await pop.waitForTimeout(1200);
+    const txt = await pop.evaluate(() => document.body.innerText);
+    expect(/Litware Analytics/.test(txt) && /Gray Test, VP Marketing/.test(txt), 'the signed copy is missing the sponsor or signer');
+    expect(/Cancellation and Force Majeure/.test(txt) && /Version|2027-v1/.test(txt), 'the signed copy is missing the contract terms');
+    await pop.close();
+    await portal.click('#d-cancel').catch(() => {});
+    await portal.click('#d-close').catch(() => {});
+    await portal.waitForTimeout(300);
   });
 
   await check('the price comes from the price list, not from the sponsor\'s page', async () => {
@@ -256,6 +299,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
         const want = p.program === 'Summit Series' ? 13500 : 5000;
         expect(price === want, 'price sent was ' + p.price + ', the catalog says ' + want);
         expect(p.agreed && p.signerName === 'Pat Check', 'the signature was not sent');
+        expect(p.contractVersion === '2027-v1', 'the contract version sent was "' + p.contractVersion + '"');
         expect(!page.errors.length, 'page errors: ' + page.errors.join(' | '));
       });
       await check(pg.name + ': the application arrives in the portal on the right summit', async () => {

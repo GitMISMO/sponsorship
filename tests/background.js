@@ -103,7 +103,13 @@ async function signIn() {
   } else {
     if (process.env.SPONSORSHIP_DATA_TOKEN) {
       const ok = await canWrite(process.env.SPONSORSHIP_DATA_TOKEN).catch(() => null);
-      if (ok === false) { say('Could not run: the data key can read the sponsorship records but not save them. Give it Contents: Read and write on GitMISMO/sponsorship-data.'); finish(1); }
+      if (ok === false) {
+        /* a warning, not a failure: until the key is given write access every hourly run would
+           otherwise email a failure */
+        console.log('::warning::The data key can read the sponsorship records but not save them.');
+        say('Waiting to be switched on: the data key can read the sponsorship records but not save them. Give it Contents: Read and write on GitMISMO/sponsorship-data.');
+        finish(0);
+      }
       if (ok === null) { say('Could not run: GitHub did not answer the data key check. The next run will try again.'); finish(1); }
       dataToken = process.env.SPONSORSHIP_DATA_TOKEN;
     } else {

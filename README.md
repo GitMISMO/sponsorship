@@ -12,6 +12,7 @@ The public prospectuses that feed it are in the Sponsorship-Prospectus repo.
 | `tests/checks.js` | Automated checks of the portal and all three prospectuses. |
 | `tests/apply-catalog.js` | Carries the price list onto every page (see below). |
 | `.github/workflows/checks.yml` | Runs the checks on GitHub after every change and every Monday. |
+| `tests/background.js`, `.github/workflows/background.yml` | Opens the portal every hour as its robot account, so its background work happens without anyone opening it (see below). |
 
 ## The price list
 
@@ -24,6 +25,17 @@ flagged on the record until it is approved.
 To change a price or a slot count: edit `catalog.json`, run `node tests/apply-catalog.js` to carry
 it onto the three prospectuses and the portal, run the checks, and publish every changed file.
 The checks fail if any page disagrees with the price list.
+
+## Background work
+
+New applications from the prospectuses, MISMO Money payments and prospects returning to the list
+are all handled by the portal's own code when someone with edit access opens it. GitHub opens it
+every hour from about 6 am to 6 pm Eastern, signed in as the portal's robot account, so these happen even
+on a day nobody opens it. Each run's summary (Actions tab, "Background work") says what it did.
+
+It needs a relay account with Staff access to the Sponsorship Portal, and two repository
+secrets: `SPONSORSHIP_ROBOT_EMAIL` and `SPONSORSHIP_ROBOT_PASSWORD`. Until they are set, each run
+says "Not set up yet" and does nothing.
 
 ## Practice copy
 

@@ -8018,7 +8018,9 @@ a series deal is counted once, at its full amount.</div>
       takeInbox();
     }, function(){});
     d.collection("inbox-taken").onSnapshot(function(snap){
-      inboxTaken = {};
+      /* added to, never cleared (November 7, 2026): clearing it let a re-read that arrived
+         while several applications were still saving take them a second time, under new
+         application numbers (found by the automated checks) */
       snap.docs.forEach(function(doc){ inboxTaken[doc.id] = 1; });
       takeInboxReady = true;
       takeInbox();

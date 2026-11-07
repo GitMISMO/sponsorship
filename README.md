@@ -10,7 +10,20 @@ The public prospectuses that feed it are in the Sponsorship-Prospectus repo.
 | `practice.js` | The practice copy. Without `?practice` in the address it does nothing. |
 | `practice-data.json` | Made-up test data for the practice copy and the checks. Every company and person in it is fictional. |
 | `tests/checks.js` | Automated checks of the portal and all three prospectuses. |
+| `tests/apply-catalog.js` | Carries the price list onto every page (see below). |
 | `.github/workflows/checks.yml` | Runs the checks on GitHub after every change and every Monday. |
+
+## The price list
+
+`Sponsorship-Prospectus/catalog.json` is the one place tiers, prices, registrations, slot counts
+and days are set. The portal reads it when it opens and uses it for Inventory and for the price
+check: every application from a prospectus is charged the price list's price, whatever the page
+sent, and anything that doesn't fit (a wrong price, an opportunity sold at the wrong tier) is
+flagged on the record until it is approved.
+
+To change a price or a slot count: edit `catalog.json`, run `node tests/apply-catalog.js` to carry
+it onto the three prospectuses and the portal, run the checks, and publish every changed file.
+The checks fail if any page disagrees with the price list.
 
 ## Practice copy
 

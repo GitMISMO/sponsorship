@@ -843,6 +843,7 @@
   .banner, .dnote, .quickfilter{border-radius:0 6px 6px 0; background:var(--info-soft);
     border-left:3px solid var(--c1);}
   .banner.bad{background:var(--bad-soft); border-left-color:var(--bad);}
+  .dnote.warn{background:var(--warn-soft); border-left-color:var(--warn); color:var(--ink);}
   .impmsg{background:var(--info-soft);}
   .impmsg.warn{background:var(--warn-soft);}
   .impmsg.bad{background:var(--bad-soft);}
@@ -2640,7 +2641,7 @@ a series deal is counted once, at its full amount.</div>
      "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate","paymentStatus",
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
      "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day","workshopName",
-     "inKind","updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
+     "inKind","priceFlag","priceSent","updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
     return d;
   }
 
@@ -4411,6 +4412,9 @@ a series deal is counted once, at its full amount.</div>
       "outstanding, and it raises nothing to chase.";
 
     var html = "";
+    if(a.priceFlag && (stage === "Submitted" || a.id === draft)){
+      html += '<div class="dnote warn"><b>Check the price before approving.</b> ' + esc(a.priceFlag) + '</div>';
+    }
     if(note) html += '<div class="dnote">' + note + '</div>';
 
     html += '<div class="dsect"><h4>Sponsor</h4><div class="grid2">' +
@@ -7599,6 +7603,57 @@ a series deal is counted once, at its full amount.</div>
   var appsLoaded = false, inboxItems = null, inboxTaken = {}, takeInboxReady = false;
   function refKey(ref){ return String(ref || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
   function txt(v){ return String(v == null ? "" : v).replace(/[<>]/g, "").trim().slice(0, 300); }
+  /* ---- the price list (November 7, 2026) ----
+     Sponsorship-Prospectus/catalog.json is the one place tiers, prices, slot counts and days
+     are set. The three prospectuses and the CATALOG above are checked against it after every
+     change (tests/checks.js); here the portal reads it when it opens, so Inventory and the
+     price check below always use the file, with the copy above only as a fallback. */
+  var PRICE_LIST_URL = "/Sponsorship-Prospectus/catalog.json";
+  var priceListReady = false, priceListFrom = "built in";
+  function loadPriceList(){
+    var done = function(){ priceListReady = true; takeInbox(); };
+    try{
+      fetch(PRICE_LIST_URL, {cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; }).then(function(c){
+        if(c && c.year && Array.isArray(c.tiers) && c.tiers.length){
+          CATALOG[c.year] = {source:"the price list (Sponsorship-Prospectus/catalog.json)",
+            tiers: c.tiers.map(function(t){
+              return {name:String(t.name).toUpperCase(), single:+t.single, series:+t.series, comps:+t.comps,
+                items:(t.items || []).map(function(it){
+                  var o = {opp:it.opp, cap:it.cap == null ? null : +it.cap};
+                  if(it.exclusive) o.exclusive = true;
+                  if(it.days) o.days = it.days.slice();
+                  if(it.alt) o.alt = it.alt.slice();
+                  return o;
+                })};
+            })};
+          priceListFrom = "catalog.json";
+          renderAll();
+        }
+        done();
+      }, done);
+    }catch(e){ done(); }
+  }
+  /* What the price list says this record should cost, and anything about it that doesn't fit:
+     {expected, problems:[...]}. null when there is no price list for its year. */
+  function priceCheck(a){
+    var year = (/(20\d\d)/.exec(a.event || "") || [])[1], c = CATALOG[year];
+    if(!c) return null;
+    var lvl = String(a.level2027 || "").toUpperCase(), tier = null, problems = [];
+    c.tiers.forEach(function(t){ if(t.name === lvl) tier = t; });
+    if(!tier) return {expected:null, problems:["The level \u201c" + (a.level2027 || "none") + "\u201d isn't on the " + year + " price list."]};
+    var series = RE_SERIES.test(a.event || "");
+    var expected = series ? tier.series : tier.single;
+    var slot = slotFor(catalogItems(year), a);
+    if(!slot) problems.push("\u201c" + (a.opportunity || "No opportunity") + "\u201d isn't on the " + year + " price list.");
+    else if(slot.tier.name !== tier.name) problems.push("\u201c" + slot.item.opp + "\u201d is a " + slot.tier.name + " opportunity, not " + tier.name + ".");
+    var due = Number(a.amountDue);
+    if(isFinite(due) && due > 0 && Math.abs(due - expected) >= 0.01)
+      problems.push("The prospectus page sent " + money(due) + "; the price list says " + money(expected) + " for " + tier.name +
+                    (series ? " Series" : "") + ", so the amount due is set to " + money(expected) + ".");
+    return {expected:expected, problems:problems};
+  }
+  loadPriceList();
+
   function fromProspectus(r){
     var ref = txt(r.reference).toUpperCase();
     var year = (/(20\d\d)/.exec(r.programLabel || "") || /(20\d\d)/.exec(r.submittedAt || "") || [])[1] ||
@@ -7627,8 +7682,25 @@ a series deal is counted once, at its full amount.</div>
       amountDue: isFinite(due) && due > 0 ? due : "", prospectusRef: ref, comments: notes.join(" "),
       followUpCount: 0};
   }
+  /* The price comes from the price list, never from the sponsor's browser (November 7, 2026).
+     What the page sent is kept in priceSent; anything that doesn't fit is kept in priceFlag
+     and shown on the record until it is approved. */
+  function checkedFromProspectus(r){
+    var a = fromProspectus(r), pc = priceCheck(a);
+    if(!pc) return a;
+    var sent = a.amountDue;
+    if(pc.expected != null && Number(sent) !== pc.expected){
+      a.priceSent = sent === "" ? "" : sent;
+      a.amountDue = pc.expected;
+    }
+    if(pc.problems.length){
+      a.priceFlag = pc.problems.join(" ");
+      a.comments += " Price check: " + a.priceFlag;
+    }
+    return a;
+  }
   function takeInbox(){
-    if(!db || !canWrite || !appsLoaded || !inboxItems || !takeInboxReady) return;
+    if(!db || !canWrite || !appsLoaded || !inboxItems || !takeInboxReady || !priceListReady) return;
     var have = {};
     apps.forEach(function(a){ if(a.prospectusRef) have[refKey(a.prospectusRef)] = 1; });
     var fresh = inboxItems.filter(function(r){
@@ -7639,11 +7711,12 @@ a series deal is counted once, at its full amount.</div>
     fresh.forEach(function(r){
       var k = refKey(r.reference);
       inboxTaken[k] = 1;                       // at most once from this screen
-      var a = fromProspectus(r);
+      var a = checkedFromProspectus(r);
       saveApp(a);
       db.doc("inbox-taken/" + k).set({at: new Date().toISOString(), appNo: a.appNo, by: whoAmI()}).catch(function(){});
       addLog(a.appNo, "received from the online prospectus (" + a.prospectusRef + ") \u2014 " +
              (a.company || "") + ", " + (a.level2027 || "") + " " + (oppLabel(a) || ""), "Online prospectus");
+      if(a.priceFlag) addLog(a.appNo, "price check: " + a.priceFlag, "Price list");
     });
     toast(fresh.length === 1
             ? (txt(fresh[0].company) + " applied through the online prospectus. It's on the Pipeline under Submitted.")

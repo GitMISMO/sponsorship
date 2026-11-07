@@ -145,6 +145,11 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(a.day === 'Wednesday', 'day is ' + a.day);
     const all = await apps(portal);
     expect(new Set(all.map(x => x.appNo)).size === all.length, 'two records share an application number');
+    /* several applications arriving together are each taken exactly once */
+    const nos = all.map(x => +String(x.appNo).replace(/\D/g, '')).sort((a, b) => a - b);
+    expect(nos.every((n, i) => !i || n === nos[i - 1] + 1), 'application numbers skip (' + nos.join(', ') + '), so something was taken twice');
+    const log = (await P(portal, () => window.__practice.file('log').entries)).filter(e => /received from the online prospectus/.test(e.text || e.what || JSON.stringify(e)));
+    expect(log.length === 3, log.length + ' "received from the online prospectus" entries for 3 applications');
   });
 
   await check('each application records which contract wording it agreed to, and prints a signed copy', async () => {

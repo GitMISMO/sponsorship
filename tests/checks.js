@@ -19,8 +19,9 @@ const HAVE_PROS = fs.existsSync(path.join(PROS, 'index.html'));
 const PORT = 8790 + Math.floor(Math.random() * 100);
 const ORIGIN = 'http://localhost:' + PORT;
 
-/* resources.mismo.org, in miniature: /sponsorship/ and /Sponsorship-Prospectus/ side by side */
-const ROOTS = { '/sponsorship/': PORTAL + '/', '/Sponsorship-Prospectus/': PROS + '/' };
+/* resources.mismo.org, in miniature: /sponsorship/ and /Sponsorship-Prospectus/ side by side, and a
+   made-up website sponsor list at /sponsors/ (tests/fixtures/sponsors/) */
+const ROOTS = { '/sponsorship/': PORTAL + '/', '/Sponsorship-Prospectus/': PROS + '/', '/sponsors/': path.join(__dirname, 'fixtures', 'sponsors') + '/' };
 const TYPES = { '.js': 'text/javascript', '.json': 'application/json', '.html': 'text/html', '.png': 'image/png', '.svg': 'image/svg+xml' };
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
@@ -336,6 +337,12 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(/Northwind Lending/.test(body) && /Contoso Mortgage/.test(body) && /Dedicated LinkedIn recognition post/.test(body), 'the Winter checklist is missing sponsors or items');
     expect(!/Proseware Price Test/.test(body), 'a sponsorship still waiting for approval has a checklist');
     expect(/6 complimentary registrations: comp code sent[\s\S]*?Done \(comp code on the record\)/.test(body), 'registrations did not tick themselves from the comp code');
+    /* the logo is never a to-do while the website shows it; only a name with no logo file is */
+    expect(/Logo on the website[\s\S]*?Done \(on the website with its logo\)/.test(body), 'a logo already on the website is not ticked from the website list');
+    expect(/Logo file for the website/.test(body), 'a sponsor the website shows without a logo is not listed as needing its logo file');
+    const todo = await P(portal, () => { const h = [...document.querySelectorAll('#ben-body h4')].find(x => /To Do/.test(x.textContent)); const t = h && h.nextElementSibling; return t ? t.textContent : ''; });
+    expect(!/Logo on the website/.test(todo), 'a logo the website handles is still on the To Do list');
+    expect(/Contoso Mortgage\s*Logo file for the website/.test(todo), 'the missing logo file is not on the To Do list');
     /* someone else ticks the LinkedIn post while this screen ticks the agenda: both stay */
     await P(portal, () => window.__practice.write('applications', d => { d.docs['app-t-paid']['bf:Winter 2027:linkedin'] = { done: '2026-11-07', by: 'Someone Else' }; }));
     await portal.click('[data-ben-done="bf:Winter 2027:agenda"][data-ben-id="app-t-paid"]');

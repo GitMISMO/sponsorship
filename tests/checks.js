@@ -326,6 +326,29 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
   });
 
+  await check('every approved sponsor has a benefits checklist with owners and due dates', async () => {
+    await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
+    await portal.click('.tab[data-view="benefits"]');
+    await portal.waitForTimeout(500);
+    await portal.selectOption('#ben-summit', 'Winter 2027');
+    await portal.waitForTimeout(300);
+    const body = await P(portal, () => document.getElementById('ben-body').textContent);
+    expect(/Northwind Lending/.test(body) && /Contoso Mortgage/.test(body) && /Dedicated LinkedIn recognition post/.test(body), 'the Winter checklist is missing sponsors or items');
+    expect(!/Proseware Price Test/.test(body), 'a sponsorship still waiting for approval has a checklist');
+    expect(/6 complimentary registrations: comp code sent[\s\S]*?Done \(comp code on the record\)/.test(body), 'registrations did not tick themselves from the comp code');
+    /* someone else ticks the LinkedIn post while this screen ticks the agenda: both stay */
+    await P(portal, () => window.__practice.write('applications', d => { d.docs['app-t-paid']['bf:Winter 2027:linkedin'] = { done: '2026-11-07', by: 'Someone Else' }; }));
+    await portal.click('[data-ben-done="bf:Winter 2027:agenda"][data-ben-id="app-t-paid"]');
+    await portal.waitForTimeout(2000);
+    await portal.selectOption('[data-ben-owner="bf:Winter 2027:chair"][data-ben-id="app-t-paid"]', 'Amy Moses');
+    await portal.waitForTimeout(2000);
+    const a = await appBy(portal, x => x.id === 'app-t-paid');
+    expect(a['bf:Winter 2027:agenda'] && a['bf:Winter 2027:agenda'].done, 'Done was not saved');
+    expect(a['bf:Winter 2027:linkedin'] && a['bf:Winter 2027:linkedin'].by === 'Someone Else', 'another person\'s tick was overwritten');
+    expect(a['bf:Winter 2027:chair'] && a['bf:Winter 2027:chair'].owner === 'Amy Moses', 'the owner change was not saved');
+    await portal.click('.tab[data-view="pipeline"]').catch(() => {});
+  });
+
   await check('nothing reaches a real address', async () => {
     const out = [...new Set(portal.outside)];
     expect(!out.length, 'the page tried to reach ' + out.join(', '));

@@ -298,6 +298,34 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await portal.click('.tab[data-view="pipeline"]').catch(() => {});
   });
 
+  await check('the activity log keeps everything, in monthly files, and shows on each record', async () => {
+    const month = 'log-' + new Date().toISOString().slice(0, 7);
+    /* someone else's entry saved a moment ago must survive this screen's next one */
+    await P(portal, () => window.__practice.write('log', d => { d.entries.unshift({ at: new Date().toISOString(), appNo: 'AN90001', what: 'note from another screen', who: 'Someone Else' }); }));
+    await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
+    await portal.click('tr[data-open="app-t-spring"]');
+    await portal.waitForTimeout(400);
+    await portal.click('#drawer button:has-text("Pending")').catch(() => {});
+    await portal.fill('#x-statusNotes', 'History check');
+    await portal.click('#d-save');
+    await portal.waitForTimeout(2500);
+    const main = await P(portal, () => window.__practice.file('log').entries);
+    expect(main.some(e => e.what === 'note from another screen'), 'another screen\'s log entry was wiped out');
+    const mf = await P(portal, m => window.__practice.file(m), month);
+    expect(mf && mf.entries && mf.entries.length >= main.filter(e => String(e.at).slice(0, 7) === month.slice(4)).length - 1,
+      'this month\'s history file is missing or short (' + (mf && mf.entries ? mf.entries.length : 'none') + ')');
+    const old = await P(portal, () => window.__practice.file('log-' + new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 7)));
+    expect(old && old.entries.some(e => e.appNo === 'AN90001'), 'last month\'s entries were not swept into their month\'s file');
+    await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
+    await portal.click('tr[data-open="app-t-paid"]');
+    await portal.waitForTimeout(400);
+    await portal.click('#x-fullhist');
+    await portal.waitForTimeout(1500);
+    const hist = await P(portal, () => document.getElementById('x-hist').textContent);
+    expect(/marked Paid from MISMO Money/.test(hist) && /note from another screen/.test(hist) && /monthly history files/.test(hist), 'the full history does not show: "' + hist.slice(0, 200) + '"');
+    await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
+  });
+
   await check('nothing reaches a real address', async () => {
     const out = [...new Set(portal.outside)];
     expect(!out.length, 'the page tried to reach ' + out.join(', '));

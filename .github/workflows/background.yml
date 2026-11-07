@@ -1,0 +1,33 @@
+# Opens the Sponsorship Portal every hour, signed in as its robot account, so new applications,
+# MISMO Money payments and returning prospects are handled even when nobody opens the portal.
+# See tests/background.js. Does nothing until the SPONSORSHIP_ROBOT_EMAIL and
+# SPONSORSHIP_ROBOT_PASSWORD secrets are set. A failed run emails whoever last changed this file.
+name: Background work
+on:
+  schedule:
+    - cron: "23 11-23 * * *"
+  workflow_dispatch:
+concurrency:
+  group: sponsorship-background
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install the browser
+        working-directory: tests
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Open the portal and let it do its work
+        working-directory: tests
+        env:
+          SPONSORSHIP_ROBOT_EMAIL: ${{ secrets.SPONSORSHIP_ROBOT_EMAIL }}
+          SPONSORSHIP_ROBOT_PASSWORD: ${{ secrets.SPONSORSHIP_ROBOT_PASSWORD }}
+          SPONSORSHIP_ROBOT_DEVICE: ${{ secrets.SPONSORSHIP_ROBOT_DEVICE }}
+        run: node background.js

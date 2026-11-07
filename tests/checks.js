@@ -340,17 +340,30 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     /* the logo is never a to-do while the website shows it; only a name with no logo file is */
     expect(/Logo on the website[\s\S]*?Done \(on the website with its logo\)/.test(body), 'a logo already on the website is not ticked from the website list');
     expect(/Logo file for the website/.test(body), 'a sponsor the website shows without a logo is not listed as needing its logo file');
-    const todo = await P(portal, () => { const h = [...document.querySelectorAll('#ben-body h4')].find(x => /To Do/.test(x.textContent)); const t = h && h.nextElementSibling; return t ? t.textContent : ''; });
+    const todo = await P(portal, () => { const h = document.getElementById('ben-todo-head'); const t = h && h.nextElementSibling; return t ? t.textContent : ''; });
     expect(!/Logo on the website/.test(todo), 'a logo the website handles is still on the To Do list');
     expect(/Contoso Mortgage\s*Logo file for the website/.test(todo), 'the missing logo file is not on the To Do list');
-    /* someone else ticks the LinkedIn post while this screen ticks the agenda: both stay */
+    /* the agenda ticks itself from Summit HQ: Northwind by its person record, Contoso by the sponsor card's mark */
+    expect(!/Northwind Lending\s*Added to the agenda/.test(todo) && !/Contoso Mortgage\s*Added to the agenda/.test(todo), 'a sponsor Summit HQ has on the agenda is still on the To Do list');
+    expect(/Woodgrove Title\s*Added to the agenda/.test(todo), 'a sponsor Summit HQ has not put on the agenda is missing from the To Do list');
+    expect(/Done \(on the agenda in Summit HQ\)/.test(body), 'the agenda did not tick itself from Summit HQ');
+    /* the weekly registration list is sent by a flow, and To Do only holds what is due in the next 45 days */
+    expect(!/Weekly registration list/.test(todo), 'the weekly registration list (sent by a flow) is on the To Do list');
+    const late = await P(portal, () => { const lim = new Date(); lim.setDate(lim.getDate() + 45); const h = document.getElementById('ben-todo-head'); const t = h && h.nextElementSibling;
+      return t ? [...t.querySelectorAll('tbody tr')].map(r => r.querySelector('td').textContent).filter(d => new Date(d) > lim) : []; });
+    expect(!late.length, 'To Do has items due more than 45 days out: ' + late.join(', '));
+    expect(!/Rosalyn/.test(body), 'Rosalyn is listed in the portal (she works from Summit HQ only)');
+    /* someone else ticks the LinkedIn post while this screen ticks the Mic'd Up invitation: both stay */
     await P(portal, () => window.__practice.write('applications', d => { d.docs['app-t-paid']['bf:Winter 2027:linkedin'] = { done: '2026-11-07', by: 'Someone Else' }; }));
-    await portal.click('[data-ben-done="bf:Winter 2027:agenda"][data-ben-id="app-t-paid"]');
+    const unfold = () => P(portal, () => document.querySelectorAll('#ben-body details').forEach(d => { d.open = true; }));
+    await unfold();
+    await portal.click('[data-ben-done="bf:Winter 2027:micdup"][data-ben-id="app-t-paid"]');
     await portal.waitForTimeout(2000);
+    await unfold();
     await portal.selectOption('[data-ben-owner="bf:Winter 2027:chair"][data-ben-id="app-t-paid"]', 'Amy Moses');
     await portal.waitForTimeout(2000);
     const a = await appBy(portal, x => x.id === 'app-t-paid');
-    expect(a['bf:Winter 2027:agenda'] && a['bf:Winter 2027:agenda'].done, 'Done was not saved');
+    expect(a['bf:Winter 2027:micdup'] && a['bf:Winter 2027:micdup'].done, 'Done was not saved');
     expect(a['bf:Winter 2027:linkedin'] && a['bf:Winter 2027:linkedin'].by === 'Someone Else', 'another person\'s tick was overwritten');
     expect(a['bf:Winter 2027:chair'] && a['bf:Winter 2027:chair'].owner === 'Amy Moses', 'the owner change was not saved');
     await portal.click('.tab[data-view="pipeline"]').catch(() => {});

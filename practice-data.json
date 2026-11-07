@@ -1,0 +1,41 @@
+{
+  "about": "Made-up test data for the practice copy (?practice) and the automated checks in tests/. Every company and person here is fictional. {{today-5}} means five days ago.",
+  "files": {
+    "applications": {"docs": {
+      "app-t-paid": {"appNo": "AN90001", "event": "Winter 2027", "status": "Paid", "company": "Northwind Lending", "contactName": "Avery Test", "contactEmail": "avery@example.org", "level2027": "PLATINUM", "opportunity": "Badge Sponsor", "day": "", "dateSubmitted": "{{today-60}}", "contractAccepted": "Yes", "acceptanceName": "Avery Test", "acceptanceDate": "{{today-60}}", "amountDue": 15000, "invoiceNumber": "990101", "invoiceDate": "{{today-50}}", "amountPaid": 15000, "paymentReceivedDate": "{{today-30}}", "paymentStatus": "Paid", "prospectusRef": "MS27-T0001", "comments": "Practice record.", "followUpCount": 0},
+      "app-t-series": {"appNo": "AN90002", "event": "2027 Series", "status": "Pending Payment", "company": "Contoso Mortgage", "contactName": "Blake Test", "contactEmail": "blake@example.org", "level2027": "GOLD", "opportunity": "Workshop Sponsor", "day": "", "dateSubmitted": "{{today-40}}", "contractAccepted": "Yes", "acceptanceName": "Blake Test", "acceptanceDate": "{{today-40}}", "amountDue": 27000, "invoiceNumber": "990102", "invoiceDate": "{{today-12}}", "prospectusRef": "MS27-T0002", "comments": "Practice record.", "followUpCount": 0},
+      "app-t-spring": {"appNo": "AN90003", "event": "Spring 2027", "status": "Approved", "company": "Fabrikam Title", "contactName": "Casey Test", "contactEmail": "casey@example.org", "level2027": "SILVER", "opportunity": "Event App Sponsor", "day": "", "dateSubmitted": "{{today-9}}", "contractAccepted": "Yes", "acceptanceName": "Casey Test", "acceptanceDate": "{{today-9}}", "amountDue": 7500, "prospectusRef": "MS27-T0003", "comments": "Practice record.", "followUpCount": 0},
+      "app-t-new": {"appNo": "AN90004", "event": "Winter 2027", "status": "Submitted", "company": "Tailspin Data", "contactName": "Drew Test", "contactEmail": "drew@example.org", "level2027": "BRONZE", "opportunity": "Breakfast Sponsor", "day": "Tuesday", "dateSubmitted": "{{today-2}}", "contractAccepted": "Yes", "acceptanceName": "Drew Test", "acceptanceDate": "{{today-2}}", "amountDue": 5000, "prospectusRef": "MS27-T0004", "comments": "Practice record.", "followUpCount": 0},
+      "app-t-fall": {"appNo": "AN90005", "event": "Fall 2027", "status": "Pending Payment", "company": "Adatum Credit", "contactName": "Emery Test", "contactEmail": "emery@example.org", "level2027": "GOLD", "opportunity": "Session Introduction", "day": "", "dateSubmitted": "{{today-30}}", "contractAccepted": "Yes", "acceptanceName": "Emery Test", "acceptanceDate": "{{today-30}}", "amountDue": 10000, "invoiceNumber": "990105", "invoiceDate": "{{today-20}}", "prospectusRef": "MS27-T0005", "comments": "Practice record. MISMO Money has its payment, so it turns Paid when the portal opens.", "followUpCount": 0}
+    }},
+    "leads": {"docs": {
+      "lead-t-1": {"leadNo": "LD90001", "company": "Wingtip Servicing", "contactName": "Finley Test", "contactEmail": "finley@example.org", "stage": "Contacted", "interest": "GOLD", "notes": "Practice prospect.", "createdAt": "{{today-15}}"}
+    }},
+    "log": {"entries": [
+      {"at": "{{today-30}}T15:00:00.000Z", "appNo": "AN90001", "text": "marked Paid from MISMO Money", "by": "MISMO Money"}
+    ]},
+    "outbox": {"docs": {}, "list": []},
+    "outbox-sent": {"list": []},
+    "inbox": {"list": [
+      {"reference": "MS27-T0006", "program": "Spring Summit", "programLabel": "Spring 2027 Summit", "tier": "Bronze", "opportunity": "Morning Coffee Break Sponsor", "day": "Wednesday", "price": "$5,000", "company": "Litware Analytics", "contactName": "Gray Test", "contactEmail": "gray@example.org", "contactPhone": "555-0100", "signerName": "Gray Test", "signerTitle": "VP Marketing", "signedDate": "{{today-1}}", "agreed": true, "submittedAt": "{{today-1}}T14:00:00.000Z"}
+    ]},
+    "inbox-taken": {"docs": {}},
+    "prospects-removed": {"docs": {}},
+    "workgroups": {"docs": {}},
+    "webinars": {"docs": {}},
+    "mismo-money-paid": {
+      "for": "sponsorship", "writtenAt": "{{today}}T12:00:00.000Z", "paymentsThrough": "{{today-1}}",
+      "orders": [
+        {"order": "990101", "company": "Northwind Lending", "net": 15000, "refunded": 0, "firstPaidOn": "{{today-30}}", "lastPaidOn": "{{today-30}}", "lines": [{"product": "2027 Winter Summit Sponsorship"}], "payments": [{"on": "{{today-30}}", "amount": 15000}]},
+        {"order": "990105", "company": "Adatum Credit", "net": 10000, "refunded": 0, "firstPaidOn": "{{today-3}}", "lastPaidOn": "{{today-3}}", "lines": [{"product": "2027 Fall Summit Sponsorship"}], "payments": [{"on": "{{today-3}}", "amount": 10000}]}
+      ]
+    }
+  },
+  "list": [
+    {"reference": "MS27-T0001", "program": "Winter Summit", "tier": "Platinum", "opportunity": "Badge Sponsor", "day": null, "status": "Paid", "lines": null},
+    {"reference": "MS27-T0002", "program": "Summit Series", "tier": "Gold", "opportunity": "Workshop Sponsor", "day": null, "status": "Pending Payment", "lines": null},
+    {"reference": "MS27-T0003", "program": "Spring Summit", "tier": "Silver", "opportunity": "Event App Sponsor", "day": null, "status": "Approved", "lines": null},
+    {"reference": "MS27-T0004", "program": "Winter Summit", "tier": "Bronze", "opportunity": "Breakfast Sponsor", "day": "Tuesday", "status": "New", "lines": null},
+    {"reference": "MS27-T0005", "program": "Fall Summit", "tier": "Gold", "opportunity": "Session Introduction", "day": null, "status": "Pending Payment", "lines": null}
+  ]
+}

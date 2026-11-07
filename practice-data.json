@@ -13,7 +13,7 @@
       "lead-t-1": {"leadNo": "LD90001", "company": "Wingtip Servicing", "contactName": "Finley Test", "contactEmail": "finley@example.org", "stage": "Contacted", "interest": "GOLD", "notes": "Practice prospect.", "createdAt": "{{today-15}}"}
     }},
     "log": {"entries": [
-      {"at": "{{today-30}}T15:00:00.000Z", "appNo": "AN90001", "text": "marked Paid from MISMO Money", "by": "MISMO Money"}
+      {"at": "{{today-30}}T15:00:00.000Z", "appNo": "AN90001", "what": "marked Paid from MISMO Money", "who": "MISMO Money"}
     ]},
     "outbox": {"docs": {}, "list": []},
     "outbox-sent": {"list": []},

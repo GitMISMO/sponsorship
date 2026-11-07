@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-07: Full activity history kept in monthly files (data/log-YYYY-MM.json); a History section on every record; log entries from two screens no longer wipe each other out.
 - 2026-11-07: The Sponsorship Requests list is checked against the portal's records on every open; anything it has wrong is sent to it again, and stray sold slots are shown on Inventory.
 - 2026-11-07: Likely spam is held at the top of the Pipeline for Take It In or Not a Sponsor, instead of becoming a record.
 - 2026-11-07: Daily health check of the flows and data feeds, emailing Jonna when one stops.

@@ -73,7 +73,7 @@
   function relay(method, name, body){
     var s = store(), f = s.files[name];
     if(method === "GET"){
-      if(!f) return reply(404, {error: "NOT_FOUND"});
+      if(!f) return reply(200, {data: null, sha: null});   // as the relay answers for a file not made yet
       return reply(200, {data: f.data, sha: "p" + f.sha});
     }
     if(method === "PUT"){

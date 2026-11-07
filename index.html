@@ -843,6 +843,8 @@
   .banner, .dnote, .quickfilter{border-radius:0 6px 6px 0; background:var(--info-soft);
     border-left:3px solid var(--c1);}
   .banner.bad{background:var(--bad-soft); border-left-color:var(--bad);}
+  .histrow{display:flex; gap:10px; font-size:12.5px; padding:4px 0; border-bottom:1px solid var(--rule);}
+  .histrow .hwhen{flex:none; width:150px; color:var(--ink-3);} .histrow .hwho2{color:var(--ink-3);}
   .contractline{font-size:12.5px; color:var(--ink-2); margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 8px; align-items:center;}
   .contractline .muted{color:var(--ink-3);}
   .banner.warn{background:var(--warn-soft); border-left-color:var(--warn);}
@@ -2847,14 +2849,67 @@ a series deal is counted once, at its full amount.</div>
     });
   }
 
+  /* The activity log (November 7, 2026). data/log.json keeps the latest 300 entries for quick
+     reading; every entry is also kept for good in that month's file, data/log-YYYY-MM.json, which
+     nothing ever trims. A record's History shows both. */
+  function logMonth(at){ return "log-" + String(at || new Date().toISOString()).slice(0, 7); }
   function addLog(appNo, what, who){
     var entry = {at:new Date().toISOString(), appNo:appNo||"", what:what, who:who||whoAmI()};
     logEntries.unshift(entry);
     if(logEntries.length > 300) logEntries.length = 300;
     renderLog();
     if(!db || !canWrite) return;
-    db.doc("log/main").set({entries: logEntries}).catch(function(){});
+    var main = db.doc("log/main");
+    (main.add ? main.add(entry, 300) : main.set({entries: logEntries})).catch(function(){});
+    if(db.month) db.month(logMonth(entry.at), [entry]).catch(function(){});
   }
+  /* Entries already in data/log.json that aren't in their month's file yet (everything from
+     before November 7, 2026, and anything a page opened before then still writes). Done once
+     each time someone who can edit opens the portal; the robot opens it every hour. */
+  var logSwept = false;
+  function sweepLog(){
+    if(logSwept || !db || !db.month || !canWrite || !logEntries.length) return;
+    logSwept = true;
+    var byMonth = {};
+    logEntries.forEach(function(e){ if(e && e.at) (byMonth[logMonth(e.at)] = byMonth[logMonth(e.at)] || []).push(e); });
+    Object.keys(byMonth).forEach(function(m){ db.month(m, byMonth[m]).catch(function(){}); });
+  }
+  function logKey(e){ return [e.at, e.appNo, e.what].join("|"); }
+  /* every entry for one record, from the month it was submitted to now */
+  function fullHistory(a){
+    var from = String(a.dateSubmitted || "").slice(0, 7) || new Date().toISOString().slice(0, 7);
+    var months = [], d = new Date(from + "-15T12:00:00Z"), end = new Date().toISOString().slice(0, 7);
+    while(months.length < 36){ var m = d.toISOString().slice(0, 7); months.push(m); if(m >= end) break; d.setUTCMonth(d.getUTCMonth() + 1); }
+    return Promise.all(["log"].concat(months.map(function(m){ return "log-" + m; })).map(function(n){
+      return db.readLog(n).catch(function(){ return []; }); })).then(function(lists){
+      var seen = {}, out = [];
+      [].concat.apply(logEntries.slice(), lists).forEach(function(e){
+        if(!e || e.appNo !== a.appNo || seen[logKey(e)]) return;
+        seen[logKey(e)] = 1; out.push(e);
+      });
+      return out.sort(function(x, y){ return String(y.at).localeCompare(String(x.at)); });
+    });
+  }
+  function historyRows(list){
+    if(!list.length) return '<div class="fldnote">Nothing recorded for this application yet.</div>';
+    return list.map(function(e){
+      var d = new Date(e.at);
+      return '<div class="histrow"><span class="hwhen">' + esc(d.toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"})) + " " +
+        esc(d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})) + '</span><span>' + esc(e.what) +
+        (e.who ? ' <span class="hwho2">\u00b7 ' + esc(e.who) + '</span>' : '') + '</span></div>';
+    }).join("");
+  }
+  document.addEventListener("click", function(ev){
+    var b = ev.target && ev.target.closest && ev.target.closest("#x-fullhist");
+    if(!b || !current || !db || !db.readLog) return;
+    b.disabled = true; b.textContent = "Loading\u2026";
+    var a = current;
+    fullHistory(a).then(function(list){
+      if(!current || current.id !== a.id) return;
+      b.style.display = "none";
+      $("x-hist").innerHTML = historyRows(list) + '<div class="fldnote">Everything recorded since ' + esc(fmtDate(a.dateSubmitted)) + ', from the monthly history files.</div>';
+    }, function(){ b.disabled = false; b.textContent = "Show Full History"; });
+  });
 
   function loadFailed(what, detail){
     var b = $("conn-banner");
@@ -4614,6 +4669,13 @@ a series deal is counted once, at its full amount.</div>
               esc(outboxWord(o)) + '</span></div>';
           }).join("") + '</div>';
       })() + '</div>';
+
+    /* History (November 7, 2026): this record's entries from the activity log, newest first */
+    if(a.id !== draft){
+      var hist = logEntries.filter(function(e){ return e && e.appNo === a.appNo; });
+      html += '<div class="dsect"><h4>History</h4><div id="x-hist">' + historyRows(hist.slice(0, 12)) + '</div>' +
+        (db && db.readLog ? '<button class="btn ghost sm" type="button" id="x-fullhist" style="margin-top:8px;">Show Full History</button>' : '') + '</div>';
+    }
 
     /* Delete — for test records and mistakes (Jonna, September 25, 2026). Two clicks, via
        armDangerButton, never window.confirm. Not offered on an unsaved draft (closing the
@@ -7495,7 +7557,7 @@ a series deal is counted once, at its full amount.</div>
     }
     function kindOf(name){
       if(name === "mismo-money-paid") return "raw";   // written by MISMO Money only (October 23, 2026)
-      return name === "log" ? "log" : ((name === "outbox-sent" || name === "inbox") ? "list" : "docs");
+      return (name === "log" || /^log-\d{4}-\d{2}$/.test(name)) ? "log" : ((name === "outbox-sent" || name === "inbox") ? "list" : "docs");
     }
     function notify(f){ f.listeners.forEach(function(fn){ try{ fn(f.data); }catch(e){} }); }
     /* A background re-read that started before one of this screen's saves can arrive after
@@ -7579,7 +7641,13 @@ a series deal is counted once, at its full amount.</div>
                 if(errCb) errCb(e);
               });
             },
-            set: function(obj){ return mutate("log", function(d){ d.entries = (obj && obj.entries) || []; }); }
+            set: function(obj){ return mutate("log", function(d){ d.entries = (obj && obj.entries) || []; }); },
+            /* one entry added to the newest copy, so two people's entries never wipe each other out
+               (November 7, 2026: set() wrote this screen's whole list over whatever was saved) */
+            add: function(entry, cap){ return mutate("log", function(d){
+              d.entries.unshift(entry);
+              if(cap && d.entries.length > cap) d.entries.length = cap;
+            }); }
           };
         }
         return {
@@ -7594,6 +7662,19 @@ a series deal is counted once, at its full amount.</div>
           }); },
           delete: function(){ return mutate(name, function(d){ delete d.docs[id]; }); }
         };
+      },
+      /* add entries to a monthly history file, skipping any it already has */
+      month: function(name, entries){
+        var keyOf = function(e){ return [e.at, e.appNo, e.what].join("|"); };
+        return mutate(name, function(d){
+          var have = {}; d.entries.forEach(function(e){ have[keyOf(e)] = 1; });
+          var add = entries.filter(function(e){ return !have[keyOf(e)]; });
+          if(!add.length) throw {code:"NOTHING_TO_ADD"};
+          d.entries = add.concat(d.entries).sort(function(x, y){ return String(y.at).localeCompare(String(x.at)); });
+        }).catch(function(e){ if(e && e.code === "NOTHING_TO_ADD") return; throw e; });
+      },
+      readLog: function(name){
+        return call("GET", name).then(function(b){ return (clean(b.data, "log").entries) || []; });
       },
       /* A file this page only reads and never writes, handed over exactly as stored
          (null until whoever owns it has written it). There is deliberately no save. */
@@ -8216,7 +8297,7 @@ a series deal is counted once, at its full amount.</div>
     d.doc("log/main").onSnapshot(function(snap){
       try{
         var e = (snap.data()||{}).entries;
-        if(Array.isArray(e)){ logEntries = e.slice(); renderLog(); }
+        if(Array.isArray(e)){ logEntries = e.slice(); renderLog(); sweepLog(); }
       }catch(err){ loadFailed("reading the activity log", err && err.message); }
     }, failed("loading the activity log"));
     ["workgroups","webinars"].forEach(function(cname){

@@ -37,6 +37,12 @@ reads the list through the Availability flow and compares it with the records. A
 has wrong or missing is sent to it again (at most once a day each), and a sold slot the list holds
 that no record accounts for is shown on Inventory to be cleared in SharePoint.
 
+## Activity history
+
+`data/log.json` keeps the latest 300 entries; every entry is also kept for good in that month's
+file, `data/log-YYYY-MM.json`, which nothing trims. Each record's History shows its entries, and
+Show Full History reads the monthly files back to the month it was submitted.
+
 ## Likely spam
 
 The Intake flow's address is in the public page, so anything can post to it. An application

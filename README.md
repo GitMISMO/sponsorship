@@ -12,7 +12,7 @@ The public prospectuses that feed it are in the Sponsorship-Prospectus repo.
 | `tests/checks.js` | Automated checks of the portal and all three prospectuses. |
 | `tests/apply-catalog.js` | Carries the price list onto every page (see below). |
 | `.github/workflows/checks.yml` | Runs the checks on GitHub after every change and every Monday. |
-| `tests/background.js`, `.github/workflows/background.yml` | Opens the portal every hour as its robot account, so its background work happens without anyone opening it (see below). |
+| `tests/background.js` | Opens the portal every hour, so its background work happens without anyone opening it (see below). |
 
 ## The price list
 
@@ -30,12 +30,12 @@ The checks fail if any page disagrees with the price list.
 
 New applications from the prospectuses, MISMO Money payments and prospects returning to the list
 are all handled by the portal's own code when someone with edit access opens it. GitHub opens it
-every hour from about 6 am to 6 pm Eastern, signed in as the portal's robot account, so these happen even
-on a day nobody opens it. Each run's summary (Actions tab, "Background work") says what it did.
-
-It needs a relay account with Staff access to the Sponsorship Portal, and two repository
-secrets: `SPONSORSHIP_ROBOT_EMAIL` and `SPONSORSHIP_ROBOT_PASSWORD`. Until they are set, each run
-says "Not set up yet" and does nothing.
+every hour, about 7 am to 7 pm Eastern, as "Sponsorship Robot", so these happen even on a day
+nobody opens it. The schedule lives in the site repo (GitMISMO.github.io,
+`.github/workflows/sponsorship-background.yml`), because that is where the data key is: it uses
+`SPONSOR_DATA_TOKEN`, the same secret the Summit Sponsor Feed uses, and that key needs
+Contents: Read and write on GitMISMO/sponsorship-data. Each run's summary (Actions tab,
+"Sponsorship Background Work") says what it did.
 
 ## Practice copy
 

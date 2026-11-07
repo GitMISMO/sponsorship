@@ -185,7 +185,7 @@
   .side.mini .pip.quiet{display:none;}
 
   /* ---------- the Prospectuses tab (November 7, 2026) ---------- */
-  .pcards{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-bottom:28px;}
+  .pcards{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-bottom:28px;}
   @media (max-width:1100px){ .pcards{grid-template-columns:minmax(0,1fr);} }
   .pcard{display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--border);
     border-top:3px solid var(--sky); border-radius:8px; padding:18px 20px;}
@@ -1350,7 +1350,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
   <!-- ================= HELP (October 23, 2026) =================
        How the portal works, end to end, and its limits. Plain language for the team.
        Keep it in step with programs/summits/PROGRAM.md when the process changes. -->
-  <!-- The three public prospectuses, to open or to copy the link for a sponsor (November 7, 2026) -->
+  <!-- The public prospectuses, to open or to copy the link for a sponsor (November 7, 2026) -->
   <section class="view" id="view-prospectus">
     <div class="pcards">
       <article class="pcard">
@@ -1373,6 +1373,13 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <dl class="pc-rows"><div><dt>Dates</dt><dd>September 13&ndash;16, 2027</dd></div><div><dt>Where</dt><dd>The Bethesdan Hotel, Bethesda, MD</dd></div><div><dt>Sells</dt><dd>Fall Summit tiers, $5,000 to $22,500</dd></div></dl>
         <div class="pc-url" title="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/">resources.mismo.org/Sponsorship-Prospectus/fall-2027/</div>
         <div class="pc-acts"><a class="btn sm" href="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/" target="_blank" rel="noopener">Open</a><button class="btn ghost sm" type="button" data-copy="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/" data-name="Fall 2027 Summit">Copy Link</button></div>
+      </article>
+      <article class="pcard">
+        <div class="pc-eb">Spring &amp; Fall Package</div>
+        <h3 class="pc-title">Spring &amp; Fall 2027 Summits</h3>
+        <dl class="pc-rows"><div><dt>Dates</dt><dd>June 7&ndash;10 (Salt Lake City) and September 13&ndash;16, 2027 (Bethesda)</dd></div><div><dt>Package</dt><dd>The same opportunity at both summits, 10% off individual rates</dd></div><div><dt>When</dt><dd>For sponsors signing up after the Winter Summit</dd></div></dl>
+        <div class="pc-url" title="https://resources.mismo.org/Sponsorship-Prospectus/spring-fall-2027/">resources.mismo.org/Sponsorship-Prospectus/spring-fall-2027/</div>
+        <div class="pc-acts"><a class="btn sm" href="https://resources.mismo.org/Sponsorship-Prospectus/spring-fall-2027/" target="_blank" rel="noopener">Open</a><button class="btn ghost sm" type="button" data-copy="https://resources.mismo.org/Sponsorship-Prospectus/spring-fall-2027/" data-name="Spring &amp; Fall 2027 Summits">Copy Link</button></div>
       </article>
     </div>
   </section>
@@ -1761,6 +1768,9 @@ a series deal is counted once, at its full amount.</div>
     perry:   {name:"Perry Williams",   email:"pwilliams@mismo.org"}
   };
 
+  /* packages of some summits at a discount (Kelly, November 2026: Spring & Fall at 10% off).
+     Sold on their own prospectus; recorded as a Series with only those summits in its Package. */
+  var PACKAGES = {springfall: {name:"Spring & Fall", summits:["Spring","Fall"], discount:0.10}};
   var SUMMITS = {
     "Winter 2026":  {opens:"",           label:"Winter 2026 Summit"},
     "Spring 2026":  {opens:"",           label:"Spring 2026 Summit"},
@@ -2643,7 +2653,7 @@ a series deal is counted once, at its full amount.</div>
      "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate","paymentStatus",
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
      "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day","workshopName",
-     "inKind","priceFlag","priceSent","contractVersion","acceptanceTitle","updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
+     "inKind","priceFlag","priceSent","contractVersion","acceptanceTitle","package","updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
     return d;
   }
 
@@ -3588,9 +3598,10 @@ a series deal is counted once, at its full amount.</div>
   function tierWord(t){ t = String(t || ""); return t.charAt(0) + t.slice(1).toLowerCase(); }
   function customSummary(a){
     var lines = customLines(a); if(!lines) return "";
-    return "Custom Series \u2014 " + lines.map(function(l){
+    var pk = a["package"] && PACKAGES[a["package"]];
+    return (pk ? pk.name + " package \u2014 " : "Custom Series \u2014 ") + lines.map(function(l){
       return l.s + ": " + tierWord(l.tier) + " " + (l.opp && l.opp !== OPP_TBD ? l.opp : "(opportunity to be decided)") +
-        (l.workshop && isWorkshop(l.opp) ? " (" + l.workshop + ")" : "");
+        (l.day ? " \u2014 " + l.day : "") + (l.workshop && isWorkshop(l.opp) ? " (" + l.workshop + ")" : "");
     }).join(" \u00b7 ");
   }
   /* what the Sponsorship Requests list is told this sponsorship takes */
@@ -4651,12 +4662,13 @@ a series deal is counted once, at its full amount.</div>
     if(mode){
       if(mode.value !== "Custom") out.custom = [];
       else out.custom = SEASONS.map(function(se){
-        var t = $("x-ctier-" + se), o = $("x-copp-" + se), m = $("x-camt-" + se), w = $("x-cws-" + se);
+        var t = $("x-ctier-" + se), o = $("x-copp-" + se), m = $("x-camt-" + se), w = $("x-cws-" + se), dy = $("x-cday-" + se);
         var tier = t ? t.value : "";
         if(!tier || tier === "Not Included") return null;
         var line = {s:se, tier:tier, opp: o ? o.value : OPP_TBD,
                 amount: m && m.value !== "" ? Number(m.value) : ""};
         if(w && isWorkshop(line.opp) && w.value.trim()) line.workshop = w.value.trim();
+        if(dy && dy.value && dy.value !== "Not chosen yet" && (dayChoices(line.opp) || []).indexOf(dy.value) >= 0) line.day = dy.value;
         return line;
       }).filter(Boolean);
     }
@@ -4724,6 +4736,11 @@ a series deal is counted once, at its full amount.</div>
         (l.tier && l.tier !== "Not Included" && isWorkshop(l.opp)
           ? '<div class="fld custws"><label for="x-cws-' + se + '">Workshop Name</label><input id="x-cws-' + se +
             '" data-cust="1" type="text" placeholder="Not named yet" value="' + esc(l.workshop || "") + '"></div>' : '') +
+        /* the day, for a one-a-day opportunity (November 7, 2026: First American's Tuesday
+           coffee break at Spring and Fall) */
+        (l.tier && l.tier !== "Not Included" && dayChoices(l.opp)
+          ? '<div class="fld custws"><label for="x-cday-' + se + '">Day</label><select id="x-cday-' + se + '" data-cust="1">' +
+            opt(["Not chosen yet"].concat(dayChoices(l.opp)), l.day || "Not chosen yet") + '</select></div>' : '') +
         '</div>';
     });
     html += '</div><div class="fldnote" id="x-csplit"></div>';
@@ -7629,6 +7646,9 @@ a series deal is counted once, at its full amount.</div>
                   return o;
                 })};
             })};
+          (c.packages || []).forEach(function(pk){
+            if(pk && pk.key && Array.isArray(pk.summits)) PACKAGES[pk.key] = {name:pk.name || pk.key, summits:pk.summits.slice(), discount:+pk.discount || 0};
+          });
           priceListFrom = "catalog.json";
           renderAll();
         }
@@ -7728,14 +7748,15 @@ a series deal is counted once, at its full amount.</div>
     c.tiers.forEach(function(t){ if(t.name === lvl) tier = t; });
     if(!tier) return {expected:null, problems:["The level \u201c" + (a.level2027 || "none") + "\u201d isn't on the " + year + " price list."]};
     var series = RE_SERIES.test(a.event || "");
-    var expected = series ? tier.series : tier.single;
+    var pk = a.package && PACKAGES[a.package];
+    var expected = pk ? Math.round(tier.single * pk.summits.length * (1 - pk.discount)) : (series ? tier.series : tier.single);
     var slot = slotFor(catalogItems(year), a);
     if(!slot) problems.push("\u201c" + (a.opportunity || "No opportunity") + "\u201d isn't on the " + year + " price list.");
     else if(slot.tier.name !== tier.name) problems.push("\u201c" + slot.item.opp + "\u201d is a " + slot.tier.name + " opportunity, not " + tier.name + ".");
     var due = Number(a.amountDue);
     if(isFinite(due) && due > 0 && Math.abs(due - expected) >= 0.01)
       problems.push("The prospectus page sent " + money(due) + "; the price list says " + money(expected) + " for " + tier.name +
-                    (series ? " Series" : "") + ", so the amount due is set to " + money(expected) + ".");
+                    (pk ? " " + pk.name + " package" : (series ? " Series" : "")) + ", so the amount due is set to " + money(expected) + ".");
     return {expected:expected, problems:problems};
   }
   loadPriceList();
@@ -7774,7 +7795,20 @@ a series deal is counted once, at its full amount.</div>
      What the page sent is kept in priceSent; anything that doesn't fit is kept in priceFlag
      and shown on the record until it is approved. */
   function checkedFromProspectus(r){
-    var a = fromProspectus(r), pc = priceCheck(a);
+    var a = fromProspectus(r);
+    var pkKey = String(r["package"] || ""), pk = PACKAGES[pkKey];
+    if(pk && RE_SERIES.test(a.event || "")){
+      a["package"] = pkKey;
+      a.custom = pk.summits.map(function(se){
+        var l = {s:se, tier:a.level2027, opp:a.opportunity || OPP_TBD, amount:""};
+        if(a.day && dayChoices(a.opportunity)) l.day = a.day;
+        return l;
+      });
+      a.comments = a.comments.replace("Received through the online prospectus.",
+        "Received through the " + pk.name + " prospectus: the same opportunity at " + pk.summits.join(" and ") + ", " +
+        Math.round(pk.discount * 100) + "% off.");
+    }
+    var pc = priceCheck(a);
     if(!pc) return a;
     var sent = a.amountDue;
     if(pc.expected != null && Number(sent) !== pc.expected){

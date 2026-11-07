@@ -193,14 +193,28 @@
     bar = document.createElement("div");
     bar.id = "practice-bar";
     bar.setAttribute("role", "status");
-    bar.style.cssText = "position:sticky;top:0;z-index:2147483000;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;" +
-      "padding:8px 16px;background:#b45309;color:#fff;font:500 13px/1.35 system-ui,-apple-system,Segoe UI,sans-serif;";
-    bar.innerHTML = '<b style="font-weight:700">Practice copy</b><span>Test data only. Nothing is saved to the real records and nobody is emailed.</span>' +
-      '<span data-n style="opacity:.9"></span><span style="flex:1"></span>' +
-      '<button type="button" data-log style="font:inherit;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:6px;padding:3px 10px;cursor:pointer">What Would Have Gone Out</button>' +
-      '<button type="button" data-reset style="font:inherit;background:#fff;color:#7c2d12;border:0;border-radius:6px;padding:4px 10px;cursor:pointer;font-weight:600">Reset Test Data</button>' +
-      '<a data-leave style="color:#fff;text-decoration:underline">Leave Practice</a>';
-    document.body.insertBefore(bar, document.body.firstChild);
+    /* a card in the bottom-left corner: clear of every page's masthead and of the portal's
+       record panel (which opens on the right), and it folds down to a small tag */
+    bar.style.cssText = "position:fixed;left:12px;bottom:12px;z-index:2147483000;max-width:min(420px,calc(100vw - 24px));" +
+      "box-shadow:0 6px 24px rgba(0,0,0,.3);border-radius:10px;padding:10px 12px;background:#b45309;color:#fff;" +
+      "font:500 12.5px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;";
+    var btn = "font:inherit;border-radius:6px;padding:3px 9px;cursor:pointer;";
+    bar.innerHTML = '<b style="font-weight:700">Practice copy</b>' +
+      '<button type="button" data-fold title="Fold" style="' + btn + 'margin-left:auto;background:transparent;color:#fff;border:0;padding:0 4px;font-size:15px;line-height:1">&#8211;</button>' +
+      '<div data-more style="flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;">' +
+      '<span style="flex-basis:100%">Test data only. Nothing is saved to the real records and nobody is emailed.</span>' +
+      '<span data-n style="flex-basis:100%;opacity:.9"></span>' +
+      '<button type="button" data-log style="' + btn + 'background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6)">What Would Have Gone Out</button>' +
+      '<button type="button" data-reset style="' + btn + 'background:#fff;color:#7c2d12;border:0;font-weight:600">Reset Test Data</button>' +
+      '<a data-leave style="color:#fff;text-decoration:underline">Leave Practice</a></div>';
+    document.body.appendChild(bar);
+    var more = bar.querySelector("[data-more]"), fold = bar.querySelector("[data-fold]");
+    fold.onclick = function(){
+      var open = more.style.display !== "none";
+      more.style.display = open ? "none" : "flex";
+      fold.innerHTML = open ? "+" : "&#8211;";
+      fold.title = open ? "Open" : "Fold";
+    };
     var leave = new URL(location.href); leave.searchParams.delete("practice");
     bar.querySelector("[data-leave]").href = leave.pathname + (leave.search || "") + leave.hash;
     bar.querySelector("[data-reset]").onclick = function(){

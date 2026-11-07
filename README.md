@@ -23,7 +23,10 @@ sent, and anything that doesn't fit (a wrong price, an opportunity sold at the w
 flagged on the record until it is approved.
 
 To change a price or a slot count: edit `catalog.json`, run `node tests/apply-catalog.js` to carry
-it onto the three prospectuses and the portal, run the checks, and publish every changed file.
+it onto the prospectus template, the pages and the portal, run `python3 tools/build.py` in the
+Sponsorship-Prospectus repo, run the checks, and publish every changed file.
+
+New prospectuses are made from one template; see the Sponsorship-Prospectus README.
 The checks fail if any page disagrees with the price list.
 
 ## Background work

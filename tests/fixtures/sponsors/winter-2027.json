@@ -1,0 +1,9 @@
+{
+ "about": "Made-up copy of the website's sponsor list (resources.mismo.org/sponsors/winter-2027.json, written by the site's Summit Sponsor Feed) for the checks. Every company here is fictional.",
+ "summit": "2027 Winter Summit",
+ "source": "Sponsorship Portal",
+ "sponsors": [
+  {"name": "Northwind Lending", "tier": "Platinum", "url": "", "logo": "https://resources.mismo.org/sponsors/logos/northwind-lending.png", "placements": []},
+  {"name": "Contoso Mortgage", "tier": "Gold", "url": "", "logo": "", "placements": []}
+ ]
+}

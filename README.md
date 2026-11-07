@@ -40,6 +40,10 @@ nobody opens it. The schedule lives in the site repo (GitMISMO.github.io,
 Contents: Read and write on GitMISMO/sponsorship-data. Each run's summary (Actions tab,
 "Sponsorship Background Work") says what it did.
 
+The 8 am Eastern run also runs `tests/health.js`: the Availability and Intake flows answer, every
+email the portal queued has been sent by the Team Emails flow, MISMO Money's payments are recent,
+and the pages load. If anything has stopped, the run fails and GitHub emails Jonna.
+
 ## Practice copy
 
 Add `?practice` to the address to try anything on test data, with nothing saved to the real

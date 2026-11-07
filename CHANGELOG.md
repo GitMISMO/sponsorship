@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-07: Daily health check of the flows and data feeds, emailing Jonna when one stops.
 - 2026-11-07: Spring & Fall packages: applications from the package prospectus become a Series of just those two summits at the package price.
 - 2026-11-07: A custom package can set the day at each summit (for one-a-day opportunities like coffee breaks).
 - 2026-11-07: Background work every hour from the site repo, as Sponsorship Robot.

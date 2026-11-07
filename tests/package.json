@@ -1,0 +1,7 @@
+{
+  "name": "sponsorship-checks",
+  "private": true,
+  "description": "Automated checks for the Sponsorship Portal and prospectuses. See checks.js.",
+  "scripts": { "test": "node checks.js" },
+  "dependencies": { "playwright": "1.48.2" }
+}

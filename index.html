@@ -845,6 +845,10 @@
   .banner.bad{background:var(--bad-soft); border-left-color:var(--bad);}
   .contractline{font-size:12.5px; color:var(--ink-2); margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 8px; align-items:center;}
   .contractline .muted{color:var(--ink-3);}
+  .banner.warn{background:var(--warn-soft); border-left-color:var(--warn);}
+  .heldlist{margin:8px 0 0; padding:0; list-style:none; display:grid; gap:8px;}
+  .heldlist li{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:center; padding:8px 10px; border-radius:6px; background:var(--surface);}
+  .heldlist .hwho{flex:1 1 260px; font-size:13px;} .heldlist .hwhy{display:block; font-size:12px; color:var(--ink-2);}
   .dnote.warn{background:var(--warn-soft); border-left-color:var(--warn); color:var(--ink);}
   .impmsg{background:var(--info-soft);}
   .impmsg.warn{background:var(--warn-soft);}
@@ -1146,6 +1150,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 
   <div id="conn-banner" class="banner" style="display:none;"></div>
   <div id="money-banner" class="banner" style="display:none;"></div>
+  <div id="held-banner" class="banner warn" style="display:none;"></div>
 
   <div class="vhead" id="pagehead"><div>
     <h2 id="ph-title">Pipeline</h2>
@@ -7821,6 +7826,79 @@ a series deal is counted once, at its full amount.</div>
     }
     return a;
   }
+  /* ---- likely spam (November 7, 2026) ----
+     The Intake flow's address is in the public page, so anything can post to it. An application
+     that looks automated is not made into a record: it is held, and listed at the top of the
+     Pipeline for someone to Take In or set aside as Not a Sponsor. Nothing is deleted; a held or
+     set-aside application stays in the inbox and in data/inbox-taken.json. */
+  var inboxTakenDocs = {};
+  function spamSigns(r, items){
+    var why = [];
+    if(String(r.hp || "").trim()) why.push("the hidden spam box was filled in");
+    var secs = Number(r.secondsOnPage);
+    if(r.secondsOnPage !== undefined && r.secondsOnPage !== "" && isFinite(secs) && secs < 5) why.push("it was sent " + secs + " seconds after the page opened");
+    if(!txt(r.company)) why.push("there's no company name");
+    if(!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(txt(r.contactEmail))) why.push("there's no valid email address");
+    if(/https?:\/\/|www\./i.test([r.company, r.contactName, r.signerName, r.signerTitle].join(" "))) why.push("a name has a web address in it");
+    if(!r.agreed) why.push("the contract wasn't agreed");
+    /* more than three from one email address in a day: the fourth and later are held */
+    var em = txt(r.contactEmail).toLowerCase(), t = Date.parse(r.submittedAt || 0);
+    if(em && t){
+      var earlier = (items || []).filter(function(x){
+        var tx = Date.parse(x.submittedAt || 0);
+        return x !== r && txt(x.contactEmail).toLowerCase() === em && tx && tx <= t && t - tx < 864e5;
+      }).length;
+      if(earlier >= 3) why.push("it's application " + (earlier + 1) + " from " + em + " in a day");
+    }
+    return why;
+  }
+  function heldItems(){
+    return (inboxItems || []).filter(function(r){
+      var d = inboxTakenDocs[refKey(r && r.reference)];
+      return d && d.held && !d.released && !d.dismissed;
+    });
+  }
+  function paintHeld(){
+    var b = $("held-banner"); if(!b) return;
+    var list = canWrite ? heldItems() : [];
+    if(!list.length){ b.style.display = "none"; return; }
+    b.innerHTML = "<b>" + list.length + " application" + (list.length === 1 ? " looks" : "s look") + " like spam, so " +
+      (list.length === 1 ? "it wasn't" : "they weren't") + " added to the Pipeline.</b> If one is a real sponsor, take it in." +
+      '<ul class="heldlist">' + list.map(function(r){
+        var k = refKey(r.reference), d = inboxTakenDocs[k] || {};
+        return '<li><span class="hwho"><b>' + esc(txt(r.company) || "No company") + '</b> \u00b7 ' + esc(txt(r.contactEmail) || "no email") +
+          ' \u00b7 ' + esc([txt(r.programLabel) || txt(r.program), txt(r.tier), txt(r.opportunity)].filter(Boolean).join(", ")) +
+          '<span class="hwhy">Held because ' + esc((d.why || []).join("; ") || "it looked automated") + '. Reference ' + esc(txt(r.reference)) + '.</span></span>' +
+          '<button class="btn sm" type="button" data-held-take="' + esc(k) + '">Take It In</button>' +
+          '<button class="btn ghost sm" type="button" data-held-drop="' + esc(k) + '">Not a Sponsor</button></li>';
+      }).join("") + '</ul>';
+    b.style.display = "";
+  }
+  document.addEventListener("click", function(ev){
+    var t = ev.target && ev.target.closest && ev.target.closest("[data-held-take],[data-held-drop]");
+    if(!t || !db || !canWrite) return;
+    var take = t.hasAttribute("data-held-take"), k = t.getAttribute(take ? "data-held-take" : "data-held-drop");
+    var r = (inboxItems || []).filter(function(x){ return refKey(x && x.reference) === k; })[0];
+    var d = Object.assign({}, inboxTakenDocs[k] || {});
+    if(!r) return;
+    t.disabled = true;
+    if(take){
+      var a = checkedFromProspectus(r);
+      a.comments += " Held as likely spam (" + (d.why || []).join("; ") + "); taken in by " + whoAmI() + ".";
+      saveApp(a);
+      d.released = true; d.appNo = a.appNo; d.releasedBy = whoAmI(); d.releasedAt = new Date().toISOString();
+      addLog(a.appNo, "received from the online prospectus (" + a.prospectusRef + "), held as likely spam and taken in \u2014 " + (a.company || ""), whoAmI());
+      toast(txt(r.company) + " is on the Pipeline under Submitted.", "", "Taken In");
+    } else {
+      d.dismissed = true; d.dismissedBy = whoAmI(); d.dismissedAt = new Date().toISOString();
+      addLog("", "set aside a likely spam application (" + txt(r.reference) + ", " + (txt(r.company) || "no company") + ")", whoAmI());
+      toast("It stays in the inbox's history but won't come back here.", "", "Set Aside");
+    }
+    inboxTakenDocs[k] = d;
+    db.doc("inbox-taken/" + k).set(d).catch(function(){});
+    paintHeld();
+  });
+
   function takeInbox(){
     if(!db || !canWrite || !appsLoaded || !inboxItems || !takeInboxReady || !priceListReady) return;
     var have = {};
@@ -7829,6 +7907,19 @@ a series deal is counted once, at its full amount.</div>
       var k = r && refKey(r.reference);
       return k && !have[k] && !inboxTaken[k];
     });
+    if(!fresh.length){ paintHeld(); return; }
+    var held = [];
+    fresh = fresh.filter(function(r){
+      var why = spamSigns(r, inboxItems);
+      if(!why.length) return true;
+      var k = refKey(r.reference);
+      inboxTaken[k] = 1;
+      inboxTakenDocs[k] = {at: new Date().toISOString(), held: true, why: why, by: whoAmI()};
+      db.doc("inbox-taken/" + k).set(inboxTakenDocs[k]).catch(function(){});
+      held.push(r);
+      return false;
+    });
+    if(held.length) paintHeld();
     if(!fresh.length) return;
     fresh.forEach(function(r){
       var k = refKey(r.reference);
@@ -8055,9 +8146,10 @@ a series deal is counted once, at its full amount.</div>
       /* added to, never cleared (November 7, 2026): clearing it let a re-read that arrived
          while several applications were still saving take them a second time, under new
          application numbers (found by the automated checks) */
-      snap.docs.forEach(function(doc){ inboxTaken[doc.id] = 1; });
+      snap.docs.forEach(function(doc){ inboxTaken[doc.id] = 1; inboxTakenDocs[doc.id] = doc.data() || {}; });
       takeInboxReady = true;
       takeInbox();
+      paintHeld();
     }, function(){});
     /* Paid Aptify orders from MISMO Money (October 23, 2026). Read only. */
     d.raw("mismo-money-paid", function(content){ moneyFeed = content; paintMoneyBanner(); });

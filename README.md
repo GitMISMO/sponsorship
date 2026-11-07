@@ -29,6 +29,15 @@ Sponsorship-Prospectus repo, run the checks, and publish every changed file.
 New prospectuses are made from one template; see the Sponsorship-Prospectus README.
 The checks fail if any page disagrees with the price list.
 
+## Likely spam
+
+The Intake flow's address is in the public page, so anything can post to it. An application
+that looks automated (the prospectus's hidden spam box filled in, sent within five seconds of
+the page opening, no company or valid email, a web address in a name, the contract not agreed,
+or a fourth application from one email in a day) is not made into a record. It is listed at the
+top of the Pipeline with why it was held, for someone to **Take It In** or mark **Not a Sponsor**.
+Nothing is deleted.
+
 ## Background work
 
 New applications from the prospectuses, MISMO Money payments and prospects returning to the list

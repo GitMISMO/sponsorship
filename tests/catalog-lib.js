@@ -5,13 +5,22 @@
 const fs = require('fs'), path = require('path'), vm = require('vm');
 
 const TIER_KEYS = ['diamond', 'platinum', 'gold', 'silver', 'bronze'];
-const PAGES = [   // file, which TIERS programs it holds, and its single-summit page id
-  { file: 'index.html', single: 'winter' },
-  { file: 'spring-2027/index.html', single: 'spring' },
-  { file: 'fall-2027/index.html', single: 'fall' }
+const PAGES = [   // every page that has prices written into it; package: a discounted package of summits
+  { file: 'tools/template.html' },
+  { file: 'index.html' },
+  { file: 'spring-2027/index.html' },
+  { file: 'fall-2027/index.html' },
+  { file: 'spring-fall-2027/index.html', package: 'springfall' }
 ];
 const money = n => '$' + Number(n).toLocaleString('en-US');
-const lowest = cat => Math.min(...cat.tiers.map(t => t.single));
+const packageOf = (cat, key) => (cat.packages || []).find(p => p.key === key);
+/* what a tier costs on a page: the series price, a package's price, or the single price */
+const priceFor = (cat, ct, prog, pg) => {
+  if (prog === 'series') return ct.series;
+  const pk = pg && pg.package && packageOf(cat, pg.package);
+  return pk ? Math.round(ct.single * pk.summits.length * (1 - pk.discount)) : ct.single;
+};
+const lowest = (cat, pg) => Math.min(...cat.tiers.map(t => priceFor(cat, t, null, pg)));
 const highest = cat => Math.max(...cat.tiers.map(t => t.single));
 const FROM_RE = /(<span class="cp-k">From<\/span><span class="cp-v">)(\$[\d,]+)(<\/span>)/g;   // the cover's "From $5,000"
 const RANGE_RE = /(Summit tiers, )(\$[\d,]+ to \$[\d,]+)()/g;                                  // the portal's Prospectuses tab
@@ -70,7 +79,7 @@ function comparePages(prosDir, cat) {
       for (const key of TIER_KEYS) {
         const t = T[prog][key], ct = tierOf(cat, key);
         if (!t) continue;
-        const want = money(series ? ct.series : ct.single);
+        const want = money(priceFor(cat, ct, prog, pg));
         if (t.price !== want) diffs.push(`${pg.file}: ${prog} ${key} price is ${t.price}, the catalog says ${want}`);
         const regs = (/(\d+) complimentary/.exec(t.regs || '') || [])[1];
         if (regs && +regs !== ct.comps) diffs.push(`${pg.file}: ${prog} ${key} gives ${regs} registrations, the catalog says ${ct.comps}`);
@@ -86,11 +95,11 @@ function comparePages(prosDir, cat) {
         }
       }
     }
-    for (const m of src.matchAll(FROM_RE)) if (m[2] !== money(lowest(cat)))
-      diffs.push(`${pg.file}: the cover says "From ${m[2]}", the lowest price in the catalog is ${money(lowest(cat))}`);
+    for (const m of src.matchAll(FROM_RE)) if (m[2] !== money(lowest(cat, pg)))
+      diffs.push(`${pg.file}: the cover says "From ${m[2]}", the lowest price in the catalog is ${money(lowest(cat, pg))}`);
     for (const c of cards(src)) {
       const ct = tierOf(cat, c.key); if (!ct) continue;
-      const want = money(c.page === 'series' ? ct.series : ct.single);
+      const want = money(priceFor(cat, ct, c.page, pg));
       if (c.price !== want) diffs.push(`${pg.file}: the ${c.key} card on the ${c.page} page shows ${c.price}, the catalog says ${want}`);
       if (c.comps.some(n => n !== ct.comps)) diffs.push(`${pg.file}: the ${c.key} card on the ${c.page} page gives ${c.comps.join('/')} registrations, the catalog says ${ct.comps}`);
     }
@@ -105,7 +114,7 @@ function comparePortal(portalFile, cat) {
   const C = evalObj(b.text)[cat.year];
   if (!C) return ['the portal has no built-in price list for ' + cat.year];
   const diffs = [];
-  const range = money(lowest(cat)) + ' to ' + money(highest(cat));
+  const range = money(lowest(cat)) + ' to ' + money(highest(cat));   // single-summit cards
   for (const m of src.matchAll(RANGE_RE)) if (m[2] !== range)
     diffs.push(`the portal's Prospectuses tab says "${m[2]}", the catalog runs ${range}`);
   for (const ct of cat.tiers) {
@@ -142,7 +151,7 @@ function applyPages(prosDir, cat) {
         const tb = block(ptext, '\n      ' + key + ': {'); if (!tb) continue;
         const ct = tierOf(cat, key);
         let t = tb.text;
-        t = setIn(t, /(price:")([^"]*)(")/, money(prog === 'series' ? ct.series : ct.single));
+        t = setIn(t, /(price:")([^"]*)(")/, money(priceFor(cat, ct, prog, pg)));
         t = t.replace(/(\d+)( complimentary)/g, ct.comps + '$2');
         for (const it of ct.items) {
           for (const name of [it.opp].concat(it.alt || [])) {
@@ -163,12 +172,12 @@ function applyPages(prosDir, cat) {
     const cs = cards(src).reverse();
     for (const c of cs) {
       const ct = tierOf(cat, c.key); if (!ct) continue;
-      const want = money(c.page === 'series' ? ct.series : ct.single);
+      const want = money(priceFor(cat, ct, c.page, pg));
       const region = src.slice(c.at, c.end).replace(c.whole, c.whole.replace('>' + c.price + '<', '>' + want + '<'))
         .replace(/(\d+)( complimentary)/g, ct.comps + '$2');
       src = src.slice(0, c.at) + region + src.slice(c.end);
     }
-    src = src.replace(FROM_RE, (m, a, v, c) => a + money(lowest(cat)) + c);
+    src = src.replace(FROM_RE, (m, a, v, c) => a + money(lowest(cat, pg)) + c);
     if (src !== before) { fs.writeFileSync(f, src); changed.push(pg.file); }
   }
   return changed;

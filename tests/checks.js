@@ -106,6 +106,15 @@ const appBy = async (page, test) => (await apps(page)).find(test);
           expect(/contractVersion:/.test(t), pg.file + ' does not send the contract version with an application');
         }
       });
+      await check('every prospectus is exactly what tools/build.py makes from the template', async () => {
+        const os = require('os'), cp = require('child_process');
+        const out = fs.mkdtempSync(path.join(os.tmpdir(), 'pros-'));
+        cp.execFileSync('python3', [path.join(PROS, 'tools', 'build.py'), out], { stdio: 'pipe' });
+        const conf = JSON.parse(fs.readFileSync(path.join(PROS, 'tools', 'prospectuses.json'), 'utf8'));
+        const files = ['index.html'].concat(conf.pages.map(p => p.folder + '/index.html'));
+        const off = files.filter(f => !fs.existsSync(path.join(PROS, f)) || fs.readFileSync(path.join(PROS, f), 'utf8') !== fs.readFileSync(path.join(out, f), 'utf8'));
+        expect(!off.length, off.join(', ') + ' differ from the build. Make the change in tools/template.html (or tools/prospectuses.json), run python3 tools/build.py, and publish what it writes');
+      });
       await check('the portal matches the price list', async () => {
         const d = L.comparePortal(path.join(PORTAL, 'index.html'), cat);
         expect(!d.length, d.join('; ') + '. Run node apply-catalog.js to fix.');
@@ -150,6 +159,25 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(nos.every((n, i) => !i || n === nos[i - 1] + 1), 'application numbers skip (' + nos.join(', ') + '), so something was taken twice');
     const log = (await P(portal, () => window.__practice.file('log').entries)).filter(e => /received from the online prospectus/.test(e.text || e.what || JSON.stringify(e)));
     expect(log.length === 3, log.length + ' "received from the online prospectus" entries for 3 applications');
+  });
+
+  await check('a custom package can set the day at each summit, and the list hears about it', async () => {
+    await portal.click('tr[data-open="app-t-custom"]');
+    await portal.waitForTimeout(500);
+    expect(await portal.isVisible('#x-cday-Spring') && await portal.isVisible('#x-cday-Fall'), 'no Day choice on the Spring and Fall lines');
+    expect(!(await portal.isVisible('#x-cday-Winter')), 'a Day choice shows for the Livestream, which has no days');
+    await portal.selectOption('#x-cday-Spring', 'Tuesday');
+    await portal.selectOption('#x-cday-Fall', 'Tuesday');
+    await portal.click('#d-save');
+    await portal.waitForTimeout(2500);
+    const a = await appBy(portal, x => x.id === 'app-t-custom');
+    const days = (a.custom || []).map(l => l.s + ':' + (l.day || '-')).join(' ');
+    expect(days === 'Winter:- Spring:Tuesday Fall:Tuesday', 'the lines saved as ' + days);
+    const row = (await P(portal, () => window.__practice.list())).find(r => r.reference === 'MS27-T0010');
+    const lines = JSON.parse((row && row.lines) || '[]');
+    expect(lines.filter(l => l.day === 'Tuesday').map(l => l.s).join(',') === 'Spring,Fall', 'the list was told: ' + (row && row.lines));
+    await portal.click('#d-close').catch(() => {});
+    await portal.waitForTimeout(300);
   });
 
   await check('each application records which contract wording it agreed to, and prints a signed copy', async () => {
@@ -245,7 +273,8 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const PAGES = [
       { url: '/Sponsorship-Prospectus/', name: '2027 Series and Winter', col: 'Winter Summit', programs: ['Winter Summit', 'Summit Series'] },
       { url: '/Sponsorship-Prospectus/spring-2027/', name: 'Spring 2027', col: 'Spring Summit', programs: ['Spring Summit'] },
-      { url: '/Sponsorship-Prospectus/fall-2027/', name: 'Fall 2027', col: 'Fall Summit', programs: ['Fall Summit'] }
+      { url: '/Sponsorship-Prospectus/fall-2027/', name: 'Fall 2027', col: 'Fall Summit', programs: ['Fall Summit'] },
+      { url: '/Sponsorship-Prospectus/spring-fall-2027/', name: 'Spring & Fall 2027', col: 'Spring & Fall Summits', programs: ['Summit Series'], package: 'springfall', price: 9000 }
     ];
     /* the availability table's cell for one opportunity under one column ("Winter Summit", "Summit Series", ...) */
     const cell = (page, opp, col) => P(page, ([opp, col]) => {
@@ -268,6 +297,12 @@ const appBy = async (page, test) => (await apps(page)).find(test);
         const app = await cell(page, 'Event App Sponsor', pg.col);
         const intro = await cell(page, 'Session Introduction', pg.col);
         expect(/1 sold/i.test(work), 'the Series Workshop sale is not counted at ' + pg.col + ': "' + work + '"');
+        if (pg.package) {
+          /* a package needs the slot free at both: Spring's sale and Fall's sale both count */
+          expect(/^sold$/i.test(app), 'Spring\'s Event App sale does not make the package sold: "' + app + '"');
+          expect(/1 sold/i.test(intro), 'Fall\'s Session Introduction sale is not counted on the package: "' + intro + '"');
+          return;
+        }
         if (pg.col === 'Spring Summit') expect(/^sold$/i.test(app), 'Spring\'s Event App sale is not shown as sold: "' + app + '"');
         else expect(/available/i.test(app) && !/sold/i.test(app), 'Spring\'s Event App sale shows at ' + pg.col + ': "' + app + '"');
         if (pg.col === 'Fall Summit') expect(/1 sold/i.test(intro), 'Fall\'s Session Introduction sale is not counted: "' + intro + '"');
@@ -301,7 +336,8 @@ const appBy = async (page, test) => (await apps(page)).find(test);
         const p = sub.payload;
         expect(pg.programs.indexOf(p.program) >= 0, 'program sent was "' + p.program + '", expected ' + pg.programs.join(' or '));
         const price = Number(String(p.price).replace(/[^0-9.]/g, ''));
-        const want = p.program === 'Summit Series' ? 13500 : 5000;
+        const want = pg.price || (p.program === 'Summit Series' ? 13500 : 5000);
+        if (pg.package) expect(p.package === pg.package && p.summits === 'Spring,Fall', 'the package was sent as "' + p.package + '" for "' + p.summits + '"');
         expect(price === want, 'price sent was ' + p.price + ', the catalog says ' + want);
         expect(p.agreed && p.signerName === 'Pat Check', 'the signature was not sent');
         expect(p.contractVersion === '2027-v1', 'the contract version sent was "' + p.contractVersion + '"');
@@ -313,6 +349,12 @@ const appBy = async (page, test) => (await apps(page)).find(test);
         expect(a, 'the portal did not pick it up from the inbox');
         const want = pg.name === 'Spring 2027' ? 'Spring 2027' : pg.name === 'Fall 2027' ? 'Fall 2027' : /Series|Winter/;
         expect(want instanceof RegExp ? want.test(a.event) : a.event === want, 'it was filed under "' + a.event + '"');
+        if (pg.package) {
+          const lines = (a.custom || []).map(l => l.s + ' ' + l.tier + ' ' + l.opp + ' ' + (l.day || '')).join(' | ');
+          expect(a.package === pg.package && (a.custom || []).length === 2 && a.custom.every(l => l.tier === 'BRONZE' && /Afternoon Snack/.test(l.opp) && l.day),
+            'the package did not become Spring and Fall lines with the day: ' + lines);
+          expect(Number(a.amountDue) === pg.price && !a.priceFlag, 'amount due ' + a.amountDue + (a.priceFlag ? ', flagged: ' + a.priceFlag : ''));
+        }
         expect(!portal2.errors.length, 'portal errors: ' + portal2.errors.join(' | '));
       });
       await check(pg.name + ': nothing reaches a real address', async () => {

@@ -218,6 +218,22 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await portal.waitForTimeout(300);
   });
 
+  await check('likely spam is held for review, not made into a record', async () => {
+    const all = await apps(portal);
+    expect(!all.some(a => /MS27-T0009|MS27-T0011/.test(a.prospectusRef || '')), 'a spam application was made into a record');
+    const banner = await P(portal, () => { const b = document.getElementById('held-banner'); return b && b.style.display !== 'none' ? b.textContent : ''; });
+    expect(/2 applications look like spam/.test(banner) && /hidden spam box/.test(banner) && /2 seconds/.test(banner), 'the held list is not showing them: "' + banner.slice(0, 200) + '"');
+    await portal.click('[data-held-take="ms27-t0011"]');
+    await portal.waitForTimeout(1500);
+    await portal.click('[data-held-drop="ms27-t0009"]');
+    await portal.waitForTimeout(1500);
+    const kept = await appBy(portal, x => x.prospectusRef === 'MS27-T0011');
+    expect(kept && kept.status === 'Submitted', 'Take It In did not put it on the Pipeline');
+    const taken = await P(portal, () => window.__practice.file('inbox-taken').docs);
+    expect(taken['ms27-t0009'] && taken['ms27-t0009'].dismissed && taken['ms27-t0011'].released, 'the choices were not saved: ' + JSON.stringify(taken).slice(0, 200));
+    expect(await P(portal, () => document.getElementById('held-banner').style.display === 'none'), 'the held list did not clear');
+  });
+
   await check('a payment in MISMO Money marks the record Paid and sends the Payment Made email once', async () => {
     const a = await appBy(portal, x => x.appNo === 'AN90005');
     expect(a.status === 'Paid', 'Adatum Credit is still ' + a.status);
@@ -329,6 +345,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
         await page.waitForTimeout(300);
         await page.fill('#f-signer-name', 'Pat Check'); await page.fill('#f-signer-title', 'VP'); await page.fill('#f-signer-date', '2026-11-07');
         await page.check('#f-agree');
+        await page.waitForTimeout(3000);   // a person takes more than five seconds; quicker is held as likely spam
         await page.click('#submit-btn');
         await page.waitForTimeout(1200);
         const sub = (await P(page, () => window.__practice.sent())).find(x => x.kind === 'intake');
@@ -341,6 +358,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
         expect(price === want, 'price sent was ' + p.price + ', the catalog says ' + want);
         expect(p.agreed && p.signerName === 'Pat Check', 'the signature was not sent');
         expect(p.contractVersion === '2027-v1', 'the contract version sent was "' + p.contractVersion + '"');
+        expect(p.hp === '' && p.secondsOnPage >= 5, 'the spam signs were not sent as a person would send them (box "' + p.hp + '", ' + p.secondsOnPage + ' seconds)');
         expect(!page.errors.length, 'page errors: ' + page.errors.join(' | '));
       });
       await check(pg.name + ': the application arrives in the portal on the right summit', async () => {

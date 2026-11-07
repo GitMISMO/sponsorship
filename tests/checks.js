@@ -66,6 +66,30 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   await new Promise(r => server.listen(PORT, r));
   browser = await chromium.launch();
 
+  if (HAVE_PROS) {
+    console.log('\nPrice list (Sponsorship-Prospectus/catalog.json)');
+    const L = require('./catalog-lib');
+    let cat = null;
+    await check('the price list is readable and complete', async () => {
+      cat = L.loadCatalog(PROS);
+      expect(cat.tiers && cat.tiers.length === 5, 'expected 5 tiers, found ' + (cat.tiers || []).length);
+      for (const t of cat.tiers) {
+        expect(t.single > 0 && t.series > 0 && t.comps > 0, t.name + ' is missing a price or registration count');
+        expect(Math.abs(t.series - t.single * 3 * 0.9) < 0.01, t.name + ' series price ' + t.series + ' is not three summits less 10% (' + t.single * 2.7 + ')');
+      }
+    });
+    if (cat) {
+      await check('all three prospectuses match the price list', async () => {
+        const d = L.comparePages(PROS, cat);
+        expect(!d.length, d.join('; ') + '. Run node apply-catalog.js to fix.');
+      });
+      await check('the portal matches the price list', async () => {
+        const d = L.comparePortal(path.join(PORTAL, 'index.html'), cat);
+        expect(!d.length, d.join('; ') + '. Run node apply-catalog.js to fix.');
+      });
+    }
+  }
+
   console.log('\nSponsorship Portal');
   const portal = await open('/sponsorship/?practice');
 
@@ -98,6 +122,24 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(a.day === 'Wednesday', 'day is ' + a.day);
     const all = await apps(portal);
     expect(new Set(all.map(x => x.appNo)).size === all.length, 'two records share an application number');
+  });
+
+  await check('the price comes from the price list, not from the sponsor\'s page', async () => {
+    const ok = await appBy(portal, x => x.prospectusRef === 'MS27-T0006');
+    expect(!ok.priceFlag, 'a correctly priced application was flagged: ' + ok.priceFlag);
+    const t = await appBy(portal, x => x.prospectusRef === 'MS27-T0007');
+    expect(t, 'the $5 test application was not taken in');
+    expect(Number(t.amountDue) === 40500, 'a page that sent $5 for Platinum Series left the amount due at ' + t.amountDue);
+    expect(Number(t.priceSent) === 5 && /40,500/.test(t.priceFlag || ''), 'the $5 was not flagged (' + t.priceFlag + ')');
+    const g = await appBy(portal, x => x.prospectusRef === 'MS27-T0008');
+    expect(/PLATINUM opportunity/.test(g.priceFlag || ''), 'a Platinum opportunity sold as Gold was not flagged (' + g.priceFlag + ')');
+    await portal.click('tr[data-open="' + t.id + '"]');
+    await portal.waitForTimeout(400);
+    const warn = await P(portal, () => (document.querySelector('#drawer .dnote.warn') || {}).textContent || '');
+    expect(/Check the price before approving/.test(warn) && /\$5\b/.test(warn), 'the record does not warn about the price: "' + warn + '"');
+    await portal.click('#d-cancel').catch(() => {});
+    await portal.click('#d-close').catch(() => {});
+    await portal.waitForTimeout(300);
   });
 
   await check('a payment in MISMO Money marks the record Paid and sends the Payment Made email once', async () => {

@@ -125,10 +125,22 @@ const appBy = async (page, test) => (await apps(page)).find(test);
 
   console.log('\nSponsorship Portal');
   const portal = await open('/sponsorship/?practice');
-  /* the summit board, where every application has a row (the Pipeline opens first since Nov 18, 2026) */
-  const toSummits = async () => {
+  /* open a record the way a person does since the record pages were folded into the Pipeline
+     (Nov 18, 2026): its Pipeline row (All, every type) opens its company, and the company's
+     own row for it opens the record itself */
+  const openRec = async id => {
     await P(portal, () => { ['d-close','ld-close','bd-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
-    await portal.click('.tab[data-view="pipeline"]');
+    await portal.click('.tab[data-view="flow"]'); await portal.waitForTimeout(200);
+    await portal.click('[data-ftype=""]'); await portal.click('[data-fgroup="all"]');
+    await portal.selectOption('#flow-owner', ''); await portal.fill('#flow-q', ''); await portal.waitForTimeout(150);
+    await portal.click('#flow-body tr[data-fid="' + id + '"] td:first-child'); await portal.waitForTimeout(400);
+    if (await portal.isVisible('#co-panel.on')) {
+      const direct = '#co-panel [data-fid="' + id + '"][data-direct]';
+      if (!(await portal.isVisible(direct))) { await portal.click('#co-panel [data-cotab="sponsorships"]'); await portal.waitForTimeout(250); }
+      await portal.click(direct); await portal.waitForTimeout(300);
+      /* the company panel stays under the record for a person; the checks put it away */
+      await P(portal, () => { const c = document.getElementById('co-close'); if (c) c.click(); });
+    }
   };
 
   await check('opens with no errors, in practice mode', async () => {
@@ -148,7 +160,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
       expect(shown, 'the "' + v + '" section did not show');
     }
     expect(!portal.errors.length, 'page errors while switching sections: ' + portal.errors.join(' | '));
-    await portal.click('.tab[data-view="pipeline"]').catch(() => {});
+    await portal.click('.tab[data-view="flow"]').catch(() => {});
   });
 
   await check('an application from the prospectus inbox becomes a record on the right summit', async () => {
@@ -168,7 +180,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
 
   await check('a custom package can set the day at each summit, and the list hears about it', async () => {
-    await toSummits(); await portal.click('tr[data-open="app-t-custom"]');
+    await openRec('app-t-custom');
     await portal.waitForTimeout(500);
     expect(await portal.isVisible('#x-cday-Spring') && await portal.isVisible('#x-cday-Fall'), 'no Day choice on the Spring and Fall lines');
     expect(!(await portal.isVisible('#x-cday-Winter')), 'a Day choice shows for the Livestream, which has no days');
@@ -191,7 +203,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     if (HAVE_PROS) expect(a.contractVersion === '2027-v1', 'the contract version recorded is "' + a.contractVersion + '"');
     expect(a.acceptanceTitle === 'VP Marketing', 'the signer\'s title was not kept ("' + a.acceptanceTitle + '")');
     if (!HAVE_PROS) return;
-    await toSummits(); await portal.click('tr[data-open="' + a.id + '"]');
+    await openRec(a.id);
     await portal.waitForTimeout(400);
     const line = await P(portal, () => (document.querySelector('#drawer .contractline') || {}).textContent || '');
     expect(/Version 2027-v1/.test(line), 'the record does not show the contract version: "' + line + '"');
@@ -215,7 +227,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(Number(t.priceSent) === 5 && /40,500/.test(t.priceFlag || ''), 'the $5 was not flagged (' + t.priceFlag + ')');
     const g = await appBy(portal, x => x.prospectusRef === 'MS27-T0008');
     expect(/PLATINUM opportunity/.test(g.priceFlag || ''), 'a Platinum opportunity sold as Gold was not flagged (' + g.priceFlag + ')');
-    await toSummits(); await portal.click('tr[data-open="' + t.id + '"]');
+    await openRec(t.id);
     await portal.waitForTimeout(400);
     const warn = await P(portal, () => (document.querySelector('#drawer .dnote.warn') || {}).textContent || '');
     expect(/Check the price before approving/.test(warn) && /\$5\b/.test(warn), 'the record does not warn about the price: "' + warn + '"');
@@ -256,7 +268,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
 
   await check('approving keeps a change someone else saved a moment earlier', async () => {
-    await toSummits(); await portal.click('tr[data-open="app-t-new"]');
+    await openRec('app-t-new');
     await portal.waitForTimeout(500);
     /* while the record is open here, someone else saves a note and a new email on it */
     await P(portal, () => window.__practice.write('applications', d => {
@@ -301,7 +313,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(/doesn.t match these records/.test(note) && /Fabrikam Title/.test(note) && /Banner Sponsor/.test(note), 'the mismatch was not reported: ' + (note.match(/Sponsorship Requests list[\s\S]{0,300}/) || ['(nothing)'])[0]);
     const row = (await P(portal, () => window.__practice.list())).find(r => r.reference === 'MS27-T0003');
     expect(row && row.status === 'Approved', 'Fabrikam was not sent to the list again');
-    await portal.click('.tab[data-view="pipeline"]').catch(() => {});
+    await portal.click('.tab[data-view="flow"]').catch(() => {});
   });
 
   await check('the activity log keeps everything, in monthly files, and shows on each record', async () => {
@@ -309,7 +321,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     /* someone else's entry saved a moment ago must survive this screen's next one */
     await P(portal, () => window.__practice.write('log', d => { d.entries.unshift({ at: new Date().toISOString(), appNo: 'AN90001', what: 'note from another screen', who: 'Someone Else' }); }));
     await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
-    await toSummits(); await portal.click('tr[data-open="app-t-spring"]');
+    await openRec('app-t-spring');
     await portal.waitForTimeout(400);
     await portal.click('#drawer button:has-text("Pending")').catch(() => {});
     await portal.fill('#x-statusNotes', 'History check');
@@ -323,7 +335,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const old = await P(portal, () => window.__practice.file('log-' + new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 7)));
     expect(old && old.entries.some(e => e.appNo === 'AN90001'), 'last month\'s entries were not swept into their month\'s file');
     await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
-    await toSummits(); await portal.click('tr[data-open="app-t-paid"]');
+    await openRec('app-t-paid');
     await portal.waitForTimeout(400);
     await portal.click('#x-fullhist');
     await portal.waitForTimeout(1500);
@@ -371,7 +383,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(a['bf:Winter 2027:micdup'] && a['bf:Winter 2027:micdup'].done, 'Done was not saved');
     expect(a['bf:Winter 2027:linkedin'] && a['bf:Winter 2027:linkedin'].by === 'Someone Else', 'another person\'s tick was overwritten');
     expect(a['bf:Winter 2027:chair'] && a['bf:Winter 2027:chair'].owner === 'Amy Moses', 'the owner change was not saved');
-    await portal.click('.tab[data-view="pipeline"]').catch(() => {});
+    await portal.click('.tab[data-view="flow"]').catch(() => {});
   });
 
   /* ---- one Pipeline, Other Sponsorships, the mismosponsor@ mailbox (November 18, 2026) ---- */
@@ -411,6 +423,14 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(await P(portal, () => document.getElementById('flow-drill').hidden), 'Close did not put the list away');
     const dueRows = await P(portal, () => document.querySelectorAll('#flow-due .fbrow').length);
     expect(dueRows <= 4, 'Due Now shows ' + dueRows + ' rows (it keeps to four, with See All for the rest)');
+    /* the record pages are folded in: no tabs for them, and what an application waits on is on the Pipeline */
+    expect(!(await P(portal, () => !!document.querySelector('.tab[data-view="pipeline"], .tab[data-view="workgroup"], .tab[data-view="other"]'))),
+      'Summit Sponsorships, Workgroups or Other Sponsorships still has a tab');
+    expect(await portal.isVisible('[data-fdrill="todo"]'), 'applications waiting on a next step are not counted on the Pipeline');
+    await portal.click('[data-fdrill="todo"]'); await portal.waitForTimeout(250);
+    const todo = await P(portal, () => document.getElementById('flow-drill').innerText);
+    expect(/Review and Approve|Raise the Invoice|Raise the invoice/.test(todo), 'the waiting list does not say what each is waiting on: ' + todo.slice(0, 200));
+    await portal.click('#flow-drill [data-fdrill=""]');
   });
   await check('a prospect\'s stage changes right in its row', async () => {
     await toFlow();
@@ -424,20 +444,22 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const o = (await fileOf('others')).docs['wb-t-1'], w = (await fileOf('webinars')).docs['wb-t-1'];
     expect(o && o.otype === 'ai-webinar' && o.no === 'WB90001', 'the webinar record was not copied into others.json');
     expect(w && !w.otype, 'webinars.json was changed; it is kept as it was');
-    await portal.click('.tab[data-view="other"]'); await portal.waitForTimeout(300);
-    const row = await P(portal, () => document.querySelector('#bill-body-other tr').innerText);
-    expect(/AI Webinar Series/.test(row) && /\$2,000/.test(row), 'the row does not show the type and MISMO\'s half: ' + row);
+    await openRec('wb-t-1');
+    const row = await P(portal, () => document.querySelector('#flow-body tr[data-fid="wb-t-1"]').innerText);
+    expect(/AI Webinar Series/.test(row), 'the Pipeline row does not show the type: ' + row);
+    const rec = await P(portal, () => document.getElementById('bill-drawer').innerText);
+    expect(/\$2,000/.test(rec), 'the record does not show MISMO\'s half');
   });
   await check('a new sponsorship type can be added and used', async () => {
-    await portal.click('.tab[data-view="other"]');
-    await portal.click('#new-otype');
+    await toFlow();
+    await portal.selectOption('#flow-newkind', 'newtype'); await portal.waitForTimeout(200);
     await portal.fill('#ot-name', 'Bootcamp Test');
     await portal.fill('#ot-detail', 'Bootcamp');
     await portal.click('#ot-save'); await portal.waitForTimeout(1200);
     const st = (await fileOf('settings')) || {docs:{}};
     const types = ((st.docs.main || {}).otherTypes || []).map(t => t.key);
     expect(types.indexOf('bootcamp-test') >= 0, 'the type was not saved: ' + types.join(', '));
-    await portal.click('[data-newbill="other"]'); await portal.waitForTimeout(400);
+    await portal.selectOption('#flow-newkind', 'other:bootcamp-test'); await portal.waitForTimeout(400);
     const sel = await P(portal, () => document.getElementById('bx-otype').value);
     expect(sel === 'bootcamp-test', 'a new sponsorship does not start as the type being looked at: ' + sel);
     await P(portal, () => document.getElementById('bd-close').click());
@@ -474,7 +496,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await portal.click('[data-mailpick="m-t-3"][data-name="Contoso Mortgage"]'); await portal.waitForTimeout(1500);
     const m3 = (await fileOf('mailin')).docs['m-t-3'];
     expect(m3.st === 'logged' && m3.coName === 'Contoso Mortgage', 'picking a company did not log it: ' + m3.st);
-    await toSummits(); await portal.click('tr[data-open="app-t-paid"]'); await portal.waitForTimeout(500);
+    await openRec('app-t-paid'); await portal.waitForTimeout(500);
     const dr = await P(portal, () => document.getElementById('drawer').innerText);
     expect(/Badge artwork/.test(dr), 'the sponsor\'s record does not show its emails');
     await P(portal, () => document.getElementById('d-close').click());
@@ -522,8 +544,13 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await portal.click('[data-cotab="overview"]');
     const ov = await P(portal, () => document.querySelector('#cp-body .cp-panel').innerText);
     expect(/Follow-Ups/i.test(ov) && /Send the Spring options/.test(ov), 'the follow-up is not on the company');
-    const due = await P(portal, () => document.getElementById('flow-due').innerText);
-    expect(/Northwind Lending/.test(due), 'the follow-up is not under Due Now on the Pipeline');
+    await P(portal, () => document.getElementById('co-close').click());
+    await toFlow(); await portal.click('[data-fdrill="due"]'); await portal.waitForTimeout(250);
+    const due = await P(portal, () => document.getElementById('flow-drill').innerText);
+    expect(/Northwind Lending/.test(due), 'the follow-up is not in Follow-Ups Due on the Pipeline');
+    await portal.click('#flow-drill [data-fdrill=""]');
+    await toCos(); await portal.click('#co-body tr[data-co="northwindlending"]'); await portal.waitForTimeout(400);
+    await portal.click('[data-cotab="overview"]');
     await portal.click('#cp-body [data-tpdone="' + tp.id + '"]'); await portal.waitForTimeout(1200);
     const after = (await fileOf('touchpoints')).docs[tp.id];
     expect(after && after.next && after.next.done, 'Done did not clear the follow-up');

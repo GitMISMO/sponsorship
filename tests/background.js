@@ -145,8 +145,14 @@ async function signIn() {
     const HQ = (process.env.SPONSORSHIP_GH_API || 'https://api.github.com') + '/repos/GitMISMO/summit-hq-data';
     await ctx.route(/\.on\.aws\/summit-hq\/data\/feed-desk-sponsor$/, async route => {
       if (route.request().method() !== 'GET') return route.fulfill({ status: 405, contentType: 'application/json', body: '{"error":"READ_ONLY"}' });
-      const out = await relayGet(process.env.SUMMIT_HQ_DATA_TOKEN || dataToken, 'feed-desk-sponsor', HQ).catch(() => ({ status: 0 }));
-      if (out.status !== 200) desk = 'Registration Desk entries were not read (the key can\'t read GitMISMO/summit-hq-data' + (out.status ? ', ' + out.status : '') + '); they are applied when someone opens the portal.';
+      const key = process.env.SUMMIT_HQ_DATA_TOKEN || dataToken;
+      const out = await relayGet(key, 'feed-desk-sponsor', HQ).catch(() => ({ status: 0 }));
+      if (out.status === 404) {
+        /* GitHub says 404 both for a file not made yet and for a repo the key can't see */
+        const repo = await gh(key, HQ).then(r => r.status).catch(() => 0);
+        desk = repo === 200 ? 'Nothing from the Registration Desk yet (Summit HQ has not saved any Desk entries).'
+                            : 'Registration Desk entries were not read: the key can\'t read GitMISMO/summit-hq-data. They are applied when someone opens the portal.';
+      } else if (out.status !== 200) desk = 'Registration Desk entries were not read this time (GitHub answered ' + (out.status || 'nothing') + '); they are applied when someone opens the portal.';
       await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' },
         body: JSON.stringify(out.status === 200 ? out.body : { data: null }) });
     });

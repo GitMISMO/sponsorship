@@ -1905,7 +1905,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div class="hbody">
           <ul>
             <li><b>MISMO Money payments are recorded when the portal is opened.</b> The recording happens inside the portal. Payments are recorded the next time anyone who can edit opens it, not the moment MISMO Money loads them. If nobody opens the portal, nothing is recorded until someone does. Someone who can only view the portal doesn&rsquo;t trigger it.</li>
-            <li><b>Some payments never reach MISMO Money.</b> Aptify payments recorded as an MBA ACH payment or by credit memo aren&rsquo;t in its payment exports. Kastle AI&rsquo;s $15,000 was one. Mark those Paid by hand on the record by entering the <b>Payment Received</b> date.</li>
+            <li><b>Some payments never reach MISMO Money.</b> Aptify payments recorded as an MBA ACH payment or by credit memo aren&rsquo;t in its payment exports. Kastle AI&rsquo;s $15,000 was one. Bernie enters the date it was paid on his <b>Registration Desk</b> (or anyone can enter the <b>Payment Received</b> date on the record here), and it is marked Paid.</li>
             <li><b>MISMO Money covers recent payments only.</b> It covers payments from 1 January 2025 on. Older payments are already on their records.</li>
             <li><b>Payment follow-ups need a click.</b> They don&rsquo;t send themselves on a timer, because nothing here emails people without someone choosing to send it. The card shows when one is due.</li>
             <li><b>Custom packages show one summit publicly.</b> The Sponsorship Requests list holds one row per sponsorship, so for a custom Series it carries the Winter choice. Spring and Fall choices show here on Inventory but not on the public page.</li>
@@ -2719,7 +2719,6 @@ a series deal is counted once, at its full amount.</div>
           "- Please enter the Aptify Order ID and the Invoice Date on your Registration Desk\n" +
           "- Please enter the Sponsor comp code and number of comps on your Registration Desk.\n\n" +
           "Registration Desk: https://resources.mismo.org/summit-hq/?desk\n\n" +
-          "Note: If the invoice is under a different company name, please indicate that name in the Also Invoiced As field.\n\n" +
           "Application: " + a.appNo +
           "\nLevel: " + (lvl||"—") + "\nOpportunity: " + (oppLabel(a)||"—") +
           "\nAmount due: " + money(a.amountDue) +
@@ -8961,7 +8960,7 @@ a series deal is counted once, at its full amount.</div>
      feed-desk-sponsor document, which this reads (never writes) and applies to the records:
        { updatedAt, entries: { <applications id>: { appNo, company, invoiceNumber, invoiceDate,
          compCode, numComps, to, codeSentAt, codeSentTo, codeSentBy,
-         followUps:[{on, by, at}], by, at } } }
+         followUps:[{on, by, at}], paymentReceivedDate, amountPaid, by, at } } }
      - an entry is matched on the record id, then on appNo;
      - a field that isn't there hasn't been entered, so the portal's value stays;
      - the order ID works as if typed here (applyRules: Approved moves to Pending Payment);
@@ -8969,6 +8968,10 @@ a series deal is counted once, at its full amount.</div>
      - each follow-up not seen before (by its "at", kept in deskChases) counts as one chase,
        the same as Log a Follow-Up: followUpCount goes up and lastFollowUpDate is the latest "on",
        which restarts the 10-business-day count;
+     - paymentReceivedDate (and amountPaid if given) is for a payment MISMO Money never sees (an
+       MBA ACH payment, a credit memo): it marks the record Paid, the same as entering Payment
+       Received here, and the usual Payment Made email goes to Jonna, Amy and Kelly; it never
+       changes a record already Paid;
      - an entry is applied only when its "at" is newer than deskAppliedAt on the record, so a
        later edit made here is never overwritten by an older Desk entry.
      Runs whenever someone who can edit has the portal open, and in the hourly background work.
@@ -9024,6 +9027,15 @@ a series deal is counted once, at its full amount.</div>
         });
         if(ticked) said.push("code emailed" + (e.codeSentTo || e.to ? " to " + (e.codeSentTo || e.to) : "") + " " + fmtDate(sentDay));
       }
+      /* a payment that never reaches MISMO Money (an MBA ACH payment, a credit memo): Bernie
+         enters the date it was paid on the Desk, the same as entering Payment Received here */
+      var paidNow = false;
+      if(deskHas(e.paymentReceivedDate) && !a.paymentReceivedDate && a.status !== "Paid" && !a.inKind){
+        after.paymentReceivedDate = String(e.paymentReceivedDate).slice(0, 10);
+        if(deskHas(e.amountPaid) && isFinite(Number(e.amountPaid))) after.amountPaid = Number(e.amountPaid);
+        paidNow = true;
+        said.push("paid " + fmtDate(after.paymentReceivedDate) + (deskHas(e.amountPaid) ? " (" + money(after.amountPaid) + ")" : ""));
+      }
       var seen = Array.isArray(a.deskChases) ? a.deskChases.slice() : [];
       var fresh = (Array.isArray(e.followUps) ? e.followUps : []).filter(function(f){ return f && f.at && seen.indexOf(String(f.at)) < 0; });
       if(fresh.length){
@@ -9038,11 +9050,17 @@ a series deal is counted once, at its full amount.</div>
       after.deskAppliedAt = at;
       /* the order ID moves an Approved record to Pending Payment, exactly as if typed here */
       var fired = applyRules(a, after);
+      var paidAlert = !!after.__alert_paid && paidNow;
       delete after.__alert_invoice; delete after.__alert_logo; delete after.__alert_paid;
       if(!said.length){ saveApp(after); return; }   // nothing new, but don't look at this entry again
       if(a.status !== after.status) fired.unshift("status " + a.status + " → " + after.status);
       saveApp(after);
       addLog(after.appNo, "From the Registration Desk: " + said.join(", ") + (fired.length ? "; " + fired.join("; ") : ""), e.by || "Registration Desk");
+      /* marked Paid: the usual Payment Made email to Jonna, Amy and Kelly, as when the date is typed here */
+      if(paidAlert && AUTO_SEND && QUEUE_KINDS.paid){
+        var recent = outbox.some(function(o){ return o.kind === "paid" && outboxBelongs(o, after) && Date.now() - Date.parse(o.queuedAt || 0) < 3600000; });
+        if(!recent) queueAlert("paid", after).catch(function(){});
+      }
       deskApplied.push({company: after.company || after.appNo, appNo: after.appNo, said: said.join(", ")});
       n++;
     });

@@ -159,12 +159,15 @@ Bernie works summit sponsorships from his Registration Desk in Summit HQ
 `data/applications.json` with the viewer's own sign-in (so Bernie, Amy and Kelly need view access to
 the portal) and never writes to sponsorship-data. What he enters is kept in Summit HQ's data, in
 `feed-desk-sponsor` (`{updatedAt, entries:{<application id>:{appNo, invoiceNumber, invoiceDate,
-compCode, numComps, codeSentAt, codeSentTo, codeSentBy, followUps:[{on,by,at}], by, at}}}`).
+compCode, numComps, codeSentAt, codeSentTo, codeSentBy, followUps:[{on,by,at}], paymentReceivedDate,
+amountPaid, by, at}}}`).
 `applyDesk()` reads it (`/summit-hq/data/feed-desk-sponsor`, read only) and applies it: matched on
 the id, then `appNo`; a missing field leaves the record alone; the order ID goes through
 `applyRules` (Approved → Pending Payment); `codeSentAt` ticks `bf:<summit>:comps`; each follow-up not
 seen before (its `at`, kept in `deskChases`) adds one to `followUpCount` and sets `lastFollowUpDate`
-to the latest `on`. An entry is applied only when its newest `at` is later than `deskAppliedAt` on the
+to the latest `on`; `paymentReceivedDate` (and `amountPaid` if given), for a payment MISMO Money never
+sees (an MBA ACH payment, a credit memo), marks the record Paid the same as entering Payment Received
+here, with the usual Payment Made email, and never touches a record already Paid. An entry is applied only when its newest `at` is later than `deskAppliedAt` on the
 record, so it never overwrites a later edit made here. The history line starts "From the
 Registration Desk". It runs whenever someone who can edit has the portal open (the feed is read
 again every five minutes) and in the hourly background work, which reads the feed from

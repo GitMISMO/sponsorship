@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-19: Prospectuses tab: Download PDF on each prospectus (today's availability, no application form).
 - 2026-11-19: Registration Desk: a paid-on date from the Desk (for payments MISMO Money never sees) marks the record Paid, with the usual Payment Made email. The invoice request to Bernie no longer mentions the Also Invoiced As field (MISMO Money fills it in).
 - 2026-11-19: Bernie's Registration Desk in Summit HQ: his order IDs, invoice dates, comp codes, code emails and payment follow-ups are read from Summit HQ and applied to the records (Approved moves to Pending Payment, the comps benefit ticks, each follow-up counts as a chase), whenever the portal is open and hourly. Emails to Bernie point to the Desk.
 - 2026-11-18: Summit Sponsorships, Workgroups and Other Sponsorships fold into the Pipeline: pick the type there; All shows every record however old; New Sponsorship… starts any kind or adds a type; what applications and draft sponsorships are waiting on (review, the invoice, a chase) shows in the headline and under Due Now.

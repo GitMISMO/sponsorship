@@ -432,6 +432,28 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(/Review and Approve|Raise the Invoice|Raise the invoice/.test(todo), 'the waiting list does not say what each is waiting on: ' + todo.slice(0, 200));
     await portal.click('#flow-drill [data-fdrill=""]');
   });
+  await check('Bernie\'s Registration Desk entries (Summit HQ) are applied to the records', async () => {
+    const docs = (await fileOf('applications')).docs;
+    const d = docs['app-t-desk'];
+    expect(d.invoiceNumber === '991234' && d.status === 'Pending Payment', 'the order ID was not applied, or did not move it to Pending Payment: ' + d.invoiceNumber + ' / ' + d.status);
+    expect(d.compCode === 'COHO27' && Number(d.numComps) === 4, 'the comp code was not applied: ' + d.compCode + ' (' + d.numComps + ')');
+    expect(d['bf:Fall 2027:comps'] && d['bf:Fall 2027:comps'].done && d['bf:Fall 2027:comps'].by === 'Bernardo Jordan', 'the comp code email did not tick the comps benefit');
+    expect(d.deskAppliedAt, 'the record does not keep when the Desk was applied');
+    /* matched on the application number, two follow-ups, counted once each */
+    const c = docs['app-t-series'];
+    const today = await P(portal, () => { const x = new Date(); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); });
+    expect(Number(c.followUpCount) === 2 && c.lastFollowUpDate === today && (c.deskChases || []).length === 2, 'the follow-ups were not counted: ' + c.followUpCount + ', last ' + c.lastFollowUpDate);
+    /* an older Desk entry never overwrites the record */
+    expect(docs['app-t-paid'].invoiceNumber === '990101', 'an older Desk entry overwrote the order ID');
+    const log = await P(portal, () => window.__practice.file('log').entries);
+    expect(log.some(e => e.appNo === 'AN90007' && /From the Registration Desk: order 991234/.test(e.what) && /COHO27/.test(e.what)), 'the record\'s history does not say what came from the Desk');
+    /* opening again applies nothing twice */
+    await portal.reload({ waitUntil: 'load' }); await portal.waitForTimeout(4000);
+    const again = (await fileOf('applications')).docs['app-t-series'];
+    expect(Number(again.followUpCount) === 2, 'a follow-up was counted twice after reopening: ' + again.followUpCount);
+    const n = (await P(portal, () => window.__practice.file('log').entries)).filter(e => e.appNo === 'AN90007' && /Registration Desk/.test(e.what)).length;
+    expect(n === 1, 'the Desk entry was applied ' + n + ' times');
+  });
   await check('a prospect\'s stage changes right in its row', async () => {
     await toFlow();
     await portal.selectOption('select[data-flowstage="lead-t-1"]', 'Meeting Scheduled');

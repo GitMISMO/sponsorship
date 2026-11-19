@@ -48,15 +48,15 @@ async function canWrite(token) {
   const r = await gh(token, GH + '/git/blobs', { method: 'POST', body: JSON.stringify({ content: 'write check', encoding: 'utf-8' }) });
   return r.status === 201 ? true : (r.status === 403 || r.status === 404 ? false : null);
 }
-async function relayGet(token, name) {
-  const r = await gh(token, GH + '/contents/data/' + encodeURIComponent(name) + '.json?ref=main');
+async function relayGet(token, name, base) {
+  const r = await gh(token, (base || GH) + '/contents/data/' + encodeURIComponent(name) + '.json?ref=main');
   if (r.status === 404) return { status: 404, body: { error: 'NOT_FOUND' } };
   if (!r.ok) return { status: r.status, body: { error: 'HTTP_' + r.status } };
   const f = await r.json();
   let text;
   if (f.encoding === 'base64' && f.content) text = Buffer.from(f.content, 'base64').toString('utf8');
   else {   // files over 1 MB come back without content
-    const b = await gh(token, GH + '/git/blobs/' + f.sha);
+    const b = await gh(token, (base || GH) + '/git/blobs/' + f.sha);
     const bj = await b.json();
     text = Buffer.from(bj.content || '', 'base64').toString('utf8');
   }
@@ -137,6 +137,20 @@ async function signIn() {
       await route.fulfill({ status: out.status, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(out.body) });
     });
   }
+  /* Bernie's Registration Desk entries (Summit HQ, November 19, 2026): read only, from Summit HQ's
+     data repo, with SUMMIT_HQ_DATA_TOKEN if there is one, otherwise the same data key. A key that
+     can't read it just means the entries wait for someone to open the portal. */
+  let desk = '';
+  if (dataToken) {
+    const HQ = (process.env.SPONSORSHIP_GH_API || 'https://api.github.com') + '/repos/GitMISMO/summit-hq-data';
+    await ctx.route(/\.on\.aws\/summit-hq\/data\/feed-desk-sponsor$/, async route => {
+      if (route.request().method() !== 'GET') return route.fulfill({ status: 405, contentType: 'application/json', body: '{"error":"READ_ONLY"}' });
+      const out = await relayGet(process.env.SUMMIT_HQ_DATA_TOKEN || dataToken, 'feed-desk-sponsor', HQ).catch(() => ({ status: 0 }));
+      if (out.status !== 200) desk = 'Registration Desk entries were not read (the key can\'t read GitMISMO/summit-hq-data' + (out.status ? ', ' + out.status : '') + '); they are applied when someone opens the portal.';
+      await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify(out.status === 200 ? out.body : { data: null }) });
+    });
+  }
   const page = await ctx.newPage();
   const errors = [], toasts = [], saves = [];
   page.on('pageerror', e => errors.push(String(e).split('\n')[0]));
@@ -166,6 +180,7 @@ async function signIn() {
     list: ((document.getElementById('stock-body') || {}).textContent || '').match(/The Sponsorship Requests list[^.]*(\.|\))[^.]*\.?/) || ['']
   }));
   await page.waitForTimeout(10000);   // the saves the jobs started
+  const fromDesk = await page.evaluate(() => (window.__deskApplied || []).map(x => x.company + ' ' + x.appNo + ': ' + x.said)).catch(() => []);
   await browser.close();
   if (server) server.close();
 
@@ -175,6 +190,7 @@ async function signIn() {
   say(fromInbox.length ? 'New applications: ' + fromInbox.join(' ') : 'No new applications from the prospectuses.');
   say(/recorded/i.test(state.money) ? state.money.replace(/\s*Got It$/, '').replace(/\n+/g, ' ') : 'No new payments from MISMO Money. ' + state.stamp.trim() + '.');
   if (state.list[0]) say(state.list[0].trim());
+  say(fromDesk.length ? 'From the Registration Desk: ' + fromDesk.join('; ') + '.' : (desk || 'Nothing new from the Registration Desk.'));
   if (errors.length) { say('Page errors: ' + errors.join(' | ')); finish(1); }
   finish(state.conn ? 1 : 0);
 })().catch(e => { say('Could not run: ' + e.message); finish(1); });

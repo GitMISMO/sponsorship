@@ -443,6 +443,10 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const c = docs['app-t-series'];
     const today = await P(portal, () => { const x = new Date(); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); });
     expect(Number(c.followUpCount) === 2 && c.lastFollowUpDate === today && (c.deskChases || []).length === 2, 'the follow-ups were not counted: ' + c.followUpCount + ', last ' + c.lastFollowUpDate);
+    /* a payment MISMO Money never sees, marked paid on the Desk, with the usual Payment Made email */
+    expect(c.status === 'Paid' && c.paymentReceivedDate && Number(c.amountPaid) > 0, 'the Desk\'s paid date did not mark it Paid: ' + c.status);
+    const ob = Object.values((await fileOf('outbox')).docs);
+    expect(ob.some(o => o.kind === 'paid' && o.appNo === 'AN90002'), 'no Payment Made email was queued for the payment from the Desk');
     /* an older Desk entry never overwrites the record */
     expect(docs['app-t-paid'].invoiceNumber === '990101', 'an older Desk entry overwrote the order ID');
     const log = await P(portal, () => window.__practice.file('log').entries);

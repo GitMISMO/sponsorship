@@ -48,8 +48,13 @@ stored twice. The only company-level data is `data/companies.json` (`companies/<
 every company once with its relationship (Sponsor, Applied, Prospect, Past Sponsor, Lost); the
 **company record** (`openCompany`) has its band, journey, open opportunities with a stage bar, all its
 sponsorships, one Activity timeline, contacts and money. Pipeline rows open the company; a company's
-own buttons open the record itself (`data-direct`). Notes logged on a company are touchpoints with
-`type: "Note"`. The look follows Member 360's (navy gradient tiles, squared tags).
+own buttons open the record itself (`data-direct`). Log a Touchpoint saves to `touchpoints.json` with
+`type` (Call, Email, Meeting, Event Conversation, Note, Other), `about` (`summit`, `workgroup`, an
+Other Sponsorship type key, or empty for General), `contact`, `summary`, and an optional
+`next: {text, due, onLead, done, doneBy}`. When the company has an open prospect of that kind, its
+Next Step, follow-up date and last contact date are set on the prospect too (`onLead`), so the
+follow-up isn't counted twice; otherwise the touchpoint's own follow-up shows on Home, under Due Now
+on the Pipeline and in the company's Follow-Ups until marked Done. Emails get the same About picker. The look follows Member 360's (navy gradient tiles, squared tags).
 
 ## The Pipeline (November 18, 2026)
 

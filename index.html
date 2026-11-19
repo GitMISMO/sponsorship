@@ -1102,6 +1102,11 @@
   .cp-mbig{font-size:21px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--ink);} .cp-mbig.good{color:var(--good);} .cp-mbig.warn{color:var(--warn);}
   .cp-mtable tbody tr{cursor:pointer;}
   .cp-grow .linkbtn{align-self:flex-start; margin-top:3px;}
+  .cp-ameta{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:2px;}
+  .cp-about{font:inherit; font-size:11.5px; font-weight:600; padding:2px 6px; border:1px solid var(--border-strong); border-radius:4px; background:var(--surface-2); color:var(--ink-2); cursor:pointer;}
+  .cp-anext{font-size:12.5px; color:var(--ink); margin:2px 0;}
+  .cp-tpform h4{margin:0 0 10px; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink-3);}
+  .cp-tpform .fld{margin-bottom:8px;}
   .linkbtn{border:0; background:none; padding:0; color:var(--c1); font:inherit; font-size:12px; font-weight:600; cursor:pointer; text-decoration:underline;}
   :root[data-theme="dark"] .cp-filt button.on{background:var(--sky); color:var(--navy-deep);}
   /* ---- the one Pipeline (November 18, 2026) ---- */
@@ -1836,7 +1841,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
           <ul>
             <li><b>Home</b> is the day at a glance: what&rsquo;s on your plate this week (follow-ups due and invoices past due), the summit season&rsquo;s money, the sales pipeline, the next summit, emails to mismosponsor@, money by type and what the team has been doing. Select any tile to go to it.</li>
             <li><b>Sponsors and Prospects</b> lists every company once, the way Member 360 does: whether it&rsquo;s a Sponsor, has Applied, is a Prospect, a Past Sponsor or Lost, every sponsorship it has or is working toward, the stage it&rsquo;s at, its owner, its money over the last 12 months and its last touch. The tiles at the top filter the list.</li>
-            <li><b>The company record</b> brings everything together: its sponsorships of every kind and its prospects, its year-by-year sponsorship journey, money, contacts, and one Activity timeline of emails, notes and changes. Change a prospect&rsquo;s stage on its stage bar, <b>Log a Note</b>, set the company&rsquo;s <b>Owner</b>, or <b>Add a Prospective Sponsorship</b>. The buttons on each sponsorship open the record itself.</li>
+            <li><b>The company record</b> brings everything together: its sponsorships of every kind and its prospects, its year-by-year sponsorship journey, money, contacts, and one Activity timeline of emails, notes and changes. Change a prospect&rsquo;s stage on its stage bar, <b>Log a Touchpoint</b> (a call, email, meeting or conversation, what it was about, and a next step with a follow-up date), set the company&rsquo;s <b>Owner</b>, or <b>Add a Prospective Sponsorship</b>. The buttons on each sponsorship open the record itself.</li>
             <li>A row on the Pipeline opens its company too, and emails to mismosponsor@ are logged on the company, whatever sponsorship they&rsquo;re about.</li>
           </ul>
         </div>
@@ -9220,7 +9225,7 @@ a series deal is counted once, at its full amount.</div>
       }).join("");
     }
     paintNewProspects();
-    paintDue(due.concat(late));
+    paintDue(due.concat(late).concat(touchFollowUps(0)));
     paintMailBox();
   }
   /* what is waiting on someone today: prospect follow-ups that have come due, invoices past due */
@@ -9454,6 +9459,7 @@ a series deal is counted once, at its full amount.</div>
         if(co){
           var tid = "tp-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
           var tdoc = touchDoc(co, m, id);
+          try{ var cg = coOf(co.key); if(cg){ var g = coAboutGuess(cg); if(g) tdoc.about = g; } }catch(e){}
           touches.push(Object.assign({id:tid}, tdoc));
           saves.push(db.doc("touchpoints/" + tid).set(tdoc));
           saves.push(db.doc(mailTextFile(m.date) + "/" + tid).set({text:String(m.body || "").slice(0, 8000), subject:tdoc.subject, from:m.from}));
@@ -9658,6 +9664,7 @@ a series deal is counted once, at its full amount.</div>
       if(!id) return;
       /* it's about the company (Jonna, November 18, 2026): a row opens the company, and the
          company's own buttons open the record itself (data-direct) */
+      if(k === "touch"){ var tq = touches.filter(function(x){ return x.id === id; })[0]; if(tq) openCompany(tq.co); return; }
       if(!b.hasAttribute("data-direct")){
         var rec = k === "lead" ? findById(leads, id) : k === "app" ? findById(apps, id) : findById(billList(k), id);
         if(rec && companyKey(rec.company)){ openCompany(companyKey(rec.company)); return; }
@@ -9987,7 +9994,7 @@ a series deal is counted once, at its full amount.</div>
           : '<div class="cp-big">—</div><div class="cp-js">no summit booked</div>') + '</div>' +
       '</div></div>';
     html += '<div class="cp-actions">' +
-      (canWrite ? '<button class="btn sm" type="button" data-conote="1">+ Log a Note</button>' +
+      (canWrite ? '<button class="btn sm" type="button" data-conote="1">+ Log a Touchpoint</button>' +
         '<button class="btn ghost sm" type="button" data-coprospect="1">+ Add a Prospective Sponsorship</button>' : '') +
       (c.contact && c.contact.email ? '<a class="btn ghost sm" href="mailto:' + esc(c.contact.email) + '">Email ' + esc(c.contact.name || c.contact.email) + '</a>' : '') +
       '</div><div id="cp-noteform" hidden></div>';
@@ -10026,7 +10033,16 @@ a series deal is counted once, at its full amount.</div>
     var items = c.items.slice().sort(function(x, y){ return PIPE_STAGES.indexOf(y.stage) - PIPE_STAGES.indexOf(x.stage); });
     var openI = items.filter(function(it){ return PIPE_OPEN.indexOf(it.stage) >= 0 || it.stage === "Hold"; });
     if(coTab === "overview"){
-      var h = '<div class="cp-sect"><h4>Open Opportunities</h4>' + (openI.length ? openI.map(coOppCard).join("") :
+      var fus = c.touches.filter(function(x){ return x.next && x.next.due && !x.next.done && !x.next.onLead; })
+        .sort(function(x, y){ return String(x.next.due).localeCompare(String(y.next.due)); });
+      var h = fus.length ? '<div class="cp-sect"><h4>Follow-Ups</h4>' + fus.map(function(x){
+          var late = parseDate(x.next.due) <= today();
+          return '<div class="cp-row"><span class="cp-ic note">\u2713</span><div class="cp-grow"><b>' + esc(x.next.text || "Follow up") + '</b>' +
+            '<span class="sub2">from a ' + esc(String(x.type || "touchpoint").toLowerCase()) + ' on ' + esc(fmtDate(x.date)) + (x.about ? " \u00b7 " + esc(typeName(x.about)) : "") + (x.by ? " \u00b7 " + esc(x.by) : "") + '</span></div>' +
+            '<b class="' + (late ? "bad" : "") + '" style="white-space:nowrap;">' + esc(fmtDate(x.next.due)) + '</b>' +
+            (canWrite ? '<button class="btn ghost sm" type="button" data-tpdone="' + esc(x.id) + '">Done</button>' : '') + '</div>';
+        }).join("") + '</div>' : '';
+      h += '<div class="cp-sect"><h4>Open Opportunities</h4>' + (openI.length ? openI.map(coOppCard).join("") :
         '<div class="cp-card"><div class="fldnote" style="margin:0;">Nothing open. ' + (canWrite ? 'Use <b>Add a Prospective Sponsorship</b> to start one.' : '') + '</div></div>') + '</div>';
       var cur = c.items.filter(function(it){ return it.stage === "Paid"; });
       if(cur.length) h += '<div class="cp-sect"><h4>Sponsorships, Last 12 Months</h4>' + cur.map(function(it){ return coSpRow(it); }).join("") + '</div>';
@@ -10040,7 +10056,7 @@ a series deal is counted once, at its full amount.</div>
     }
     if(coTab === "activity"){
       var fl = actFilter, list = acts.filter(function(a){ return fl === "all" || a.kind === fl; });
-      return '<div class="cp-filt">' + [["all","All"],["email","Emails"],["note","Notes"],["change","Changes"]].map(function(f){
+      return '<div class="cp-filt">' + [["all","All"],["email","Emails"],["note","Touchpoints"],["change","Changes"]].map(function(f){
           return '<button type="button" class="' + (fl === f[0] ? "on" : "") + '" data-actf="' + f[0] + '">' + f[1] + '</button>'; }).join("") + '</div>' +
         (list.length ? list.map(actRow).join("") : '<div class="empty">Nothing here yet.</div>');
     }
@@ -10076,8 +10092,14 @@ a series deal is counted once, at its full amount.</div>
   /* everything that happened with the company, newest first: emails, notes, changes */
   function coActivity(c){
     var out = [];
-    c.touches.forEach(function(t){ out.push({kind: t.type === "Email" ? "email" : "note", date:t.date, at:t.at || t.date, title: t.type === "Email" ? (t.subject || "(no subject)") : "Note",
-      text: t.summary || "", who: t.type === "Email" ? (t.fromName || t.from || "") + (t.by ? " · logged by " + t.by : "") : (t.by || ""), tid: t.type === "Email" ? t.id : "", day:t.date}); });
+    c.touches.forEach(function(t){
+      var isMail = t.type === "Email" && t.via === "mismosponsor";
+      out.push({kind: isMail ? "email" : "note", date:t.date, at:t.at || t.date,
+        title: isMail ? (t.subject || "(no subject)") : (t.type || "Touchpoint") + (t.topic ? " \u00b7 " + t.topic : ""),
+        text: t.summary || "", who: isMail ? (t.fromName || t.from || "") + (t.by ? " \u00b7 logged by " + t.by : "") :
+          [t.contact ? "with " + t.contact : "", t.by ? "logged by " + t.by : ""].filter(Boolean).join(" \u00b7 "),
+        tid: isMail ? t.id : "", day:t.date, touch:t, about:t.about || "", next:t.next || null});
+    });
     c.leads.forEach(function(l){ (l.history || []).forEach(function(h){ out.push({kind: /^Stage |^Started |^Applied|ended|Merged|Added from/.test(h.text || "") || h.who === "Sponsorship Portal" ? "change" : "note",
       date:h.at, at:h.at, title: h.who === "Sponsorship Portal" ? "Prospect " + (l.leadNo || "") : "Note on " + (l.leadNo || "the prospect"), text:h.text || "", who:h.who || ""}); }); });
     var nos = {};
@@ -10089,29 +10111,97 @@ a series deal is counted once, at its full amount.</div>
   }
   function actRow(a){
     var ic = {email:"✉", note:"✎", change:"↻"}[a.kind] || "•";
+    /* what a touchpoint or email is about: summit, workgroup or an Other type, changeable right here */
+    var about = "";
+    if(a.touch){
+      about = canWrite
+        ? '<select class="cp-about" data-tpabout="' + esc(a.touch.id) + '" aria-label="What it is about"><option value="">About: General</option>' +
+            typeChoices().map(function(tc){ return '<option value="' + esc(tc[0]) + '"' + (tc[0] === a.about ? " selected" : "") + '>About: ' + esc(tc[1]) + '</option>'; }).join("") + '</select>'
+        : (a.about ? '<span class="tag ftype">' + esc(typeName(a.about)) + '</span>' : '');
+    }
     return '<div class="cp-row top"><span class="cp-ic ' + a.kind + '">' + ic + '</span><div class="cp-grow">' +
       '<div class="cp-arow"><b>' + esc(a.title) + '</b><span class="sub2">' + esc(a.date ? fmtDate(a.date) : "") + '</span></div>' +
       (a.text ? '<div class="cp-atext">' + esc(a.text) + '</div>' : '') +
-      '<span class="sub2">' + esc(a.who || "") + '</span>' +
+      (a.next && a.next.text ? '<div class="cp-anext"><b>Next:</b> ' + esc(a.next.text) + (a.next.due ? ' \u00b7 ' + esc(fmtDate(a.next.due)) : '') + '</div>' : '') +
+      '<div class="cp-ameta"><span class="sub2">' + esc(a.who || "") + '</span>' + about + '</div>' +
       (a.tid ? ' <button class="linkbtn" type="button" data-readmail="' + esc(a.tid) + '" data-day="' + esc(a.day) + '">Read the whole email</button>' : '') + '</div></div>';
   }
+  /* Log a Touchpoint (Jonna, November 18, 2026: like Member 360, and say what it's about) */
+  var TP_TYPES = ["Call", "Email", "Meeting", "Event Conversation", "Note", "Other"];
+  function coAboutGuess(c){
+    var open = c.items.filter(function(it){ return PIPE_OPEN.indexOf(it.stage) >= 0; });
+    var ts = {}; open.forEach(function(it){ ts[it.type] = 1; });
+    var k = Object.keys(ts); return k.length === 1 ? k[0] : "";
+  }
   function coNoteForm(){
-    var f = $("cp-noteform"); if(!f) return;
+    var f = $("cp-noteform"); if(!f || !coOpen) return;
+    var c = coOf(coOpen); if(!c) return;
+    var guess = coAboutGuess(c), cons = coContacts(c);
     f.hidden = false;
-    f.innerHTML = '<div class="cp-card"><div class="fld"><label for="cp-note">Note</label><textarea id="cp-note" rows="3" placeholder="What happened, and with whom"></textarea></div>' +
-      '<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn sm" type="button" data-conotesave="1">Save the Note</button><button class="btn ghost sm" type="button" data-conotecancel="1">Cancel</button></div></div>';
+    f.innerHTML = '<div class="cp-card cp-tpform"><h4>Log a Touchpoint</h4><div class="grid2">' +
+      '<div class="fld"><label for="cp-tptype">Type</label><select id="cp-tptype">' + TP_TYPES.map(function(t){ return '<option>' + t + '</option>'; }).join("") + '</select></div>' +
+      '<div class="fld"><label for="cp-tpabout">About</label><select id="cp-tpabout"><option value="">General (not one sponsorship)</option>' +
+        typeChoices().map(function(tc){ return '<option value="' + esc(tc[0]) + '"' + (tc[0] === guess ? " selected" : "") + '>' + esc(tc[1]) + '</option>'; }).join("") + '</select></div>' +
+      '<div class="fld"><label for="cp-tpwith">With</label><select id="cp-tpwith"><option value="">\u2014</option>' +
+        cons.map(function(p){ var v = p.name || p.email; return '<option value="' + esc(v) + '">' + esc(v + (p.name && p.email ? " (" + p.email + ")" : "")) + '</option>'; }).join("") + '</select></div>' +
+      '<div class="fld"><label for="cp-tpdate">Date</label><input id="cp-tpdate" type="date" value="' + esc(iso(today())) + '"></div>' +
+      '</div><div class="fld"><label for="cp-note">What Happened</label><textarea id="cp-note" rows="3" placeholder="What was said, and what they want"></textarea></div>' +
+      '<div class="grid2"><div class="fld"><label for="cp-tpnext">Next Step</label><input id="cp-tpnext" type="text" placeholder="e.g. Send the Gold options"></div>' +
+      '<div class="fld"><label for="cp-tpdue">Follow Up On</label><input id="cp-tpdue" type="date"></div></div>' +
+      '<div class="fldnote">' + (c.last ? 'Last touched <b>' + esc(fmtDate(c.last)) + '</b>. ' : 'Not touched yet. ') +
+        'A follow-up date shows on Home and under Due Now on the Pipeline when it comes due, on the open prospect it is about if there is one.</div>' +
+      '<div style="display:flex;gap:8px;margin-top:10px;"><button class="btn sm" type="button" data-conotesave="1">Save the Touchpoint</button>' +
+      '<button class="btn ghost sm" type="button" data-conotecancel="1">Cancel</button></div></div>';
     setTimeout(function(){ var n = $("cp-note"); if(n) n.focus(); }, 30);
   }
   function coSaveNote(){
     var txt0 = ($("cp-note").value || "").trim(); if(!txt0 || !db || !canWrite || !coOpen) return;
     var c = coOf(coOpen); if(!c) return;
+    var type = $("cp-tptype").value || "Note", about = $("cp-tpabout").value || "", withP = $("cp-tpwith").value || "";
+    var day = $("cp-tpdate").value || iso(today()), nx = ($("cp-tpnext").value || "").trim(), due = $("cp-tpdue").value || "";
     var tid = "tp-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    var doc = {co:c.key, coName:c.name, date:iso(today()), type:"Note", summary:txt0.slice(0, 2000), by:whoAmI(), at:new Date().toISOString(), via:"note"};
+    var doc = {co:c.key, coName:c.name, date:day, type:type, about:about, contact:withP, summary:txt0.slice(0, 2000),
+      by:whoAmI(), at:new Date().toISOString(), via:"touchpoint"};
+    if(nx || due) doc.next = {text:nx, due:due};
+    var l0 = c.leads.filter(function(x){ return !LEAD_CLOSED[x.status] && (!about || leadType(x) === about); })
+      .sort(function(x, y){ return String(y.updatedAt || "").localeCompare(String(x.updatedAt || "")); })[0];
+    if(doc.next && l0) doc.next.onLead = l0.id;
     touches.push(Object.assign({id:tid}, doc));
     db.doc("touchpoints/" + tid).set(doc);
-    addLog("", "note on " + c.name + ": " + txt0.slice(0, 120), whoAmI());
-    toast("Saved on " + c.name + ".", "", "Note Logged");
-    coTab = "activity"; paintCompany(); renderCompanies(); renderFlow();
+    /* the open prospect it is about keeps its last contact and next step up to date */
+    var l = c.leads.filter(function(x){ return !LEAD_CLOSED[x.status] && (!about || leadType(x) === about); })
+      .sort(function(x, y){ return String(y.updatedAt || "").localeCompare(String(x.updatedAt || "")); })[0];
+    if(l){
+      var after = JSON.parse(JSON.stringify(l));
+      if(day > (after.lastContactDate || "")) after.lastContactDate = day;
+      if(nx) after.nextStep = nx;
+      if(due) after.nextFollowUpDate = due;
+      saveLead(after);
+    }
+    addLog(l ? l.leadNo : "", type.toLowerCase() + " with " + c.name + (about ? " about " + typeName(about) : "") + ": " + txt0.slice(0, 120), whoAmI());
+    toast("Saved on " + c.name + (l && (nx || due) ? ", with the next step on its prospect." : "."), "", "Touchpoint Logged");
+    coTab = "activity"; paintCompany(); renderCompanies(); renderFlow(); renderHome();
+  }
+  /* follow-ups set on a touchpoint that no open prospect carries, as Pipeline-style items */
+  function touchFollowUps(within){
+    var t = today(), lim = new Date(t); lim.setDate(lim.getDate() + (within || 0));
+    return touches.filter(function(x){ return !x.archived && x.next && x.next.due && !x.next.done && !x.next.onLead && parseDate(x.next.due) <= lim; })
+      .map(function(x){ return {kind:"touch", id:x.id, company:x.coName || x.co, nextDate:x.next.due, nextText:x.next.text || (x.type || "Follow up"),
+        owner:x.by || "", stage:"Follow-Up", tp:x}; });
+  }
+  function tpDone(tid){
+    if(!db || !canWrite) return;
+    var t = touches.filter(function(x){ return x.id === tid; })[0]; if(!t || !t.next) return;
+    t.next = Object.assign({}, t.next, {done:iso(today()), doneBy:whoAmI()});
+    db.doc("touchpoints/" + tid).update({next:t.next});
+    toast("Marked done.", "", "Follow-Up");
+    paintCompany(); renderFlow(); renderHome();
+  }
+  function coSetAbout(tid, about){
+    if(!db || !canWrite) return;
+    var t = touches.filter(function(x){ return x.id === tid; })[0]; if(!t) return;
+    t.about = about; db.doc("touchpoints/" + tid).update({about:about});
+    paintCompany();
   }
   function coNewProspect(){
     var c = coOf(coOpen); if(!c) return;
@@ -10152,7 +10242,7 @@ a series deal is counted once, at its full amount.</div>
     var forecast = open.reduce(function(n, it){ return n + it.amount; }, 0);
     var late = open.filter(function(it){ return it.late; });
     var week = new Date(t); week.setDate(week.getDate() + 7);
-    var plate = open.filter(function(it){ return it.late || (it.nextDate && parseDate(it.nextDate) <= week); })
+    var plate = open.filter(function(it){ return it.late || (it.nextDate && parseDate(it.nextDate) <= week); }).concat(touchFollowUps(7))
       .sort(function(x, y){ return (x.late ? "0" : "1" + (x.nextDate || "")).localeCompare(y.late ? "0" : "1" + (y.nextDate || "")); });
     var newP = leads.filter(function(l){ var d = parseDate(l.createdDate); return d && d >= wk && l.id !== leadDraft && !LEAD_CLOSED[l.status]; });
     var due = plate.filter(function(it){ return !it.late && parseDate(it.nextDate) <= t; });
@@ -10252,6 +10342,7 @@ a series deal is counted once, at its full amount.</div>
       return;
     }
     if(el.closest("[data-conote]")){ coNoteForm(); return; }
+    if((b = el.closest("[data-tpdone]"))){ tpDone(b.getAttribute("data-tpdone")); return; }
     if(el.closest("[data-conotecancel]")){ $("cp-noteform").hidden = true; return; }
     if(el.closest("[data-conotesave]")){ coSaveNote(); return; }
     if(el.closest("[data-coprospect]")){ coNewProspect(); return; }
@@ -10264,6 +10355,7 @@ a series deal is counted once, at its full amount.</div>
     if(el.id === "co-owner"){ coState.owner = el.value; renderCompanies(); }
     if(el.id === "co-type"){ coState.type = el.value; renderCompanies(); }
     if(el.getAttribute && el.getAttribute("data-coowner")) coSetOwner(el.getAttribute("data-coowner"), el.value);
+    if(el.getAttribute && el.getAttribute("data-tpabout")) coSetAbout(el.getAttribute("data-tpabout"), el.value);
   });
   document.addEventListener("input", function(ev){ if(ev.target && ev.target.id === "co-q"){ coState.q = ev.target.value; renderCompanies(); } });
 

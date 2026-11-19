@@ -48,7 +48,7 @@ stored twice. The only company-level data is `data/companies.json` (`companies/<
 every company once with its relationship (Sponsor, Applied, Prospect, Past Sponsor, Lost); the
 **company record** (`openCompany`) has its band, journey, open opportunities with a stage bar, all its
 sponsorships, one Activity timeline, contacts and money. Pipeline rows open the company; a company's
-own buttons open the record itself (`data-direct`). Log a Touchpoint saves to `touchpoints.json` with
+own buttons open the record itself (`data-direct`). Every number in the Pipeline headline and each stage box has `data-fdrill` (open, worth, due, late, new, newweek, duenow, `stage:<name>`); selecting one fills `#flow-drill` under the headline from `drillOf()`. Log a Touchpoint saves to `touchpoints.json` with
 `type` (Call, Email, Meeting, Event Conversation, Note, Other), `about` (`summit`, `workgroup`, an
 Other Sponsorship type key, or empty for General), `contact`, `summary`, and an optional
 `next: {text, due, onLead, done, doneBy}`. When the company has an open prospect of that kind, its

@@ -1116,15 +1116,24 @@
     border:1px solid rgba(116,191,235,.28); border-radius:6px; padding:9px 11px; color:#fff; font:inherit; cursor:pointer;}
   .fstage:hover{background:rgba(255,255,255,.12);}
   .fstage.on{background:rgba(80,164,219,.32); border-color:var(--sky);}
+  .hlnum{font:inherit; color:var(--sky); background:none; border:0; padding:0 1px; cursor:pointer;
+    text-decoration:underline dotted rgba(116,191,235,.6); text-underline-offset:4px; border-radius:3px;}
+  .hlnum.hl-late{color:#ffcf73; text-decoration-color:rgba(255,207,115,.6);}
+  .hlnum:hover, .hlnum.on{background:rgba(116,191,235,.2); text-decoration-style:solid;}
+  .flowdrill{margin:-12px 0 16px; padding:14px 16px; border-top:3px solid var(--sky);}
+  .fdhead{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px;}
+  .fdhead h3{margin:0; font-size:15px; color:var(--ink);} .fdn{font-weight:600; color:var(--ink-3); font-size:13px;}
+  .fdnote{font-size:12.5px; color:var(--ink-3); margin-top:3px;}
+  .fdtable tbody tr{cursor:pointer;} .fdtable tfoot td{border-top:2px solid var(--border-strong);}
   .fsn{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:rgba(255,255,255,.78);}
   .fsbar{height:6px; background:rgba(255,255,255,.12); border-radius:2px; overflow:hidden;}
   .fsbar i{display:block; height:100%; background:var(--sky); min-width:2px;}
   .fsv{font-size:12.5px; color:rgba(255,255,255,.86);} .fsv b{font-size:16px; color:#fff;}
-  .flowside{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin:16px 0; align-items:start;}
+  .flowside{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin:16px 0; align-items:stretch;}
   @media (max-width:1100px){ .flowside{grid-template-columns:1fr 1fr;} }
   @media (max-width:760px){ .flowside{grid-template-columns:1fr;} }
   .flowtable td:first-child{min-width:150px;} .flowtable td:nth-child(3){min-width:190px;}
-  .flowbox{padding:14px 16px; margin:0;}
+  .flowbox{padding:14px 16px; margin:0; max-height:300px; overflow-y:auto;}
   .fbhead{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;}
   .fbhead h3{margin:0; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-2);}
   .fbhead .seg button{padding:4px 10px; font-size:11.5px;}
@@ -1360,11 +1369,11 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <button class="tab on" data-view="home" type="button" title="Home"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-home"/></svg><span class="tlbl">Home</span></button>
     <button class="tab" data-view="companies" type="button" title="Sponsors and Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-co"/></svg><span class="tlbl">Sponsors and Prospects</span></button>
     <button class="tab" data-view="flow" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Pipeline</span><span class="pip quiet" id="pip-flow">0</span></button>
+    <button class="tab" data-view="benefits" type="button" title="Sponsor Benefits"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Benefits</span><span class="pip quiet" id="pip-benefits">0</span></button>
+    <div class="navgrp">Records</div>
     <button class="tab" data-view="pipeline" type="button" title="Summit Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pipe"/></svg><span class="tlbl">Summit Sponsorships</span><span class="pip quiet" id="pip-pipe">0</span></button>
     <button class="tab" data-view="workgroup" type="button" title="Workgroup Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-apps"/></svg><span class="tlbl">Workgroups</span><span class="pip quiet" id="pip-workgroup">0</span></button>
     <button class="tab" data-view="other" type="button" title="Other Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Other Sponsorships</span><span class="pip quiet" id="pip-other">0</span></button>
-    <button class="tab" data-view="benefits" type="button" title="Sponsor Benefits"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Benefits</span><span class="pip quiet" id="pip-benefits">0</span></button>
-    <div class="navgrp">Records</div>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
     <button class="tab" data-view="prospectus" type="button" title="Prospectuses"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-doc"/></svg><span class="tlbl">Prospectuses</span></button>
@@ -1441,6 +1450,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
       <div class="hl-say" id="flow-say"></div>
       <div class="funnel" id="flow-funnel" role="group" aria-label="Open stages"></div>
     </div>
+    <div class="panel flowdrill" id="flow-drill" hidden></div>
     <div class="flowside">
       <div class="panel flowbox" id="flow-newbox">
         <div class="fbhead"><h3>New Prospects</h3><span class="seg" id="flow-newseg" role="group" aria-label="Which week">
@@ -1664,10 +1674,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
   <!-- The public prospectuses, to open or to copy the link for a sponsor (November 7, 2026) -->
   <!-- What each sponsor is owed, summit by summit (November 7, 2026) -->
   <section class="view" id="view-benefits">
-    <div class="toolbar" style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-      <label for="ben-summit" style="font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink-2);">SUMMIT</label>
+    <div class="filters">
       <select id="ben-summit" aria-label="Summit"></select>
-      <label for="ben-owner" style="font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink-2);margin-left:8px;">OWNER</label>
       <select id="ben-owner" aria-label="Owner"></select>
     </div>
     <div class="stats" id="ben-stats"></div>
@@ -3391,12 +3399,12 @@ a series deal is counted once, at its full amount.</div>
     other: {t:"Other Sponsorships",
       s:"Every one-off or partner sponsorship that isn\u2019t a summit or a workgroup, by type. The AI Webinar Series is " +
         "the first; add a type with <b>New Sponsorship Type</b>. A type shared with a partner shows what MISMO keeps and drafts " +
-        "a past-due notice to the partner; any other type drafts the invoice email to the sponsor. Nothing is sent until you press Send."},
+        "a past-due notice to the partner; any other type drafts the invoice email to the sponsor. Nothing is sent until you press Send. The Pipeline and Sponsors and Prospects show these alongside every other kind; this page is the full record list for this kind alone."},
     pipeline: {t:"Summit Sponsorships",
       s:"Where every application sits, and who owns the next move. Select a stage to see the " +
         "applications in it \u2014 each one shows what is still waiting on someone, with a button to " +
         "act on it, right there. Every application is listed underneath, newest first; select a row " +
-        "to open its record."},
+        "to open its record. The Pipeline and Sponsors and Prospects show these alongside every other kind; this page is the full record list for this kind alone."},
     leads: {t:"Prospects",
       s:"Everyone the Strategic Growth Team is cultivating who hasn\u2019t applied yet. A prospect who " +
         "said \u201cnot this year\u201d is still a prospect \u2014 this is where they stay visible instead of " +
@@ -3419,7 +3427,7 @@ a series deal is counted once, at its full amount.</div>
     workgroup: {t:"Workgroup Sponsorships",
       s:"A company sponsoring one MISMO group for a term — Initial, then a numbered Renewal each cycle. " +
         "None of it comes from the public prospectus and none of it touches summit inventory. Payments arrive " +
-        "from MISMO Money against the Aptify order ID, the same as a summit sponsorship. Select a row to open its record."},
+        "from MISMO Money against the Aptify order ID, the same as a summit sponsorship. Select a row to open its record. The Pipeline and Sponsors and Prospects show these alongside every other kind; this page is the full record list for this kind alone."},
     webinar: {t:"AI Webinar Series",
       s:"The joint MISMO and MBA series. MISMO raises the invoice and the revenue is split in half, so every figure " +
         "shows what was invoiced and what MISMO keeps. Terms are net 30; a past-due notice for MBA\u2019s team is " +
@@ -8433,7 +8441,7 @@ a series deal is counted once, at its full amount.</div>
       '<option value="">No summits coming up</option>';
     if(keep && summits.indexOf(keep) >= 0) sel.value = keep;
     var ko = own.value;
-    own.innerHTML = '<option value="">Everyone</option>' + BENEFIT_OWNERS.map(function(o){ return '<option>' + esc(o) + '</option>'; }).join("");
+    own.innerHTML = '<option value="">Every Owner</option>' + BENEFIT_OWNERS.map(function(o){ return '<option>' + esc(o) + '</option>'; }).join("");
     if(ko) own.value = ko;
     var sm = sel.value, who = own.value;
     var list = all.filter(function(b){ return b.summit === sm && (!who || b.owner === who); });
@@ -9063,7 +9071,7 @@ a series deal is counted once, at its full amount.</div>
   }
   function leadType(l){ return (l && l.stype) || "summit"; }
 
-  var flowState = {type:"", group:"open", owner:"", q:"", nweek:0, stage:""};
+  var flowState = {type:"", group:"open", owner:"", q:"", nweek:0, stage:"", drill:""}, flowCtx = null;
 
   function recentEnough(day){
     var d = parseDate(day); if(!d) return true;
@@ -9157,17 +9165,24 @@ a series deal is counted once, at its full amount.</div>
     if(!$("flow-body") || !PIPE_OPEN || !others || !otherTypes || !touches) return;
     var all = pipeItems(), t = today();
     var open = all.filter(function(it){ return PIPE_OPEN.indexOf(it.stage) >= 0; });
-    var due = open.filter(function(it){ return it.kind === "lead" && it.nextDate && parseDate(it.nextDate) <= t; });
+    /* follow-ups due: prospects' follow-up dates and touchpoint follow-ups that have come due */
+    var due = open.filter(function(it){ return it.kind === "lead" && it.nextDate && parseDate(it.nextDate) <= t; }).concat(touchFollowUps(0));
     var late = open.filter(function(it){ return it.late; });
     var forecast = open.reduce(function(n, it){ return n + it.amount; }, 0);
     var wk = weekStart(0), newNow = leads.filter(function(l){ var d = parseDate(l.createdDate); return d && d >= wk && l.id !== leadDraft && !LEAD_CLOSED[l.status]; });
 
     $("flow-date").textContent = "Today · " + new Date().toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
-    $("flow-say").innerHTML = "<em>" + open.length + "</em> open " + (open.length === 1 ? "opportunity" : "opportunities") +
-      " worth <em>" + money(forecast) + "</em>" +
-      (due.length ? ", <em class=\"hl-late\">" + due.length + "</em> follow-up" + (due.length === 1 ? "" : "s") + " due" : ", no follow-ups due") +
-      (late.length ? ", <em class=\"hl-late\">" + late.length + "</em> past due" : "") +
-      (newNow.length ? ". <em>+" + newNow.length + "</em> new prospect" + (newNow.length === 1 ? "" : "s") + " this week." : ".");
+    flowCtx = {all:all, open:open, due:due, late:late, newNow:newNow, forecast:forecast};
+    /* every number can be selected to list what makes it up (Jonna, November 18, 2026) */
+    var num = function(key, text, cls){
+      return '<button type="button" class="hlnum' + (cls ? " " + cls : "") + (flowState.drill === key ? " on" : "") + '" data-fdrill="' + key + '"' +
+        ' aria-pressed="' + (flowState.drill === key ? "true" : "false") + '" title="Show what makes up this number">' + esc(text) + '</button>';
+    };
+    $("flow-say").innerHTML = num("open", String(open.length)) + " open " + (open.length === 1 ? "opportunity" : "opportunities") +
+      " worth " + num("worth", money(forecast)) +
+      (due.length ? ", " + num("due", String(due.length), "hl-late") + " follow-up" + (due.length === 1 ? "" : "s") + " due" : ", no follow-ups due") +
+      (late.length ? ", " + num("late", String(late.length), "hl-late") + " past due" : "") +
+      (newNow.length ? ". " + num("new", "+" + newNow.length) + " new prospect" + (newNow.length === 1 ? "" : "s") + " this week." : ".");
 
     /* the funnel: each open stage, its count and its money; selecting one shows only it */
     var maxN = 1;
@@ -9175,8 +9190,9 @@ a series deal is counted once, at its full amount.</div>
     $("flow-funnel").innerHTML = PIPE_OPEN.map(function(sg){
       var here = open.filter(function(it){ return it.stage === sg && (!flowState.type || it.type === flowState.type); });
       var sum = here.reduce(function(n, it){ return n + it.amount; }, 0);
-      return '<button type="button" class="fstage' + (flowState.stage === sg ? " on" : "") + '" data-fstage="' + esc(sg) + '"' +
-        ' aria-pressed="' + (flowState.stage === sg ? "true" : "false") + '">' +
+      var on = flowState.drill === "stage:" + sg;
+      return '<button type="button" class="fstage' + (on ? " on" : "") + '" data-fdrill="stage:' + esc(sg) + '"' +
+        ' aria-pressed="' + (on ? "true" : "false") + '" title="Show what makes up this number">' +
         '<span class="fsn">' + esc(sg) + '</span><span class="fsbar"><i style="width:' + Math.round(here.length / maxN * 100) + '%"></i></span>' +
         '<span class="fsv"><b>' + here.length + '</b>' + (sum ? ' · ' + esc(money(sum)) : '') + '</span></button>';
     }).join("");
@@ -9225,8 +9241,61 @@ a series deal is counted once, at its full amount.</div>
       }).join("");
     }
     paintNewProspects();
-    paintDue(due.concat(late).concat(touchFollowUps(0)));
+    paintDue(due.concat(late));
     paintMailBox();
+    paintDrill();
+  }
+  /* ---- the list under the headline: what makes up the number that was selected ---- */
+  var DUE_SHOW = 4;
+  function drillOf(key){
+    var c = flowCtx, byStage = function(x, y){
+      var a = PIPE_STAGES.indexOf(x.stage), b = PIPE_STAGES.indexOf(y.stage);
+      return a !== b ? b - a : String(x.company).localeCompare(String(y.company));
+    }, byDate = function(x, y){ return String(x.nextDate || "0").localeCompare(String(y.nextDate || "0")); };
+    if(key === "open") return {title:"Open Opportunities", note:"Every prospect and sponsorship in an open stage, Lead through Pending Payment.", items:c.open.slice().sort(byStage)};
+    if(key === "worth") return {title:"What Makes Up " + money(c.forecast), money:true,
+      note:"Open opportunities with an amount, largest first. A prospect counts its forecast; a sponsorship counts what it is for.",
+      items:c.open.filter(function(it){ return it.amount; }).sort(function(x, y){ return y.amount - x.amount; })};
+    if(key === "due") return {title:"Follow-Ups Due", note:"Prospects and touchpoints whose follow-up date is today or earlier.", items:c.due.slice().sort(byDate)};
+    if(key === "late") return {title:"Past Due", money:true, note:"Invoices sent and not paid by their due date.", items:c.late.slice().sort(function(x, y){ return y.amount - x.amount; })};
+    if(key === "duenow") return {title:"Due Now", note:"Follow-ups that have come due and invoices past due.", items:c.due.concat(c.late).sort(byDate)};
+    if(key === "new" || key === "newweek"){
+      var wk = key === "new" ? 0 : flowState.nweek, from = weekStart(wk), to = new Date(from); to.setDate(to.getDate() + 7);
+      var ids = {}; leads.forEach(function(l){ var d = parseDate(l.createdDate); if(l.id !== leadDraft && d && d >= from && d < to && !LEAD_CLOSED[l.status]) ids[l.id] = 1; });
+      return {title:"New Prospects " + (wk ? "Last Week" : "This Week"), note:"Prospects added " + (wk ? "last week" : "since Monday") + ", still open.",
+        items:c.all.filter(function(it){ return it.kind === "lead" && ids[it.id]; }).sort(function(x, y){ return String(y.created || "").localeCompare(String(x.created || "")); })};
+    }
+    if(key.indexOf("stage:") === 0){
+      var sg = key.slice(6);
+      return {title:sg + (flowState.type ? " · " + typeName(flowState.type) : ""), money:true, note:"Open opportunities at this stage" + (flowState.type ? ", " + typeName(flowState.type) + " only" : "") + ".",
+        items:c.open.filter(function(it){ return it.stage === sg && (!flowState.type || it.type === flowState.type); }).sort(function(x, y){ return y.amount - x.amount || String(x.company).localeCompare(String(y.company)); })};
+    }
+    return null;
+  }
+  function paintDrill(){
+    var el = $("flow-drill"); if(!el) return;
+    var d = flowState.drill && flowCtx ? drillOf(flowState.drill) : null;
+    if(!d){ el.hidden = true; el.innerHTML = ""; return; }
+    var t = today(), sum = d.items.reduce(function(n, it){ return n + (it.amount || 0); }, 0);
+    el.hidden = false;
+    el.innerHTML = '<div class="fdhead"><div><h3>' + esc(d.title) + ' <span class="fdn">' + d.items.length + (sum ? ' · ' + esc(money(sum)) : '') + '</span></h3>' +
+      '<div class="fdnote">' + esc(d.note) + ' Select a row to open the company.</div></div>' +
+      '<button type="button" class="btn ghost sm" data-fdrill="">Close</button></div>' +
+      (d.items.length ? '<div class="tablewrap"><table class="flowtable fdtable"><thead><tr><th>Company</th><th>Type</th><th>What</th><th>Stage</th><th>Owner</th>' +
+        '<th class="r">Amount</th><th>Next</th></tr></thead><tbody>' +
+        d.items.map(function(it){
+          var tp = it.tp, nd = it.nextDate ? parseDate(it.nextDate) : null, over = nd && nd <= t;
+          var type = tp ? (tp.about ? typeName(tp.about) : "General") : typeName(it.type);
+          var what = tp ? (tp.type || "Touchpoint") + (tp.summary ? ": " + String(tp.summary).slice(0, 90) : "") : (it.what || "—");
+          return '<tr data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '">' +
+            '<td><b>' + esc(it.company) + '</b>' + (it.contact ? '<div class="sub2">' + esc(it.contact) + '</div>' : '') + '</td>' +
+            '<td><span class="tag ftype">' + esc(type) + '</span></td><td>' + esc(what) + '</td>' +
+            '<td><span class="st ' + (it.inKind ? "inkind" : (PIPE_TONE[it.stage] || "")) + '">' + esc(it.stage) + '</span></td>' +
+            '<td>' + esc(it.owner || "—") + '</td><td class="r num">' + (it.amount ? esc(money(it.amount)) : "—") + '</td>' +
+            '<td>' + (it.nextDate ? '<span class="' + (over ? "bad" : "") + '">' + esc(fmtDate(it.nextDate)) + '</span>' : '') +
+              (it.nextText ? '<div class="sub2' + (it.late ? " bad" : "") + '">' + esc(it.nextText) + '</div>' : (it.nextDate ? '' : '—')) + '</td></tr>';
+        }).join("") + '</tbody>' + (d.money && sum ? '<tfoot><tr><td colspan="5"><b>Total</b></td><td class="r num"><b>' + esc(money(sum)) + '</b></td><td></td></tr></tfoot>' : '') +
+        '</table></div>' : '<div class="fbempty">Nothing here right now.</div>');
   }
   /* what is waiting on someone today: prospect follow-ups that have come due, invoices past due */
   function paintDue(list){
@@ -9234,11 +9303,11 @@ a series deal is counted once, at its full amount.</div>
     list = list.slice().sort(function(x, y){ return String(x.nextDate || "0").localeCompare(String(y.nextDate || "0")); });
     $("flow-duecount").textContent = list.length ? list.length + " waiting" : "";
     if(!list.length){ el.innerHTML = '<div class="fbempty">Nothing due. Every prospect\u2019s follow-up is in the future and no invoice is past due.</div>'; return; }
-    el.innerHTML = list.slice(0, 8).map(function(it){
+    el.innerHTML = list.slice(0, DUE_SHOW).map(function(it){
       return '<div class="fbrow" data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '"><span class="fbdate' + (it.late || it.nextDate ? " bad" : "") + '">' +
         esc(it.late ? "Past due" : fmtDate(it.nextDate)) + '</span><span class="fbmain"><b>' + esc(it.company) + '</b> <span class="sub2">' +
         esc(it.nextText || it.stage) + (it.owner ? " \u00b7 " + esc(it.owner) : "") + '</span></span></div>';
-    }).join("") + (list.length > 8 ? '<div class="fbmore">and ' + (list.length - 8) + ' more</div>' : '');
+    }).join("") + (list.length > DUE_SHOW ? '<div class="fbmore"><button type="button" class="linkbtn" data-fdrill="duenow">See all ' + list.length + '</button></div>' : '');
   }
 
   function paintNewProspects(){
@@ -9252,11 +9321,11 @@ a series deal is counted once, at its full amount.</div>
       b.setAttribute("aria-pressed", String(+b.getAttribute("data-nweek") === flowState.nweek));
     });
     if(!list.length){ el.innerHTML = '<div class="fbempty">No new prospects ' + (flowState.nweek ? "last week" : "yet this week") + '.</div>'; return; }
-    el.innerHTML = list.slice(0, 8).map(function(l){
+    el.innerHTML = list.slice(0, DUE_SHOW).map(function(l){
       return '<div class="fbrow" data-fkind="lead" data-fid="' + esc(l.id) + '"><span class="fbdate">' + esc(fmtDate(l.createdDate)) + '</span>' +
         '<span class="fbmain"><b>' + esc(l.company || l.leadNo) + '</b> <span class="sub2">' + esc(typeName(leadType(l))) +
         (l.source ? " · " + esc(l.source) : (l.owner ? " · " + esc(l.owner) : "")) + '</span></span></div>';
-    }).join("") + (list.length > 8 ? '<div class="fbmore">and ' + (list.length - 8) + ' more</div>' : '');
+    }).join("") + (list.length > DUE_SHOW ? '<div class="fbmore"><button type="button" class="linkbtn" data-fdrill="newweek">See all ' + list.length + '</button></div>' : '');
   }
 
   /* ============================================================
@@ -9647,7 +9716,12 @@ a series deal is counted once, at its full amount.</div>
     var b;
     if((b = el.closest("[data-ftype]"))){ flowState.type = b.getAttribute("data-ftype"); renderFlow(); return; }
     if((b = el.closest("[data-fgroup]"))){ flowState.group = b.getAttribute("data-fgroup"); flowState.stage = ""; renderFlow(); return; }
-    if((b = el.closest("[data-fstage]"))){ var sg = b.getAttribute("data-fstage"); flowState.stage = flowState.stage === sg ? "" : sg; renderFlow(); return; }
+    if((b = el.closest("[data-fdrill]"))){
+      var dk = b.getAttribute("data-fdrill"), fromBox = !!b.closest(".flowbox");
+      flowState.drill = (flowState.drill === dk && !fromBox) ? "" : dk; renderFlow();
+      if(flowState.drill && $("flow-drill")) $("flow-drill").scrollIntoView({behavior:"smooth", block:"nearest"});
+      return;
+    }
     if((b = el.closest("[data-nweek]"))){ flowState.nweek = +b.getAttribute("data-nweek"); paintNewProspects(); return; }
     if((b = el.closest("[data-mailpick]"))){ mailPick(b.getAttribute("data-mailpick"), b.getAttribute("data-key"), b.getAttribute("data-name")); return; }
     if((b = el.closest("[data-mailskip]"))){ mailSkip(b.getAttribute("data-mailskip")); return; }

@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-11-18: Pipeline: every number in the headline and every stage box can be selected to list what makes it up, right under it (with a total for money). Due Now and New Prospects keep to four rows with See All, and the three boxes line up. Follow-ups due now count touchpoint follow-ups too.
+- 2026-11-18: The menu: Work is Home, Sponsors and Prospects, Pipeline and Benefits; Summit Sponsorships, Workgroups and Other Sponsorships move under Records as the full list of each kind. Benefits filters match the rest of the portal.
 - 2026-11-18: Log a Touchpoint on any company: the kind (call, email, meeting, event conversation, note), what it's about (Summit, Workgroup, an other sponsorship type or General), who with, the date, and a next step with a follow-up date. Follow-ups show on Home, under Due Now and on the company until marked Done; the last touched date shows on the form.
 - 2026-11-18: It's about the company: a new Home, Sponsors and Prospects (one row per company with all its sponsorships), and a company record with its journey, opportunities, sponsorships, activity, contacts, money, notes and owner. Pipeline rows and mismosponsor@ emails go to the company. Member 360's look across the portal.
 - 2026-11-18: One Pipeline for every sponsorship, lead to paid (summits, workgroups, other types, prospects included), with type and stage filters, New Prospects, Due Now and a stage changed right in its row. Prospects get a type, workgroup prospects their group, and Start the Sponsorship.

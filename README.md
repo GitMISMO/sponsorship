@@ -44,8 +44,10 @@ It's about the company, not the sponsorship, the way Member 360 works. A company
 with the same `companyKey` (prospects, summit applications, workgroup and other sponsorships, and the
 emails and notes in `data/touchpoints.json`), put together each time by `companies()`; nothing is
 stored twice. The only company-level data is `data/companies.json` (`companies/<key>.owner`).
-**Home** (the first tab) is the day and the season at a glance; **Sponsors and Prospects** lists
-every company once with its relationship (Sponsor, Applied, Prospect, Past Sponsor, Lost); the
+**Home** (the first tab) is the day and the season at a glance; **Sponsors** lists every sponsoring,
+applied or past-sponsor company once (`SPONSOR_RELS`); **Prospects** (`view-plist`, `renderProspectList`,
+since Nov 19, 2026 at Amy's request) lists every prospect, one row each, with type buttons, My Prospects /
+Everyone and Open / Hold / Lost kept in this browser (`sponsorship:plist`); the
 **company record** (`openCompany`) has its band, journey, open opportunities with a stage bar, all its
 sponsorships, one Activity timeline, contacts and money. Pipeline rows open the company; a company's
 own buttons open the record itself (`data-direct`). Every number in the Pipeline headline and each stage box has `data-fdrill` (open, worth, due, late, new, newweek, duenow, `stage:<name>`); selecting one fills `#flow-drill` under the headline from `drillOf()`. Log a Touchpoint saves to `touchpoints.json` with

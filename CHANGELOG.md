@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-19: Sponsors and Prospects split in two (Amy). Sponsors lists sponsors, applicants and past sponsors with type buttons; Prospects lists every prospect, one row each, with one-click type buttons, My Prospects / Everyone (remembered), stage tiles, the stage changed in its row, and a count of your follow-ups due. The Pipeline says what it lists: its stages in two rows, Prospects and Sponsorships Being Closed, with matching buttons.
 - 2026-11-19: Prospectuses tab: Download PDF on each prospectus (today's availability, no application form).
 - 2026-11-19: Registration Desk: a paid-on date from the Desk (for payments MISMO Money never sees) marks the record Paid, with the usual Payment Made email. The invoice request to Bernie no longer mentions the Also Invoiced As field (MISMO Money fills it in).
 - 2026-11-19: Bernie's Registration Desk in Summit HQ: his order IDs, invoice dates, comp codes, code emails and payment follow-ups are read from Summit HQ and applied to the records (Approved moves to Pending Payment, the comps benefit ticks, each follow-up counts as a chase), whenever the portal is open and hourly. Emails to Bernie point to the Desk.

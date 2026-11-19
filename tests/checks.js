@@ -460,7 +460,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
   await check('a prospect\'s stage changes right in its row', async () => {
     await toFlow();
-    await portal.selectOption('select[data-flowstage="lead-t-1"]', 'Meeting Scheduled');
+    await portal.selectOption('#flow-body select[data-flowstage="lead-t-1"]', 'Meeting Scheduled');
     await portal.waitForTimeout(1500);
     const l = (await fileOf('leads')).docs['lead-t-1'];
     expect(l.status === 'Meeting Scheduled', 'the stage was not saved: ' + l.status);
@@ -496,7 +496,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   await check('a workgroup prospect starts its sponsorship, filled in', async () => {
     await toFlow();
     /* a Pipeline row opens the company; its Open the Prospect button opens the prospect itself */
-    await portal.click('tr[data-fid="lead-t-wg"] td:first-child'); await portal.waitForTimeout(500);
+    await portal.click('#flow-body tr[data-fid="lead-t-wg"] td:first-child'); await portal.waitForTimeout(500);
     expect(await portal.isVisible('#co-panel.on'), 'a Pipeline row did not open the company');
     await portal.click('#co-panel [data-fkind="lead"][data-fid="lead-t-wg"][data-direct]'); await portal.waitForTimeout(500);
     await portal.click('#ld-start'); await portal.waitForTimeout(500);
@@ -549,6 +549,33 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const n = await P(portal, () => document.querySelectorAll('#co-body tr[data-co]').length);
     const keys = await P(portal, () => [...document.querySelectorAll('#co-body tr[data-co]')].map(r => r.getAttribute('data-co')));
     expect(new Set(keys).size === n, 'a company is listed twice');
+  });
+  await check('Sponsors and Prospects are separate pages, and one click shows the summit prospects', async () => {
+    await toCos();
+    const spons = await P(portal, () => document.getElementById('co-body').innerText);
+    expect(!/Wingtip Servicing/.test(spons), 'a prospect (Wingtip Servicing) is listed on Sponsors');
+    await P(portal, () => { const c = document.getElementById('co-close'); if (c && c.offsetParent) c.click(); });
+    await portal.click('.tab[data-view="plist"]'); await portal.waitForTimeout(300);
+    await portal.click('[data-plwho="all"]'); await portal.click('[data-plshow="open"]');
+    await portal.click('[data-pltype="summit"]'); await portal.waitForTimeout(200);
+    const types = await P(portal, () => [...document.querySelectorAll('#pl-body tr td:nth-child(2)')].map(td => td.textContent.trim()));
+    expect(types.length && types.every(t => t === 'Summit'), 'Summit shows other types: ' + types.join(', '));
+    const body = await P(portal, () => document.getElementById('pl-body').innerText);
+    expect(/Wingtip Servicing/.test(body) && !/Northwind Lending/.test(body), 'the summit prospects are wrong: ' + body.slice(0, 200));
+    /* My Prospects: only the signed-in person's */
+    await portal.click('[data-plwho="mine"]'); await portal.waitForTimeout(200);
+    const owners = await P(portal, () => [...document.querySelectorAll('#pl-body tr td:nth-child(5)')].map(td => td.textContent.trim()));
+    expect(owners.every(o => o === 'Practice User'), 'My Prospects shows other people\'s: ' + owners.join(', '));
+    /* the choice is remembered */
+    const kept = await P(portal, () => JSON.parse(localStorage.getItem('sponsorship:plist') || '{}'));
+    expect(kept.type === 'summit' && kept.who === 'mine', 'the Prospects choice is not remembered');
+    await portal.click('[data-plwho="all"]'); await portal.click('[data-pltype=""]');
+    /* the Pipeline says what it lists */
+    await toFlow();
+    const say = await P(portal, () => document.getElementById('flow-say').innerText);
+    expect(/prospect/.test(say) && /being closed/.test(say), 'the Pipeline does not say what it lists: ' + say);
+    const fun = await P(portal, () => document.getElementById('flow-funnel').innerText);
+    expect(/PROSPECTS|Prospects/.test(fun) && /Being Closed/i.test(fun), 'the Pipeline stages are not split into prospects and sponsorships being closed');
   });
   await check('a company record shows its emails and sponsorships, and takes a note and an owner', async () => {
     await toCos();

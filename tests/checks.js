@@ -127,7 +127,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   const portal = await open('/sponsorship/?practice');
   /* the summit board, where every application has a row (the Pipeline opens first since Nov 18, 2026) */
   const toSummits = async () => {
-    await P(portal, () => { ['d-close','ld-close','bd-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await P(portal, () => { ['d-close','ld-close','bd-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
     await portal.click('.tab[data-view="pipeline"]');
   };
 
@@ -377,7 +377,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   /* ---- one Pipeline, Other Sponsorships, the mismosponsor@ mailbox (November 18, 2026) ---- */
   const fileOf = name => P(portal, n => window.__practice.file(n), name);
   const toFlow = async () => {
-    await P(portal, () => { ['d-close','bd-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
     await portal.click('.tab[data-view="flow"]'); await portal.waitForTimeout(300);
   };
   await check('the Pipeline lists every kind of sponsorship, from lead to paid', async () => {
@@ -430,7 +430,10 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
   await check('a workgroup prospect starts its sponsorship, filled in', async () => {
     await toFlow();
+    /* a Pipeline row opens the company; its Open the Prospect button opens the prospect itself */
     await portal.click('tr[data-fid="lead-t-wg"] td:first-child'); await portal.waitForTimeout(500);
+    expect(await portal.isVisible('#co-panel.on'), 'a Pipeline row did not open the company');
+    await portal.click('#co-panel [data-fkind="lead"][data-fid="lead-t-wg"][data-direct]'); await portal.waitForTimeout(500);
     await portal.click('#ld-start'); await portal.waitForTimeout(500);
     const vals = await P(portal, () => ({co: document.getElementById('bx-company').value, wg: document.getElementById('bx-workgroup').value, amt: document.getElementById('bx-amountDue').value}));
     expect(vals.co === 'Litware Group' && vals.wg === 'API Community of Practice' && +vals.amt === 5000, 'the new workgroup sponsorship is not filled in: ' + JSON.stringify(vals));
@@ -458,6 +461,46 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const dr = await P(portal, () => document.getElementById('drawer').innerText);
     expect(/Badge artwork/.test(dr), 'the sponsor\'s record does not show its emails');
     await P(portal, () => document.getElementById('d-close').click());
+  });
+
+  /* ---- companies, like Member 360 (November 18, 2026) ---- */
+  const toCos = async () => {
+    await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await portal.click('.tab[data-view="companies"]'); await portal.waitForTimeout(300);
+  };
+  await check('Home shows the day and the season at a glance', async () => {
+    await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await portal.click('.tab[data-view="home"]'); await portal.waitForTimeout(300);
+    const t = await P(portal, () => document.getElementById('view-home').innerText);
+    expect(/Good (morning|afternoon|evening)/.test(t) && /On Your Plate/i.test(t) && /Sales Pipeline/i.test(t) && /Team Activity/i.test(t), 'Home is missing its parts');
+  });
+  await check('every company is one row, with all of its sponsorships', async () => {
+    await toCos();
+    const row = co => P(portal, k => { const r = document.querySelector('tr[data-co="' + k + '"]'); return r ? r.innerText : ''; }, co);
+    const fc = await row('fourthcoffeetest');
+    expect(/Sponsor/.test(fc) && /AI Webinar Series/.test(fc), 'Fourth Coffee Test is not a sponsor with its AI webinar sponsorship: ' + fc);
+    const nw = await row('northwindlending');
+    expect(/Sponsor/.test(nw) && /Winter 2027/.test(nw), 'Northwind Lending does not show its summit sponsorship: ' + nw);
+    const n = await P(portal, () => document.querySelectorAll('#co-body tr[data-co]').length);
+    const keys = await P(portal, () => [...document.querySelectorAll('#co-body tr[data-co]')].map(r => r.getAttribute('data-co')));
+    expect(new Set(keys).size === n, 'a company is listed twice');
+  });
+  await check('a company record shows its emails and sponsorships, and takes a note and an owner', async () => {
+    await toCos();
+    await portal.click('tr[data-co="northwindlending"]'); await portal.waitForTimeout(500);
+    const band = await P(portal, () => document.querySelector('#cp-body .cp-band').innerText);
+    expect(/Northwind Lending/.test(band) && /\$15,000/.test(band), 'the company band is wrong: ' + band.slice(0, 200));
+    await portal.click('[data-cotab="activity"]');
+    const act = await P(portal, () => document.querySelector('#cp-body .cp-panel').innerText);
+    expect(/Badge artwork/.test(act), 'the email to mismosponsor@ is not in the company\'s activity');
+    await portal.click('[data-conote]'); await portal.fill('#cp-note', 'Called about Spring, automated check');
+    await portal.click('[data-conotesave]'); await portal.waitForTimeout(1500);
+    const notes = Object.values((await fileOf('touchpoints')).docs).filter(t => t.type === 'Note' && t.co === 'northwindlending');
+    expect(notes.some(t => /automated check/.test(t.summary)), 'the note was not saved on the company');
+    await portal.selectOption('[data-coowner="northwindlending"]', 'Kelly Bradshaw'); await portal.waitForTimeout(1500);
+    const co = ((await fileOf('companies')) || {docs:{}}).docs.northwindlending || {};
+    expect(co.owner === 'Kelly Bradshaw', 'the company owner was not saved');
+    await P(portal, () => document.getElementById('co-close').click());
   });
 
   await check('nothing reaches a real address', async () => {

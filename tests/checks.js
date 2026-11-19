@@ -395,6 +395,23 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(types.length && types.every(t => t === 'Workgroup'), 'the Workgroup filter shows other types: ' + types.join(', '));
     await portal.click('[data-ftype=""]');
   });
+  await check('every Pipeline number lists what makes it up, and Due Now stays short', async () => {
+    await toFlow();
+    await portal.click('[data-fdrill="open"]'); await portal.waitForTimeout(250);
+    const said = await P(portal, () => +document.querySelector('[data-fdrill="open"]').textContent);
+    const rows = await P(portal, () => document.querySelectorAll('#flow-drill tbody tr').length);
+    expect(said > 0 && rows === said, 'the open count says ' + said + ' but the list under it has ' + rows);
+    await portal.click('[data-fdrill="worth"]'); await portal.waitForTimeout(250);
+    const worth = await P(portal, () => ({said: document.querySelector('[data-fdrill="worth"]').textContent, foot: (document.querySelector('#flow-drill tfoot') || {}).innerText || ''}));
+    expect(worth.foot.indexOf(worth.said) >= 0, 'the amounts listed do not add up to ' + worth.said + ': ' + worth.foot);
+    await portal.click('[data-fdrill="stage:Contacted"]'); await portal.waitForTimeout(250);
+    const st = await P(portal, () => [...document.querySelectorAll('#flow-drill tbody tr td:nth-child(4)')].map(td => td.textContent.trim()));
+    expect(st.length && st.every(x => x === 'Contacted'), 'the Contacted list shows other stages: ' + st.join(', '));
+    await portal.click('#flow-drill [data-fdrill=""]'); await portal.waitForTimeout(200);
+    expect(await P(portal, () => document.getElementById('flow-drill').hidden), 'Close did not put the list away');
+    const dueRows = await P(portal, () => document.querySelectorAll('#flow-due .fbrow').length);
+    expect(dueRows <= 4, 'Due Now shows ' + dueRows + ' rows (it keeps to four, with See All for the rest)');
+  });
   await check('a prospect\'s stage changes right in its row', async () => {
     await toFlow();
     await portal.selectOption('select[data-flowstage="lead-t-1"]', 'Meeting Scheduled');

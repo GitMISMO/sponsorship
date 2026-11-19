@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-18: It's about the company: a new Home, Sponsors and Prospects (one row per company with all its sponsorships), and a company record with its journey, opportunities, sponsorships, activity, contacts, money, notes and owner. Pipeline rows and mismosponsor@ emails go to the company. Member 360's look across the portal.
 - 2026-11-18: One Pipeline for every sponsorship, lead to paid (summits, workgroups, other types, prospects included), with type and stage filters, New Prospects, Due Now and a stage changed right in its row. Prospects get a type, workgroup prospects their group, and Start the Sponsorship.
 - 2026-11-18: Other Sponsorships with types you can add; the AI Webinar Series is the first and its records moved there (webinars.json kept as it was).
 - 2026-11-18: The mismosponsor@ mailbox: emails forwarded or copied to it are logged on the right sponsor or prospect, make a new prospect when nothing matches, or wait to be picked.

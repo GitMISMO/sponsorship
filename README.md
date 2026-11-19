@@ -38,6 +38,19 @@ reads the list through the Availability flow and compares it with the records. A
 has wrong or missing is sent to it again (at most once a day each), and a sold slot the list holds
 that no record accounts for is shown on Inventory to be cleared in SharePoint.
 
+## Companies (November 18, 2026)
+
+It's about the company, not the sponsorship, the way Member 360 works. A company is every record
+with the same `companyKey` (prospects, summit applications, workgroup and other sponsorships, and the
+emails and notes in `data/touchpoints.json`), put together each time by `companies()`; nothing is
+stored twice. The only company-level data is `data/companies.json` (`companies/<key>.owner`).
+**Home** (the first tab) is the day and the season at a glance; **Sponsors and Prospects** lists
+every company once with its relationship (Sponsor, Applied, Prospect, Past Sponsor, Lost); the
+**company record** (`openCompany`) has its band, journey, open opportunities with a stage bar, all its
+sponsorships, one Activity timeline, contacts and money. Pipeline rows open the company; a company's
+own buttons open the record itself (`data-direct`). Notes logged on a company are touchpoints with
+`type: "Note"`. The look follows Member 360's (navy gradient tiles, squared tags).
+
 ## The Pipeline (November 18, 2026)
 
 One list of every sponsorship, from first contact to paid, the way Member 360 works its prospects:

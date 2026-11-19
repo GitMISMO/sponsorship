@@ -938,6 +938,172 @@
     :root:not([data-theme="light"]) .seg button[aria-pressed="true"]{background:var(--sky); color:var(--navy-deep);}
   }
 
+
+  /* ============ Member 360's look (November 18, 2026) ============ */
+  .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+  .headline{background:radial-gradient(120% 120% at 100% 0%, rgba(116,191,235,.22), rgba(116,191,235,0) 55%), linear-gradient(160deg,#10324a,#0b2436) !important;
+    border:1px solid rgba(116,191,235,.18); box-shadow:0 10px 24px -14px rgba(6,32,47,.6); border-radius:12px !important;}
+  .headline .stat{border-radius:10px; transition:transform .15s, background .15s;}
+  .headline .stat:hover{transform:translateY(-2px);}
+  /* Home */
+  .hm-hero{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:18px; color:#fff; border-radius:12px; padding:22px 24px; margin-bottom:22px;
+    position:relative; overflow:hidden; background:radial-gradient(120% 120% at 100% 0%, rgba(116,191,235,.22), rgba(116,191,235,0) 55%), linear-gradient(160deg,#10324a,#0b2436);
+    border:1px solid rgba(116,191,235,.18); box-shadow:0 10px 24px -14px rgba(6,32,47,.6);}
+  .hm-hero::after{content:""; position:absolute; right:-60px; top:-80px; width:280px; height:280px; border-radius:50%;
+    background:radial-gradient(circle, rgba(116,191,235,.22), rgba(116,191,235,0) 70%); pointer-events:none;}
+  @media (max-width:900px){ .hm-hero{grid-template-columns:1fr;} }
+  .hm-hi{position:relative; z-index:1; min-width:0;}
+  .hm-eyebrow{font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:#74bfeb;}
+  .hm-hi h1{font-size:30px; font-weight:700; line-height:1.15; margin:6px 0 10px; color:#fff;}
+  .hm-hi p{font-size:15px; line-height:1.65; color:rgba(255,255,255,.86); margin:0;}
+  .hm-em{color:#74bfeb; font-weight:600; cursor:pointer; border-bottom:1px dashed rgba(116,191,235,.45);}
+  .hm-em:hover{color:#fff; border-bottom-color:#fff;} .hm-em.late{color:#ffb4a8; border-bottom-color:rgba(255,180,168,.5);}
+  .hm-needs{background:rgba(255,255,255,.07); border:1px solid rgba(116,191,235,.25); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px; position:relative; z-index:1; min-width:0;}
+  .hm-nh{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:rgba(255,255,255,.7); display:flex; gap:8px; align-items:baseline;}
+  .hm-nh span{letter-spacing:0; text-transform:none; font-weight:500; color:rgba(255,255,255,.5);}
+  .hm-need{all:unset; box-sizing:border-box; cursor:pointer; display:grid; grid-template-columns:70px minmax(0,1fr) auto; gap:10px; align-items:baseline; padding:8px 10px;
+    border-radius:6px; background:rgba(255,255,255,.06); border-left:3px solid #74bfeb; font-size:13px; color:#fff; transition:background .15s;}
+  .hm-need:hover{background:rgba(255,255,255,.12);} .hm-need.late{border-left-color:#ff8f7d;}
+  .hm-need .d{font-size:12px; color:rgba(255,255,255,.65); white-space:nowrap;} .hm-need.late .d{color:#ffb4a8; font-weight:600;}
+  .hm-need .t{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} .hm-need .t b{font-weight:600; margin-right:6px;} .hm-need .t span{color:rgba(255,255,255,.7);}
+  .hm-need .w{font-size:12px; color:rgba(255,255,255,.55);}
+  .hm-clear{font-size:13px; color:rgba(255,255,255,.7); padding:6px 2px;}
+  .hm-all{margin-top:4px; font-size:13px; font-weight:600; color:#74bfeb; cursor:pointer;} .hm-all:hover{color:#fff;}
+  .hm-h2row{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0 0 12px; flex-wrap:wrap;}
+  .hm-h2{font-size:20px; font-weight:700; margin:0; color:var(--ink);} .hm-asof{font-size:12.5px; color:var(--ink-3);}
+  .hm-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-rows:minmax(150px,auto); gap:14px; grid-auto-flow:row dense;}
+  @media (max-width:1100px){ .hm-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .hm-tile.w4{grid-column:span 2;} }
+  @media (max-width:640px){ .hm-grid{grid-template-columns:1fr;} .hm-tile.w2, .hm-tile.w4{grid-column:span 1;} .hm-tile.h2{grid-row:span 1;} }
+  .hm-tile{all:unset; box-sizing:border-box; cursor:pointer; position:relative; overflow:hidden; min-width:0; display:flex; flex-direction:column; gap:10px; padding:16px 18px; border-radius:12px; color:#fff;
+    background:radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--k,#74bfeb) 26%, transparent), transparent 60%), linear-gradient(160deg,#10324a,#0b2436);
+    border:1px solid rgba(116,191,235,.18); box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 10px 24px -14px rgba(6,32,47,.6); transition:transform .18s, box-shadow .18s;}
+  .hm-tile:hover{transform:translateY(-3px); box-shadow:0 0 0 1px color-mix(in srgb, var(--k,#74bfeb) 55%, transparent), 0 18px 34px -16px rgba(6,32,47,.75);}
+  .hm-tile.still{cursor:default;} .hm-tile.still:hover{transform:none;}
+  .hm-tile:focus-visible{outline:2px solid #74bfeb; outline-offset:3px;}
+  .hm-tile.w2{grid-column:span 2;} .hm-tile.w4{grid-column:span 4;} .hm-tile.h2{grid-row:span 2;}
+  .hm-top{display:flex; align-items:center; gap:8px;}
+  .hm-lab{font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:color-mix(in srgb, var(--k,#74bfeb) 70%, #fff);}
+  .hm-pill{margin-left:auto; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; background:rgba(255,255,255,.12); color:#fff; white-space:nowrap;}
+  .hm-pill.hot{background:#c94a3b;}
+  .hm-big{font-size:40px; font-weight:700; line-height:1; letter-spacing:-.02em; display:flex; align-items:baseline; gap:8px; font-variant-numeric:tabular-nums;}
+  .hm-big small{font-size:13px; font-weight:600; color:#74bfeb; letter-spacing:0;}
+  .hm-sub{font-size:12.5px; line-height:1.45; color:rgba(255,255,255,.78); margin-top:auto;} .hm-sub b{color:#fff;}
+  .hm-ringrow{display:flex; align-items:center; gap:22px; flex-wrap:wrap; flex:1;}
+  .hm-ring{position:relative; width:150px; height:150px; flex:none;}
+  .hm-ring .arc{transition:stroke-dasharray 1.1s cubic-bezier(.2,.8,.2,1);}
+  .hm-ringmid{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .hm-ringmid b{font-size:32px; font-weight:700; line-height:1;} .hm-ringmid span{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.65); margin-top:4px;}
+  .hm-legend{display:flex; flex-direction:column; gap:4px; min-width:190px; flex:1;}
+  .hm-li{display:grid; grid-template-columns:12px minmax(0,1fr) auto; gap:10px; align-items:center; font-size:13.5px; color:rgba(255,255,255,.85); padding:6px 0; border-bottom:1px solid rgba(255,255,255,.08);}
+  .hm-li i{width:12px; height:12px; border-radius:3px;} .hm-li b{font-size:15px; font-variant-numeric:tabular-nums;}
+  .hm-bars{display:flex; flex-direction:column; gap:7px; flex:1;}
+  .hm-bar{display:grid; grid-template-columns:130px minmax(0,1fr) 30px; gap:10px; align-items:center; font-size:12.5px; color:rgba(255,255,255,.82);}
+  .hm-bar .tr{height:10px; border-radius:3px; background:rgba(255,255,255,.08); overflow:hidden;}
+  .hm-bar .tr i{display:block; height:100%; background:#e8b04a; border-radius:3px; min-width:2px; transition:width 1s cubic-bezier(.2,.8,.2,1);}
+  .hm-bar b{text-align:right; font-variant-numeric:tabular-nums;}
+  .hm-stack{display:flex; height:10px; border-radius:3px; overflow:hidden; background:rgba(255,255,255,.08);} .hm-stack i{display:block; height:100%;}
+  .hm-trio{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:auto;}
+  .hm-tc{background:rgba(255,255,255,.06); border-radius:8px; padding:8px 10px; border-top:3px solid var(--c);} .hm-tc b{display:block; font-size:16px; font-weight:700;} .hm-tc span{font-size:11px; color:rgba(255,255,255,.65);}
+  .hm-acts{display:grid; grid-template-columns:1fr 1fr; gap:6px 22px;} @media (max-width:900px){ .hm-acts{grid-template-columns:1fr;} }
+  .hm-act{display:grid; grid-template-columns:26px minmax(0,1fr) auto; gap:10px; align-items:center; font-size:12.5px; color:rgba(255,255,255,.82); padding:5px 0; border-bottom:1px solid rgba(255,255,255,.06);}
+  .hm-act i{width:26px; height:26px; border-radius:6px; background:rgba(116,191,235,.2); color:#d6efff; font-style:normal; font-size:10.5px; font-weight:700; display:flex; align-items:center; justify-content:center;}
+  .hm-act > span{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} .hm-act b{color:#fff;} .hm-act .m{color:rgba(255,255,255,.5); font-size:11.5px;}
+  /* Sponsors and Prospects */
+  .cotiles{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; margin-bottom:16px;}
+  @media (max-width:1000px){ .cotiles{grid-template-columns:repeat(3,minmax(0,1fr));} } @media (max-width:600px){ .cotiles{grid-template-columns:1fr 1fr;} }
+  .cotile{all:unset; box-sizing:border-box; cursor:pointer; display:flex; flex-direction:column; gap:3px; padding:14px 16px 12px; border-radius:10px; color:#fff;
+    background:radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--k) 24%, transparent), transparent 60%), linear-gradient(160deg,#10324a,#0b2436);
+    border:1px solid rgba(116,191,235,.18); border-bottom:3px solid var(--k); transition:transform .15s, box-shadow .15s;}
+  .cotile:hover{transform:translateY(-2px);} .cotile.on{box-shadow:0 0 0 2px var(--k);}
+  .cotile b{font-size:28px; font-weight:700; line-height:1.05;} .cotile .l{font-size:13px; font-weight:600;} .cotile .s{font-size:11.5px; color:rgba(255,255,255,.62);}
+  .cotable tbody tr{cursor:pointer;} .cotable tbody tr:hover td{background:var(--surface-2);}
+  .corow{display:flex; gap:10px; align-items:center;}
+  .cobadge{width:34px; height:34px; border-radius:8px; background:#14486e; color:#a9d8f3; font-weight:700; font-size:12.5px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .cospons{max-width:330px;} .cochip{display:inline-block; margin:0 4px 4px 0; background:var(--chip); color:var(--ink-2); white-space:nowrap;}
+  /* the company record */
+  .drawer.copanel{width:min(820px, 100%); z-index:52; background:var(--ground);}
+  #co-scrim{z-index:51;}
+  .copanel .dhead{padding:10px 18px; background:var(--surface);}
+  .copanel .dbody{padding:16px 18px 30px;}
+  .cp-band{position:relative; overflow:hidden; color:#fff; border-radius:12px; padding:18px 20px 16px; margin:0 0 14px;
+    background:radial-gradient(120% 120% at 100% 0%, rgba(116,191,235,.22), rgba(116,191,235,0) 55%), linear-gradient(160deg,#10324a,#0b2436);
+    border:1px solid rgba(116,191,235,.18); box-shadow:0 10px 24px -14px rgba(6,32,47,.6);}
+  .cp-hero{display:flex; gap:14px; align-items:center; margin:0 0 14px;}
+  .cp-badge{width:56px; height:56px; border-radius:12px; background:rgba(116,191,235,.2); border:1px solid rgba(116,191,235,.35); color:#fff; font-weight:700; font-size:20px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .cp-namewrap{flex:1; min-width:0;} .cp-name{margin:0; font-size:24px; font-weight:700; color:#fff; line-height:1.2; overflow-wrap:anywhere;}
+  .cp-tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+  .cp-band .st{background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.2);}
+  .cp-band .st.paid{background:rgba(95,211,154,.18); color:#a8f0c9; border-color:rgba(95,211,154,.4);}
+  .cp-band .st.submitted, .cp-band .st.contacted{background:rgba(116,191,235,.2); color:#d6efff; border-color:rgba(116,191,235,.4);}
+  .cp-band .st.lost{text-decoration:none; color:#ffb4a8; border-color:rgba(255,143,125,.4);}
+  .cp-band .tag.cpt{background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.18);}
+  .cp-owner{position:relative; display:flex; align-items:center; gap:8px; padding:5px 12px 5px 5px; border:1px solid rgba(255,255,255,.22); border-radius:6px; background:rgba(255,255,255,.06); flex:none; cursor:pointer;}
+  .cp-owner i{width:26px; height:26px; border-radius:5px; background:#2477b8; color:#fff; font-style:normal; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;}
+  .cp-owner span{font-size:11.5px; line-height:1.25; color:rgba(255,255,255,.65);} .cp-owner b{display:block; color:#fff; font-size:12.5px;}
+  .cp-owner select{position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; font:inherit;}
+  .cp-owner:hover{border-color:rgba(255,255,255,.45);}
+  .cp-metrics{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); border-radius:10px; overflow:hidden; margin:0 0 14px;}
+  .cp-metrics > div{padding:10px 12px; border-right:1px solid rgba(255,255,255,.1); min-width:0;} .cp-metrics > div:last-child{border-right:0;}
+  .cp-metrics .k{display:block; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.6); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .cp-metrics .v{display:block; margin-top:4px; font-size:15px; font-weight:600; color:#fff;} .cp-metrics .v.warn{color:#ffcf73;}
+  @media (max-width:640px){ .cp-metrics{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  .cp-jr{display:grid; grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr)); gap:10px;}
+  @media (max-width:700px){ .cp-jr{grid-template-columns:1fr 1fr;} .cp-jcol.wide{grid-column:1/-1;} }
+  .cp-jcol{background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:7px; min-width:0;}
+  .cp-jl{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:#74bfeb; display:flex; gap:8px; align-items:baseline; white-space:nowrap;}
+  .cp-jl span{letter-spacing:0; text-transform:none; font-weight:500; color:rgba(255,255,255,.55); overflow:hidden; text-overflow:ellipsis;}
+  .cj-yrs{display:flex; gap:4px; align-items:flex-end;}
+  .cj-y{flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0;}
+  .cj-y i{display:block; width:100%; height:22px; border-radius:4px; background:rgba(255,255,255,.1);}
+  .cj-y.next i{outline:1px dashed rgba(255,255,255,.45); outline-offset:2px;}
+  .cj-y span{font-size:10px; color:rgba(255,255,255,.55);} .cj-y.now span{color:#fff; font-weight:700;}
+  .cj-key{display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:rgba(255,255,255,.6);} .cj-key span{display:inline-flex; align-items:center; gap:5px;} .cj-key i{width:9px; height:9px; border-radius:2px;}
+  .cp-big{font-size:22px; font-weight:700; line-height:1.05; font-variant-numeric:tabular-nums;} .cp-big small{font-size:12px; font-weight:600; color:#74bfeb;}
+  .cp-js{font-size:12px; color:rgba(255,255,255,.65);}
+  .cj-spark{display:flex; align-items:flex-end; gap:3px; height:32px;} .cj-spark i{flex:1; background:rgba(255,255,255,.14); border-radius:2px 2px 0 0;} .cj-spark i.on{background:#b79cff;}
+  .cp-actions{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 12px;}
+  .cp-tabs{display:flex; gap:20px; border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none;}
+  .cp-tab{border:0; background:none; padding:10px 0 11px; border-bottom:3px solid transparent; color:var(--ink-2); font:inherit; font-size:13.5px; cursor:pointer; white-space:nowrap;}
+  .cp-tab:hover{color:var(--ink);} .cp-tab[aria-selected="true"]{color:var(--ink); font-weight:600; border-bottom-color:var(--sky);}
+  .cp-tab .n{font-size:11px; font-weight:500; padding:1px 6px; border-radius:3px; background:var(--chip); color:var(--ink-2); margin-left:4px;}
+  .cp-panel{padding-top:16px; display:flex; flex-direction:column; gap:12px;}
+  .cp-sect h4{margin:0 0 8px; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink-3);}
+  .cp-sect{display:flex; flex-direction:column; gap:10px;}
+  .cp-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .cp-card.opp{display:flex; flex-direction:column; gap:12px;}
+  .cp-head{display:flex; justify-content:space-between; align-items:baseline; gap:12px;}
+  .cp-amt{font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--ink);}
+  .cp-steps{display:grid; grid-template-columns:repeat(9,minmax(0,1fr)); gap:4px;}
+  .cp-step{border:0; background:none; padding:0; text-align:left; font:inherit; cursor:pointer; min-width:0;}
+  .cp-step:disabled{cursor:default;}
+  .cp-step i{display:block; height:6px; border-radius:3px; background:var(--border);}
+  .cp-step.on i{background:var(--sky);} .cp-step:hover:not(:disabled) i{background:var(--border-strong);} .cp-step.on:hover:not(:disabled) i{background:var(--c1);}
+  .cp-step span{display:block; margin-top:5px; font-size:10.5px; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .cp-step.cur span{color:var(--ink); font-weight:700;}
+  .cp-next{display:flex; justify-content:space-between; gap:12px; align-items:center; padding-top:2px;}
+  .cp-next .k{display:block; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3);}
+  .cp-next .t{display:block; margin-top:2px; font-size:13.5px; font-weight:500; color:var(--ink);}
+  .cp-next .r{text-align:right; display:flex; flex-direction:column; font-size:12px; color:var(--ink-3);} .cp-next .r b{color:var(--warn);} .cp-next .r b.bad{color:var(--bad);}
+  .cp-cardft{display:flex; justify-content:space-between; align-items:center; gap:10px; border-top:1px solid var(--border); padding-top:10px;}
+  .cp-row{display:flex; gap:12px; align-items:center; padding:11px 14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;}
+  .cp-row.top{align-items:flex-start;} .cp-row.clickable{cursor:pointer;} .cp-row.clickable:hover{border-color:var(--sky);}
+  .cp-grow{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;} .cp-grow .sub2{white-space:normal;}
+  .cp-dot{width:10px; height:10px; border-radius:3px; flex:none;}
+  .cp-av{width:34px; height:34px; border-radius:50%; background:#14486e; color:#a9d8f3; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; flex:none;}
+  .cp-ic{width:28px; height:28px; border-radius:50%; background:var(--surface-3); color:var(--c1); display:flex; align-items:center; justify-content:center; flex:none; font-size:13px;}
+  .cp-ic.email{background:rgba(183,156,255,.18); color:#7a5fd6;} .cp-ic.note{background:rgba(95,211,154,.18); color:var(--good);}
+  .cp-arow{display:flex; justify-content:space-between; gap:10px;}
+  .cp-atext{font-size:13px; color:var(--ink-2); white-space:pre-wrap; max-height:6.2em; overflow:hidden; margin:3px 0;}
+  .cp-filt{display:flex; gap:6px; flex-wrap:wrap;}
+  .cp-filt button{border:1px solid var(--border-strong); background:var(--surface); color:var(--ink-2); font:inherit; font-size:12.5px; font-weight:600; padding:4px 11px; border-radius:4px; cursor:pointer;}
+  .cp-filt button.on{background:var(--navy); color:#fff; border-color:var(--navy);}
+  .cp-three{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
+  .cp-three .cp-card{display:flex; flex-direction:column; gap:6px;} .cp-three .k{font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3);}
+  .cp-mbig{font-size:21px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--ink);} .cp-mbig.good{color:var(--good);} .cp-mbig.warn{color:var(--warn);}
+  .cp-mtable tbody tr{cursor:pointer;}
+  .cp-grow .linkbtn{align-self:flex-start; margin-top:3px;}
+  .linkbtn{border:0; background:none; padding:0; color:var(--c1); font:inherit; font-size:12px; font-weight:600; cursor:pointer; text-decoration:underline;}
+  :root[data-theme="dark"] .cp-filt button.on{background:var(--sky); color:var(--navy-deep);}
   /* ---- the one Pipeline (November 18, 2026) ---- */
   .funnel{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px 14px; margin-top:16px;}
   @media (max-width:820px){ .funnel{grid-template-columns:1fr 1fr;} }
@@ -1152,6 +1318,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 <symbol id="ico-search" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6.9" cy="6.9" r="4.6"/><path d="M10.3 10.3 14 14"/></g></symbol>
 <symbol id="ico-expand" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="ico-shrink" viewBox="0 0 24 24"><path d="M20 10h-6V4M4 14h6v6M14 10l7-7M10 14l-7 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="ico-home" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2.5 7.2 8 2.6l5.5 4.6"/><path d="M4 6.2v7.2h3V10h2v3.4h3V6.2"/></g></symbol>
+<symbol id="ico-co" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="2" y="3" width="7" height="10.5" rx="1"/><path d="M9 7h5v6.5H9M4.3 5.6h2.4M4.3 8h2.4M4.3 10.4h2.4"/></g></symbol>
 <symbol id="ico-chev" viewBox="0 0 16 16"><path d="M6 3.4 10.6 8 6 12.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </defs></svg>
 
@@ -1184,7 +1352,9 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="navgrp">Work</div>
     <!-- One pipeline, every kind of sponsorship, lead to paid (Jonna, November 18, 2026). The
          Prospects tab is folded into it; the summit board keeps its own tab. -->
-    <button class="tab on" data-view="flow" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Pipeline</span><span class="pip quiet" id="pip-flow">0</span></button>
+    <button class="tab on" data-view="home" type="button" title="Home"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-home"/></svg><span class="tlbl">Home</span></button>
+    <button class="tab" data-view="companies" type="button" title="Sponsors and Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-co"/></svg><span class="tlbl">Sponsors and Prospects</span></button>
+    <button class="tab" data-view="flow" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Pipeline</span><span class="pip quiet" id="pip-flow">0</span></button>
     <button class="tab" data-view="pipeline" type="button" title="Summit Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pipe"/></svg><span class="tlbl">Summit Sponsorships</span><span class="pip quiet" id="pip-pipe">0</span></button>
     <button class="tab" data-view="workgroup" type="button" title="Workgroup Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-apps"/></svg><span class="tlbl">Workgroups</span><span class="pip quiet" id="pip-workgroup">0</span></button>
     <button class="tab" data-view="other" type="button" title="Other Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Other Sponsorships</span><span class="pip quiet" id="pip-other">0</span></button>
@@ -1232,8 +1402,35 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="stats" id="stats"></div>
   </div>
 
+  <!-- ================= HOME (November 18, 2026, in Member 360's look) ================= -->
+  <section class="view on" id="view-home">
+    <div class="hm-hero" id="home-hero"></div>
+    <div class="hm-h2row"><h3 class="hm-h2">Sponsorship at a Glance</h3><span class="hm-asof">Live from the portal, MISMO Money and mismosponsor@</span></div>
+    <div class="hm-grid" id="home-grid"></div>
+  </section>
+
+  <!-- ================= SPONSORS AND PROSPECTS: one row per company (November 18, 2026) ================= -->
+  <section class="view" id="view-companies">
+    <div class="cotiles" id="co-tiles"></div>
+    <div class="panel">
+      <div class="filters">
+        <input type="search" id="co-q" placeholder="Company, contact or email">
+        <select id="co-type" aria-label="Type"></select>
+        <select id="co-owner" aria-label="Owner"></select>
+        <span class="fbcount" id="co-count"></span>
+        <button class="btn sm" id="co-new-lead" type="button" title="Opens a blank prospect">Add a Prospect</button>
+      </div>
+      <div class="tablewrap">
+        <table class="cotable">
+          <thead><tr><th>Company</th><th>Relationship</th><th>Sponsorships</th><th>Stage</th><th>Owner</th><th class="r">Last 12 Months</th><th>Last Touch</th></tr></thead>
+          <tbody id="co-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= PIPELINE: every sponsorship, lead to paid (November 18, 2026) ================= -->
-  <section class="view on" id="view-flow">
+  <section class="view" id="view-flow">
     <div class="headline">
       <div class="hl-top"><div class="hl-date" id="flow-date"></div></div>
       <div class="hl-say" id="flow-say"></div>
@@ -1634,6 +1831,18 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
       </details>
 
       <details class="hsec">
+        <summary>Home, and Sponsors and Prospects: It&rsquo;s About the Company</summary>
+        <div class="hbody">
+          <ul>
+            <li><b>Home</b> is the day at a glance: what&rsquo;s on your plate this week (follow-ups due and invoices past due), the summit season&rsquo;s money, the sales pipeline, the next summit, emails to mismosponsor@, money by type and what the team has been doing. Select any tile to go to it.</li>
+            <li><b>Sponsors and Prospects</b> lists every company once, the way Member 360 does: whether it&rsquo;s a Sponsor, has Applied, is a Prospect, a Past Sponsor or Lost, every sponsorship it has or is working toward, the stage it&rsquo;s at, its owner, its money over the last 12 months and its last touch. The tiles at the top filter the list.</li>
+            <li><b>The company record</b> brings everything together: its sponsorships of every kind and its prospects, its year-by-year sponsorship journey, money, contacts, and one Activity timeline of emails, notes and changes. Change a prospect&rsquo;s stage on its stage bar, <b>Log a Note</b>, set the company&rsquo;s <b>Owner</b>, or <b>Add a Prospective Sponsorship</b>. The buttons on each sponsorship open the record itself.</li>
+            <li>A row on the Pipeline opens its company too, and emails to mismosponsor@ are logged on the company, whatever sponsorship they&rsquo;re about.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
         <summary>The Pipeline: Every Sponsorship, Lead to Paid</summary>
         <div class="hbody">
           <ul>
@@ -1831,6 +2040,15 @@ a series deal is counted once, at its full amount.</div>
     <button class="btn ghost" id="bd-cancel" type="button">Cancel</button>
     <span class="savemsg" id="bd-msg"></span>
   </div>
+</aside>
+
+<div class="scrim" id="co-scrim"></div>
+<aside class="drawer copanel" id="co-panel" aria-hidden="true" aria-label="Company">
+  <div class="dhead">
+    <div><div class="dsub">Company</div><h3 id="cp-title" class="sr-only">—</h3></div>
+    <button class="dclose" id="co-close" type="button" aria-label="Close">&times;</button>
+  </div>
+  <div class="dbody" id="cp-body"></div>
 </aside>
 
 <aside class="drawer" id="lead-drawer" aria-hidden="true">
@@ -2096,7 +2314,7 @@ a series deal is counted once, at its full amount.</div>
   var leadQuickFilter = null; // "overdue" | "recent" | "converted" | null — set by clicking a Prospects stat card
   var leadBy = "status";      // Prospects "View By": status | owner | type
   var leadGroup = null;       // the one group being shown, set by clicking a group card
-  var currentView = "flow";
+  var currentView = "home";
   var summitView = "overall";
   var summitYear = null;
   var scopeYear = null;      // which season the figures, Pipeline and Applications show
@@ -3155,6 +3373,11 @@ a series deal is counted once, at its full amount.</div>
      summit picker moves, so it is kept here and re-applied whenever that tab is the
      one being shown. */
   var PAGES = {
+    home: {t:"Home", s:""},
+    companies: {t:"Sponsors and Prospects",
+      s:"Every company the portal knows, one row each, with every sponsorship it has or is working toward: summit, " +
+        "workgroup and every other kind. Select a company to see its whole relationship with MISMO: sponsorships, " +
+        "prospects, emails, notes, contacts and money."},
     flow: {t:"Pipeline",
       s:"Every sponsorship in one list, from first contact to paid: summits, workgroups and every other kind. " +
         "Prospects sit in the early stages; a sponsorship carries its own stage from Application In on. Pick a type " +
@@ -3211,7 +3434,7 @@ a series deal is counted once, at its full amount.</div>
   }
 
   /* ---------------- rendering ---------------- */
-  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); renderBilling(); renderBenefits(); renderFlow(); scheduleProspectSync(); }
+  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); renderBilling(); renderBenefits(); renderFlow(); renderHome(); renderCompanies(); if(coOpen) paintCompany(); scheduleProspectSync(); }
 
   function totals(list){
     var t = {committed:0, collected:0, invoiced:0, approved:0, outstanding:0, overdue:0, overdueN:0,
@@ -7575,7 +7798,7 @@ a series deal is counted once, at its full amount.</div>
        answering a question nobody asked there. Money, Inventory and Prospects carry their
        own bands instead. */
     var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help" || v === "prospectus" || v === "benefits" ||
-                v === "workgroup" || v === "other" || v === "flow") ? "none" : "";
+                v === "workgroup" || v === "other" || v === "flow" || v === "home" || v === "companies") ? "none" : "";
     $("headline").style.display = hide;
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.id === "view-"+v); });
     if(v !== "pipeline" && stageKey) closeStage();
@@ -7583,6 +7806,9 @@ a series deal is counted once, at its full amount.</div>
     if(v !== "leads" && v !== "flow" && $("lead-drawer").classList.contains("on")) closeLeadDrawer();
     if(v !== "workgroup" && v !== "other" && v !== "flow" && $("bill-drawer").classList.contains("on")) closeBill();
     if(v === "flow") renderFlow();
+    if(v === "home") renderHome();
+    if(v === "companies") renderCompanies();
+    var ph = $("pagehead"); if(ph) ph.style.display = v === "home" ? "none" : "";
   }
 
   /* Copy Link on a prospectus card puts its address on the clipboard, ready to paste into an
@@ -9430,6 +9656,12 @@ a series deal is counted once, at its full amount.</div>
     if((b = el.closest("[data-fkind][data-fid]"))){
       var k = b.getAttribute("data-fkind"), id = b.getAttribute("data-fid");
       if(!id) return;
+      /* it's about the company (Jonna, November 18, 2026): a row opens the company, and the
+         company's own buttons open the record itself (data-direct) */
+      if(!b.hasAttribute("data-direct")){
+        var rec = k === "lead" ? findById(leads, id) : k === "app" ? findById(apps, id) : findById(billList(k), id);
+        if(rec && companyKey(rec.company)){ openCompany(companyKey(rec.company)); return; }
+      }
       if(k === "lead") openLeadDrawer(id, null);
       else if(k === "app") openDrawer(id, null);
       else openBill(k, id);
@@ -9488,6 +9720,553 @@ a series deal is counted once, at its full amount.</div>
     saveLead(after);
   }
 
+  /* ============================================================
+     COMPANIES (November 18, 2026, Jonna: "it's about the company, not the sponsorship,
+     like Member 360")
+     A company is every record with the same company name (companyKey): its prospects,
+     summit applications, workgroup and other sponsorships, and the emails and notes
+     logged to it. Nothing is stored twice; the company is put together from those records
+     each time. The only thing kept for a company itself is in data/companies.json
+     (companies/<key>): its owner.
+     ============================================================ */
+  var coDocs = {}, coSeen = false;
+  var coState = {rel:"", q:"", owner:"", type:""};
+  var coOpen = null, coTab = "overview", actFilter = "all";
+  var REL_ORDER = ["Sponsor", "Applied", "Prospect", "Past Sponsor", "Lost"];
+  var REL_TONE = {"Sponsor":"paid", "Applied":"submitted", "Prospect":"contacted", "Past Sponsor":"inkind", "Lost":"lost"};
+  var TYPE_COLOR = {summit:"#74bfeb", workgroup:"#5fd39a", other:"#b79cff"};
+
+  function coTypeOf(t){ return t === "summit" || t === "workgroup" ? t : "other"; }
+  function within(day, days){ var d = parseDate(day); return !!d && daysBetween(d, today()) <= days; }
+  function billWhen(r){ return String(r.invoiceDate || r.periodStart || r.paymentReceivedDate || r.updatedAt || "").slice(0, 10); }
+  function billLive(r){
+    if(r.status === "Cancelled") return false;
+    if(r.periodEnd) return parseDate(r.periodEnd) >= today();
+    return r.status === "Draft" || r.status === "Pending Payment" || within(billWhen(r), 365);
+  }
+  function appLive(a){
+    if(a.status === "Declined" || a.status === "Written Off") return false;
+    var e = sponsorshipEnds(a); return !e || e >= today();
+  }
+
+  /* every company, put together from its records: key -> company */
+  function companies(){
+    if(!FLOW_CACHE) FLOW_CACHE = pipeItems();
+    var map = {};
+    function co(name){
+      var k = companyKey(name); if(!k) return null;
+      return map[k] || (map[k] = {key:k, name:String(name || "").trim(), leads:[], apps:[], bills:[], touches:[], when:""});
+    }
+    function seen(c, name, when){ if(when && when >= c.when){ c.when = when; c.name = String(name).trim(); } }
+    leads.forEach(function(l){ if(l.id === leadDraft) return; var c = co(l.company); if(!c) return; c.leads.push(l); seen(c, l.company, String(l.updatedAt || l.createdDate || "").slice(0, 10)); });
+    billAll().forEach(function(r){ var c = co(r.company); if(!c) return; c.bills.push(r); seen(c, r.company, billWhen(r)); });
+    apps.forEach(function(a){ if(a.id === draft) return; var c = co(a.company); if(!c) return; c.apps.push(a);
+      /* the name on the newest application wins: it is what the company signed */
+      seen(c, a.company, "9" + String(a.dateSubmitted || ""));
+    });
+    touches.forEach(function(t){ if(t.archived || !t.co) return; var c = map[t.co] || (map[t.co] = {key:t.co, name:t.coName || t.co, leads:[], apps:[], bills:[], touches:[], when:""}); c.touches.push(t); });
+    Object.keys(map).forEach(function(k){ coFill(map[k]); });
+    return map;
+  }
+  function coFill(c){
+    var live = c.apps.filter(appLive), liveB = c.bills.filter(billLive);
+    var sponsorNow = live.some(function(a){ return a.status !== "Submitted"; }) || liveB.length > 0;
+    var applied = live.some(function(a){ return a.status === "Submitted"; });
+    var openLeads = c.leads.filter(function(l){ return !LEAD_CLOSED[l.status]; });
+    var everSponsored = c.apps.some(function(a){ return a.status !== "Declined" && a.status !== "Submitted"; }) ||
+      c.bills.some(function(r){ return r.status !== "Cancelled"; });
+    c.rel = sponsorNow ? "Sponsor" : applied ? "Applied" : openLeads.length ? "Prospect" : everSponsored ? "Past Sponsor" :
+      (c.leads.length || c.apps.length) ? "Lost" : "Prospect";
+    c.live = live; c.liveB = liveB; c.openLeads = openLeads;
+    /* the types it has, now or in the past */
+    var types = {};
+    c.apps.forEach(function(){ types.summit = 1; });
+    c.bills.forEach(function(r){ types[r.__kind === "workgroup" ? "workgroup" : (r.otype || "other")] = 1; });
+    c.leads.forEach(function(l){ if(!LEAD_CLOSED[l.status]) types[leadType(l)] = 1; });
+    c.types = Object.keys(types);
+    /* money over the last 12 months */
+    var m = {committed:0, paid:0, out:0, life:0};
+    c.apps.forEach(function(a){
+      if(a.status === "Declined" || a.status === "Submitted") return;
+      var due = Number(a.amountDue) || 0, pd = Number(a.amountPaid) || (a.status === "Paid" ? due : 0);
+      m.life += pd;
+      if(appLive(a) || within(a.dateSubmitted, 365)){ m.committed += due; m.paid += pd; if(a.status === "Pending Payment" || a.status === "Approved") m.out += due - pd; }
+    });
+    c.bills.forEach(function(r){
+      if(r.status === "Cancelled" || r.status === "Waived") return;
+      var due = Number(r.amountDue) || 0, pd = Number(r.amountPaid) || (r.status === "Paid" ? due : 0);
+      m.life += pd;
+      if(billLive(r) || within(billWhen(r), 365)){ m.committed += due; m.paid += pd; if(r.status === "Pending Payment" || r.status === "Draft") m.out += due - pd; }
+    });
+    c.money = m;
+    /* owner: the company's own, else whoever owns its newest open prospect */
+    var own = (coDocs[c.key] || {}).owner;
+    if(!own){ var ol = c.leads.filter(function(l){ return l.owner; }).sort(function(x, y){ return String(y.updatedAt || "").localeCompare(String(x.updatedAt || "")); })[0]; own = ol ? ol.owner : ""; }
+    c.owner = own || "";
+    /* the stage it is furthest along with, from its open opportunities */
+    var items = coItems(c);
+    var open = items.filter(function(it){ return PIPE_OPEN.indexOf(it.stage) >= 0; });
+    c.stage = open.length ? open.slice().sort(function(x, y){ return PIPE_STAGES.indexOf(y.stage) - PIPE_STAGES.indexOf(x.stage); })[0].stage : "";
+    c.items = items;
+    /* last touch: newest email or note, prospect contact date, or record change */
+    var last = "";
+    c.touches.forEach(function(t){ if(t.date > last) last = t.date; });
+    c.leads.forEach(function(l){ if((l.lastContactDate || "") > last) last = l.lastContactDate; });
+    c.last = last;
+    /* first year as a sponsor */
+    var yrs = [];
+    c.apps.forEach(function(a){ if(a.status !== "Declined" && a.status !== "Submitted"){ var y = seasonOf(a); if(y) yrs.push(y); } });
+    c.bills.forEach(function(r){ if(r.status !== "Cancelled"){ var y = +String(billWhen(r)).slice(0, 4); if(y) yrs.push(y); } });
+    c.since = yrs.length ? Math.min.apply(null, yrs) : null;
+    c.contact = coContacts(c)[0] || null;
+  }
+  /* this company's rows from the Pipeline's list, every stage */
+  function coItems(c){
+    var ids = {};
+    c.leads.forEach(function(l){ ids["lead:" + l.id] = 1; });
+    c.apps.forEach(function(a){ ids["app:" + a.id] = 1; });
+    c.bills.forEach(function(r){ ids[r.__kind + ":" + r.id] = 1; });
+    return (FLOW_CACHE || []).filter(function(it){ return ids[it.kind + ":" + it.id]; });
+  }
+  var FLOW_CACHE = null;
+  function coContacts(c){
+    var by = {};
+    function add(name, email, role, from){
+      email = String(email || "").trim().toLowerCase(); name = String(name || "").trim();
+      if(!email && !name) return;
+      if(email && MAIL_STAFF.test(email)) return;
+      var k = email || name.toLowerCase();
+      var p = by[k] || (by[k] = {name:"", email:email, role:"", from:{}});
+      if(name && !p.name) p.name = name; if(role && !p.role) p.role = role; p.from[from] = 1;
+    }
+    c.leads.forEach(function(l){ add(l.contactName, l.contactEmail, l.contactRole, "Prospect " + (l.leadNo || "")); });
+    c.apps.forEach(function(a){ add(a.contactName, a.contactEmail, "", "Application " + (a.appNo || "")); if(a.acceptanceName) add(a.acceptanceName, "", a.acceptanceTitle || "Signer", "Signed " + (a.appNo || "")); });
+    c.bills.forEach(function(r){ add(r.contactName, r.contactEmail, "", (r.__kind === "workgroup" ? "Workgroup " : "") + (r.no || "")); });
+    c.touches.forEach(function(t){ if(t.type === "Email" && t.from) add(t.fromName, t.from, "", "Email"); });
+    return Object.keys(by).map(function(k){ return by[k]; }).filter(function(p){ return p.email || p.name; });
+  }
+  function coInitials(n){
+    var w = String(n || "").replace(/[^A-Za-z0-9 ]/g, " ").split(/\s+/).filter(function(x){ return x && !CO_NOISE[x.toLowerCase()]; });
+    return ((w[0] || "?").charAt(0) + (w[1] ? w[1].charAt(0) : (w[0] || "").charAt(1) || "")).toUpperCase();
+  }
+  function relTag(rel){ return '<span class="st ' + (REL_TONE[rel] || "") + '">' + esc(rel) + '</span>'; }
+  function typeChips(c){
+    return c.types.map(function(t){ return '<span class="tag ftype" style="border-left:3px solid ' + TYPE_COLOR[coTypeOf(t)] + '">' + esc(typeName(t)) + '</span>'; }).join(" ");
+  }
+
+  /* ---------------- Sponsors and Prospects (the companies list) ---------------- */
+  function renderCompanies(){
+    if(!$("co-body") || !PIPE_OPEN || !others || !touches) return;
+    FLOW_CACHE = pipeItems();
+    var map = companies(), list = Object.keys(map).map(function(k){ return map[k]; });
+    var n = {}; REL_ORDER.forEach(function(r){ n[r] = 0; });
+    list.forEach(function(c){ n[c.rel]++; });
+    $("co-tiles").innerHTML = [
+      ["Sponsor", "Current Sponsors", "sponsoring now", "#5fd39a"],
+      ["Applied", "Applied", "applications to review", "#74bfeb"],
+      ["Prospect", "Prospects", "being worked", "#e8b04a"],
+      ["Past Sponsor", "Past Sponsors", "to win back", "#b79cff"],
+      ["Lost", "Lost", "said no", "#ff8f7d"]
+    ].map(function(t){
+      return '<button type="button" class="cotile' + (coState.rel === t[0] ? " on" : "") + '" data-corel="' + esc(t[0]) + '" style="--k:' + t[3] + '">' +
+        '<b>' + n[t[0]] + '</b><span class="l">' + esc(t[1]) + '</span><span class="s">' + esc(t[2]) + '</span></button>';
+    }).join("");
+    var ow = $("co-owner"); if(ow){ var keep = coState.owner;
+      ow.innerHTML = '<option value="">Every Owner</option>' + BENEFIT_OWNERS.map(function(o){ return '<option' + (o === keep ? " selected" : "") + '>' + esc(o) + '</option>'; }).join(""); }
+    var ty = $("co-type"); if(ty){ var kt = coState.type;
+      ty.innerHTML = '<option value="">Every Type</option>' + typeChoices().map(function(t){ return '<option value="' + esc(t[0]) + '"' + (t[0] === kt ? " selected" : "") + '>' + esc(t[1]) + '</option>'; }).join(""); }
+    var q = (coState.q || "").toLowerCase();
+    var rows = list.filter(function(c){
+      if(coState.rel && c.rel !== coState.rel) return false;
+      if(coState.owner && c.owner !== coState.owner) return false;
+      if(coState.type && c.types.indexOf(coState.type) < 0) return false;
+      if(q){
+        var hay = [c.name].concat(coContacts(c).map(function(p){ return p.name + " " + p.email; })).join(" ").toLowerCase();
+        if(hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    }).sort(function(x, y){
+      var a = REL_ORDER.indexOf(x.rel), b = REL_ORDER.indexOf(y.rel);
+      return a !== b ? a - b : String(x.name).localeCompare(String(y.name));
+    });
+    $("co-count").textContent = rows.length + (rows.length === 1 ? " company" : " companies");
+    if(!rows.length){ $("co-body").innerHTML = '<tr><td colspan="7"><div class="empty">No companies match.</div></td></tr>'; return; }
+    $("co-body").innerHTML = rows.map(function(c){
+      var spons = coSponsorChips(c);
+      return '<tr data-co="' + esc(c.key) + '">' +
+        '<td><div class="corow"><span class="cobadge">' + esc(coInitials(c.name)) + '</span><span><b>' + esc(c.name) + '</b>' +
+          (c.contact ? '<div class="sub2">' + esc(c.contact.email || c.contact.name) + '</div>' : '') + '</span></div></td>' +
+        '<td>' + relTag(c.rel) + '</td>' +
+        '<td class="cospons">' + (spons || '<span class="sub2">—</span>') + '</td>' +
+        '<td>' + (c.stage ? '<span class="st ' + (PIPE_TONE[c.stage] || "") + '">' + esc(c.stage) + '</span>' :
+          (c.rel === "Sponsor" ? '<span class="st paid">Paid</span>' : '<span class="sub2">—</span>')) + '</td>' +
+        '<td>' + esc(c.owner || "Unassigned") + '</td>' +
+        '<td class="r num">' + (c.money.committed ? esc(money(c.money.committed)) : "—") + '</td>' +
+        '<td>' + (c.last ? esc(fmtDate(c.last)) : "—") + '</td></tr>';
+    }).join("");
+  }
+  /* the sponsorships a company has now or is working toward, as small labels */
+  function coSponsorChips(c){
+    var out = [];
+    c.live.forEach(function(a){ out.push(["summit", a.event + (levelOf(a) ? " · " + tierLabel(levelOf(a)) : "")]); });
+    c.liveB.forEach(function(r){ out.push([r.__kind === "workgroup" ? "workgroup" : (r.otype || "other"), r.__kind === "workgroup" ? (r.workgroup || "Workgroup") : otypeOf(r).name]); });
+    c.openLeads.forEach(function(l){ out.push([leadType(l), "Prospective · " + typeName(leadType(l))]); });
+    var seen = {};
+    return out.filter(function(x){ var k = x.join("|"); if(seen[k]) return false; seen[k] = 1; return true; }).slice(0, 4).map(function(x){
+      return '<span class="tag cochip" style="border-left:3px solid ' + TYPE_COLOR[coTypeOf(x[0])] + '">' + esc(x[1]) + '</span>';
+    }).join("");
+  }
+
+  /* ---------------- the company record ---------------- */
+  function openCompany(key, tab){
+    if(!key) return;
+    coOpen = key; if(tab) coTab = tab;
+    closeDrawer(); closeLeadDrawer(); closeBill();
+    paintCompany();
+    $("co-scrim").classList.add("on");
+    $("co-panel").classList.add("on");
+    $("co-panel").setAttribute("aria-hidden", "false");
+  }
+  function closeCompany(){
+    coOpen = null;
+    $("co-scrim").classList.remove("on");
+    $("co-panel").classList.remove("on");
+    $("co-panel").setAttribute("aria-hidden", "true");
+  }
+  function coOf(key){ FLOW_CACHE = pipeItems(); return companies()[key] || null; }
+  function paintCompany(){
+    if(!coOpen || !$("co-panel")) return;
+    var c = coOf(coOpen);
+    if(!c){ $("cp-body").innerHTML = '<div class="empty">This company has no records any more.</div>'; return; }
+    var t = today();
+    /* the band: who they are and where they stand */
+    var yrsHave = {};
+    c.apps.forEach(function(a){ if(a.status !== "Declined"){ var y = seasonOf(a); if(y){ (yrsHave[y] = yrsHave[y] || {}).summit = 1; } } });
+    c.bills.forEach(function(r){ if(r.status !== "Cancelled"){ var y = +String(billWhen(r)).slice(0, 4); if(y){ (yrsHave[y] = yrsHave[y] || {})[r.__kind === "workgroup" ? "workgroup" : "other"] = 1; } } });
+    var yNow = t.getFullYear(), y0 = Math.min(yNow - 2, c.since || yNow), years = [];
+    for(var y = y0; y <= yNow + 1; y++) years.push(y);
+    var journey = years.map(function(y){
+      var h = yrsHave[y] || {}, ks = Object.keys(h);
+      var bg = ks.length ? (ks.length === 1 ? TYPE_COLOR[ks[0]] : "linear-gradient(90deg," + ks.map(function(k){ return TYPE_COLOR[k]; }).join(",") + ")") : "";
+      return '<div class="cj-y' + (y === yNow ? " now" : "") + (y > yNow ? " next" : "") + '" title="' + esc(y + ": " + (ks.length ? ks.map(typeName).join(", ") : "no sponsorship")) + '">' +
+        '<i' + (bg ? ' style="background:' + bg + '"' : '') + '></i><span>’' + String(y).slice(2) + '</span></div>';
+    }).join("");
+    var spark = [], cut = new Date(t); cut.setMonth(cut.getMonth() - 11, 1);
+    for(var mI = 0; mI < 12; mI++){
+      var mm = new Date(cut); mm.setMonth(cut.getMonth() + mI);
+      var key = iso(mm).slice(0, 7), nT = c.touches.filter(function(x){ return String(x.date).slice(0, 7) === key; }).length;
+      spark.push(nT);
+    }
+    var maxS = Math.max.apply(null, spark.concat([1]));
+    var nextSm = null;
+    c.live.forEach(function(a){ sharesOf(a).forEach(function(sh){ var o = parseDate((SUMMITS[sh.summit] || {}).opens); if(o && o >= t && (!nextSm || o < nextSm.d)) nextSm = {d:o, s:sh.summit}; }); });
+    var tags = relTag(c.rel) + " " + c.types.map(function(x){ return '<span class="tag cpt">' + esc(typeName(x)) + '</span>'; }).join(" ");
+    var html = '<div class="cp-band">' +
+      '<div class="cp-hero"><div class="cp-badge">' + esc(coInitials(c.name)) + '</div>' +
+        '<div class="cp-namewrap"><h2 class="cp-name">' + esc(c.name) + '</h2><div class="cp-tags">' + tags + '</div></div>' +
+        '<label class="cp-owner" title="Change the owner"><i>' + esc(coInitials(c.owner || "?")) + '</i><span>Owner<b>' + esc(c.owner || "Unassigned") + '</b></span>' +
+          (canWrite ? '<select data-coowner="' + esc(c.key) + '" aria-label="Owner"><option value="">Unassigned</option>' +
+            BENEFIT_OWNERS.map(function(o){ return '<option' + (o === c.owner ? " selected" : "") + '>' + esc(o) + '</option>'; }).join("") + '</select>' : '') + '</label></div>' +
+      '<div class="cp-metrics">' +
+        '<div><span class="k">Sponsoring Since</span><span class="v">' + (c.since || "—") + '</span></div>' +
+        '<div><span class="k">Last 12 Months</span><span class="v">' + (c.money.committed ? esc(money(c.money.committed)) : "—") + '</span></div>' +
+        '<div><span class="k">Paid</span><span class="v">' + (c.money.paid ? esc(money(c.money.paid)) : "—") + '</span></div>' +
+        '<div><span class="k">Outstanding</span><span class="v' + (c.money.out ? " warn" : "") + '">' + (c.money.out ? esc(money(c.money.out)) : "—") + '</span></div>' +
+        '<div><span class="k">Last Touch</span><span class="v">' + (c.last ? esc(fmtDate(c.last)) : "—") + '</span></div>' +
+      '</div>' +
+      '<div class="cp-jr">' +
+        '<div class="cp-jcol wide"><div class="cp-jl">Sponsorship Journey <span>' + (c.since ? "since " + c.since : "not a sponsor yet") + '</span></div>' +
+          '<div class="cj-yrs">' + journey + '</div>' +
+          '<div class="cj-key"><span><i style="background:' + TYPE_COLOR.summit + '"></i>Summit</span><span><i style="background:' + TYPE_COLOR.workgroup + '"></i>Workgroup</span><span><i style="background:' + TYPE_COLOR.other + '"></i>Other</span></div></div>' +
+        '<div class="cp-jcol"><div class="cp-jl">On Record</div><div class="cp-big">' + esc(money(c.money.life)) + '</div><div class="cp-js">paid, all time</div></div>' +
+        '<div class="cp-jcol"><div class="cp-jl">Touches <span>12 mo.</span></div><div class="cj-spark">' +
+          spark.map(function(v){ return '<i' + (v ? ' class="on"' : '') + ' style="height:' + Math.max(8, Math.round(v / maxS * 100)) + '%"></i>'; }).join("") +
+          '</div><div class="cp-js">' + c.touches.length + ' logged</div></div>' +
+        '<div class="cp-jcol"><div class="cp-jl">Next Summit</div>' + (nextSm
+          ? '<div class="cp-big">' + daysBetween(t, nextSm.d) + ' <small>days</small></div><div class="cp-js">' + esc((SUMMITS[nextSm.s] || {}).label || nextSm.s) + '</div>'
+          : '<div class="cp-big">—</div><div class="cp-js">no summit booked</div>') + '</div>' +
+      '</div></div>';
+    html += '<div class="cp-actions">' +
+      (canWrite ? '<button class="btn sm" type="button" data-conote="1">+ Log a Note</button>' +
+        '<button class="btn ghost sm" type="button" data-coprospect="1">+ Add a Prospective Sponsorship</button>' : '') +
+      (c.contact && c.contact.email ? '<a class="btn ghost sm" href="mailto:' + esc(c.contact.email) + '">Email ' + esc(c.contact.name || c.contact.email) + '</a>' : '') +
+      '</div><div id="cp-noteform" hidden></div>';
+    var acts = coActivity(c), cons = coContacts(c);
+    var tabs = [["overview","Overview",""],["sponsorships","Sponsorships",c.apps.length + c.bills.length],["activity","Activity",acts.length],["contacts","Contacts",cons.length],["money","Money",""]];
+    html += '<div class="cp-tabs" role="tablist">' + tabs.map(function(x){
+      return '<button type="button" class="cp-tab" role="tab" data-cotab="' + x[0] + '" aria-selected="' + (coTab === x[0] ? "true" : "false") + '">' + esc(x[1]) +
+        (x[2] !== "" ? ' <span class="n">' + x[2] + '</span>' : '') + '</button>';
+    }).join("") + '</div><div class="cp-panel">' + coTabHtml(c, acts, cons) + '</div>';
+    $("cp-body").innerHTML = html;
+    $("cp-title").textContent = c.name;
+  }
+  function stepsBar(it){
+    var cur = PIPE_OPEN.indexOf(it.stage), closed = it.stage === "Paid";
+    var short = {"Meeting Scheduled":"Meeting", "Verbal Commitment":"Verbal", "Application In":"Applied", "Pending Payment":"Invoiced"};
+    var stages = PIPE_OPEN.concat(["Paid"]);
+    return '<div class="cp-steps">' + stages.map(function(s, i){
+      var on = closed || (cur >= 0 && i <= cur), isCur = s === it.stage;
+      var can = it.kind === "lead" && canWrite && i <= 4;
+      return '<button type="button" class="cp-step' + (on ? " on" : "") + (isCur ? " cur" : "") + '"' + (can ? ' data-costep="' + esc(it.id) + '" data-stage="' + esc(s) + '"' : ' disabled') + '>' +
+        '<i></i><span>' + esc(short[s] || s) + '</span></button>';
+    }).join("") + '</div>';
+  }
+  function coOppCard(it){
+    var r = it.rec, open = it.kind === "lead" ? "Open the Prospect" : it.kind === "app" ? "Open the Application" : "Open the Sponsorship";
+    return '<div class="cp-card opp"><div class="cp-head"><div><span class="tag ftype" style="border-left:3px solid ' + TYPE_COLOR[coTypeOf(it.type)] + '">' + esc(typeName(it.type)) + '</span> ' +
+        '<b>' + esc(it.what || "") + '</b></div><div class="cp-amt">' + (it.amount ? esc(money(it.amount)) : "") + '</div></div>' +
+      stepsBar(it) +
+      '<div class="cp-next"><div><span class="k">' + (it.kind === "lead" ? "Next Step" : "Waiting On") + '</span>' +
+        '<span class="t">' + esc(it.nextText || (it.kind === "lead" ? "No next step set" : it.stage)) + '</span></div>' +
+        '<div class="r">' + (it.nextDate ? '<b' + (parseDate(it.nextDate) <= today() ? ' class="bad"' : '') + '>' + esc(fmtDate(it.nextDate)) + '</b><span>follow-up</span>' : '') + '</div></div>' +
+      '<div class="cp-cardft"><span class="sub2">' + esc(it.no || "") + (it.owner ? " · " + esc(it.owner) : "") + '</span>' +
+        '<button class="btn ghost sm" type="button" data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '" data-direct="1">' + open + '</button></div></div>';
+  }
+  function coTabHtml(c, acts, cons){
+    var items = c.items.slice().sort(function(x, y){ return PIPE_STAGES.indexOf(y.stage) - PIPE_STAGES.indexOf(x.stage); });
+    var openI = items.filter(function(it){ return PIPE_OPEN.indexOf(it.stage) >= 0 || it.stage === "Hold"; });
+    if(coTab === "overview"){
+      var h = '<div class="cp-sect"><h4>Open Opportunities</h4>' + (openI.length ? openI.map(coOppCard).join("") :
+        '<div class="cp-card"><div class="fldnote" style="margin:0;">Nothing open. ' + (canWrite ? 'Use <b>Add a Prospective Sponsorship</b> to start one.' : '') + '</div></div>') + '</div>';
+      var cur = c.items.filter(function(it){ return it.stage === "Paid"; });
+      if(cur.length) h += '<div class="cp-sect"><h4>Sponsoring Now</h4>' + cur.map(function(it){ return coSpRow(it); }).join("") + '</div>';
+      h += '<div class="cp-sect"><h4>Latest Activity</h4>' + (acts.length ? acts.slice(0, 4).map(actRow).join("") : '<div class="fldnote" style="margin:0;">Nothing logged yet.</div>') +
+        (acts.length > 4 ? '<button class="btn ghost sm" type="button" data-cotab="activity" style="margin-top:8px;">See All Activity</button>' : '') + '</div>';
+      return h;
+    }
+    if(coTab === "sponsorships"){
+      var all = c.items.slice().sort(function(x, y){ return String(y.created || "").localeCompare(String(x.created || "")); });
+      return all.length ? all.map(coSpRow).join("") : '<div class="empty">No sponsorships or prospects yet.</div>';
+    }
+    if(coTab === "activity"){
+      var fl = actFilter, list = acts.filter(function(a){ return fl === "all" || a.kind === fl; });
+      return '<div class="cp-filt">' + [["all","All"],["email","Emails"],["note","Notes"],["change","Changes"]].map(function(f){
+          return '<button type="button" class="' + (fl === f[0] ? "on" : "") + '" data-actf="' + f[0] + '">' + f[1] + '</button>'; }).join("") + '</div>' +
+        (list.length ? list.map(actRow).join("") : '<div class="empty">Nothing here yet.</div>');
+    }
+    if(coTab === "contacts"){
+      return cons.length ? cons.map(function(p){
+        return '<div class="cp-row"><span class="cp-av">' + esc(coInitials(p.name || p.email)) + '</span><div class="cp-grow"><b>' + esc(p.name || p.email) + '</b>' +
+          '<span class="sub2">' + esc([p.role, p.email].filter(Boolean).join(" · ")) + '</span><span class="sub2">' + esc(Object.keys(p.from).join(", ")) + '</span></div>' +
+          (p.email ? '<a class="btn ghost sm" href="mailto:' + esc(p.email) + '">Email</a>' : '') + '</div>';
+      }).join("") : '<div class="empty">No contacts on any record yet.</div>';
+    }
+    /* money */
+    var rows = [];
+    c.apps.forEach(function(a){ if(a.status === "Declined") return; rows.push({when:a.invoiceDate || a.dateSubmitted, what:a.event + " · " + (oppLabel(a) || levelOf(a)), st:a.status, due:+a.amountDue || 0, paid:+a.amountPaid || 0, inv:a.invoiceNumber, kind:"app", id:a.id}); });
+    c.bills.forEach(function(r){ if(r.status === "Cancelled") return; rows.push({when:billWhen(r), what:(r.__kind === "workgroup" ? "Workgroup · " + (r.workgroup || "") : otypeOf(r).name + " · " + BILL.other.titleOf(r)), st:r.status, due:+r.amountDue || 0, paid:+r.amountPaid || 0, inv:r.invoiceNumber, kind:r.__kind, id:r.id}); });
+    rows.sort(function(x, y){ return String(y.when || "").localeCompare(String(x.when || "")); });
+    var tot = rows.reduce(function(n, r){ n.due += r.st === "Waived" || r.st === "In Kind" ? 0 : r.due; n.paid += r.paid; return n; }, {due:0, paid:0});
+    return '<div class="cp-three"><div class="cp-card"><span class="k">Invoiced, All Time</span><span class="cp-mbig">' + esc(money(tot.due)) + '</span></div>' +
+      '<div class="cp-card"><span class="k">Paid, All Time</span><span class="cp-mbig good">' + esc(money(tot.paid)) + '</span></div>' +
+      '<div class="cp-card"><span class="k">Outstanding Now</span><span class="cp-mbig' + (c.money.out ? " warn" : "") + '">' + esc(money(c.money.out)) + '</span></div></div>' +
+      (rows.length ? '<div class="tablewrap"><table class="cp-mtable"><thead><tr><th>Date</th><th>What</th><th>Status</th><th class="r">Amount</th><th class="r">Paid</th><th>Invoice</th></tr></thead><tbody>' +
+        rows.map(function(r){ return '<tr data-fkind="' + esc(r.kind) + '" data-fid="' + esc(r.id) + '" data-direct="1"><td>' + esc(r.when ? fmtDate(r.when) : "—") + '</td><td>' + esc(r.what) + '</td><td><span class="st ' + (r.kind === "app" ? stClass(r.st) : billClass(r.st)) + '">' + esc(r.st) + '</span></td>' +
+          '<td class="r num">' + esc(money(r.due)) + '</td><td class="r num">' + (r.paid ? esc(money(r.paid)) : "—") + '</td><td>' + esc(r.inv || "—") + '</td></tr>'; }).join("") +
+        '</tbody></table></div>' : '<div class="empty">No invoices yet.</div>');
+  }
+  function coSpRow(it){
+    return '<div class="cp-row clickable" data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '" data-direct="1">' +
+      '<span class="cp-dot" style="background:' + TYPE_COLOR[coTypeOf(it.type)] + '"></span>' +
+      '<div class="cp-grow"><b>' + esc(it.what || typeName(it.type)) + '</b><span class="sub2">' + esc(typeName(it.type)) + (it.no ? " · " + esc(it.no) : "") +
+        (it.kind === "lead" ? " · prospective" : "") + '</span></div>' +
+      '<span class="st ' + (it.inKind ? "inkind" : (PIPE_TONE[it.stage] || "")) + '">' + esc(it.inKind ? (it.kind === "app" ? "In Kind" : "Waived") : it.stage) + '</span>' +
+      '<span class="cp-amt">' + (it.amount ? esc(money(it.amount)) : "") + '</span></div>';
+  }
+  /* everything that happened with the company, newest first: emails, notes, changes */
+  function coActivity(c){
+    var out = [];
+    c.touches.forEach(function(t){ out.push({kind: t.type === "Email" ? "email" : "note", date:t.date, at:t.at || t.date, title: t.type === "Email" ? (t.subject || "(no subject)") : "Note",
+      text: t.summary || "", who: t.type === "Email" ? (t.fromName || t.from || "") + (t.by ? " · logged by " + t.by : "") : (t.by || ""), tid: t.type === "Email" ? t.id : "", day:t.date}); });
+    c.leads.forEach(function(l){ (l.history || []).forEach(function(h){ out.push({kind: /^Stage |^Started |^Applied|ended|Merged|Added from/.test(h.text || "") || h.who === "Sponsorship Portal" ? "change" : "note",
+      date:h.at, at:h.at, title: h.who === "Sponsorship Portal" ? "Prospect " + (l.leadNo || "") : "Note on " + (l.leadNo || "the prospect"), text:h.text || "", who:h.who || ""}); }); });
+    var nos = {};
+    c.apps.forEach(function(a){ if(a.appNo) nos[a.appNo] = 1; });
+    c.bills.forEach(function(r){ if(r.no) nos[r.no] = 1; });
+    c.leads.forEach(function(l){ if(l.leadNo) nos[l.leadNo] = 1; });
+    (logEntries || []).forEach(function(e){ if(e.appNo && nos[e.appNo]) out.push({kind:"change", date:String(e.at).slice(0, 10), at:e.at, title:e.appNo, text:e.what, who:e.who || ""}); });
+    return out.sort(function(x, y){ return String(y.at || "").localeCompare(String(x.at || "")); });
+  }
+  function actRow(a){
+    var ic = {email:"✉", note:"✎", change:"↻"}[a.kind] || "•";
+    return '<div class="cp-row top"><span class="cp-ic ' + a.kind + '">' + ic + '</span><div class="cp-grow">' +
+      '<div class="cp-arow"><b>' + esc(a.title) + '</b><span class="sub2">' + esc(a.date ? fmtDate(a.date) : "") + '</span></div>' +
+      (a.text ? '<div class="cp-atext">' + esc(a.text) + '</div>' : '') +
+      '<span class="sub2">' + esc(a.who || "") + '</span>' +
+      (a.tid ? ' <button class="linkbtn" type="button" data-readmail="' + esc(a.tid) + '" data-day="' + esc(a.day) + '">Read the whole email</button>' : '') + '</div></div>';
+  }
+  function coNoteForm(){
+    var f = $("cp-noteform"); if(!f) return;
+    f.hidden = false;
+    f.innerHTML = '<div class="cp-card"><div class="fld"><label for="cp-note">Note</label><textarea id="cp-note" rows="3" placeholder="What happened, and with whom"></textarea></div>' +
+      '<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn sm" type="button" data-conotesave="1">Save the Note</button><button class="btn ghost sm" type="button" data-conotecancel="1">Cancel</button></div></div>';
+    setTimeout(function(){ var n = $("cp-note"); if(n) n.focus(); }, 30);
+  }
+  function coSaveNote(){
+    var txt0 = ($("cp-note").value || "").trim(); if(!txt0 || !db || !canWrite || !coOpen) return;
+    var c = coOf(coOpen); if(!c) return;
+    var tid = "tp-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    var doc = {co:c.key, coName:c.name, date:iso(today()), type:"Note", summary:txt0.slice(0, 2000), by:whoAmI(), at:new Date().toISOString(), via:"note"};
+    touches.push(Object.assign({id:tid}, doc));
+    db.doc("touchpoints/" + tid).set(doc);
+    addLog("", "note on " + c.name + ": " + txt0.slice(0, 120), whoAmI());
+    toast("Saved on " + c.name + ".", "", "Note Logged");
+    coTab = "activity"; paintCompany(); renderCompanies(); renderFlow();
+  }
+  function coNewProspect(){
+    var c = coOf(coOpen); if(!c) return;
+    var p = c.contact || {};
+    closeCompany();
+    $("new-lead").click();
+    setTimeout(function(){
+      setLeadField("company", c.name);
+      if(p.name) setLeadField("contactName", p.name);
+      if(p.email) setLeadField("contactEmail", p.email);
+      if(c.owner) setLeadField("owner", c.owner);
+      if(c.rel !== "Prospect" && c.rel !== "Lost") setLeadField("engagementType", "Retention");
+    }, 60);
+  }
+  function coSetOwner(key, owner){
+    if(!db || !canWrite) return;
+    coDocs[key] = Object.assign({}, coDocs[key] || {}, {owner:owner, ownerSet:new Date().toISOString(), by:whoAmI()});
+    db.doc("companies/" + key).update({owner:owner, ownerSet:new Date().toISOString(), by:whoAmI()});
+    var c = coOf(key);
+    addLog("", "owner of " + (c ? c.name : key) + " set to " + (owner || "nobody"), whoAmI());
+    paintCompany(); renderCompanies(); renderFlow();
+  }
+
+  /* ---------------- Home ---------------- */
+  function greet(){ var h = new Date().getHours(); return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"; }
+  function ring(pct, color, size){
+    var r = 52, cIrc = 2 * Math.PI * r, on = Math.max(0, Math.min(1, pct)) * cIrc;
+    return '<svg viewBox="0 0 120 120" width="' + (size || 140) + '" height="' + (size || 140) + '" aria-hidden="true"><circle cx="60" cy="60" r="' + r + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/>' +
+      '<circle class="arc" cx="60" cy="60" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + on.toFixed(1) + ' ' + cIrc.toFixed(1) + '" transform="rotate(-90 60 60)"/></svg>';
+  }
+  /* $133,500 as $134K, for tight tiles */
+  function moneyK(n){ n = Number(n) || 0; if(n >= 1e6) return "$" + (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M"; if(n >= 1e4) return "$" + Math.round(n / 1e3) + "K"; return money(n); }
+  function renderCo(){ renderHome(); renderCompanies(); if(coOpen) paintCompany(); }
+  function renderHome(){
+    if(!$("home-hero") || !PIPE_OPEN || !others || !touches) return;
+    var all = FLOW_CACHE = pipeItems(), t = today(), wk = weekStart(0);
+    var open = all.filter(function(it){ return PIPE_OPEN.indexOf(it.stage) >= 0; });
+    var forecast = open.reduce(function(n, it){ return n + it.amount; }, 0);
+    var late = open.filter(function(it){ return it.late; });
+    var week = new Date(t); week.setDate(week.getDate() + 7);
+    var plate = open.filter(function(it){ return it.late || (it.nextDate && parseDate(it.nextDate) <= week); })
+      .sort(function(x, y){ return (x.late ? "0" : "1" + (x.nextDate || "")).localeCompare(y.late ? "0" : "1" + (y.nextDate || "")); });
+    var newP = leads.filter(function(l){ var d = parseDate(l.createdDate); return d && d >= wk && l.id !== leadDraft && !LEAD_CLOSED[l.status]; });
+    var due = plate.filter(function(it){ return !it.late && parseDate(it.nextDate) <= t; });
+    /* the season: the summit sponsorships counted the way the summit board counts them */
+    var yr = scopeYear && scopeYear !== "all" ? scopeYear : (t.getMonth() >= 8 ? t.getFullYear() + 1 : t.getFullYear());
+    var sa = apps.filter(function(a){ return seasonOf(a) === yr && a.id !== draft && a.status !== "Declined" && a.status !== "Written Off"; });
+    var s = {paid:0, pending:0, notInv:0, kind:0, review:0};
+    sa.forEach(function(a){
+      var v = +a.amountDue || 0;
+      if(a.status === "Paid") s.paid += +a.amountPaid || v; else if(a.status === "Pending Payment") s.pending += v;
+      else if(a.status === "Approved") s.notInv += v; else if(a.status === "In Kind") s.kind++; else if(a.status === "Submitted") s.review += v;
+    });
+    var committed = s.paid + s.pending + s.notInv, pct = committed ? s.paid / committed : 0;
+    var nextSm = Object.keys(SUMMITS).filter(function(k){ var o = parseDate(SUMMITS[k].opens); return o && o >= t && !/Series/.test(k); })
+      .sort(function(x, y){ return SUMMITS[x].opens.localeCompare(SUMMITS[y].opens); })[0];
+    var smDays = nextSm ? daysBetween(t, parseDate(SUMMITS[nextSm].opens)) : null;
+    var me = String(whoAmI()).split(" ")[0];
+
+    $("home-hero").innerHTML = '<div class="hm-hi"><div class="hm-eyebrow">' + esc(new Date().toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"})) + '</div>' +
+      '<h1>' + esc(greet()) + (me && me !== "MISMO" ? ", " + esc(me) : "") + '</h1>' +
+      '<p>The ' + yr + ' season is <a class="hm-em" data-go="money">' + Math.round(pct * 100) + '% collected</a>: ' + esc(money(s.paid)) + ' paid of ' + esc(money(committed)) + ' committed. ' +
+      '<a class="hm-em" data-go="flow">' + open.length + ' open ' + (open.length === 1 ? "opportunity" : "opportunities") + '</a> worth ' + esc(money(forecast)) +
+      (late.length ? ', <a class="hm-em late" data-go="flow">' + late.length + ' past due</a>' : '') +
+      (due.length ? ', <a class="hm-em late" data-go="flow">' + due.length + ' follow-up' + (due.length === 1 ? "" : "s") + ' due</a>' : '') +
+      (newP.length ? ', and <a class="hm-em" data-go="companies">' + newP.length + ' new prospect' + (newP.length === 1 ? "" : "s") + ' this week</a>' : '') + '.' +
+      (nextSm ? ' ' + esc((SUMMITS[nextSm].label || nextSm).replace(/ Summit$/, "")) + ' opens in ' + smDays + ' days.' : '') + '</p></div>' +
+      '<div class="hm-needs"><div class="hm-nh">On Your Plate <span>next 7 days</span></div>' +
+      (plate.length ? plate.slice(0, 5).map(function(it){
+        return '<button type="button" class="hm-need' + (it.late || (it.nextDate && parseDate(it.nextDate) < t) ? " late" : "") + '" data-co="' + esc(companyKey(it.company)) + '">' +
+          '<span class="d">' + esc(it.late ? "Past due" : fmtDate(it.nextDate).replace(/, \d{4}$/, "")) + '</span><span class="t"><b>' + esc(it.company) + '</b><span>' + esc(it.nextText || it.stage) + '</span></span>' +
+          '<span class="w">' + esc((it.owner || "").split(" ")[0]) + '</span></button>';
+      }).join("") : '<div class="hm-clear">Nothing due in the next week.</div>') +
+      '<a class="hm-all" data-go="flow">Open the Pipeline →</a></div>';
+
+    /* tiles */
+    var stageN = PIPE_OPEN.map(function(sg){ return [sg, open.filter(function(it){ return it.stage === sg; }).length]; });
+    var maxN = Math.max.apply(null, stageN.map(function(x){ return x[1]; }).concat([1]));
+    var byType = {summit:0, workgroup:0, other:0};
+    all.forEach(function(it){ if(it.kind !== "lead" && (it.stage === "Paid" || PIPE_OPEN.indexOf(it.stage) >= 0) && within(it.created || iso(t), 365)) byType[coTypeOf(it.type)] += it.amount; });
+    var typeTot = byType.summit + byType.workgroup + byType.other || 1;
+    var mailWeek = 0, mailNeed = 0;
+    Object.keys(mailDocs).forEach(function(id){ var d = mailDocs[id]; if(!d) return; if(d.st === "need") mailNeed++; if(d.st === "logged" && d.doneAt && new Date(d.doneAt) >= wk) mailWeek++; });
+    var map = companies(), cos = Object.keys(map).map(function(k){ return map[k]; });
+    var nSp = cos.filter(function(c){ return c.rel === "Sponsor"; }).length, nPr = cos.filter(function(c){ return c.rel === "Prospect"; }).length;
+    var benOpen = 0;
+    if(nextSm) apps.forEach(function(a){ benefitsOf(a).forEach(function(b){ if(b.summit === nextSm && !b.done) benOpen++; }); });
+    var acts = (logEntries || []).slice(0, 8);
+    $("home-grid").innerHTML =
+      '<button type="button" class="hm-tile w2 h2" data-go="money" style="--k:#5fd39a"><div class="hm-top"><span class="hm-lab">' + yr + ' Summit Season</span><span class="hm-pill">' + sa.length + ' sponsorships</span></div>' +
+        '<div class="hm-ringrow"><div class="hm-ring">' + ring(pct, "#5fd39a", 150) + '<div class="hm-ringmid"><b>' + Math.round(pct * 100) + '%</b><span>collected</span></div></div>' +
+        '<div class="hm-legend">' +
+          '<div class="hm-li"><i style="background:#5fd39a"></i><span>Paid</span><b>' + esc(money(s.paid)) + '</b></div>' +
+          '<div class="hm-li"><i style="background:#e8b04a"></i><span>Invoiced, Awaiting Payment</span><b>' + esc(money(s.pending)) + '</b></div>' +
+          '<div class="hm-li"><i style="background:#74bfeb"></i><span>Approved, Not Invoiced</span><b>' + esc(money(s.notInv)) + '</b></div>' +
+          '<div class="hm-li"><i style="background:rgba(255,255,255,.25)"></i><span>Waiting for Review</span><b>' + esc(money(s.review)) + '</b></div>' +
+          (s.kind ? '<div class="hm-li"><i style="background:#b79cff"></i><span>In Kind</span><b>' + s.kind + '</b></div>' : '') +
+        '</div></div></button>' +
+      '<button type="button" class="hm-tile w2 h2" data-go="flow" style="--k:#e8b04a"><div class="hm-top"><span class="hm-lab">Sales Pipeline</span><span class="hm-pill">+' + newP.length + ' this week</span></div>' +
+        '<div class="hm-bars">' + stageN.map(function(x){
+          return '<div class="hm-bar"><span>' + esc(x[0]) + '</span><span class="tr"><i style="width:' + Math.round(x[1] / maxN * 100) + '%"></i></span><b>' + x[1] + '</b></div>'; }).join("") + '</div>' +
+        '<div class="hm-sub"><b>' + open.length + '</b> open · <b>' + esc(money(forecast)) + '</b> in play</div></button>' +
+      '<button type="button" class="hm-tile" data-go="companies" style="--k:#74bfeb"><div class="hm-top"><span class="hm-lab">Sponsors</span></div><div class="hm-big">' + nSp + ' <small>sponsoring now</small></div>' +
+        '<div class="hm-sub"><b>' + nPr + '</b> prospects being worked</div></button>' +
+      '<button type="button" class="hm-tile" data-go="benefits" style="--k:#b79cff"><div class="hm-top"><span class="hm-lab">Next Summit</span></div>' +
+        (nextSm ? '<div class="hm-big">' + smDays + ' <small>days</small></div><div class="hm-sub">' + esc(SUMMITS[nextSm].label) + ' · <b>' + benOpen + '</b> benefits still to do</div>'
+                : '<div class="hm-big">—</div>') + '</button>' +
+      '<button type="button" class="hm-tile" data-go="flow" style="--k:#ff8f7d"><div class="hm-top"><span class="hm-lab">mismosponsor@</span>' + (mailNeed ? '<span class="hm-pill hot">' + mailNeed + ' to pick</span>' : '') + '</div>' +
+        '<div class="hm-big">' + mailWeek + ' <small>logged this week</small></div><div class="hm-sub">Forward, Cc or Bcc mismosponsor@mismo.org</div></button>' +
+      '<button type="button" class="hm-tile" data-go="companies" style="--k:#5fd39a"><div class="hm-top"><span class="hm-lab">By Type</span><span class="hm-pill">12 months</span></div>' +
+        '<div class="hm-stack">' + ["summit","workgroup","other"].map(function(k){ return '<i style="width:' + (byType[k] / typeTot * 100).toFixed(1) + '%;background:' + TYPE_COLOR[k] + '"></i>'; }).join("") + '</div>' +
+        '<div class="hm-trio">' + [["summit","Summit"],["workgroup","Workgroup"],["other","Other"]].map(function(k){
+          return '<div class="hm-tc" style="--c:' + TYPE_COLOR[k[0]] + '"><b>' + esc(moneyK(byType[k[0]])) + '</b><span>' + k[1] + '</span></div>'; }).join("") + '</div></button>' +
+      '<div class="hm-tile w4 still" style="--k:#74bfeb"><div class="hm-top"><span class="hm-lab">Team Activity</span></div><div class="hm-acts">' +
+        (acts.length ? acts.map(function(e){
+          return '<div class="hm-act"><i>' + esc(coInitials(e.who || "MISMO")) + '</i><span><b>' + esc(e.who || "") + '</b> ' + esc(e.what || "") + (e.appNo ? ' <span class="m">' + esc(e.appNo) + '</span>' : '') + '</span>' +
+            '<span class="m">' + esc(fmtDate(String(e.at).slice(0, 10)).replace(/, \d{4}$/, "")) + '</span></div>';
+        }).join("") : '<div class="hm-sub">Nothing yet.</div>') + '</div></div>';
+  }
+
+  /* ---------------- wiring ---------------- */
+  document.addEventListener("click", function(ev){
+    var el = ev.target; if(!el || !el.closest) return;
+    var b;
+    if((b = el.closest("[data-go]"))){ ev.preventDefault(); showView(b.getAttribute("data-go")); window.scrollTo(0, 0); return; }
+    if((b = el.closest("[data-corel]"))){ var r = b.getAttribute("data-corel"); coState.rel = coState.rel === r ? "" : r; renderCompanies(); return; }
+    if((b = el.closest("[data-cotab]"))){ coTab = b.getAttribute("data-cotab"); paintCompany(); return; }
+    if((b = el.closest("[data-actf]"))){ actFilter = b.getAttribute("data-actf"); paintCompany(); return; }
+    if((b = el.closest("[data-costep]"))){
+      var l = findById(leads, b.getAttribute("data-costep")), st = b.getAttribute("data-stage");
+      if(l && l.status !== st){
+        var after = JSON.parse(JSON.stringify(l)), was = l.status || "Lead"; after.status = st;
+        after.history = (after.history || []).concat([{at:iso(today()), who:whoAmI(), text:"Stage " + was + " → " + st + "."}]);
+        saveLead(after); addLog(after.leadNo, "stage " + was + " → " + st + " (prospect)", whoAmI());
+        toast(was + " → " + st, "", "Saved — " + (after.company || after.leadNo));
+        paintCompany(); renderCompanies(); renderFlow();
+      }
+      return;
+    }
+    if(el.closest("[data-conote]")){ coNoteForm(); return; }
+    if(el.closest("[data-conotecancel]")){ $("cp-noteform").hidden = true; return; }
+    if(el.closest("[data-conotesave]")){ coSaveNote(); return; }
+    if(el.closest("[data-coprospect]")){ coNewProspect(); return; }
+    if(el.closest("#co-close") || el.closest("#co-scrim")){ closeCompany(); return; }
+    if(el.closest("#co-new-lead")){ $("new-lead").click(); return; }
+    if((b = el.closest("[data-co]")) && !el.closest("select, a")){ openCompany(b.getAttribute("data-co")); return; }
+  }, true);
+  document.addEventListener("change", function(ev){
+    var el = ev.target; if(!el) return;
+    if(el.id === "co-owner"){ coState.owner = el.value; renderCompanies(); }
+    if(el.id === "co-type"){ coState.type = el.value; renderCompanies(); }
+    if(el.getAttribute && el.getAttribute("data-coowner")) coSetOwner(el.getAttribute("data-coowner"), el.value);
+  });
+  document.addEventListener("input", function(ev){ if(ev.target && ev.target.id === "co-q"){ coState.q = ev.target.value; renderCompanies(); } });
+
   showView(currentView);
   function startRelay(){
     RS.requireAccess(RELAY_PROJECT, {toolName: TOOL_NAME, eyebrow: "Programs & Operations"}).then(beginRelay, function(e){
@@ -9543,7 +10322,7 @@ a series deal is counted once, at its full amount.</div>
           keep.forEach(function(r){ if(!fresh.some(function(x){ return x.id === r.id; })) fresh.push(r); });
           billSet(kind, fresh);
           if(kind === "other"){ othersSeen = true; moveWebinars(); } else wgsSeen = true;
-          renderBilling(); renderFlow();
+          renderBilling(); renderFlow(); renderCo();
         }catch(err){ loadFailed("reading the " + cname, err && err.message); }
       }, function(e){
         /* a store that has never been written yet is simply empty, not a failure */
@@ -9569,8 +10348,13 @@ a series deal is counted once, at its full amount.</div>
       snap.docs.forEach(function(doc){ mailDocs[doc.id] = doc.data() || {}; });
       mailSeen = true; mailRun(); renderFlow();
     }, function(e){ mailSeen = true; });
+    /* company-level fields (the owner), November 18, 2026 */
+    d.collection("companies").onSnapshot(function(snap){
+      coDocs = {}; snap.docs.forEach(function(doc){ coDocs[doc.id] = doc.data() || {}; }); coSeen = true;
+      renderCompanies(); if(coOpen) paintCompany();
+    }, function(){ coSeen = true; });
     d.collection("touchpoints").onSnapshot(function(snap){
-      touches = copyDocs(snap); touchSeen = true; mailRun(); renderFlow();
+      touches = copyDocs(snap); touchSeen = true; mailRun(); renderFlow(); renderCo();
     }, function(e){ touchSeen = true; });
     d.collection("outbox").onSnapshot(function(snap){
       try{ outbox = copyDocs(snap); outboxLoaded = true; renderAll(); paintMoneyBanner();

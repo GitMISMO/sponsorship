@@ -38,6 +38,52 @@ reads the list through the Availability flow and compares it with the records. A
 has wrong or missing is sent to it again (at most once a day each), and a sold slot the list holds
 that no record accounts for is shown on Inventory to be cleared in SharePoint.
 
+## The Pipeline (November 18, 2026)
+
+One list of every sponsorship, from first contact to paid, the way Member 360 works its prospects:
+summit sponsorships, workgroup sponsorships and every Other Sponsorship type, prospects included.
+Nothing is stored twice; each row is read from the record it lives in and shown on one scale
+(`PIPE_STAGES`): Lead, Contacted, Meeting Scheduled, Proposal, Verbal Commitment (a prospect's
+stages, in `leads.json`), then Application In, Approved, Pending Payment and Paid (the summit
+application, workgroup or other sponsorship's own status, through `APP_TO_PIPE` and `BILL_TO_PIPE`),
+plus Hold and Lost. Older prospect stage names are read as the new ones (`LEAD_LEGACY`).
+
+A prospect has a type (`stype`: summit, workgroup or an Other type key), and a workgroup prospect
+names its group. **Start the Sponsorship** on a workgroup or other prospect opens the new record
+filled in (`fromLead`); saving it marks the prospect Converted to Sponsorship (`linkedBillNo`).
+The old Prospects tab is folded into the Pipeline (its view and code are still there, with no tab).
+The summit board is the **Summit Sponsorships** tab.
+
+## Other Sponsorships and types
+
+Any sponsorship that isn't a summit or a workgroup is an Other Sponsorship (`data/others.json`),
+with its type on each record (`otype`). Types are `OTHER_TYPES_BASE` (the AI Webinar Series, split
+50/50 with MBA) plus the ones added with **New Sponsorship Type**, kept in `data/settings.json`
+(`settings/main.otherTypes`): name, what each one is called, MISMO's share, and for a partner
+series who gets the past-due notice. The AI webinar records were copied into `others.json` under the
+same ids and numbers the first time an editor opened the portal; `data/webinars.json` is kept as it
+was.
+
+## The mismosponsor@ mailbox
+
+Forward, Cc or Bcc an email to mismosponsor@mismo.org and it is logged on the sponsor or prospect it
+is about, the way 360@ works for Member 360. The Power Automate flow **Sponsorship - mismosponsor
+Mailbox** (Jonna's account) adds each email to `data/mailin.json` as `{docs:{<id>:{from, to, cc,
+subject, received, html, mid, at, src}}}`. Any screen that can save (and the robot, hourly) takes
+each new one (`db.claim`, so two screens never take the same email), finds the company by a known
+contact email, then by email domain, and:
+
+- one company: writes the email to `data/touchpoints.json` (`co` = `companyKey`, subject, from,
+  a short summary, who forwarded it) and its whole text to `data/mailtext-YYYY-MM.json`
+- several: marks it `need`, listed on the Pipeline under Emails to mismosponsor@ to pick one
+- none, and a real company address: makes a prospect (`source: "Email to mismosponsor@"`), logs
+  the email there, and lists it with Looks Right
+
+The email's HTML is blanked once it is read, and a logged entry is trimmed from `mailin.json` after
+60 days (its email stays on the timeline), so the file stays small. A first line `sponsor: Name` or
+`[sponsor: Name]` in the subject picks the company. Free mail, automated senders and tools never
+make a prospect. Every record's panel shows its company's Emails.
+
 ## Sponsor benefits
 
 Every sponsor that is Approved, Pending Payment, Paid, In Kind or Written Off gets a checklist

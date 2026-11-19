@@ -938,6 +938,54 @@
     :root:not([data-theme="light"]) .seg button[aria-pressed="true"]{background:var(--sky); color:var(--navy-deep);}
   }
 
+  /* ---- the one Pipeline (November 18, 2026) ---- */
+  .funnel{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px 14px; margin-top:16px;}
+  @media (max-width:820px){ .funnel{grid-template-columns:1fr 1fr;} }
+  .fstage{display:flex; flex-direction:column; gap:5px; text-align:left; background:rgba(255,255,255,.06);
+    border:1px solid rgba(116,191,235,.28); border-radius:6px; padding:9px 11px; color:#fff; font:inherit; cursor:pointer;}
+  .fstage:hover{background:rgba(255,255,255,.12);}
+  .fstage.on{background:rgba(80,164,219,.32); border-color:var(--sky);}
+  .fsn{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:rgba(255,255,255,.78);}
+  .fsbar{height:6px; background:rgba(255,255,255,.12); border-radius:2px; overflow:hidden;}
+  .fsbar i{display:block; height:100%; background:var(--sky); min-width:2px;}
+  .fsv{font-size:12.5px; color:rgba(255,255,255,.86);} .fsv b{font-size:16px; color:#fff;}
+  .flowside{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin:16px 0; align-items:start;}
+  @media (max-width:1100px){ .flowside{grid-template-columns:1fr 1fr;} }
+  @media (max-width:760px){ .flowside{grid-template-columns:1fr;} }
+  .flowtable td:first-child{min-width:150px;} .flowtable td:nth-child(3){min-width:190px;}
+  .flowbox{padding:14px 16px; margin:0;}
+  .fbhead{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;}
+  .fbhead h3{margin:0; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-2);}
+  .fbhead .seg button{padding:4px 10px; font-size:11.5px;}
+  .fbcount{font-size:12px; color:var(--ink-3);}
+  .fbrow{display:flex; gap:12px; align-items:baseline; padding:7px 0; border-top:1px solid var(--border); cursor:pointer;}
+  .fbrow:first-child{border-top:0;} .fbrow:hover b{text-decoration:underline;}
+  .fbdate{font-size:12px; color:var(--ink-3); white-space:nowrap; min-width:84px;} .fbdate.bad{color:var(--bad); font-weight:600;}
+  .fbmain{min-width:0;} .fbmain .sub2{white-space:normal;}
+  .fbempty{font-size:12.5px; color:var(--ink-3); line-height:1.5; padding:4px 0;}
+  .fbmore{font-size:12px; color:var(--ink-3); padding-top:6px;}
+  .mailrow{display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 12px; padding:8px 0; border-top:1px solid var(--border);}
+  .mailrow:first-child{border-top:0;}
+  .mailbtns{display:flex; flex-wrap:wrap; gap:6px; align-items:center;}
+  .mailany{font:inherit; font-size:12px; padding:4px 6px; border:1px solid var(--border-strong); border-radius:4px; background:var(--surface); color:var(--ink); max-width:190px;}
+  .flowfilters{flex-wrap:wrap;}
+  .segn{font-weight:500; opacity:.7; margin-left:2px;}
+  .tag.ftype{background:var(--chip); color:var(--ink-2);}
+  .fstsel{font:inherit; font-size:11.5px; font-weight:600; border:0; border-radius:3px; padding:2px 4px; cursor:pointer;}
+  .flowtable tbody tr{cursor:pointer;}
+  .flowtable td .bad, .flowtable .sub2.bad{color:var(--bad);}
+  .tprow{padding:9px 0; border-top:1px solid var(--border);} .tprow:first-of-type{border-top:0;}
+  .tphead{font-size:13px;} .tphead .lt{color:var(--ink-3); font-size:12px; margin-right:6px;}
+  .tpsum{font-size:12.5px; color:var(--ink-2); white-space:pre-wrap; margin:6px 0; max-height:7.5em; overflow:hidden;}
+  .maildlg{border:1px solid var(--border-strong); border-radius:8px; padding:16px 18px; max-width:760px; width:92vw;
+    background:var(--surface); color:var(--ink);}
+  .maildlg::backdrop{background:var(--overlay);}
+  .mdh{display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:4px;}
+  .mdtext{white-space:pre-wrap; font:inherit; font-size:13px; line-height:1.5; max-height:60vh; overflow:auto;
+    border:1px solid var(--border); border-radius:5px; padding:10px 12px; margin-top:10px; background:var(--surface-2);}
+  .otypeform{border:1px solid var(--border); border-radius:7px; padding:14px 16px; margin:0 0 14px; background:var(--surface-2);}
+  .otypeform h4{margin:0 0 10px; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-2);}
+
   .lgd{display:flex; flex-wrap:wrap; gap:6px 16px; margin:12px 0 16px;
     font-size:12.5px; color:var(--ink-2);}
   .lgd span{display:inline-flex; align-items:center; gap:6px;}
@@ -1134,10 +1182,12 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
   </div>
   <nav class="tabband" id="tabband" aria-label="Sections">
     <div class="navgrp">Work</div>
-    <button class="tab on" data-view="pipeline" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pipe"/></svg><span class="tlbl">Pipeline</span><span class="pip quiet" id="pip-pipe">0</span></button>
-    <button class="tab" data-view="leads" type="button" title="Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Prospects</span></button>
+    <!-- One pipeline, every kind of sponsorship, lead to paid (Jonna, November 18, 2026). The
+         Prospects tab is folded into it; the summit board keeps its own tab. -->
+    <button class="tab on" data-view="flow" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Pipeline</span><span class="pip quiet" id="pip-flow">0</span></button>
+    <button class="tab" data-view="pipeline" type="button" title="Summit Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pipe"/></svg><span class="tlbl">Summit Sponsorships</span><span class="pip quiet" id="pip-pipe">0</span></button>
     <button class="tab" data-view="workgroup" type="button" title="Workgroup Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-apps"/></svg><span class="tlbl">Workgroups</span><span class="pip quiet" id="pip-workgroup">0</span></button>
-    <button class="tab" data-view="webinar" type="button" title="AI Webinar Series"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">AI Webinars</span><span class="pip quiet" id="pip-webinar">0</span></button>
+    <button class="tab" data-view="other" type="button" title="Other Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Other Sponsorships</span><span class="pip quiet" id="pip-other">0</span></button>
     <button class="tab" data-view="benefits" type="button" title="Sponsor Benefits"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Benefits</span><span class="pip quiet" id="pip-benefits">0</span></button>
     <div class="navgrp">Records</div>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
@@ -1182,7 +1232,47 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="stats" id="stats"></div>
   </div>
 
-  <!-- ================= PROSPECTS ================= -->
+  <!-- ================= PIPELINE: every sponsorship, lead to paid (November 18, 2026) ================= -->
+  <section class="view on" id="view-flow">
+    <div class="headline">
+      <div class="hl-top"><div class="hl-date" id="flow-date"></div></div>
+      <div class="hl-say" id="flow-say"></div>
+      <div class="funnel" id="flow-funnel" role="group" aria-label="Open stages"></div>
+    </div>
+    <div class="flowside">
+      <div class="panel flowbox" id="flow-newbox">
+        <div class="fbhead"><h3>New Prospects</h3><span class="seg" id="flow-newseg" role="group" aria-label="Which week">
+          <button type="button" data-nweek="0" aria-pressed="true">This Week</button><button type="button" data-nweek="1" aria-pressed="false">Last Week</button></span></div>
+        <div id="flow-new"></div>
+      </div>
+      <div class="panel flowbox" id="flow-duebox">
+        <div class="fbhead"><h3>Due Now</h3><span class="fbcount" id="flow-duecount"></span></div>
+        <div id="flow-due"></div>
+      </div>
+      <div class="panel flowbox" id="flow-mailbox">
+        <div class="fbhead"><h3>Emails to mismosponsor@</h3><span class="fbcount" id="flow-mailcount"></span></div>
+        <div id="flow-mail"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="filters flowfilters">
+        <span class="seg" id="flow-types" role="group" aria-label="Type of sponsorship"></span>
+        <span class="seg" id="flow-groups" role="group" aria-label="Which stages"></span>
+        <select id="flow-owner" aria-label="Owner"></select>
+        <input type="search" id="flow-q" placeholder="Company, contact, group or opportunity">
+        <button class="btn sm" id="flow-new-lead" type="button" title="Opens a blank prospect">New Prospect</button>
+      </div>
+      <div class="tablewrap">
+        <table class="flowtable">
+          <thead><tr><th>Company</th><th>Type</th><th>What</th><th>Stage</th><th>Owner</th>
+            <th class="r">Amount</th><th>Next</th><th>Last Touch</th></tr></thead>
+          <tbody id="flow-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROSPECTS (folded into the Pipeline, November 18, 2026; no tab) ================= -->
   <section class="view" id="view-leads">
     <div class="headline">
       <div class="hl-top">
@@ -1209,10 +1299,9 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
       <div class="filters">
         <select id="f-lead-status">
           <option value="">All Statuses</option>
-          <option>New Lead</option><option>Contacted</option><option>Meeting Scheduled</option>
-          <option>Pitching to Management</option><option>Verbal Commitment</option><option>Follow Up</option>
-          <option>Not Now — Follow Up</option><option>Invoiced</option><option>Paid</option>
-          <option>Converted to Application</option><option>Lost</option>
+          <option>Lead</option><option>Contacted</option><option>Meeting Scheduled</option>
+          <option>Proposal</option><option>Verbal Commitment</option><option>Hold</option>
+          <option>Converted to Application</option><option>Converted to Sponsorship</option><option>Lost</option>
         </select>
         <select id="f-lead-type" aria-label="Acquisition or Retention">
           <option value="">Acquisition &amp; Retention</option>
@@ -1265,35 +1354,38 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     </div>
   </section>
 
-  <!-- ================= AI WEBINAR SERIES ================= -->
-  <section class="view" id="view-webinar">
+  <!-- ================= OTHER SPONSORSHIPS (November 18, 2026) =================
+       One-off and partner sponsorships of any type set up here, the AI Webinar Series first. -->
+  <section class="view" id="view-other">
     <div class="headline">
-      <div class="hl-top"><div class="hl-date" id="bill-date-webinar"></div></div>
-      <div class="hl-say" id="bill-say-webinar"></div>
-      <div class="stats" id="bill-stats-webinar"></div>
+      <div class="hl-top"><div class="hl-date" id="bill-date-other"></div></div>
+      <div class="hl-say" id="bill-say-other"></div>
+      <div class="stats" id="bill-stats-other"></div>
     </div>
     <div class="panel">
       <div class="filters">
-        <select id="f-bill-status-webinar" aria-label="Status">
+        <select id="f-bill-type-other" aria-label="Type"></select>
+        <select id="f-bill-status-other" aria-label="Status">
           <option value="">All Statuses</option>
           <option>Draft</option><option>Pending Payment</option><option>Paid</option>
           <option>Cancelled</option><option>Waived</option>
         </select>
-        <input type="search" id="f-bill-search-webinar" placeholder="Company, contact, webinar or order ID">
-        
-        <button class="btn sm" data-newbill="webinar" type="button" title="Opens a blank record">New Webinar Sponsorship</button>
+        <input type="search" id="f-bill-search-other" placeholder="Company, contact, what or order ID">
+        <button class="btn ghost sm" id="new-otype" type="button" title="Adds a kind of sponsorship to this list">New Sponsorship Type</button>
+        <button class="btn sm" data-newbill="other" type="button" title="Opens a blank record">New Sponsorship</button>
       </div>
+      <div id="otype-form" class="otypeform" hidden></div>
       <div class="tablewrap">
         <table>
-          <thead><tr><th>No.</th><th>Company</th><th>Webinar</th><th>Status</th><th class="r">Invoiced</th><th class="r">MISMO Half</th><th class="r">Paid</th><th>Invoice</th></tr></thead>
-          <tbody id="bill-body-webinar"></tbody>
+          <thead><tr><th>No.</th><th>Company</th><th>Type</th><th>What</th><th>Status</th><th class="r">Invoiced</th><th class="r">MISMO Keeps</th><th class="r">Paid</th><th>Invoice</th></tr></thead>
+          <tbody id="bill-body-other"></tbody>
         </table>
       </div>
     </div>
   </section>
 
   <!-- ================= PIPELINE ================= -->
-  <section class="view on" id="view-pipeline">
+  <section class="view" id="view-pipeline">
     <div class="cards pipe" id="pipe"></div>
 
     <h3 class="subhead" id="apps-head">Every Application</h3>
@@ -1542,26 +1634,44 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
       </details>
 
       <details class="hsec">
-        <summary>The AI Webinar Series with MBA</summary>
+        <summary>The Pipeline: Every Sponsorship, Lead to Paid</summary>
         <div class="hbody">
           <ul>
-            <li>The joint MISMO and MBA series. <b>MISMO raises the invoice and the revenue is split in half.</b> Every figure shows what was invoiced and what MISMO keeps.</li>
-            <li>Terms are <b>net 30</b>. The due date is taken from the record, or counted 30 days from the invoice date when there isn&rsquo;t one.</li>
-            <li>An invoice past its due date is flagged on the row and in the figures, and the rail carries the count.</li>
-            <li><b>The past-due notice to MBA&rsquo;s team is drafted, never sent.</b> It names the sponsor, the webinar, the invoice, the due date, how many days over and the split. Read it, add the recipient, then press <b>Send</b>. It refuses to send without a recipient.</li>
-            <li>Payment arrives from MISMO Money the same way it does everywhere else in this portal &mdash; matched on the Aptify order ID. A webinar sponsorship marked Paid raises no sponsor email; only summit sponsorships do that.</li>
+            <li><b>One list for everything:</b> summit sponsorships, workgroup sponsorships and every Other Sponsorship type, prospects included. Each row shows its <b>Type</b>, what it is, its <b>Stage</b>, owner, amount, the next step and the last time anyone was in touch.</li>
+            <li><b>The stages:</b> Lead, Contacted, Meeting Scheduled, Proposal, Verbal Commitment, Application In, Approved, Pending Payment and Paid, plus Hold and Lost. A prospect moves through the first five; you change its stage right in its row. From Application In on, the sponsorship record carries the stage itself (a summit application, a workgroup or an other sponsorship), so it moves when that record does.</li>
+            <li>The band at the top counts every open stage and its money; select one to see only that stage. The buttons above the list narrow it by type and by Open, Won, Hold or Lost. Won and Lost keep a year of history.</li>
+            <li><b>New Prospects</b> lists who was added this week or last. <b>Due Now</b> lists follow-ups that have come due and invoices past due.</li>
+            <li><b>A prospect for any kind of sponsorship:</b> set its <b>Type of Sponsorship</b> (Summit, Workgroup or an Other type). A workgroup prospect names the MISMO group. When a workgroup or other prospect says yes, <b>Start the Sponsorship</b> on it opens the new record already filled in; save it and the prospect is marked Converted to Sponsorship. A summit prospect converts when its application comes in.</li>
+            <li>Give every prospect a <b>Next Follow-Up</b> date; it shows under Due Now when that day comes.</li>
+            <li>A prospect who applies comes off the list while the sponsorship runs. The day after it ends, it comes back as a Lead to renew, with every note kept. Every sponsor gets a prospect record this way, so past sponsors show up to renew. <b>Delete Prospect</b> removes one for good, and the portal won&rsquo;t add it back on its own.</li>
+            <li>An <b>In Kind</b> sponsor comes back the same way, with a note saying they were recognized at no charge and are worth approaching for a paid sponsorship. They count as Retention, like any other returning sponsor.</li>
+            <li>The <b>Summit Sponsorships</b> tab is the summit board it always was: the stages, what each application is waiting on, and every application.</li>
           </ul>
         </div>
       </details>
 
       <details class="hsec">
-        <summary>Prospects</summary>
+        <summary>Logging Emails: mismosponsor@mismo.org</summary>
         <div class="hbody">
           <ul>
-            <li>Everyone the Strategic Growth Team is cultivating. Give each one a <b>Next Follow-Up</b> date, and it turns up under <b>Needs Follow-Up</b> when that day comes.</li>
-            <li>A prospect who applies comes off the list while the sponsorship runs (see <b>Sponsoring Now</b>). The day after it ends, it comes back ready to renew, with every note kept.</li>
-            <li>Every sponsor gets a prospect record, so past sponsors show up to renew. <b>Delete Prospect</b> removes one for good, and the portal won&rsquo;t add it back on its own.</li>
-            <li>An <b>In Kind</b> sponsor comes back the same way, with a note saying they were recognized at no charge and are worth approaching for a paid sponsorship. They are counted as Retention, like any other returning sponsor.</li>
+            <li>Forward an email to <b>mismosponsor@mismo.org</b>, or Cc or Bcc it on an email to a sponsor, and it lands on that sponsor or prospect&rsquo;s record under <b>Emails</b>, the same way 360@ works for Member 360.</li>
+            <li>The portal finds the company from the outside address in the email (for a forward, the person in the forwarded email): first by a contact email it already has, then by the company&rsquo;s email domain.</li>
+            <li>If several companies share the address, it waits on the Pipeline under <b>Emails to mismosponsor@</b> for someone to pick the right one, or mark it <b>Not Needed</b>.</li>
+            <li>If no company matches and it&rsquo;s a real company address, a <b>new prospect</b> is made from it and the email is logged there. It&rsquo;s listed with <b>Looks Right</b> so someone can check it. Free email (Gmail and the like), automated senders and tools never make a prospect.</li>
+            <li>To choose the company yourself, put <b>sponsor: Company Name</b> as the first line when you forward, or <b>[sponsor: Company Name]</b> in the subject.</li>
+            <li>Emails are logged by whoever has the portal open, and every hour by the robot, so nothing waits long. Nothing is ever sent from the mailbox.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>Other Sponsorships and Sponsorship Types</summary>
+        <div class="hbody">
+          <ul>
+            <li>Any sponsorship that isn&rsquo;t a summit or a workgroup is an <b>Other Sponsorship</b>, kept by type. The <b>AI Webinar Series</b> with MBA is the first type; its records moved here from the old AI Webinars tab unchanged.</li>
+            <li><b>New Sponsorship Type</b> adds a type: its name, what each one is called, what share MISMO keeps, and for a partner series who gets the past-due notice. One-offs are tracked here under their type.</li>
+            <li>A type shared with a partner (the AI Webinar Series is split in half with MBA) shows what MISMO keeps in every figure, and drafts a <b>past-due notice to the partner</b> once an invoice is over net 30. Any other type drafts the <b>invoice email to the sponsor</b>. Nothing is sent until you read it and press <b>Send</b>.</li>
+            <li>Payment arrives from MISMO Money the same way it does everywhere else in this portal &mdash; matched on the Aptify order ID.</li>
           </ul>
         </div>
       </details>
@@ -1587,7 +1697,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div class="hbody">
           <ul>
             <li><b>This portal&rsquo;s page:</b> GitHub, GitMISMO/sponsorship.</li>
-            <li><b>Its records:</b> GitHub, GitMISMO/sponsorship-data (private). That&rsquo;s applications, prospects, workgroup sponsorships, webinar sponsorships, the email requests and the payments file MISMO Money writes, which the portal only reads.</li>
+            <li><b>Its records:</b> GitHub, GitMISMO/sponsorship-data (private). That&rsquo;s applications, prospects, workgroup sponsorships, other sponsorships and their types (settings), the emails logged from mismosponsor@ (mailin, touchpoints and the monthly mailtext files), the email requests and the payments file MISMO Money writes, which the portal only reads. The old AI webinar file (webinars) is kept as it was.</li>
+            <li><b>The mismosponsor@ mailbox:</b> the Power Automate flow <b>Sponsorship - mismosponsor Mailbox</b> on Jonna&rsquo;s account adds each email to the mailin file.</li>
             <li><b>The prospectus:</b> GitHub, GitMISMO/Sponsorship-Prospectus.</li>
             <li><b>SharePoint, MISMO Summits site:</b> the Sponsorship Requests list and the Sponsor Logos library.</li>
             <li><b>Power Automate:</b> the intake flow (prospectus to list), the availability flow (list to prospectus) and the Sponsorship Team Emails flow (emails, list updates, Summit HQ).</li>
@@ -1949,16 +2060,20 @@ a series deal is counted once, at its full amount.</div>
      than going quiet until the company happens to apply on its own. Every status
      below is one the team already uses on its sheet; nothing here is invented.
      ============================================================ */
-  var LEAD_STATUSES = ["New Lead","Contacted","Meeting Scheduled","Pitching to Management",
-    "Verbal Commitment","Follow Up","Not Now — Follow Up","Invoiced","Paid",
-    "Converted to Application","Lost"];
-  var LEAD_CLOSED = {"Lost":1, "Converted to Application":1};
+  /* November 18, 2026 (Jonna): one pipeline from first contact to paid, the way Member 360
+     works its prospects. A prospect's stages are the early ones; from Application In on, the
+     sponsorship record itself carries the stage (see PIPE_STAGES). The older names are read
+     as the new ones (LEAD_LEGACY) and saved under the new name the next time the prospect is. */
+  var LEAD_STATUSES = ["Lead","Contacted","Meeting Scheduled","Proposal","Verbal Commitment",
+    "Hold","Converted to Application","Converted to Sponsorship","Lost"];
+  var LEAD_LEGACY = {"New Lead":"Lead", "Pitching to Management":"Proposal", "Follow Up":"Contacted",
+    "Not Now \u2014 Follow Up":"Hold", "Not Now — Follow Up":"Hold", "Invoiced":"Verbal Commitment", "Paid":"Verbal Commitment"};
+  function normLead(l){ if(l && LEAD_LEGACY[l.status]) l.status = LEAD_LEGACY[l.status]; return l; }
+  var LEAD_CLOSED = {"Lost":1, "Converted to Application":1, "Converted to Sponsorship":1};
   var LEAD_TONE = {
-    "New Lead":"new", "Contacted":"contacted", "Meeting Scheduled":"contacted",
-    "Pitching to Management":"contacted", "Verbal Commitment":"interested",
-    "Follow Up":"followup", "Not Now — Follow Up":"followup",
-    "Invoiced":"interested", "Paid":"converted", "Converted to Application":"converted",
-    "Lost":"lost"
+    "Lead":"new", "Contacted":"contacted", "Meeting Scheduled":"contacted",
+    "Proposal":"contacted", "Verbal Commitment":"interested", "Hold":"followup",
+    "Converted to Application":"converted", "Converted to Sponsorship":"converted", "Lost":"lost"
   };
   var LEAD_FOLLOWUP_BDAYS = 10;   // how overdue a lead's own next-follow-up date has to be flagged
 
@@ -1981,7 +2096,7 @@ a series deal is counted once, at its full amount.</div>
   var leadQuickFilter = null; // "overdue" | "recent" | "converted" | null — set by clicking a Prospects stat card
   var leadBy = "status";      // Prospects "View By": status | owner | type
   var leadGroup = null;       // the one group being shown, set by clicking a group card
-  var currentView = "pipeline";
+  var currentView = "flow";
   var summitView = "overall";
   var summitYear = null;
   var scopeYear = null;      // which season the figures, Pipeline and Applications show
@@ -2129,7 +2244,7 @@ a series deal is counted once, at its full amount.</div>
     t.push({kind:"lead", tone: d > LEAD_FOLLOWUP_BDAYS ? "bad" : "warn",
       owner:"Amy Moses and Kelly Bradshaw",
       title: d === 0 ? "Follow Up With Prospect" : "Prospect Follow-Up Is Overdue",
-      why:(l.company||l.leadNo) + " — " + (l.status||"New Lead") +
+      why:(l.company||l.leadNo) + " — " + (l.status||"Lead") +
           (d === 0 ? ". Due today." : ". Was due " + fmtDate(l.nextFollowUpDate) + ", " + d + " days ago.") +
           (l.owner ? " Owner: " + l.owner + "." : ""),
       isLead:true});
@@ -2313,7 +2428,7 @@ a series deal is counted once, at its full amount.</div>
                    (past.a.inKind
                      ? ". They were recognized at no charge. Back on the Prospects list — worth approaching for a paid sponsorship."
                      : ". Back on the Prospects list to renew.")}]);
-            l.status = "Follow Up"; l.engagementType = "Retention";
+            l.status = "Lead"; l.engagementType = "Retention";
             l.season = renewSeason(past.ends); l.nextFollowUpDate = iso(t);
             l.linkedAppNo = past.a.appNo; changed = true;
           }
@@ -2737,6 +2852,10 @@ a series deal is counted once, at its full amount.</div>
     var d = {};
     ["leadNo","company","season","engagementType","contactName","contactRole","contactEmail","contactPhone","owner","status",
      "interestedIn","nextFollowUpDate","lastContactDate","linkedAppNo","history","createdDate",
+     /* November 18, 2026: the kind of sponsorship (summit, workgroup or an Other type), the
+        workgroup, forecast amount, the next step, where it came from, and the linked
+        workgroup or other sponsorship once it is started */
+     "stype","workgroup","forecast","nextStep","source","linkedBillNo",
      "updatedAt"].forEach(function(k){ if(l[k]!==undefined && l[k]!=="") d[k]=l[k]; });
     return d;
   }
@@ -3036,7 +3155,16 @@ a series deal is counted once, at its full amount.</div>
      summit picker moves, so it is kept here and re-applied whenever that tab is the
      one being shown. */
   var PAGES = {
-    pipeline: {t:"Pipeline",
+    flow: {t:"Pipeline",
+      s:"Every sponsorship in one list, from first contact to paid: summits, workgroups and every other kind. " +
+        "Prospects sit in the early stages; a sponsorship carries its own stage from Application In on. Pick a type " +
+        "or a stage to narrow it, change a prospect\u2019s stage right in its row, and select a row to open its record. " +
+        "Emails forwarded or copied to <b>mismosponsor@mismo.org</b> land on the company they are about."},
+    other: {t:"Other Sponsorships",
+      s:"Every one-off or partner sponsorship that isn\u2019t a summit or a workgroup, by type. The AI Webinar Series is " +
+        "the first; add a type with <b>New Sponsorship Type</b>. A type shared with a partner shows what MISMO keeps and drafts " +
+        "a past-due notice to the partner; any other type drafts the invoice email to the sponsor. Nothing is sent until you press Send."},
+    pipeline: {t:"Summit Sponsorships",
       s:"Where every application sits, and who owns the next move. Select a stage to see the " +
         "applications in it \u2014 each one shows what is still waiting on someone, with a button to " +
         "act on it, right there. Every application is listed underneath, newest first; select a row " +
@@ -3083,7 +3211,7 @@ a series deal is counted once, at its full amount.</div>
   }
 
   /* ---------------- rendering ---------------- */
-  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); renderBilling(); renderBenefits(); scheduleProspectSync(); }
+  function renderAll(){ renderScopeBar(); renderStats(); renderPipe(); renderApps(); renderSummits(); renderStock(); renderLeadStats(); renderLeadCards(); renderLeads(); renderBilling(); renderBenefits(); renderFlow(); scheduleProspectSync(); }
 
   function totals(list){
     var t = {committed:0, collected:0, invoiced:0, approved:0, outstanding:0, overdue:0, overdueN:0,
@@ -3530,7 +3658,7 @@ a series deal is counted once, at its full amount.</div>
   function leadGroupOf(l){
     if(leadBy === "owner") return l.owner || "Unassigned";
     if(leadBy === "type")  return l.engagementType || "Not Set";
-    return l.status || "New Lead";
+    return l.status || "Lead";
   }
   /* the order groups appear in: the statuses in their own order, everything else
      biggest first, with the empty-ish bucket last */
@@ -3685,7 +3813,7 @@ a series deal is counted once, at its full amount.</div>
           (l.contactRole ? '<div style="font-size:11.5px;color:var(--ink-3);">' + esc(l.contactRole) + '</div>' : '') +
           (l.contactPhone ? '<div style="font-size:11.5px;color:var(--ink-3);" class="num">' + esc(l.contactPhone) + '</div>' : '') + '</td>' +
         '<td>' + esc(l.owner||"—") + '</td>' +
-        '<td><span class="st ' + leadStClass(l.status) + '">' + esc(l.status||"New Lead") + '</span></td>' +
+        '<td><span class="st ' + leadStClass(l.status) + '">' + esc(l.status||"Lead") + '</span></td>' +
         '<td' + (overdue?' style="color:var(--bad);font-weight:600;"':'') + '>' + esc(fmtDate(l.nextFollowUpDate)) +
           (overdue ? ' — due' : '') + '</td>' +
         '<td>' + esc(fmtDate(l.lastContactDate)) + '</td>' +
@@ -4741,6 +4869,7 @@ a series deal is counted once, at its full amount.</div>
       })() + '</div>';
 
     html += benefitsSection(a);
+    html += touchSection(a.company);
 
     /* History (November 7, 2026): this record's entries from the activity log, newest first */
     if(a.id !== draft){
@@ -5113,9 +5242,12 @@ a series deal is counted once, at its full amount.</div>
   function fldL(label, key, type, opts){
     var v = currentLead[key]==null ? "" : currentLead[key];
     if(type === "select"){
+      /* an option is a value, or [value, label] */
       return '<div class="fld"><label for="y-' + key + '">' + esc(label) + '</label>' +
         '<select id="y-' + key + '" data-lkey="' + key + '">' +
-        opts.map(function(o){ return '<option' + (String(o)===String(v)?" selected":"") + '>' + esc(o) + '</option>'; }).join("") +
+        opts.map(function(o){
+          var val = Array.isArray(o) ? o[0] : o, lab = Array.isArray(o) ? o[1] : o;
+          return '<option value="' + esc(val) + '"' + (String(val)===String(v)?" selected":"") + '>' + esc(lab) + '</option>'; }).join("") +
         '</select></div>';
     }
     if(type === "textarea"){
@@ -5235,27 +5367,38 @@ a series deal is counted once, at its full amount.</div>
     var html = "";
     if(note) html += '<div class="dnote">' + note + '</div>';
 
+    var st = leadType(l);
     html += '<div class="dsect"><h4>Prospect</h4><div class="grid2">' +
       fldL("Company","company") +
+      fldL("Type of Sponsorship","stype","select",typeChoices()) +
+      '<div id="y-wgwrap"' + (st === "workgroup" ? '' : ' hidden') + '>' + fldL("MISMO Group","workgroup") + '</div>' +
       fldL("Sponsorship Season","season","select",leadSeasonChoices()) +
       fldL("Acquisition or Retention","engagementType","select",["","Acquisition","Retention"]) +
-      fldL("Owner","owner","select",["","Amy Moses","Kelly Bradshaw","Jonna Critchley"]) +
+      fldL("Owner","owner","select",[""].concat(BENEFIT_OWNERS)) +
+      fldL("Forecast Amount","forecast","number") +
       '</div></div>';
 
     html += '<div class="dsect"><h4>Contact</h4><div class="grid2">' +
       fldL("Contact Name","contactName") + fldL("Contact Title","contactRole") +
       fldL("Contact Email","contactEmail","email") + fldL("Contact Phone","contactPhone","tel") +
-      '</div><div style="margin-top:11px;">' + leadInterestField() + '</div></div>';
+      '</div><div id="y-intwrap" style="margin-top:11px;"' + (st === "summit" ? '' : ' hidden') + '>' + leadInterestField() + '</div></div>';
 
-    html += '<div class="dsect"><h4>Status</h4>' +
-      fldL("Status","status","select",LEAD_STATUSES) +
+    html += '<div class="dsect"><h4>Stage</h4>' +
+      fldL("Stage","status","select",LEAD_STATUSES) +
       '<div class="grid2" style="margin-top:12px;">' +
       fldL("Next Follow-Up","nextFollowUpDate","date") +
-      roFld("Last Contact", l.lastContactDate ? fmtDate(l.lastContactDate) : "—",
-            "set automatically from your most recent note, below") +
-      '</div>' +
+      roFld("Last Contact", lastTouch(l) ? fmtDate(lastTouch(l)) : "—",
+            "set automatically from your newest note or logged email") +
+      '</div>' + fldL("Next Step","nextStep") +
       (l.status === "Converted to Application" || l.linkedAppNo
         ? fldL("Converted To Application #","linkedAppNo") : "") +
+      (l.linkedBillNo ? roFld("Sponsorship Started", l.linkedBillNo, "the workgroup or other sponsorship made from this prospect") : "") +
+      (l.id !== leadDraft && st !== "summit" && !l.linkedBillNo && !LEAD_CLOSED[l.status]
+        ? '<div style="margin-top:12px;"><button class="btn sm" type="button" id="ld-start">Start the ' +
+          esc(typeName(st)) + ' Sponsorship</button><div class="fldnote">Opens a new ' + esc(typeName(st)) +
+          ' sponsorship with this company, contact, owner and amount filled in. Save it there and this prospect ' +
+          'is marked Converted to Sponsorship.</div></div>' : '') +
+      (l.source ? '<div class="fldnote">Came from: ' + esc(l.source) + '</div>' : '') +
       '</div>';
 
     var hist = (l.history || []).map(function(h, i){ return {h:h, i:i}; })
@@ -5278,6 +5421,8 @@ a series deal is counted once, at its full amount.</div>
       'resize:vertical;min-height:76px;"></textarea>' +
       '<div style="margin-top:8px;"><button class="btn ghost sm" id="btn-lead-note" type="button">Add Note</button></div>' +
       '</div></div>';
+
+    html += touchSection(l.company);
 
     /* Delete (October 3, 2026): for prospects that shouldn't be on the list at all, such as a
        sponsorship written off as bad debt. Two clicks, like Delete Application. */
@@ -5355,7 +5500,7 @@ a series deal is counted once, at its full amount.</div>
   }
 
   var TRACKED_LEAD = ["company","season","engagementType","contactName","contactRole","contactEmail","contactPhone","owner",
-    "status","interestedIn","nextFollowUpDate","lastContactDate","linkedAppNo"];
+    "status","interestedIn","nextFollowUpDate","lastContactDate","linkedAppNo","stype","workgroup","forecast","nextStep"];
   function changedLeadFields(before, after){
     var out = [];
     TRACKED_LEAD.forEach(function(k){
@@ -5383,8 +5528,9 @@ a series deal is counted once, at its full amount.</div>
 
     var fired = [];
     if(before.status && before.status !== after.status){
-      fired.push("status " + before.status + " → " + after.status);
+      fired.push("stage " + before.status + " → " + after.status);
     }
+    if(after.forecast !== "" && after.forecast != null) after.forecast = Number(after.forecast) || "";
     var changed = changedLeadFields(before, after);
 
     saveLead(after).then(function(){
@@ -5950,7 +6096,7 @@ a series deal is counted once, at its full amount.</div>
             '<span class="impmain">' +
               '<span class="impco">' + esc(c.app.company || "—") + '</span>' +
               '<span class="impmeta">' + esc(c.app.appNo || c.app.no || "") + ' · ' +
-                esc(c.app.event || (c.app.__kind === "webinar" ? "AI Webinar Series" : "Workgroup Sponsorship")) +
+                esc(c.app.event || (c.app.__kind === "other" ? otypeOf(c.app).name : "Workgroup Sponsorship")) +
                 ' · order ' + esc(c.g.orderId) + '</span>' +
               '<span class="impwhy">' + c.why.map(esc).join(" ") + '</span>' +
               '<span class="impdelta">' + bits.join(" · ") + '</span>' +
@@ -6179,6 +6325,7 @@ a series deal is counted once, at its full amount.</div>
     var s = String(v || "").trim().toLowerCase();
     if(!s) return "";
     for(var i = 0; i < LEAD_STATUSES.length; i++){ if(LEAD_STATUSES[i].toLowerCase() === s) return LEAD_STATUSES[i]; }
+    for(var k in LEAD_LEGACY){ if(k.toLowerCase() === s) return LEAD_LEGACY[k]; }
     return null;   // not one the portal knows
   }
 
@@ -6253,7 +6400,7 @@ a series deal is counted once, at its full amount.</div>
       if(!lead){
         var notes = sheetNotes.slice().sort(function(a, b){ return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
         var f = {company: co, season: season, engagementType: row.type, contactName: row.contact,
-                 contactEmail: row.email, contactRole: row.role, status: row.status || "New Lead",
+                 contactEmail: row.email, contactRole: row.role, status: row.status || "Lead",
                  interestedIn: row.interest};
         if(notes.length) f.lastContactDate = notes[notes.length - 1].at;
         plan.changes.push({kind: "new", lead: null, fields: f, notes: notes, on: true, row: n});
@@ -6660,7 +6807,46 @@ a series deal is counted once, at its full amount.</div>
      Nothing here ever emails anyone on its own. Every message is drafted onto the
      record, shown in full, and sent only when someone presses Send (Jonna,
      November 3, 2026).
+
+     November 18, 2026 (Jonna): the AI Webinar Series became the first of the Other
+     Sponsorships. Any one-off or partner sponsorship is a type set up on that page
+     (New Sponsorship Type) and kept in data/others.json with its type on each record
+     (otype). Each type says what share of the money is MISMO's and, for a partner series,
+     who gets the past-due notice. The AI webinar records were copied into others.json
+     (same ids and numbers); data/webinars.json is left exactly as it was, as the archive.
      ============================================================ */
+
+  /* the kinds of Other Sponsorship. The AI Webinar Series is always there; the rest are
+     added on the page and kept in data/settings.json, settings/main.otherTypes. */
+  var OTHER_TYPES_BASE = [
+    {key:"ai-webinar", name:"AI Webinar Series", detail:"Webinar", share:0.5, partner:"MBA",
+     noticeTo:"DUpbin@mba.org; amoses@mismo.org", noticeCc:"jcritchley@mismo.org", noticeHi:"David and Amy"}
+  ];
+  var otherTypes = OTHER_TYPES_BASE.slice();
+  var settingsDoc = null, settingsSeen = false;
+  function otherType(key){
+    for(var i = 0; i < otherTypes.length; i++) if(otherTypes[i].key === key) return otherTypes[i];
+    return null;
+  }
+  function otypeOf(r){ return otherType(r && r.otype) || {key:r && r.otype || "", name:(r && r.otype) || "Other", share:1, detail:"What"}; }
+  /* MISMO's share of one record's money: all of it, unless its type is split with a partner */
+  function recShare(r){
+    if(!r || r.__kind !== "other") return 1;
+    var sh = Number(otypeOf(r).share);
+    return isFinite(sh) && sh > 0 && sh <= 1 ? sh : 1;
+  }
+  function keepOf(r, v){ return Math.round(Number(v || 0) * recShare(r) * 100) / 100; }
+  function applySettings(d){
+    settingsDoc = d || null;
+    var list = OTHER_TYPES_BASE.slice(), have = {};
+    list.forEach(function(t){ have[t.key] = 1; });
+    ((d && d.otherTypes) || []).forEach(function(t){
+      if(!t || !t.key) return;
+      if(have[t.key]){ list = list.map(function(x){ return x.key === t.key ? Object.assign({}, x, t) : x; }); return; }
+      have[t.key] = 1; list.push(t);
+    });
+    otherTypes = list;
+  }
 
   var BILL_STATUSES = ["Draft", "Pending Payment", "Paid", "Cancelled", "Waived"];
   var BILL_MOVES = {
@@ -6695,29 +6881,49 @@ a series deal is counted once, at its full amount.</div>
       /* half the money is MISMO's on the webinar line; all of it is here */
       share: 1
     },
-    webinar: {
-      key:"webinar", coll:"webinars", prefix:"WB",
-      name:"AI Webinar Series", one:"webinar sponsorship",
-      sub:"The joint MISMO and MBA series. MISMO raises the invoice and the revenue is split in half, so every " +
-          "figure below shows what was invoiced and what MISMO keeps. Terms are net 30, and a past-due notice " +
-          "for MBA's team is drafted here for approval — it is never sent on its own.",
-      titleOf: function(r){ return r.webinar || "—"; },
-      termOf: function(r){ return "Webinar"; },
-      share: 0.5
+    other: {
+      key:"other", coll:"others", prefix:"OS",
+      name:"Other Sponsorships", one:"sponsorship",
+      titleOf: function(r){ return r.what || r.webinar || "—"; },
+      termOf: function(r){ return otypeOf(r).name; },
+      share: 1
     }
   };
 
-  var wgs = [], webinars = [];
-  var wgsSeen = false, webinarsSeen = false;
-  function billList(kind){ return kind === "webinar" ? webinars : wgs; }
-  function billSet(kind, arr){ if(kind === "webinar") webinars = arr; else wgs = arr; }
-  function billKindOf(r){ return r && r.__kind === "webinar" ? "webinar" : "workgroup"; }
+  var wgs = [], others = [], webinarsOld = [];
+  var wgsSeen = false, othersSeen = false, webinarsSeen = false;
+  function billList(kind){ return kind === "other" ? others : wgs; }
+  function billSet(kind, arr){ if(kind === "other") others = arr; else wgs = arr; }
+  function billKindOf(r){ return r && r.__kind === "other" ? "other" : "workgroup"; }
 
   /* every record in the portal that carries an Aptify invoice, whatever kind it is.
      buildPlan matches payments across all of them on the order ID. */
   function billAll(){
     return wgs.map(function(r){ r.__kind = "workgroup"; return r; })
-      .concat(webinars.map(function(r){ r.__kind = "webinar"; return r; }));
+      .concat(others.map(function(r){ r.__kind = "other"; return r; }));
+  }
+
+  /* the AI webinar records, copied once into Other Sponsorships under the same ids and numbers.
+     Runs on a screen that can save once both files have loaded; a record already there is left
+     alone, so it is safe on several screens at once. webinars.json itself is never changed. */
+  var webinarsMoved = false;
+  function moveWebinars(){
+    if(webinarsMoved || !db || !canWrite || !webinarsSeen || !othersSeen) return;
+    webinarsMoved = true;
+    var have = {};
+    others.forEach(function(r){ have[r.id] = 1; });
+    var todo = webinarsOld.filter(function(w){ return w.id && !have[w.id]; });
+    if(!todo.length) return;
+    todo.forEach(function(w){
+      var r = JSON.parse(JSON.stringify(w));
+      r.otype = "ai-webinar"; r.__kind = "other";
+      if(r.webinar && !r.what) r.what = r.webinar;
+      others.push(r);
+      db.doc("others/" + r.id).set(billDoc(r)).catch(function(){});
+    });
+    addLog("", "the AI Webinar Series moved into Other Sponsorships \u2014 " + todo.length + " record" +
+      (todo.length === 1 ? "" : "s") + " copied (data/webinars.json kept as it was)", "Sponsorship Portal");
+    renderBilling(); renderAll();
   }
 
   function billNo(kind){
@@ -6740,7 +6946,8 @@ a series deal is counted once, at its full amount.</div>
     return {late: t > due, days: Math.max(0, daysBetween(due, t)), due:due};
   }
   function billMoney(r){ return Number(r.amountDue || 0); }
-  function billShare(kind, v){ return Math.round(v * BILL[kind].share * 100) / 100; }
+  /* MISMO's share of a total, record by record (a partner type keeps only its share) */
+  function billShareOf(list, pick){ return Math.round(list.reduce(function(n, r){ return n + keepOf(r, pick(r)); }, 0) * 100) / 100; }
 
   /* The records the figures describe: the same set the table is showing, so Invoiced
      never counts years of archived history that is not on screen (November 3, 2026).
@@ -6748,20 +6955,23 @@ a series deal is counted once, at its full amount.</div>
   function billScope(kind){
     var f = billFilter[kind];
     return billList(kind).filter(function(r){
+      if(kind === "other"){ r.__kind = "other"; if(f.type && r.otype !== f.type) return false; }
       return !(kind === "workgroup" && !f.archived && r.archived);
     });
   }
   function billTotals(kind){
-    var t = {invoiced:0, collected:0, outstanding:0, overdue:0, overdueN:0, n:0, draft:0, waived:0};
+    var t = {invoiced:0, collected:0, outstanding:0, overdue:0, overdueN:0, n:0, draft:0, waived:0,
+             keepCollected:0, keepOutstanding:0, split:false};
     billScope(kind).forEach(function(r){
       if(r.status === "Cancelled") return;
       t.n++;
       var due = billMoney(r);
+      if(recShare(r) !== 1) t.split = true;
       if(r.status === "Waived"){ t.waived++; return; }
       if(r.status === "Draft"){ t.draft += due; return; }
       t.invoiced += due;
-      if(r.status === "Paid"){ t.collected += Number(r.amountPaid || due); return; }
-      t.outstanding += due;
+      if(r.status === "Paid"){ t.collected += Number(r.amountPaid || due); t.keepCollected += keepOf(r, r.amountPaid || due); return; }
+      t.outstanding += due; t.keepOutstanding += keepOf(r, due);
       var o = billOverdue(r);
       if(o.late){ t.overdue += due; t.overdueN++; }
     });
@@ -6776,9 +6986,11 @@ a series deal is counted once, at its full amount.</div>
        it wasn't kept before, so MISMO Money re-recorded Addy AI's billing name on every visit
        and the notice came back after Got It) */
     "billingName",
+    /* who is working it (November 18, 2026), shown on the Pipeline, and the prospect it began as */ "owner","fromLead",
     /* workgroup only */ "workgroup","cadence","term","renewalNumber","periodStart","periodEnd",
     "renewalInvoiceDate","sponsorName","sponsorAddress","logoMismo","logoConnect","logoAgendas",
-    /* webinar only */ "webinar",
+    /* other sponsorships: the type, and what it is (the AI webinar records keep "webinar" too) */
+    "otype","what","webinar",
     /* the drafted message, and when it was approved and sent */
     "draftTo","draftCc","draftSubject","draftBody","draftKind","sentAt","sentBy"];
   function billDoc(r){
@@ -6794,7 +7006,8 @@ a series deal is counted once, at its full amount.</div>
     var was = i >= 0 ? arr[i] : null;
     if(i >= 0) arr[i] = r; else arr.push(r);
     if(OPENED[r.id]) noteOpened(r);
-    renderBilling();
+    renderBilling(); renderFlow();
+    if(r.fromLead) markLeadStarted(r);
     if(!db || !canWrite) return Promise.resolve();
     return db.doc(BILL[kind].coll + "/" + r.id).merge(billDoc(r), was && was !== r ? billDoc(was) : null).catch(function(e){
       if(e && e.code === "invalid_argument"){ canWrite = false; readOnlyNotice(); }
@@ -6822,22 +7035,26 @@ a series deal is counted once, at its full amount.</div>
       common.contract = [["Sponsor Name on Contract","sponsorName","text"],
         ["Sponsor Address on Contract","sponsorAddress","textarea"]];
     } else {
-      common.detail = [["Webinar","webinar","text"]];
+      var ot = otypeOf(r);
+      common.detail = [["Type","otype","select",[""].concat(otherTypes.map(function(t){ return t.key; }))],
+        [ot.detail || "What They\u2019re Sponsoring", r.webinar && !r.what ? "webinar" : "what","text"]];
     }
+    common.sponsor.push(["Owner","owner","select",[""].concat(BENEFIT_OWNERS)]);
     return common;
   }
 
   /* ---------------- rendering ---------------- */
-  var billFilter = {workgroup:{status:"", q:"", archived:false}, webinar:{status:"", q:""}};
+  var billFilter = {workgroup:{status:"", q:"", archived:false}, other:{status:"", q:"", type:""}};
 
   function billRows(kind){
     var f = billFilter[kind], q = (f.q || "").toLowerCase();
     return billList(kind).filter(function(r){
       if(kind === "workgroup" && !f.archived && r.archived) return false;
+      if(kind === "other" && f.type && r.otype !== f.type) return false;
       if(f.status && r.status !== f.status) return false;
       if(q){
         var hay = [r.no, r.company, r.contactName, r.contactEmail, r.invoiceNumber,
-                   BILL[kind].titleOf(r)].join(" ").toLowerCase();
+                   BILL[kind].titleOf(r), BILL[kind].termOf(r)].join(" ").toLowerCase();
         if(hay.indexOf(q) < 0) return false;
       }
       return true;
@@ -6849,17 +7066,17 @@ a series deal is counted once, at its full amount.</div>
   }
 
   function billStats(kind){
-    var t = billTotals(kind), cfg = BILL[kind], half = cfg.share !== 1;
+    var t = billTotals(kind), cfg = BILL[kind], half = t.split;
     var el = $("bill-stats-" + kind); if(!el) return;
     el.innerHTML =
       card("Invoiced", money(t.invoiced),
            t.n + (t.n === 1 ? " sponsorship" : " sponsorships") +
            (t.draft ? " · " + money(t.draft) + " not yet invoiced" : "") +
            (t.waived ? " · " + t.waived + " waived" : ""), "") +
-      card(half ? "Collected · MISMO Keeps Half" : "Collected",
-           money(t.collected) + (half ? " · " + money(billShare(kind, t.collected)) : ""),
+      card(half ? "Collected · MISMO Keeps" : "Collected",
+           money(t.collected) + (half ? " · " + money(t.keepCollected) : ""),
            half ? "cash received, and MISMO's share" : "cash received", "good") +
-      card("Outstanding", money(t.outstanding) + (half ? " · " + money(billShare(kind, t.outstanding)) : ""),
+      card("Outstanding", money(t.outstanding) + (half ? " · " + money(t.keepOutstanding) : ""),
            (t.overdueN ? t.overdueN + " past due" : "none past due"), "") +
       card("Past Due", money(t.overdue), t.overdueN + " over the " + BILL_GRACE + "-day mark",
            t.overdueN ? "alert" : "");
@@ -6890,9 +7107,9 @@ a series deal is counted once, at its full amount.</div>
 
   function billTable(kind){
     var el = $("bill-body-" + kind); if(!el) return;
-    var list = billRows(kind), cfg = BILL[kind], half = cfg.share !== 1;
+    var list = billRows(kind), cfg = BILL[kind], half = kind === "other";
     if(!list.length){
-      el.innerHTML = '<tr><td colspan="' + (half ? 8 : 8) + '"><div class="empty">No ' +
+      el.innerHTML = '<tr><td colspan="' + (half ? 9 : 8) + '"><div class="empty">No ' +
         esc(cfg.one) + 's match.</div></td></tr>';
       return;
     }
@@ -6902,13 +7119,14 @@ a series deal is counted once, at its full amount.</div>
         '<td>' + esc(r.no || "—") + '</td>' +
         '<td><b>' + esc(r.company || "—") + '</b>' +
           (r.contactName ? '<div class="sub2">' + esc(r.contactName) + '</div>' : '') + '</td>' +
+        (kind === "other" ? '<td>' + esc(otypeOf(r).name) + '</td>' : '') +
         '<td>' + esc(cfg.titleOf(r)) +
           (kind === "workgroup" ? '<div class="sub2">' + esc(cfg.termOf(r)) +
              (r.cadence ? " · " + esc(r.cadence) : "") + '</div>' : '') + '</td>' +
         '<td><span class="st ' + billClass(r.status) + '">' + esc(r.status || "Draft") + '</span>' +
           (o.late ? '<div class="sub2 bad">' + o.days + ' days past due</div>' : '') + '</td>' +
         '<td class="r num">' + esc(money(r.amountDue)) + '</td>' +
-        (half ? '<td class="r num">' + esc(money(billShare(kind, billMoney(r)))) + '</td>' : '') +
+        (half ? '<td class="r num">' + esc(money(keepOf(r, billMoney(r)))) + '</td>' : '') +
         '<td class="r num">' + (r.amountPaid ? esc(money(r.amountPaid)) : "—") + '</td>' +
         '<td>' + (r.invoiceNumber ? esc(r.invoiceNumber) : "—") + '</td>' +
         (half ? '' : '<td>' + (r.invoiceDate ? esc(fmtDate(r.invoiceDate)) : "—") + '</td>') +
@@ -6920,7 +7138,8 @@ a series deal is counted once, at its full amount.</div>
             "Cancelled":"declined", "Waived":"inkind"}[s] || "submitted";
   }
   function renderBilling(){
-    ["workgroup","webinar"].forEach(function(k){
+    paintTypeFilter();
+    ["workgroup","other"].forEach(function(k){
       billStats(k); billHeadline(k); billTable(k);
       /* the rail count is what is waiting on someone: not invoiced yet, or past due */
       var n = billScope(k).filter(function(r){
@@ -6945,7 +7164,10 @@ a series deal is counted once, at its full amount.</div>
     if(type === "select"){
       return '<div class="fld"><label for="' + id + '">' + esc(label) + '</label><select id="' + id +
         '" data-bkey="' + esc(key) + '">' + (opts || []).map(function(o){
-          return '<option' + (String(o) === String(v) ? " selected" : "") + '>' + esc(o) + '</option>';
+          /* the Type list shows each type's name and saves its key */
+          var val = o, lab = o;
+          if(key === "otype"){ var ot = otherType(o); lab = ot ? ot.name : (o ? o : "— Choose —"); }
+          return '<option value="' + esc(val) + '"' + (String(val) === String(v) ? " selected" : "") + '>' + esc(lab) + '</option>';
         }).join("") + '</select></div>';
     }
     return '<div class="fld"><label for="' + id + '">' + esc(label) + '</label>' +
@@ -6969,7 +7191,8 @@ a series deal is counted once, at its full amount.</div>
     noteOpened(r);
     var cfg = BILL[kind], o = billOverdue(r);
     $("bd-company").textContent = r.company || "New record";
-    $("bd-sub").textContent = (r.no || "") + " · " + cfg.titleOf(r) +
+    if(kind === "other") r.__kind = "other";
+    $("bd-sub").textContent = (r.no || "") + " · " + (kind === "other" ? cfg.termOf(r) + " · " : "") + cfg.titleOf(r) +
       (kind === "workgroup" ? " · " + cfg.termOf(r) : "");
     $("bd-msg").textContent = ""; $("bd-msg").className = "savemsg";
 
@@ -6981,20 +7204,20 @@ a series deal is counted once, at its full amount.</div>
     else if(r.status === "Pending Payment" && o.late) note = "<b>" + o.days + " days past due.</b> Invoiced " +
       (r.invoiceDate ? fmtDate(r.invoiceDate) : "—") + ", payment was due " +
       (o.due ? fmtDate(iso(o.due)) : "—") + "." +
-      (kind === "webinar" ? " A notice for MBA's team is drafted below — read it, then press Send." : "");
+      (kind === "other" && otypeOf(r).noticeTo ? " A notice for " + esc(otypeOf(r).partner || "the partner") + "'s team is drafted below — read it, then press Send." : "");
     else if(r.status === "Pending Payment") note = "<b>Awaiting payment.</b> Invoiced " +
       (r.invoiceDate ? fmtDate(r.invoiceDate) : "—") + (o.due ? ", due " + fmtDate(iso(o.due)) : "") +
       ". The payment check marks this Paid on its own once the money reaches the Financial System.";
     else if(r.status === "Paid") note = "<b>Complete.</b> Paid " +
       (r.paymentReceivedDate ? fmtDate(r.paymentReceivedDate) : "—") + "." +
-      (cfg.share !== 1 ? " MISMO's half is " + money(billShare(kind, Number(r.amountPaid || r.amountDue || 0))) + "." : "");
+      (recShare(r) !== 1 ? " MISMO's share is " + money(keepOf(r, r.amountPaid || r.amountDue || 0)) + "." : "");
     else if(r.status === "Waived") note = "<b>Waived.</b> Given at no charge — it counts as a sponsorship, never as money.";
     else if(r.status === "Cancelled") note = "<b>Cancelled.</b> Nothing is chased and none of it counts as money.";
 
     var spec = billSpec(kind, r);
     var html = "";
     if(note) html += '<div class="dnote">' + note + '</div>';
-    html += billSect(kind === "workgroup" ? "Sponsorship" : "Webinar", spec.detail);
+    html += billSect("Sponsorship", spec.detail);
     html += billSect("Sponsor", spec.sponsor);
 
     var moves = BILL_MOVES[r.status] || [];
@@ -7008,10 +7231,11 @@ a series deal is counted once, at its full amount.</div>
       '</div></div>';
 
     html += billSect("Invoicing", spec.invoicing);
-    if(cfg.share !== 1){
+    if(recShare(r) !== 1){
       html += '<div class="dsect"><h4>Revenue Split</h4><div class="grid2">' +
         roFld("Invoiced in Full", money(r.amountDue), "what the sponsor is billed") +
-        roFld("MISMO Keeps", money(billShare(kind, billMoney(r))), "half, under the MBA partnership") +
+        roFld("MISMO Keeps", money(keepOf(r, billMoney(r))), Math.round(recShare(r) * 100) + "%, under the " +
+          (otypeOf(r).partner || "partner") + " partnership") +
         '</div></div>';
     }
     html += billSect("Payment", spec.payment);
@@ -7030,6 +7254,7 @@ a series deal is counted once, at its full amount.</div>
         }).join("") + '</div></div>';
     }
     html += billEmailSection(kind, r);
+    html += touchSection(r.company);
     html += billSect("Notes", spec.notes);
     $("bd-body").innerHTML = html;
     $("bill-drawer").classList.add("on");
@@ -7117,7 +7342,21 @@ a series deal is counted once, at its full amount.</div>
   var BILL_MBA_CC = "jcritchley@mismo.org";
 
   function billDraft(kind, r){
-    var cfg = BILL[kind];
+    var cfg = BILL[kind], ot = kind === "other" ? otypeOf(r) : null;
+    if(kind === "other" && !ot.noticeTo){
+      return {
+        kind: "os-invoice",
+        to: r.contactEmail || "",
+        cc: BILL_CC,
+        subject: "MISMO " + ot.name + " Sponsorship Invoice" + (cfg.titleOf(r) !== "\u2014" ? " \u2014 " + cfg.titleOf(r) : ""),
+        body: "Good Morning " + (r.company || "") + " Team,\n\n" +
+          "Thank you for sponsoring " + (cfg.titleOf(r) !== "\u2014" ? cfg.titleOf(r) : "MISMO") + ". Please see attached for your invoice.\n\n" +
+          "The amount due is " + money(r.amountDue) +
+          (r.invoiceNumber ? ", under invoice " + r.invoiceNumber : "") + ". Instructions on how to make a " +
+          "payment are included on the invoice.\n\nReach out with questions.\n\nThank you,\nMISMO",
+        attach: "The Aptify invoice PDF"
+      };
+    }
     if(kind === "workgroup"){
       var term = cfg.termOf(r);
       return {
@@ -7138,21 +7377,21 @@ a series deal is counted once, at its full amount.</div>
     }
     var o = billOverdue(r);
     return {
-      kind: "wb-pastdue",
-      to: r.draftTo || BILL_MBA_TO,
-      cc: BILL_MBA_CC,
-      subject: "Past Due — AI Webinar Sponsorship — " + (r.company || "") +
+      kind: ot.key === "ai-webinar" ? "wb-pastdue" : "os-pastdue",
+      to: r.draftTo || ot.noticeTo || BILL_MBA_TO,
+      cc: ot.noticeCc || BILL_MBA_CC,
+      subject: "Past Due — " + ot.name + " Sponsorship — " + (r.company || "") +
                (r.invoiceNumber ? " — Invoice " + r.invoiceNumber : ""),
-      body: "Hi David and Amy,\n\n" +
-        "An AI webinar series sponsorship is past due and I wanted to flag it.\n\n" +
+      body: "Hi " + (ot.noticeHi || "all") + ",\n\n" +
+        "A " + ot.name + " sponsorship is past due and I wanted to flag it.\n\n" +
         "Sponsor: " + (r.company || "") + "\n" +
-        "Webinar: " + (r.webinar || "") + "\n" +
+        (ot.detail || "What") + ": " + cfg.titleOf(r) + "\n" +
         "Invoice: " + (r.invoiceNumber || "—") +
           (r.invoiceDate ? ", raised " + fmtDate(r.invoiceDate) : "") + "\n" +
         "Payment due: " + (o.due ? fmtDate(iso(o.due)) : "—") + " (net " + BILL_GRACE + ")\n" +
         "Days past due: " + o.days + "\n" +
         "Amount: " + money(r.amountDue) + " invoiced · " +
-          money(billShare(kind, billMoney(r))) + " to each of MISMO and MBA\n\n" +
+          money(keepOf(r, billMoney(r))) + " to MISMO" + (ot.partner ? ", the rest to " + ot.partner : "") + "\n\n" +
         "Nothing has reached MISMO against this invoice. Let me know if your team has anything on it, " +
         "or if you would like us to follow up with the sponsor directly.\n\n" +
         "Thank you,\nMISMO",
@@ -7162,16 +7401,16 @@ a series deal is counted once, at its full amount.</div>
 
   function billEmailSection(kind, r){
     var cfg = BILL[kind], o = billOverdue(r);
-    var wanted = (kind === "workgroup") ? (r.status === "Draft" || r.status === "Pending Payment")
-                                        : o.late;
+    var partner = kind === "other" && !!otypeOf(r).noticeTo;
+    var wanted = !partner ? (r.status === "Draft" || r.status === "Pending Payment") : o.late;
     var d = (r.draftSubject || r.draftBody)
       ? {kind:r.draftKind || "", to:r.draftTo || "", cc:r.draftCc || "", subject:r.draftSubject || "",
-         body:r.draftBody || "", attach:(kind === "workgroup" ? "The Aptify invoice PDF" : "")}
+         body:r.draftBody || "", attach:"The Aptify invoice PDF"}
       : billDraft(kind, r);
-    var title = kind === "workgroup" ? "Invoice Email" : "Past-Due Notice to MBA";
-    var why = kind === "workgroup"
+    var title = !partner ? "Invoice Email" : "Past-Due Notice to " + (otypeOf(r).partner || "the Partner");
+    var why = !partner
       ? "The invoice email to the sponsor. Read it, change anything you want, then press <b>Send</b>. It does not go anywhere until you do."
-      : "A notice for MBA's team that this sponsorship is past due. Read it, change anything you want, then press <b>Send</b>. It does not go anywhere until you do.";
+      : "A notice for " + esc(otypeOf(r).partner || "the partner") + "'s team that this sponsorship is past due. Read it, change anything you want, then press <b>Send</b>. It does not go anywhere until you do.";
 
     var sent = r.sentAt
       ? '<div class="fldnote">Sent ' + esc(fmtDate(String(r.sentAt).slice(0, 10))) +
@@ -7179,8 +7418,8 @@ a series deal is counted once, at its full amount.</div>
       : '';
     if(!wanted && !r.sentAt){
       return '<div class="dsect"><h4>' + esc(title) + '</h4><div class="fldnote" style="margin-top:0;">' +
-        (kind === "workgroup"
-          ? "Nothing to send — this sponsorship is " + esc(String(r.status).toLowerCase()) + "."
+        (!partner
+          ? "Nothing to send — this sponsorship is " + esc(String(r.status || "draft").toLowerCase()) + "."
           : "Nothing to send — this invoice is not past due.") + '</div></div>';
     }
     return '<div class="dsect"><h4>' + esc(title) + '</h4>' +
@@ -7194,7 +7433,7 @@ a series deal is counted once, at its full amount.</div>
         '<input id="bx-draftSubject" data-bkey="draftSubject" type="text" value="' + esc(d.subject) + '"></div>' +
       '<div class="fld"><label for="bx-draftBody">Message</label>' +
         '<textarea id="bx-draftBody" data-bkey="draftBody" rows="12">' + esc(d.body) + '</textarea></div>' +
-      (d.attach ? '<div class="fldnote">Attached when it goes out: ' + esc(d.attach) + '.</div>' : '') +
+      (d.attach && !partner ? '<div class="fldnote">Attached when it goes out: ' + esc(d.attach) + '.</div>' : '') +
       '<input type="hidden" data-bkey="draftKind" value="' + esc(d.kind) + '">' +
       '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">' +
         '<button class="btn sm" type="button" id="bd-send">Send from the Portal</button>' +
@@ -7219,7 +7458,7 @@ a series deal is counted once, at its full amount.</div>
     after.sentAt = new Date().toISOString();
     after.sentBy = whoAmI() + " (opened in Outlook)";
     saveBill(kind, after);
-    addLog(after.no, "opened the " + (kind === "workgroup" ? "invoice email" : "past-due notice") +
+    addLog(after.no, "opened the " + (/pastdue/.test(after.draftKind || "") ? "past-due notice" : "invoice email") +
       " in Outlook for " + (after.draftTo || ""), whoAmI());
     billCur = after; openBill(kind, after.id);
   }
@@ -7250,13 +7489,13 @@ a series deal is counted once, at its full amount.</div>
       bodyHtml: plain(after.draftBody, 6000).replace(/\n/g, "<br>"),
       recordNo: plain(after.no), company: plain(after.company),
       invoiceNumber: plain(after.invoiceNumber), amountDue: plain(money(after.amountDue)),
-      line: kind === "workgroup" ? "Workgroup Sponsorship" : "AI Webinar Series",
+      line: kind === "workgroup" ? "Workgroup Sponsorship" : otypeOf(after).name,
       approvedBy: plain(whoAmI())};
     db.doc("outbox/" + id).set(doc).then(function(){
       after.sentAt = now.toISOString(); after.sentBy = whoAmI();
       saveBill(kind, after);
       addLog(after.no, "approved and sent the " +
-        (kind === "workgroup" ? "invoice email" : "past-due notice") + " to " + doc.to, whoAmI());
+        (/pastdue/.test(doc.kind) ? "past-due notice" : "invoice email") + " to " + doc.to, whoAmI());
       billCur = after; openBill(kind, after.id);
       toast("It is queued for the messenger and goes out, as written, usually within a minute.",
             "", "Sent — " + (after.company || after.no), true);
@@ -7266,10 +7505,12 @@ a series deal is counted once, at its full amount.</div>
   }
 
   /* ---------------- new records, and the wiring ---------------- */
-  function newBill(kind){
+  function newBill(kind, seed){
     var id = "b-" + kind + "-" + Date.now();
     var r = {id:id, no:billNo(kind), company:"", status:"Draft", amountDue:""};
     if(kind === "workgroup"){ r.term = "Initial"; r.cadence = "Annual"; }
+    if(kind === "other"){ r.otype = billFilter.other.type || (otherTypes[0] && otherTypes[0].key) || ""; r.__kind = "other"; }
+    if(seed) Object.keys(seed).forEach(function(k){ if(seed[k] !== undefined && seed[k] !== "") r[k] = seed[k]; });
     billList(kind).push(r);
     billDraftId = id;
     renderBilling();
@@ -7305,13 +7546,14 @@ a series deal is counted once, at its full amount.</div>
     }
   });
 
-  ["workgroup","webinar"].forEach(function(k){
+  ["workgroup","other"].forEach(function(k){
     var wire = function(id, prop, fn){
       var el = $(id); if(!el) return;
       el.addEventListener(prop === "search" ? "input" : "change", function(){ fn(el.value); renderBilling(); });
     };
     wire("f-bill-status-" + k, "change", function(v){ billFilter[k].status = v; });
     wire("f-bill-search-" + k, "search", function(v){ billFilter[k].q = v; });
+    if(k === "other") wire("f-bill-type-other", "change", function(v){ billFilter.other.type = v; });
     var arch = $("f-bill-archived-" + k);
     if(arch) arch.addEventListener("change", function(){ billFilter[k].archived = arch.checked; renderBilling(); });
   });
@@ -7333,13 +7575,14 @@ a series deal is counted once, at its full amount.</div>
        answering a question nobody asked there. Money, Inventory and Prospects carry their
        own bands instead. */
     var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help" || v === "prospectus" || v === "benefits" ||
-                v === "workgroup" || v === "webinar") ? "none" : "";
+                v === "workgroup" || v === "other" || v === "flow") ? "none" : "";
     $("headline").style.display = hide;
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.id === "view-"+v); });
     if(v !== "pipeline" && stageKey) closeStage();
     if(v !== "money" && $("imp").classList.contains("on")) closeImport();
-    if(v !== "leads" && $("lead-drawer").classList.contains("on")) closeLeadDrawer();
-    if(v !== "workgroup" && v !== "webinar" && $("bill-drawer").classList.contains("on")) closeBill();
+    if(v !== "leads" && v !== "flow" && $("lead-drawer").classList.contains("on")) closeLeadDrawer();
+    if(v !== "workgroup" && v !== "other" && v !== "flow" && $("bill-drawer").classList.contains("on")) closeBill();
+    if(v === "flow") renderFlow();
   }
 
   /* Copy Link on a prospectus card puts its address on the clipboard, ready to paste into an
@@ -7454,7 +7697,7 @@ a series deal is counted once, at its full amount.</div>
   $("new-lead").addEventListener("click", function(){
     var id = "lead-" + Date.now().toString(36);
     leadDraft = id;
-    var l = {id:id, leadNo:nextLeadNo(), status:"New Lead", company:"", contactName:"",
+    var l = {id:id, leadNo:nextLeadNo(), status:"Lead", stype:"summit", company:"", contactName:"",
              contactEmail:"", contactPhone:"", owner:"", engagementType:"", interestedIn:"",
              season: leadSeason && leadSeason !== "all" ? leadSeason : String(today().getFullYear()+1),
              createdDate:iso(today()), history:[]};
@@ -7514,7 +7757,16 @@ a series deal is counted once, at its full amount.</div>
       if(hay.indexOf(t) < 0) return;
       var where = [l.leadNo, l.status, l.owner].filter(Boolean).join(" \u00b7 ");
       out.push({group:"Prospects", name:l.company || l.leadNo, where:where,
-        go:function(){ showView("leads"); openLeadDrawer(l.id, null); }});
+        go:function(){ showView("flow"); openLeadDrawer(l.id, null); }});
+    });
+    billAll().forEach(function(r){
+      var hay = [r.company, r.billingName, r.contactName, r.contactEmail, r.no, r.invoiceNumber,
+                 r.workgroup, r.what, r.webinar].map(searchable).join(" ");
+      if(hay.indexOf(t) < 0) return;
+      var k = r.__kind;
+      out.push({group: k === "other" ? "Other Sponsorships" : "Workgroups", name:r.company || r.no,
+        where:[r.no, k === "other" ? otypeOf(r).name : r.workgroup, r.status].filter(Boolean).join(" \u00b7 "),
+        go:function(){ showView(k === "other" ? "other" : "workgroup"); openBill(k, r.id); }});
     });
     return out;
   };
@@ -7734,6 +7986,22 @@ a series deal is counted once, at its full amount.</div>
           }); },
           delete: function(){ return mutate(name, function(d){ delete d.docs[id]; }); }
         };
+      },
+      /* the mismosponsor@ mailbox (November 18, 2026): mark one email as this screen's to log,
+         unless it is already logged or another screen took it in the last five minutes. Applied
+         to the newest copy, so two screens can't both take the same email. */
+      claim: function(name, id, who){
+        return mutate(name, function(d){
+          var x = d.docs[id];
+          if(!x || x.st || (x.claim && x.claim !== who && Date.now() - Date.parse(x.claimAt || 0) < 300000)) throw {code:"TAKEN"};
+          x.claim = who; x.claimAt = new Date().toISOString();
+        });
+      },
+      /* make an empty file if there is none yet (the mailbox flow needs one to add to) */
+      ensure: function(name){
+        var f = file(name);
+        var go = function(){ if(f.sha) return Promise.resolve(); return mutate(name, function(){}); };
+        return f.loaded ? go() : load(name).then(go, go);
       },
       /* add entries to a monthly history file, skipping any it already has */
       month: function(name, entries){
@@ -8531,6 +8799,696 @@ a series deal is counted once, at its full amount.</div>
      before refusing, so someone granted the Portal after they signed in is asked to sign
      in again rather than turned away (Sept 28, 2026). */
   var TOOL_NAME = "the Sponsorship Portal";
+  /* ============================================================
+     ONE PIPELINE (November 18, 2026, Jonna)
+     Every kind of sponsorship in one list, from first contact to paid, the way Member 360
+     works its prospects: summit sponsorships, workgroup sponsorships and every Other
+     Sponsorship type, prospects included. Nothing is stored twice: each row is read from
+     the record it already lives in (a prospect, a summit application, a workgroup or an
+     other sponsorship) and shows that record's stage on one shared scale.
+     ============================================================ */
+  var PIPE_STAGES = ["Lead","Contacted","Meeting Scheduled","Proposal","Verbal Commitment",
+    "Application In","Approved","Pending Payment","Paid","Hold","Lost"];
+  var PIPE_OPEN = ["Lead","Contacted","Meeting Scheduled","Proposal","Verbal Commitment",
+    "Application In","Approved","Pending Payment"];
+  var PIPE_TONE = {"Lead":"new", "Contacted":"contacted", "Meeting Scheduled":"contacted", "Proposal":"contacted",
+    "Verbal Commitment":"interested", "Application In":"submitted", "Approved":"approved",
+    "Pending Payment":"pending", "Paid":"paid", "Hold":"followup", "Lost":"lost"};
+  /* a summit application's status, and a workgroup or other sponsorship's, on the one scale */
+  var APP_TO_PIPE = {"Submitted":"Application In", "Approved":"Approved", "Pending Payment":"Pending Payment",
+    "Paid":"Paid", "In Kind":"Paid", "Declined":"Lost", "Written Off":"Lost"};
+  var BILL_TO_PIPE = {"Draft":"Approved", "Pending Payment":"Pending Payment", "Paid":"Paid",
+    "Waived":"Paid", "Cancelled":"Lost"};
+  /* a closed one stays on the list this long after it closed, under Won or Lost */
+  var PIPE_KEEP_DAYS = 365;
+
+  function typeChoices(){
+    return [["summit","Summit"],["workgroup","Workgroup"]].concat(otherTypes.map(function(t){ return [t.key, t.name]; }));
+  }
+  function typeName(key){
+    if(!key || key === "summit") return "Summit";
+    if(key === "workgroup") return "Workgroup";
+    var t = otherType(key); return t ? t.name : "Other";
+  }
+  function leadType(l){ return (l && l.stype) || "summit"; }
+
+  var flowState = {type:"", group:"open", owner:"", q:"", nweek:0, stage:""};
+
+  function recentEnough(day){
+    var d = parseDate(day); if(!d) return true;
+    return daysBetween(d, today()) <= PIPE_KEEP_DAYS;
+  }
+  function pipeItems(){
+    var out = [];
+    leads.forEach(function(l){
+      if(l.status === "Converted to Application" || l.status === "Converted to Sponsorship") return;
+      var st = l.status || "Lead";
+      if(PIPE_STAGES.indexOf(st) < 0) st = "Lead";
+      if(st === "Lost" && !recentEnough(l.updatedAt)) return;
+      var t = leadType(l);
+      out.push({kind:"lead", id:l.id, rec:l, company:l.company || l.leadNo, contact:l.contactName || "",
+        type:t, what: t === "workgroup" ? (l.workgroup || "A MISMO group") :
+              (t === "summit" ? (l.interestedIn || ("Summit sponsorship" + (l.season ? ", " + l.season : ""))) : (l.interestedIn || typeName(t))),
+        stage:st, owner:l.owner || "", amount:Number(l.forecast) || 0,
+        nextDate:l.nextFollowUpDate || "", nextText:l.nextStep || "",
+        last:lastTouch(l), created:l.createdDate || "", no:l.leadNo});
+    });
+    apps.forEach(function(a){
+      if(a.id === draft) return;
+      var st = APP_TO_PIPE[a.status] || "Application In";
+      if((st === "Paid" || st === "Lost") && !recentEnough(iso(sponsorshipEnds(a) || today()))) return;
+      var ld = leadForApp(a), tk = tasksFor(a)[0];
+      out.push({kind:"app", id:a.id, rec:a, company:a.company || a.appNo, contact:a.contactName || "",
+        type:"summit", what:[a.event, levelOf(a) ? tierLabel(levelOf(a)) : "", oppLabel(a)].filter(Boolean).join(" · "),
+        stage:st, inKind:a.status === "In Kind", owner:(ld && ld.owner) || "", amount:Number(a.amountDue) || 0,
+        nextDate:"", nextText:tk ? tk.title : "", last:latestTouchFor(a.company) || String(a.updatedAt || a.dateSubmitted || "").slice(0, 10),
+        created:a.dateSubmitted || "", no:a.appNo});
+    });
+    billAll().forEach(function(r){
+      var kind = r.__kind, st = BILL_TO_PIPE[r.status || "Draft"] || "Approved";
+      if(kind === "workgroup" && r.archived) return;
+      var when = r.paymentReceivedDate || r.invoiceDate || r.periodStart || String(r.updatedAt || "").slice(0, 10);
+      if((st === "Paid" || st === "Lost") && !recentEnough(when)) return;
+      var o = billOverdue(r), next = "";
+      if(r.status === "Draft" || !r.status) next = "Raise the invoice";
+      else if(o.late) next = o.days + " days past due";
+      else if(r.status === "Pending Payment" && o.due) next = "Payment due " + fmtDate(iso(o.due));
+      out.push({kind:kind, id:r.id, rec:r, company:r.company || r.no, contact:r.contactName || "",
+        type: kind === "workgroup" ? "workgroup" : (r.otype || "other"),
+        what: BILL[kind].titleOf(r) + (kind === "workgroup" ? " · " + BILL.workgroup.termOf(r) : ""),
+        stage:st, inKind:r.status === "Waived", owner:r.owner || ownerByCompany(r.company), amount:Number(r.amountDue) || 0,
+        nextDate:"", nextText:next, late:o.late, last:latestTouchFor(r.company) || String(r.updatedAt || "").slice(0, 10),
+        created:String(r.invoiceDate || r.periodStart || "").slice(0, 10), no:r.no});
+    });
+    return out;
+  }
+  function ownerByCompany(name){
+    var k = companyKey(name), hit = "";
+    if(!k) return "";
+    leads.forEach(function(l){ if(!hit && l.owner && companyKey(l.company) === k) hit = l.owner; });
+    return hit;
+  }
+  function inGroup(it, g){
+    if(g === "all") return true;
+    if(g === "won") return it.stage === "Paid";
+    if(g === "hold") return it.stage === "Hold";
+    if(g === "lost") return it.stage === "Lost";
+    return PIPE_OPEN.indexOf(it.stage) >= 0;
+  }
+  function flowRows(all){
+    var f = flowState, q = (f.q || "").toLowerCase();
+    return all.filter(function(it){
+      if(f.type && it.type !== f.type) return false;
+      if(f.stage ? it.stage !== f.stage : !inGroup(it, f.group)) return false;
+      if(f.owner && it.owner !== f.owner) return false;
+      if(q){
+        var r = it.rec, hay = [it.company, it.contact, it.what, it.no, typeName(it.type), r.contactEmail, r.billingName, r.invoiceNumber]
+          .join(" ").toLowerCase();
+        if(hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    }).sort(function(x, y){
+      var a = PIPE_STAGES.indexOf(x.stage), b = PIPE_STAGES.indexOf(y.stage);
+      if(a !== b) return b - a;   // furthest along first
+      var nx = x.nextDate || "9999", ny = y.nextDate || "9999";
+      if(nx !== ny) return nx < ny ? -1 : 1;
+      return String(x.company).localeCompare(String(y.company));
+    });
+  }
+  /* the Monday a week starts on, n weeks back */
+  function weekStart(n){
+    var d = today(), dow = (d.getDay() + 6) % 7;
+    d.setDate(d.getDate() - dow - 7 * (n || 0)); return d;
+  }
+
+  function renderFlow(){
+    /* renderAll runs once before this part of the page has been read; it draws on the next pass */
+    if(!$("flow-body") || !PIPE_OPEN || !others || !otherTypes || !touches) return;
+    var all = pipeItems(), t = today();
+    var open = all.filter(function(it){ return PIPE_OPEN.indexOf(it.stage) >= 0; });
+    var due = open.filter(function(it){ return it.kind === "lead" && it.nextDate && parseDate(it.nextDate) <= t; });
+    var late = open.filter(function(it){ return it.late; });
+    var forecast = open.reduce(function(n, it){ return n + it.amount; }, 0);
+    var wk = weekStart(0), newNow = leads.filter(function(l){ var d = parseDate(l.createdDate); return d && d >= wk && l.id !== leadDraft && !LEAD_CLOSED[l.status]; });
+
+    $("flow-date").textContent = "Today · " + new Date().toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+    $("flow-say").innerHTML = "<em>" + open.length + "</em> open " + (open.length === 1 ? "opportunity" : "opportunities") +
+      " worth <em>" + money(forecast) + "</em>" +
+      (due.length ? ", <em class=\"hl-late\">" + due.length + "</em> follow-up" + (due.length === 1 ? "" : "s") + " due" : ", no follow-ups due") +
+      (late.length ? ", <em class=\"hl-late\">" + late.length + "</em> past due" : "") +
+      (newNow.length ? ". <em>+" + newNow.length + "</em> new prospect" + (newNow.length === 1 ? "" : "s") + " this week." : ".");
+
+    /* the funnel: each open stage, its count and its money; selecting one shows only it */
+    var maxN = 1;
+    PIPE_OPEN.forEach(function(sg){ maxN = Math.max(maxN, open.filter(function(it){ return it.stage === sg && (!flowState.type || it.type === flowState.type); }).length); });
+    $("flow-funnel").innerHTML = PIPE_OPEN.map(function(sg){
+      var here = open.filter(function(it){ return it.stage === sg && (!flowState.type || it.type === flowState.type); });
+      var sum = here.reduce(function(n, it){ return n + it.amount; }, 0);
+      return '<button type="button" class="fstage' + (flowState.stage === sg ? " on" : "") + '" data-fstage="' + esc(sg) + '"' +
+        ' aria-pressed="' + (flowState.stage === sg ? "true" : "false") + '">' +
+        '<span class="fsn">' + esc(sg) + '</span><span class="fsbar"><i style="width:' + Math.round(here.length / maxN * 100) + '%"></i></span>' +
+        '<span class="fsv"><b>' + here.length + '</b>' + (sum ? ' · ' + esc(money(sum)) : '') + '</span></button>';
+    }).join("");
+
+    /* type and stage-group buttons */
+    var types = [["","All"]].concat(typeChoices());
+    $("flow-types").innerHTML = types.map(function(tc){
+      var n = all.filter(function(it){ return (!tc[0] || it.type === tc[0]) && inGroup(it, flowState.group); }).length;
+      return '<button type="button" data-ftype="' + esc(tc[0]) + '" aria-pressed="' + (flowState.type === tc[0] ? "true" : "false") + '">' +
+        esc(tc[1]) + ' <span class="segn">' + n + '</span></button>';
+    }).join("");
+    $("flow-groups").innerHTML = [["open","Open"],["won","Won"],["hold","Hold"],["lost","Lost"],["all","All"]].map(function(g){
+      return '<button type="button" data-fgroup="' + g[0] + '" aria-pressed="' + (!flowState.stage && flowState.group === g[0] ? "true" : "false") + '">' + g[1] + '</button>';
+    }).join("");
+    var ow = $("flow-owner"), keepO = flowState.owner;
+    ow.innerHTML = '<option value="">Every Owner</option>' + BENEFIT_OWNERS.map(function(o){ return '<option' + (o === keepO ? " selected" : "") + '>' + esc(o) + '</option>'; }).join("");
+
+    /* the table */
+    var rows = flowRows(all);
+    var pip = $("pip-flow");
+    if(pip){ var nn = due.length + late.length; pip.textContent = nn; pip.className = "pip" + (nn ? "" : " quiet"); }
+    if(!rows.length){
+      $("flow-body").innerHTML = '<tr><td colspan="8"><div class="empty">Nothing here' +
+        (flowState.type ? " for " + esc(typeName(flowState.type)) : "") + '. Try another type or stage, or add a New Prospect.</div></td></tr>';
+    } else {
+      $("flow-body").innerHTML = rows.map(function(it){
+        var stCell;
+        if(it.kind === "lead" && canWrite){
+          stCell = '<select class="fstsel st ' + (PIPE_TONE[it.stage] || "") + '" data-flowstage="' + esc(it.id) + '" aria-label="Stage for ' + esc(it.company) + '">' +
+            LEAD_STATUSES.filter(function(s){ return s !== "Converted to Application" && s !== "Converted to Sponsorship"; }).map(function(s){
+              return '<option' + (s === it.stage ? " selected" : "") + '>' + esc(s) + '</option>'; }).join("") + '</select>';
+        } else {
+          stCell = '<span class="st ' + (it.inKind ? "inkind" : (PIPE_TONE[it.stage] || "")) + '">' + esc(it.inKind ? (it.kind === "app" ? "In Kind" : "Waived") : it.stage) + '</span>';
+        }
+        var nd = it.nextDate ? parseDate(it.nextDate) : null, over = nd && nd <= t;
+        return '<tr data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '">' +
+          '<td><b>' + esc(it.company) + '</b>' + (it.contact ? '<div class="sub2">' + esc(it.contact) + '</div>' : '') + '</td>' +
+          '<td><span class="tag ftype">' + esc(typeName(it.type)) + '</span></td>' +
+          '<td>' + esc(it.what || "—") + '</td>' +
+          '<td>' + stCell + '</td>' +
+          '<td>' + esc(it.owner || "—") + '</td>' +
+          '<td class="r num">' + (it.amount ? esc(money(it.amount)) : "—") + '</td>' +
+          '<td>' + (it.nextDate ? '<span class="' + (over ? "bad" : "") + '">' + esc(fmtDate(it.nextDate)) + '</span>' : '') +
+            (it.nextText ? '<div class="sub2' + (it.late ? " bad" : "") + '">' + esc(it.nextText) + '</div>' : (it.nextDate ? '' : '—')) + '</td>' +
+          '<td>' + (it.last ? esc(fmtDate(it.last)) : "—") + '</td></tr>';
+      }).join("");
+    }
+    paintNewProspects();
+    paintDue(due.concat(late));
+    paintMailBox();
+  }
+  /* what is waiting on someone today: prospect follow-ups that have come due, invoices past due */
+  function paintDue(list){
+    var el = $("flow-due"); if(!el) return;
+    list = list.slice().sort(function(x, y){ return String(x.nextDate || "0").localeCompare(String(y.nextDate || "0")); });
+    $("flow-duecount").textContent = list.length ? list.length + " waiting" : "";
+    if(!list.length){ el.innerHTML = '<div class="fbempty">Nothing due. Every prospect\u2019s follow-up is in the future and no invoice is past due.</div>'; return; }
+    el.innerHTML = list.slice(0, 8).map(function(it){
+      return '<div class="fbrow" data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '"><span class="fbdate' + (it.late || it.nextDate ? " bad" : "") + '">' +
+        esc(it.late ? "Past due" : fmtDate(it.nextDate)) + '</span><span class="fbmain"><b>' + esc(it.company) + '</b> <span class="sub2">' +
+        esc(it.nextText || it.stage) + (it.owner ? " \u00b7 " + esc(it.owner) : "") + '</span></span></div>';
+    }).join("") + (list.length > 8 ? '<div class="fbmore">and ' + (list.length - 8) + ' more</div>' : '');
+  }
+
+  function paintNewProspects(){
+    var el = $("flow-new"); if(!el) return;
+    var from = weekStart(flowState.nweek), to = new Date(from); to.setDate(to.getDate() + 7);
+    var list = leads.filter(function(l){
+      /* a prospect the portal made for an existing sponsor (Converted) isn't new business */
+      var d = parseDate(l.createdDate); return l.id !== leadDraft && d && d >= from && d < to && !LEAD_CLOSED[l.status];
+    }).sort(function(x, y){ return String(y.createdDate).localeCompare(String(x.createdDate)); });
+    document.querySelectorAll("#flow-newseg [data-nweek]").forEach(function(b){
+      b.setAttribute("aria-pressed", String(+b.getAttribute("data-nweek") === flowState.nweek));
+    });
+    if(!list.length){ el.innerHTML = '<div class="fbempty">No new prospects ' + (flowState.nweek ? "last week" : "yet this week") + '.</div>'; return; }
+    el.innerHTML = list.slice(0, 8).map(function(l){
+      return '<div class="fbrow" data-fkind="lead" data-fid="' + esc(l.id) + '"><span class="fbdate">' + esc(fmtDate(l.createdDate)) + '</span>' +
+        '<span class="fbmain"><b>' + esc(l.company || l.leadNo) + '</b> <span class="sub2">' + esc(typeName(leadType(l))) +
+        (l.source ? " · " + esc(l.source) : (l.owner ? " · " + esc(l.owner) : "")) + '</span></span></div>';
+    }).join("") + (list.length > 8 ? '<div class="fbmore">and ' + (list.length - 8) + ' more</div>' : '');
+  }
+
+  /* ============================================================
+     THE mismosponsor@ MAILBOX (November 18, 2026, Jonna: "work like 360@ works for Member 360")
+     Forward an email to mismosponsor@mismo.org, or Cc or Bcc it, and it is logged on the
+     sponsor or prospect it is about. The flow "Sponsorship - mismosponsor Mailbox" adds each
+     email to data/mailin.json; the first screen that can save picks it up:
+       - the outside address it is with (the sender; for a forward from staff, the person in the
+         forwarded email) is matched to a company by its contact email, then by its domain
+       - one company: logged there, as an email on that company's timeline (data/touchpoints)
+       - several: it waits under Emails to mismosponsor@ on the Pipeline, to pick one
+       - none, and a real company address: a new prospect is made from it (Jonna chose this),
+         listed there with Looks Right, and the email is logged on it
+     A first line "sponsor: Company Name" (or "[sponsor: Company Name]" in the subject) picks
+     the company. Free mail, automated senders and tools never make a prospect.
+     ============================================================ */
+  var MAIL_ADDR = "mismosponsor@mismo.org";
+  var MAIL_STAFF = /@(mismo|mba|mortgagebankers)\.org$/i;
+  var MAIL_FREE = /^(gmail|googlemail|yahoo|ymail|outlook|hotmail|live|msn|icloud|me|mac|aol|comcast|att|verizon|proton|protonmail)\./i;
+  var MAIL_AUTO = /^(no-?reply|do-?not-?reply|mailer-daemon|postmaster|bounces?|newsletters?|news|marketing|notifications?|notify|alerts?|updates?|digest|automation|automated|workflow|forms?|surveys?|calendar|invitations?|reminders?)([._+-][^@]*)?@/i;
+  var MAIL_TOOL = /(^|\.)(smartsheet|docusign|hubspot|mailchimp|constantcontact|salesforce|zoom|calendly|google|microsoft|office|office365|outlook|sharepoint|linkedin|eventbrite|cvent|higherlogic|surveymonkey|qualtrics|typeform|jotform|formstack|slack|asana|aptify|stripe|paypal|quickbooks|zendesk|github|atlassian|dropbox|box|adobe|adobesign|pandadoc|riverside|vimeo|youtube)\.(com|net|io|us|ai|so|org|co)$/i;
+  var MAIL_EM = /[a-z0-9._%+'-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
+  var mailDocs = {}, mailSeen = false, touches = [], touchSeen = false, mailBusy = false, mailEnsured = false;
+  var MAIL_ME = "s" + Math.random().toString(36).slice(2, 10);
+
+  function mailLocalName(addr){
+    var a = String(addr || "").toLowerCase(), hit = "";
+    Object.keys(PEOPLE).forEach(function(k){ if(!hit && PEOPLE[k].email && a.split("@")[0] === PEOPLE[k].email.split("@")[0]) hit = PEOPLE[k].name; });
+    return hit || a.split("@")[0];
+  }
+  /* the email's HTML as plain text, keeping names with their addresses */
+  function mailText(html){
+    var s = String(html || "");
+    s = s.replace(/<a[^>]*href="mailto:([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, function(x, e, t){
+      var tt = t.replace(/<[^>]+>/g, "").trim(), em = decodeURIComponent(String(e).split("?")[0]);
+      return tt && tt.indexOf("@") < 0 ? tt + " <" + em + ">" : (tt || em); });
+    var d = new DOMParser().parseFromString(s, "text/html");
+    d.querySelectorAll("style,script,head,title").forEach(function(e){ e.remove(); });
+    d.querySelectorAll("br").forEach(function(e){ e.replaceWith("\n"); });
+    d.querySelectorAll("p,div,tr,li,h1,h2,h3,h4,h5,h6,table,hr").forEach(function(e){ e.appendChild(d.createTextNode("\n")); });
+    return String(d.body ? d.body.textContent : "").replace(/\xa0/g, " ").replace(/\r/g, "")
+      .replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  }
+  function mailStrip(b){ return String(b || "").replace(/(^|\n)\s*CAUTION:[^\n]*(\n[^\n]+)*/i, "$1").replace(/\n{3,}/g, "\n\n").trim().slice(0, 8000); }
+  function mailDay(s){ var d = new Date(String(s || "").replace(/^[A-Za-z]+,\s*/, "")); return isNaN(d) ? "" : iso(d); }
+  function addrList(v){
+    if(Array.isArray(v)) v = v.map(function(x){ return (x && (x.address || x.email || (x.emailAddress && x.emailAddress.address))) || x; }).join(";");
+    return (String(v || "").match(MAIL_EM) || []).map(function(a){ return a.toLowerCase(); });
+  }
+  /* one mail-in entry as {from, fromName, to[], date, subject, body, by} */
+  function mailParse(d){
+    var text = mailText(d.html), L = text.split("\n"), from0 = (addrList(d.from)[0] || ""), i = -1;
+    var fwd = MAIL_STAFF.test(from0);
+    for(var k = 0; fwd && k < L.length && k < 200; k++){
+      if(/^\s*From:\s*\S/i.test(L[k])){
+        var nx = L.slice(k + 1, k + 8).join("\n");
+        if(/^\s*(Sent|Date):/im.test(nx) && /^\s*Subject:/im.test(nx)){ i = k; break; }
+      }
+    }
+    var recv = mailDay(d.received) || iso(today());
+    var by = MAIL_STAFF.test(from0) ? mailLocalName(from0) : "";
+    if(i < 0){
+      var to = addrList(d.to).concat(addrList(d.cc));
+      if(!by){ var st = to.filter(function(a){ return MAIL_STAFF.test(a) && a !== MAIL_ADDR; })[0]; if(st) by = mailLocalName(st); }
+      return {from:from0, fromName:"", to:to.filter(function(a){ return !MAIL_STAFF.test(a); }), date:recv,
+        subject:String(d.subject || ""), body:mailStrip(text), direct:true, by:by};
+    }
+    var H = {}, j = i;
+    for(; j < L.length && j < i + 14; j++){
+      var ln = L[j];
+      if(!ln.trim()){ if(H.subject !== undefined) break; continue; }
+      var mm = ln.match(/^\s*(From|Sent|Date|To|Cc|Subject):\s*(.*)$/i);
+      if(mm) H[mm[1].toLowerCase()] = mm[2].trim();
+      else if(H.subject !== undefined) break;   // the message starts right after the Subject line
+      else if(j > i){ var last = Object.keys(H).pop(); if(last) H[last] += " " + ln.trim(); }
+    }
+    var fromS = H.from || "", fe = (fromS.match(MAIL_EM) || [""])[0].toLowerCase();
+    var fn = fromS.replace(/<[^>]*>/g, "").replace(MAIL_EM, "").replace(/[()"\[\]]/g, "").trim();
+    var to2 = ((H.to || "") + " " + (H.cc || "")).match(MAIL_EM) || [];
+    return {from:fe, fromName:fn && fn.indexOf("@") < 0 ? fn : "",
+      to:to2.map(function(a){ return a.toLowerCase(); }).filter(function(a){ return !MAIL_STAFF.test(a); }),
+      date:mailDay(H.sent || H.date) || recv,
+      subject:(H.subject || String(d.subject || "").replace(/^\s*(fw|fwd)\s*:\s*/i, "")).trim(),
+      body:mailStrip(L.slice(j).join("\n")), by:by};
+  }
+  function extOk(a){
+    var d = String(a || "").split("@")[1] || "";
+    return !!d && d.indexOf(".") > 0 && !MAIL_STAFF.test(a) && !MAIL_FREE.test(d) && !MAIL_AUTO.test(a) && !MAIL_TOOL.test(d);
+  }
+  /* every company the portal knows, with every address it has for it */
+  function mailDirectory(){
+    var dir = {};
+    function add(name, email){
+      var k = companyKey(name); if(!k) return;
+      var c = dir[k] || (dir[k] = {key:k, name:String(name).trim(), emails:{}});
+      String(email || "").toLowerCase().split(/[;,\s]+/).forEach(function(e){ if(/@/.test(e)) c.emails[e] = 1; });
+    }
+    leads.forEach(function(l){ if(l.id !== leadDraft) add(l.company, l.contactEmail); });
+    apps.forEach(function(a){ if(a.id !== draft) add(a.company, a.contactEmail); });
+    billAll().forEach(function(r){ add(r.company, r.contactEmail); });
+    /* an address an email was already logged from is that company's from then on (only the sender:
+       the others on an email can be anyone) */
+    touches.forEach(function(t){ if(t.coName && !t.archived && extOk(t.from)) add(t.coName, t.from); });
+    return dir;
+  }
+  function mailTag(m){
+    var first = String(m.body || "").split("\n").filter(function(x){ return x.trim(); })[0] || "";
+    var a = /^\s*sponsor\s*:\s*(.+)$/i.exec(first), b = /\[\s*sponsor\s*:\s*([^\]]+)\]/i.exec(m.subject || "");
+    return ((a && a[1]) || (b && b[1]) || "").trim();
+  }
+  function mailField(m, re){
+    var ls = String(m.body || "").split("\n").slice(0, 400);
+    for(var i = 0; i < ls.length; i++){
+      var k = ls[i].match(/^\s*[*_]*([A-Za-z][A-Za-z ]{1,30}?)[*_]*\s*:\s*[*_]*(.{2,90}?)[*_]*\s*$/);
+      if(k && re.test(k[1].trim().toLowerCase())) return k[2].trim();
+    }
+    return "";
+  }
+  /* which company an email is about: {co} | {cands:[...]} | {make:{...}} */
+  function mailDecide(m, dir){
+    var keys = Object.keys(dir), tag = mailTag(m);
+    if(tag){
+      var tk = companyKey(tag);
+      if(dir[tk]) return {co:dir[tk]};
+      return {make:{name:tag, email:(m.from && extOk(m.from)) ? m.from : "", person:m.fromName || ""}};
+    }
+    var addrs = [m.from].concat(m.to || []).map(function(a){ return String(a || "").toLowerCase(); }).filter(function(a){ return a && !MAIL_STAFF.test(a); });
+    var exact = keys.filter(function(k){ return addrs.some(function(a){ return dir[k].emails[a]; }); });
+    var pick = function(list){
+      if(list.length < 2) return list;
+      var named = list.filter(function(k){ return (" " + companyKey(m.subject) + " ").indexOf(k) >= 0 ||
+        companyKey(mailField(m, /^(company|company name|organization|organisation)$/)) === k; });
+      return named.length === 1 ? named : list;
+    };
+    exact = pick(exact);
+    if(exact.length === 1) return {co:dir[exact[0]]};
+    if(exact.length > 1) return {cands:exact.slice(0, 6).map(function(k){ return dir[k]; })};
+    var ext = addrs.filter(extOk);
+    var doms = {}; ext.forEach(function(a){ doms[a.split("@")[1]] = 1; });
+    var byDom = keys.filter(function(k){ return Object.keys(dir[k].emails).some(function(e){ return doms[e.split("@")[1]]; }); });
+    byDom = pick(byDom);
+    if(byDom.length === 1) return {co:dir[byDom[0]]};
+    if(byDom.length > 1) return {cands:byDom.slice(0, 6).map(function(k){ return dir[k]; })};
+    if(!ext.length) return {cands:[]};
+    var a = ext[0], dom = a.split("@")[1], stem = dom.split(".")[0];
+    var named = mailField(m, /^(company|company name|organization|organisation|employer|firm)$/);
+    var nm = named && named.length <= 80 ? named : (stem.length <= 4 ? stem.toUpperCase() : stem.charAt(0).toUpperCase() + stem.slice(1));
+    return {make:{name:nm, email:a, person:a === m.from ? (m.fromName || "") : "", dom:dom}};
+  }
+  function mailSummary(m){
+    var b = String(m.body || ""), cut = b.search(/\n\s*(From:\s*\S|-{3,}\s*Original Message|On .{5,80} wrote:)/i);
+    return (cut > 0 ? b.slice(0, cut) : b).trim().slice(0, 700);
+  }
+  function touchDoc(co, m, mid){
+    return {co:co.key, coName:co.name, date:m.date || iso(today()), type:"Email", subject:String(m.subject || "").slice(0, 200),
+      from:m.from || "", fromName:m.fromName || "", with:(m.to || []).join("; ").slice(0, 300),
+      summary:mailSummary(m), by:m.by || "", at:new Date().toISOString(), via:"mismosponsor", mail:mid || ""};
+  }
+  function makeMailProspect(mk, m){
+    var id = "lead-mail-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    var l = {id:id, leadNo:nextLeadNo(), company:mk.name, status:"Lead", stype:"summit",
+      contactName:mk.person || "", contactEmail:mk.email || "", season:String(today().getFullYear() + (today().getMonth() >= 8 ? 1 : 0)),
+      source:"Email to mismosponsor@", createdDate:iso(today()), owner:"",
+      history:[{at:iso(today()), who:"Sponsorship Portal",
+        text:"Added from an email to mismosponsor@ on " + (m.date || iso(today())) + (m.subject ? " (" + String(m.subject).slice(0, 120) + ")" : "") +
+             ". No sponsor or prospect in the portal matched it."}]};
+    leads.push(l);
+    saveLead(l);
+    return {key:companyKey(l.company), name:l.company, leadId:id};
+  }
+  /* the monthly file the whole text of each logged email is kept in */
+  function mailTextFile(day){ return "mailtext-" + String(day || iso(today())).slice(0, 7); }
+
+  function mailRun(){
+    if(mailBusy || !db || !canWrite || !mailSeen || !touchSeen || !leadsSeen || !appsSeen || !wgsSeen || !othersSeen) return;
+    if(!mailEnsured){ mailEnsured = true; if(db.ensure) db.ensure("mailin").catch(function(){}); }
+    var todo = Object.keys(mailDocs).filter(function(id){
+      var d = mailDocs[id];
+      if(!d || d.st) return false;
+      return !(d.claim && d.claim !== MAIL_ME && Date.now() - Date.parse(d.claimAt || 0) < 300000);
+    });
+    if(!todo.length){ mailPrune(); return; }
+    mailBusy = true;
+    var made = {}, results = [];
+    var next = function(){
+      if(!todo.length){ mailBusy = false; mailDone(results); return; }
+      var id = todo.shift();
+      db.claim("mailin", id, MAIL_ME).then(function(){
+        var d = mailDocs[id] || {}, m;
+        try{ m = mailParse(d); }catch(e){ m = {from:"", to:[], date:iso(today()), subject:String(d.subject || ""), body:"", by:""}; }
+        var dir = mailDirectory(), dc = mailDecide(m, dir), patch = {m:{from:m.from, fromName:m.fromName, to:m.to, date:m.date,
+          subject:m.subject, by:m.by}, html:"", seen:new Date().toISOString()};
+        var co = dc.co || null;
+        if(!co && dc.make){
+          var mkKey = dc.make.dom || companyKey(dc.make.name);
+          co = made[mkKey] || (made[mkKey] = makeMailProspect(dc.make, m));
+          patch.mk = {name:co.name, leadId:co.leadId}; patch.mkOk = false;
+        }
+        var saves = [];
+        if(co){
+          var tid = "tp-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+          var tdoc = touchDoc(co, m, id);
+          touches.push(Object.assign({id:tid}, tdoc));
+          saves.push(db.doc("touchpoints/" + tid).set(tdoc));
+          saves.push(db.doc(mailTextFile(m.date) + "/" + tid).set({text:String(m.body || "").slice(0, 8000), subject:tdoc.subject, from:m.from}));
+          patch.st = "logged"; patch.co = co.key; patch.coName = co.name; patch.tp = tid; patch.doneAt = new Date().toISOString();
+          results.push({id:id, co:co, made:!!patch.mk, by:m.by});
+        } else {
+          patch.st = "need"; patch.cands = (dc.cands || []).map(function(c){ return {key:c.key, name:c.name}; });
+          results.push({id:id, need:true, by:m.by});
+        }
+        saves.push(db.doc("mailin/" + id).update(patch));
+        Object.assign(mailDocs[id] || {}, patch);
+        return Promise.all(saves);
+      }, function(){ /* another screen has it */ }).then(next, function(e){ next(); });
+    };
+    next();
+  }
+  function mailDone(res){
+    var logged = res.filter(function(r){ return r.co; }), need = res.filter(function(r){ return r.need; });
+    logged.forEach(function(r){
+      addLog("", "email to mismosponsor@ logged on " + r.co.name + (r.made ? " (a new prospect, made from it)" : "") +
+        (r.by ? ", forwarded by " + r.by : ""), "Sponsorship Portal");
+    });
+    if(logged.length) toast(logged.length === 1 ? "An email to mismosponsor@ is logged on " + logged[0].co.name + "." :
+      logged.length + " emails to mismosponsor@ are logged.", "", "Logged");
+    if(need.length) toast((need.length === 1 ? "An email needs" : need.length + " emails need") +
+      " a company. Pick it on the Pipeline, under Emails to mismosponsor@.", "warn", "Pick a Company");
+    renderFlow();
+  }
+  /* a logged email's entry is trimmed from the mailbox file after 60 days (its email stays on the
+     company's timeline); the file stays well under the relay's 1 MB */
+  function mailPrune(){
+    if(!db || !canWrite) return;
+    var old = Object.keys(mailDocs).filter(function(id){
+      var d = mailDocs[id]; return d && (d.st === "logged" || d.st === "skipped") && d.doneAt &&
+        Date.now() - Date.parse(d.doneAt) > 60 * 86400000 && (d.st !== "logged" || !d.mk || d.mkOk);
+    });
+    old.slice(0, 20).forEach(function(id){ delete mailDocs[id]; db.doc("mailin/" + id).delete().catch(function(){}); });
+  }
+  /* pick the company for an email that matched several, or none */
+  function mailPick(id, key, name){
+    var d = mailDocs[id]; if(!d || !db || !canWrite) return;
+    var dir = mailDirectory(), co = dir[key] || {key:key, name:name};
+    var m = Object.assign({body:""}, d.m || {});
+    var tid = "tp-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), tdoc = touchDoc(co, m, id);
+    tdoc.by = whoAmI();
+    touches.push(Object.assign({id:tid}, tdoc));
+    db.doc("touchpoints/" + tid).set(tdoc);
+    var patch = {st:"logged", co:co.key, coName:co.name, tp:tid, doneAt:new Date().toISOString(), pickedBy:whoAmI()};
+    Object.assign(d, patch); db.doc("mailin/" + id).update(patch);
+    addLog("", "email to mismosponsor@ logged on " + co.name + " (picked by hand)", whoAmI());
+    toast("Logged on " + co.name + ".", "", "Logged"); renderFlow();
+  }
+  function mailSkip(id){
+    var d = mailDocs[id]; if(!d || !db || !canWrite) return;
+    var patch = {st:"skipped", doneAt:new Date().toISOString(), why:"Not needed (" + whoAmI() + ")"};
+    Object.assign(d, patch); db.doc("mailin/" + id).update(patch); renderFlow();
+  }
+  function mailOk(id){
+    var d = mailDocs[id]; if(!d || !db || !canWrite) return;
+    d.mkOk = true; db.doc("mailin/" + id).update({mkOk:true}); renderFlow();
+  }
+  function paintMailBox(){
+    var el = $("flow-mail"); if(!el) return;
+    var need = [], mk = [], wk = weekStart(0), logged = 0;
+    Object.keys(mailDocs).forEach(function(id){
+      var d = mailDocs[id]; if(!d) return;
+      if(d.st === "need") need.push(id);
+      if(d.st === "logged" && d.mk && !d.mkOk) mk.push(id);
+      if(d.st === "logged" && d.doneAt && new Date(d.doneAt) >= wk) logged++;
+    });
+    $("flow-mailcount").textContent = logged ? logged + " logged this week" : "";
+    var html = "";
+    need.forEach(function(id){
+      var d = mailDocs[id], m = d.m || {};
+      html += '<div class="mailrow"><div class="fbmain"><b>' + esc(m.subject || d.subject || "(no subject)") + '</b>' +
+        '<div class="sub2">' + esc(m.fromName || m.from || "") + (m.by ? " · forwarded by " + esc(m.by) : "") + ' · needs a company</div></div>' +
+        '<div class="mailbtns">' + (d.cands || []).map(function(c){
+          return '<button class="btn ghost sm" type="button" data-mailpick="' + esc(id) + '" data-key="' + esc(c.key) + '" data-name="' + esc(c.name) + '">' + esc(c.name) + '</button>';
+        }).join("") +
+        '<select class="mailany" data-mailany="' + esc(id) + '" aria-label="Another company"><option value="">Another company…</option>' +
+          Object.keys(mailDirectory()).sort().map(function(k){ var c = mailDirectory()[k]; return '<option value="' + esc(k) + '">' + esc(c.name) + '</option>'; }).join("") +
+        '</select><button class="btn ghost sm" type="button" data-mailskip="' + esc(id) + '">Not Needed</button></div></div>';
+    });
+    mk.forEach(function(id){
+      var d = mailDocs[id], m = d.m || {};
+      html += '<div class="mailrow"><div class="fbmain"><b>' + esc(d.mk.name) + '</b> <span class="tag ftype">New Prospect</span>' +
+        '<div class="sub2">made from ' + esc(m.fromName || m.from || "an email") + ' · ' + esc(m.subject || "") + '</div></div>' +
+        '<div class="mailbtns"><button class="btn ghost sm" type="button" data-fkind="lead" data-fid="' + esc(d.mk.leadId || "") + '">Open</button>' +
+        '<button class="btn sm" type="button" data-mailok="' + esc(id) + '">Looks Right</button></div></div>';
+    });
+    if(!html) html = '<div class="fbempty">Nothing waiting. Forward, Cc or Bcc an email to <b>' + MAIL_ADDR +
+      '</b> and it lands on the sponsor or prospect it is about. Put <b>sponsor: Company Name</b> as the first line to pick the company.</div>';
+    el.innerHTML = html;
+  }
+
+  /* ---- a company's timeline: its emails to mismosponsor@ and the notes on its prospect ---- */
+  function touchesFor(name){
+    var k = companyKey(name); if(!k) return [];
+    return touches.filter(function(t){ return t.co === k && !t.archived; })
+      .sort(function(x, y){ return String(y.date).localeCompare(String(x.date)) || String(y.at).localeCompare(String(x.at)); });
+  }
+  function latestTouchFor(name){ var t = touchesFor(name)[0]; return t ? t.date : ""; }
+  function lastTouch(l){
+    var a = l && l.lastContactDate || "", b = latestTouchFor(l && l.company);
+    return a > b ? a : b;
+  }
+  function touchSection(name){
+    var list = touchesFor(name);
+    return '<div class="dsect"><h4>Emails</h4>' + (list.length ? list.slice(0, 25).map(function(t){
+      return '<div class="tprow"><div class="tphead"><span class="lt">' + esc(fmtDate(t.date)) + '</span> <b>' + esc(t.subject || "(no subject)") + '</b></div>' +
+        '<div class="sub2">' + esc(t.fromName || t.from || "") + (t.by ? " · logged by " + esc(t.by) : "") + '</div>' +
+        (t.summary ? '<div class="tpsum">' + esc(t.summary) + '</div>' : '') +
+        '<button class="btn ghost sm" type="button" data-readmail="' + esc(t.id) + '" data-day="' + esc(t.date) + '">Read the Whole Email</button></div>';
+    }).join("") : '<div class="fldnote" style="margin-top:0;">No emails logged yet. Forward, Cc or Bcc one to <b>' + MAIL_ADDR + '</b> and it shows here.</div>') + '</div>';
+  }
+  var mailTexts = {};
+  function readMail(tid, day){
+    var f = mailTextFile(day);
+    var show = function(){
+      var doc = (mailTexts[f] || {})[tid], t = touches.filter(function(x){ return x.id === tid; })[0] || {};
+      var dl = document.createElement("dialog"); dl.className = "maildlg";
+      dl.innerHTML = '<div class="mdh"><b>' + esc(t.subject || "(no subject)") + '</b><button type="button" class="btn ghost sm" data-close>Close</button></div>' +
+        '<div class="sub2">' + esc([t.fromName, t.from].filter(Boolean).join(" ")) + ' · ' + esc(fmtDate(t.date)) + '</div>' +
+        '<pre class="mdtext">' + esc(doc ? doc.text : (t.summary || "The whole text isn't kept for this email.")) + '</pre>';
+      dl.addEventListener("click", function(e){ if(e.target.closest("[data-close]")) dl.close(); });
+      dl.addEventListener("close", function(){ dl.remove(); });
+      document.body.appendChild(dl); try{ dl.showModal(); }catch(e){ dl.setAttribute("open", ""); }
+    };
+    if(mailTexts[f]) return show();
+    var first = true;
+    db.collection(f).onSnapshot(function(snap){
+      var o = {}; snap.docs.forEach(function(d){ o[d.id] = d.data(); }); mailTexts[f] = o;
+      if(first){ first = false; show(); }
+    }, function(){ if(first){ first = false; mailTexts[f] = {}; show(); } });
+  }
+
+  /* ---- New Sponsorship Type (Other Sponsorships) ---- */
+  function paintTypeFilter(){
+    var sel = $("f-bill-type-other"); if(!sel) return;
+    var keep = billFilter.other.type;
+    sel.innerHTML = '<option value="">Every Type</option>' + otherTypes.map(function(t){
+      return '<option value="' + esc(t.key) + '"' + (t.key === keep ? " selected" : "") + '>' + esc(t.name) + '</option>'; }).join("");
+  }
+  function openTypeForm(){
+    var el = $("otype-form"); if(!el) return;
+    el.hidden = false;
+    el.innerHTML = '<h4>New Sponsorship Type</h4><div class="grid2">' +
+      '<div class="fld"><label for="ot-name">Name</label><input id="ot-name" type="text" placeholder="e.g. Bootcamp Sponsorship"></div>' +
+      '<div class="fld"><label for="ot-detail">What Each One Is Called</label><input id="ot-detail" type="text" placeholder="e.g. Event, Session or Report"></div>' +
+      '<div class="fld"><label for="ot-share">MISMO Keeps (%)</label><input id="ot-share" type="number" min="1" max="100" value="100"></div>' +
+      '<div class="fld"><label for="ot-partner">Partner (if the money is shared)</label><input id="ot-partner" type="text" placeholder="e.g. MBA"></div>' +
+      '<div class="fld"><label for="ot-to">Past-Due Notice To (partner only)</label><input id="ot-to" type="text" placeholder="name@mba.org; name@mismo.org"></div>' +
+      '<div class="fld"><label for="ot-hi">Notice Greeting</label><input id="ot-hi" type="text" placeholder="e.g. David and Amy"></div>' +
+      '</div><div class="fldnote">A one-off sponsorship that doesn’t fit Summit or Workgroup gets a type here, and every one of them is ' +
+      'tracked on this page and on the Pipeline. A partner type drafts a past-due notice to the partner; any other type drafts the invoice email to the sponsor.</div>' +
+      '<div style="margin-top:10px;display:flex;gap:8px;"><button class="btn sm" type="button" id="ot-save">Add the Type</button>' +
+      '<button class="btn ghost sm" type="button" id="ot-cancel">Cancel</button><span class="savemsg" id="ot-msg"></span></div>';
+    setTimeout(function(){ var n = $("ot-name"); if(n) n.focus(); }, 50);
+  }
+  function saveTypeForm(){
+    var name = ($("ot-name").value || "").trim();
+    if(!name){ $("ot-msg").textContent = "Give it a name."; $("ot-msg").className = "savemsg err"; return; }
+    var key = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+    if(otherType(key) || key === "summit" || key === "workgroup"){ $("ot-msg").textContent = "There is already a type with that name."; $("ot-msg").className = "savemsg err"; return; }
+    var share = Math.min(100, Math.max(1, Number($("ot-share").value) || 100)) / 100;
+    var t = {key:key, name:name, detail:($("ot-detail").value || "").trim() || "What They’re Sponsoring", share:share,
+      partner:($("ot-partner").value || "").trim(), noticeTo:($("ot-to").value || "").trim(), noticeHi:($("ot-hi").value || "").trim(),
+      addedBy:whoAmI(), addedOn:iso(today())};
+    if(!t.partner) t.noticeTo = "";
+    if(!db || !canWrite){ $("ot-msg").textContent = "Not connected — nothing was saved."; $("ot-msg").className = "savemsg err"; return; }
+    var mine = ((settingsDoc && settingsDoc.otherTypes) || []).concat([t]);
+    db.doc("settings/main").update({otherTypes:mine}).then(function(){
+      applySettings(Object.assign({}, settingsDoc || {}, {otherTypes:mine}));
+      addLog("", "new sponsorship type added: " + name, whoAmI());
+      $("otype-form").hidden = true; billFilter.other.type = key;
+      renderBilling(); renderFlow();
+      toast("Use New Sponsorship to add the first one.", "", "Added — " + name);
+    }, function(){ $("ot-msg").textContent = "It could not be saved."; $("ot-msg").className = "savemsg err"; });
+  }
+
+  /* ---- wiring ---- */
+  document.addEventListener("click", function(ev){
+    var el = ev.target;
+    if(!el || !el.closest) return;
+    var b;
+    if((b = el.closest("[data-ftype]"))){ flowState.type = b.getAttribute("data-ftype"); renderFlow(); return; }
+    if((b = el.closest("[data-fgroup]"))){ flowState.group = b.getAttribute("data-fgroup"); flowState.stage = ""; renderFlow(); return; }
+    if((b = el.closest("[data-fstage]"))){ var sg = b.getAttribute("data-fstage"); flowState.stage = flowState.stage === sg ? "" : sg; renderFlow(); return; }
+    if((b = el.closest("[data-nweek]"))){ flowState.nweek = +b.getAttribute("data-nweek"); paintNewProspects(); return; }
+    if((b = el.closest("[data-mailpick]"))){ mailPick(b.getAttribute("data-mailpick"), b.getAttribute("data-key"), b.getAttribute("data-name")); return; }
+    if((b = el.closest("[data-mailskip]"))){ mailSkip(b.getAttribute("data-mailskip")); return; }
+    if((b = el.closest("[data-mailok]"))){ mailOk(b.getAttribute("data-mailok")); return; }
+    if((b = el.closest("[data-readmail]"))){ readMail(b.getAttribute("data-readmail"), b.getAttribute("data-day")); return; }
+    if(el.closest("#new-otype")){ openTypeForm(); return; }
+    if(el.closest("#ot-cancel")){ $("otype-form").hidden = true; return; }
+    if(el.closest("#ot-save")){ saveTypeForm(); return; }
+    if(el.closest("#flow-new-lead")){ $("new-lead").click(); return; }
+    if(el.closest("#ld-start")){ startFromLead(); return; }
+    if(el.closest("select, input, .mailbtns select")) return;
+    if((b = el.closest("[data-fkind][data-fid]"))){
+      var k = b.getAttribute("data-fkind"), id = b.getAttribute("data-fid");
+      if(!id) return;
+      if(k === "lead") openLeadDrawer(id, null);
+      else if(k === "app") openDrawer(id, null);
+      else openBill(k, id);
+    }
+  });
+  document.addEventListener("change", function(ev){
+    var el = ev.target; if(!el) return;
+    if(el.id === "flow-owner"){ flowState.owner = el.value; renderFlow(); return; }
+    if(el.getAttribute && el.getAttribute("data-mailany")){
+      var key = el.value; if(!key) return;
+      var c = mailDirectory()[key]; mailPick(el.getAttribute("data-mailany"), key, c ? c.name : key); return;
+    }
+    if(el.getAttribute && el.getAttribute("data-flowstage")){
+      var l = findById(leads, el.getAttribute("data-flowstage")); if(!l) return;
+      var was = l.status || "Lead", now = el.value; if(was === now) return;
+      var after = JSON.parse(JSON.stringify(l)); after.status = now;
+      after.history = (after.history || []).concat([{at:iso(today()), who:whoAmI(), text:"Stage " + was + " → " + now + "."}]);
+      saveLead(after);
+      addLog(after.leadNo, "stage " + was + " → " + now + " (prospect)", whoAmI());
+      toast(was + " → " + now, "", "Saved — " + (after.company || after.leadNo));
+      renderFlow(); return;
+    }
+    if(el.id === "y-stype"){
+      var w = $("y-wgwrap"), i2 = $("y-intwrap");
+      if(w) w.hidden = el.value !== "workgroup";
+      if(i2) i2.hidden = el.value !== "summit";
+    }
+  });
+  document.addEventListener("input", function(ev){
+    if(ev.target && ev.target.id === "flow-q"){ flowState.q = ev.target.value; renderFlow(); }
+  });
+
+  /* Start the Sponsorship, from a workgroup or other prospect: a new record with what the
+     prospect already knows. The prospect is marked when that record is first saved. */
+  function startFromLead(){
+    if(!currentLead) return;
+    var l = collectLeadDrawer(true), st = leadType(l);
+    if(st === "summit") return;
+    var kind = st === "workgroup" ? "workgroup" : "other";
+    var seed = {company:l.company, contactName:l.contactName, contactEmail:l.contactEmail, owner:l.owner,
+      amountDue:l.forecast ? Number(l.forecast) : "", fromLead:l.id};
+    if(kind === "workgroup") seed.workgroup = l.workgroup || "";
+    else { seed.otype = st; seed.what = l.interestedIn || ""; }
+    closeLeadDrawer();
+    showView(kind === "workgroup" ? "workgroup" : "other");
+    newBill(kind, seed);
+  }
+  /* a record started from a prospect marks that prospect when it is saved */
+  function markLeadStarted(r){
+    if(!r || !r.fromLead) return;
+    var l = findById(leads, r.fromLead); if(!l || l.linkedBillNo === r.no) return;
+    var after = JSON.parse(JSON.stringify(l));
+    after.status = "Converted to Sponsorship"; after.linkedBillNo = r.no;
+    after.history = (after.history || []).concat([{at:iso(today()), who:whoAmI(),
+      text:"Started " + (r.__kind === "other" ? otypeOf(r).name : "workgroup") + " sponsorship " + r.no + "."}]);
+    saveLead(after);
+  }
+
+  showView(currentView);
   function startRelay(){
     RS.requireAccess(RELAY_PROJECT, {toolName: TOOL_NAME, eyebrow: "Programs & Operations"}).then(beginRelay, function(e){
       if(e && e.code === "OFFLINE") relayBanner("<b>The Sponsorship Portal couldn't reach the sign-in service.</b> Check your connection, then reload the page.", "bad");
@@ -8575,16 +9533,17 @@ a series deal is counted once, at its full amount.</div>
         if(Array.isArray(e)){ logEntries = e.slice(); renderLog(); sweepLog(); }
       }catch(err){ loadFailed("reading the activity log", err && err.message); }
     }, failed("loading the activity log"));
-    ["workgroups","webinars"].forEach(function(cname){
-      var kind = cname === "webinars" ? "webinar" : "workgroup";
+    ["workgroups","others"].forEach(function(cname){
+      var kind = cname === "others" ? "other" : "workgroup";
       d.collection(cname).onSnapshot(function(snap){
         try{
           var keep = billDraftId ? billList(kind).filter(function(r){ return r.id === billDraftId; }) : [];
           var fresh = copyDocs(snap);
+          if(kind === "other") fresh.forEach(function(r){ r.__kind = "other"; });
           keep.forEach(function(r){ if(!fresh.some(function(x){ return x.id === r.id; })) fresh.push(r); });
           billSet(kind, fresh);
-          if(kind === "webinar") webinarsSeen = true; else wgsSeen = true;
-          renderBilling();
+          if(kind === "other"){ othersSeen = true; moveWebinars(); } else wgsSeen = true;
+          renderBilling(); renderFlow();
         }catch(err){ loadFailed("reading the " + cname, err && err.message); }
       }, function(e){
         /* a store that has never been written yet is simply empty, not a failure */
@@ -8593,6 +9552,26 @@ a series deal is counted once, at its full amount.</div>
         loadFailed("loading the " + cname, e && (e.message || e.code));
       });
     });
+    /* the AI webinar records as they were before they moved into Other Sponsorships: read only */
+    d.collection("webinars").onSnapshot(function(snap){
+      webinarsOld = copyDocs(snap); webinarsSeen = true; moveWebinars();
+    }, function(e){ if(e && e.status === 404){ webinarsSeen = true; moveWebinars(); } });
+    /* portal settings: the Other Sponsorship types (November 18, 2026) */
+    d.collection("settings").onSnapshot(function(snap){
+      var main = null;
+      snap.docs.forEach(function(doc){ if(doc.id === "main") main = doc.data() || {}; });
+      applySettings(main); settingsSeen = true;
+      renderBilling(); renderFlow();
+    }, function(e){ settingsSeen = true; });
+    /* emails sent to mismosponsor@ (the mailbox flow writes them) and the timeline they become */
+    d.collection("mailin").onSnapshot(function(snap){
+      mailDocs = {};
+      snap.docs.forEach(function(doc){ mailDocs[doc.id] = doc.data() || {}; });
+      mailSeen = true; mailRun(); renderFlow();
+    }, function(e){ mailSeen = true; });
+    d.collection("touchpoints").onSnapshot(function(snap){
+      touches = copyDocs(snap); touchSeen = true; mailRun(); renderFlow();
+    }, function(e){ touchSeen = true; });
     d.collection("outbox").onSnapshot(function(snap){
       try{ outbox = copyDocs(snap); outboxLoaded = true; renderAll(); paintMoneyBanner();
            if(listSync.state === "waiting") setTimeout(checkListSync, 8000); }catch(err){}
@@ -8635,9 +9614,9 @@ a series deal is counted once, at its full amount.</div>
       try{
         var keep = [];
         if(leadDraft) keep = leads.filter(function(l){ return l.id === leadDraft; });
-        leads = copyDocs(snap);
+        leads = copyDocs(snap).map(normLead);
         keep.forEach(function(l){ if(!leads.some(function(x){ return x.id === l.id; })) leads.push(l); });
-        leadsSeen = true;
+        leadsSeen = true; mailRun();
         renderAll();
       }catch(err){ loadFailed("reading the prospects", err && err.message); }
     }, failed("loading the prospects"));

@@ -1,5 +1,8 @@
 # Changelog
 
+- 2026-11-18: One Pipeline for every sponsorship, lead to paid (summits, workgroups, other types, prospects included), with type and stage filters, New Prospects, Due Now and a stage changed right in its row. Prospects get a type, workgroup prospects their group, and Start the Sponsorship.
+- 2026-11-18: Other Sponsorships with types you can add; the AI Webinar Series is the first and its records moved there (webinars.json kept as it was).
+- 2026-11-18: The mismosponsor@ mailbox: emails forwarded or copied to it are logged on the right sponsor or prospect, make a new prospect when nothing matches, or wait to be picked.
 - 2026-11-07: Sponsor Benefits: the agenda is never a to-do (sponsors go onto the website's agenda automatically).
 - 2026-11-07: Sponsor Benefits: the agenda ticks itself from Summit HQ, the weekly registration list is shown as automatic, To Do holds only the next 45 days (the rest folded under Coming Later), and Rosalyn is no longer listed (Summit HQ only).
 - 2026-11-07: Sponsor Benefits: the logo ticks itself from the website's sponsor list (the logo goes on automatically); it is a to-do only when the website shows a sponsor's name with no logo file.

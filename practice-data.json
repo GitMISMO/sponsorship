@@ -10,7 +10,9 @@
       "app-t-fall": {"appNo": "AN90005", "event": "Fall 2027", "status": "Pending Payment", "company": "Adatum Credit", "contactName": "Emery Test", "contactEmail": "emery@example.org", "level2027": "GOLD", "opportunity": "Session Introduction", "day": "", "dateSubmitted": "{{today-30}}", "contractAccepted": "Yes", "acceptanceName": "Emery Test", "acceptanceDate": "{{today-30}}", "amountDue": 10000, "invoiceNumber": "990105", "invoiceDate": "{{today-20}}", "prospectusRef": "MS27-T0005", "comments": "Practice record. MISMO Money has its payment, so it turns Paid when the portal opens.", "followUpCount": 0}
     }},
     "leads": {"docs": {
-      "lead-t-1": {"leadNo": "LD90001", "company": "Wingtip Servicing", "contactName": "Finley Test", "contactEmail": "finley@example.org", "stage": "Contacted", "interest": "GOLD", "notes": "Practice prospect.", "createdAt": "{{today-15}}"}
+      "lead-t-1": {"leadNo": "LD90001", "company": "Wingtip Servicing", "contactName": "Finley Test", "contactEmail": "finley@wingtip.test", "status": "Contacted", "stype": "summit", "season": "2027", "owner": "Amy Moses", "forecast": 20000, "nextFollowUpDate": "{{today-1}}", "nextStep": "Send the Gold options", "createdDate": "{{today-15}}", "history": [{"at": "{{today-15}}", "who": "Amy Moses", "text": "Practice prospect."}]},
+      "lead-t-wg": {"leadNo": "LD90002", "company": "Litware Group", "contactName": "Morgan Test", "contactEmail": "morgan@litware.test", "status": "Proposal", "stype": "workgroup", "workgroup": "API Community of Practice", "season": "2027", "owner": "Kelly Bradshaw", "forecast": 5000, "createdDate": "{{today-2}}", "history": []},
+      "lead-t-old": {"leadNo": "LD90003", "company": "Margie's Travel Test", "contactName": "Riley Test", "contactEmail": "riley@margie.test", "status": "Not Now — Follow Up", "season": "2027", "createdDate": "{{today-40}}", "history": [], "about": "saved under an old stage name: shows as Hold"}
     }},
     "log": {"entries": [
       {"at": "{{today-30}}T15:00:00.000Z", "appNo": "AN90001", "what": "marked Paid from MISMO Money", "who": "MISMO Money"}
@@ -28,8 +30,19 @@
     "summit-hq:sponsor-agenda": {"docs": {"sponsor-agenda/nola": {"on": {"AN90002": "{{today-1}}"}}}},
     "inbox-taken": {"docs": {}},
     "prospects-removed": {"docs": {}},
-    "workgroups": {"docs": {}},
-    "webinars": {"docs": {}},
+    "workgroups": {"docs": {
+      "wg-t-1": {"no": "WG90001", "company": "Proseware Group Test", "workgroup": "eMortgage CoP", "term": "Initial", "cadence": "Annual", "status": "Draft", "amountDue": 6000, "contactName": "Sam Test", "contactEmail": "sam@proseware-group.test"}
+    }},
+    "webinars": {"docs": {
+      "wb-t-1": {"no": "WB90001", "company": "Fourth Coffee Test", "webinar": "AI in Servicing", "status": "Pending Payment", "invoiceNumber": "990120", "invoiceDate": "{{today-50}}", "amountDue": 4000, "contactName": "Quinn Test", "contactEmail": "quinn@fourthcoffee.test", "about": "an AI webinar record from before Other Sponsorships: copied into others.json on first open"}
+    }},
+    "others": {"docs": {}},
+    "touchpoints": {"docs": {}},
+    "mailin": {"docs": {
+      "m-t-1": {"from": "jcritchley@mismo.org", "to": "mismosponsor@mismo.org", "subject": "FW: Badge artwork", "received": "{{today-1}}T14:00:00Z", "html": "<p>Logging this.</p><p>From: Avery Test &lt;avery@example.org&gt;<br>Sent: Monday<br>To: Jonna Critchley &lt;jcritchley@mismo.org&gt;<br>Subject: Badge artwork</p><p>Hi Jonna, the badge artwork is attached. Avery</p>", "about": "a forward from staff: the person forwarded is a Northwind contact, so it is logged on Northwind"},
+      "m-t-2": {"from": "pat@newco-lending.test", "to": "mismosponsor@mismo.org; kbradshaw@mismo.org", "subject": "Sponsoring the Spring summit", "received": "{{today}}T10:00:00Z", "html": "<p>Hi Kelly, we would like to hear about sponsoring Spring.</p><p>Company: Newco Lending Test</p><p>Pat Test</p>", "about": "nobody matches: a new prospect is made"},
+      "m-t-3": {"from": "kim@example.org", "to": "mismosponsor@mismo.org", "subject": "Question", "received": "{{today}}T11:00:00Z", "html": "<p>A question about our sponsorship.</p>", "about": "example.org belongs to several sponsors: waits for someone to pick"}
+    }},
     "mismo-money-paid": {
       "for": "sponsorship", "writtenAt": "{{today}}T12:00:00.000Z", "paymentsThrough": "{{today-1}}",
       "orders": [

@@ -70,13 +70,19 @@ A prospect has a type (`stype`: summit, workgroup or an Other type key), and a w
 names its group. **Start the Sponsorship** on a workgroup or other prospect opens the new record
 filled in (`fromLead`); saving it marks the prospect Converted to Sponsorship (`linkedBillNo`).
 The old Prospects tab is folded into the Pipeline (its view and code are still there, with no tab).
-The summit board is the **Summit Sponsorships** tab.
+So are Summit Sponsorships (`view-pipeline`, the summit board), Workgroups (`view-workgroup`) and
+Other Sponsorships (`view-other`), since November 18, 2026: no tabs, views and code kept so the
+record panels work as before. In their place on the Pipeline: the type buttons, **All**
+(`pipeItems(true)`: every record however old, archived included), **New Sponsorship…**
+(`#flow-newkind`: summit application, workgroup, any other type, or a new type into `#otype-form`),
+and **waiting on a next step** (`todo`: an application's first `tasksFor` task, or a draft
+workgroup or other sponsorship), which joins Due Now and the Pipeline's menu count.
 
 ## Other Sponsorships and types
 
 Any sponsorship that isn't a summit or a workgroup is an Other Sponsorship (`data/others.json`),
 with its type on each record (`otype`). Types are `OTHER_TYPES_BASE` (the AI Webinar Series, split
-50/50 with MBA) plus the ones added with **New Sponsorship Type**, kept in `data/settings.json`
+50/50 with MBA) plus the ones added with **New Sponsorship… → A New Sponsorship Type** on the Pipeline, kept in `data/settings.json`
 (`settings/main.otherTypes`): name, what each one is called, MISMO's share, and for a partner
 series who gets the past-due notice. The AI webinar records were copied into `others.json` under the
 same ids and numbers the first time an editor opened the portal; `data/webinars.json` is kept as it

@@ -10029,7 +10029,7 @@ a series deal is counted once, at its full amount.</div>
       var h = '<div class="cp-sect"><h4>Open Opportunities</h4>' + (openI.length ? openI.map(coOppCard).join("") :
         '<div class="cp-card"><div class="fldnote" style="margin:0;">Nothing open. ' + (canWrite ? 'Use <b>Add a Prospective Sponsorship</b> to start one.' : '') + '</div></div>') + '</div>';
       var cur = c.items.filter(function(it){ return it.stage === "Paid"; });
-      if(cur.length) h += '<div class="cp-sect"><h4>Sponsoring Now</h4>' + cur.map(function(it){ return coSpRow(it); }).join("") + '</div>';
+      if(cur.length) h += '<div class="cp-sect"><h4>Sponsorships, Last 12 Months</h4>' + cur.map(function(it){ return coSpRow(it); }).join("") + '</div>';
       h += '<div class="cp-sect"><h4>Latest Activity</h4>' + (acts.length ? acts.slice(0, 4).map(actRow).join("") : '<div class="fldnote" style="margin:0;">Nothing logged yet.</div>') +
         (acts.length > 4 ? '<button class="btn ghost sm" type="button" data-cotab="activity" style="margin-top:8px;">See All Activity</button>' : '') + '</div>';
       return h;

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-19: Bernie's Registration Desk in Summit HQ: his order IDs, invoice dates, comp codes, code emails and payment follow-ups are read from Summit HQ and applied to the records (Approved moves to Pending Payment, the comps benefit ticks, each follow-up counts as a chase), whenever the portal is open and hourly. Emails to Bernie point to the Desk.
 - 2026-11-18: Summit Sponsorships, Workgroups and Other Sponsorships fold into the Pipeline: pick the type there; All shows every record however old; New Sponsorship… starts any kind or adds a type; what applications and draft sponsorships are waiting on (review, the invoice, a chase) shows in the headline and under Due Now.
 - 2026-11-18: Pipeline: every number in the headline and every stage box can be selected to list what makes it up, right under it (with a total for money). Due Now and New Prospects keep to four rows with See All, and the three boxes line up. Follow-ups due now count touchpoint follow-ups too.
 - 2026-11-18: The menu: Work is Home, Sponsors and Prospects, Pipeline and Benefits; Summit Sponsorships, Workgroups and Other Sponsorships move under Records as the full list of each kind. Benefits filters match the rest of the portal.

@@ -152,6 +152,29 @@ or a fourth application from one email in a day) is not made into a record. It i
 top of the Pipeline with why it was held, for someone to **Take It In** or mark **Not a Sponsor**.
 Nothing is deleted.
 
+## The Registration Desk (Summit HQ, November 19, 2026)
+
+Bernie works summit sponsorships from his Registration Desk in Summit HQ
+(resources.mismo.org/summit-hq/?desk) and doesn't open the portal. The Desk reads
+`data/applications.json` with the viewer's own sign-in (so Bernie, Amy and Kelly need view access to
+the portal) and never writes to sponsorship-data. What he enters is kept in Summit HQ's data, in
+`feed-desk-sponsor` (`{updatedAt, entries:{<application id>:{appNo, invoiceNumber, invoiceDate,
+compCode, numComps, codeSentAt, codeSentTo, codeSentBy, followUps:[{on,by,at}], by, at}}}`).
+`applyDesk()` reads it (`/summit-hq/data/feed-desk-sponsor`, read only) and applies it: matched on
+the id, then `appNo`; a missing field leaves the record alone; the order ID goes through
+`applyRules` (Approved → Pending Payment); `codeSentAt` ticks `bf:<summit>:comps`; each follow-up not
+seen before (its `at`, kept in `deskChases`) adds one to `followUpCount` and sets `lastFollowUpDate`
+to the latest `on`. An entry is applied only when its newest `at` is later than `deskAppliedAt` on the
+record, so it never overwrites a later edit made here. The history line starts "From the
+Registration Desk". It runs whenever someone who can edit has the portal open (the feed is read
+again every five minutes) and in the hourly background work, which reads the feed from
+GitMISMO/summit-hq-data with `SUMMIT_HQ_DATA_TOKEN` or else the data key; a key that can't read it
+just leaves the entries for the next person who opens the portal, and the run summary says so.
+
+**The Desk reads these field names; if one ever changes, tell Jonna:** event, status, company,
+contactName, contactEmail, opportunity, amountDue, invoiceNumber, invoiceDate, compCode, numComps,
+lastFollowUpDate, paymentReceivedDate, inKind.
+
 ## Background work
 
 New applications from the prospectuses, MISMO Money payments and prospects returning to the list

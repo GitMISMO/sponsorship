@@ -1739,7 +1739,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
           <ol>
             <li><b>Submitted.</b> A sponsor applies on the prospectus, or someone adds a New Application here. Amy and Kelly review it and set the <b>Amount Due</b>.</li>
             <li><b>Approved.</b> Amy or Kelly clicks <b>Approved</b>. That emails Bernie the invoice request, and the opportunity comes off the public page. The logo goes onto the website automatically, so Vanessa is no longer emailed a logo request.</li>
-            <li><b>Pending Payment.</b> Bernie raises the invoice in Aptify and enters the <b>Aptify order ID</b>, the invoice date, the comp code and the number of comps. Entering the order ID moves it to Pending Payment.</li>
+            <li><b>Pending Payment.</b> Bernie raises the invoice in Aptify and enters the <b>Aptify order ID</b>, the invoice date, the comp code and the number of comps on his <b>Registration Desk</b> in Summit HQ. The portal picks them up on its own (whenever it is open, and every hour) and the order ID moves it to Pending Payment, the same as if it were typed here. When he emails the sponsor their code from the Desk, the &ldquo;comp code sent&rdquo; benefit ticks itself. The record&rsquo;s history says <b>From the Registration Desk</b>. They can still be typed here too.</li>
             <li><b>Paid.</b> When Aptify shows the invoice paid, MISMO Money tells the portal and the record is marked Paid on its own (see <b>Payments from MISMO Money</b>). It can also be marked Paid by hand on the record. Jonna, Amy and Kelly get the Payment Made email.</li>
           </ol>
           <p><b>In Kind</b> is a sponsor who is recognized but never charged. Set <b>Sponsorship Type</b> to <b>In Kind</b> on the record. Approving it skips invoicing and payment altogether and moves it straight to <b>In Kind</b>: Bernie gets no invoice request, nothing is ever chased, and none of it reaches Committed, Collected, Outstanding or Overdue. It takes no opportunity off the list either — Inventory and the public prospectus carry on offering it, because a free sponsorship is recognition rather than a slot someone has bought. Its logo goes onto the website automatically, the same as a paid sponsor&rsquo;s. The day after the last summit it covers, the company goes back on the <b>Prospects</b> list, noted as a prior in-kind sponsor, so the team can try to convert them to a paid sponsorship.</p>
@@ -1784,7 +1784,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li>Payment is chased <b>30 days after the invoice</b>, then <b>every 10 business days</b> until it clears. The aim is to collect before the summit.</li>
             <li>When a chase is due, the record&rsquo;s card on the Pipeline turns red and says so.</li>
             <li><b>Send Alert</b> emails the payment follow-up to Bernie, Jonna, Amy and Kelly. The button says <b>Sending&hellip;</b>, then a message confirms it went. Clicking it again within two minutes does nothing, so it can&rsquo;t go out twice.</li>
-            <li>Sending the alert is <b>not</b> the chase. Once Bernie has actually chased the sponsor, he clicks <b>Log a Follow-Up</b> on the record. That records today&rsquo;s date and starts the 10-business-day count to the next one.</li>
+            <li>Sending the alert is <b>not</b> the chase. Once Bernie has actually chased the sponsor, he logs the follow-up on his <b>Registration Desk</b> (or <b>Log a Follow-Up</b> on the record here). Either records the date and starts the 10-business-day count to the next one.</li>
             <li>If the count is ever wrong, correct <b>Follow-Ups Logged</b> and <b>Last Follow-Up</b> in the record&rsquo;s Payment section and click <b>Save</b>.</li>
           </ul>
         </div>
@@ -2716,8 +2716,9 @@ a series deal is counted once, at its full amount.</div>
         body:"Hi There Bernie,\n\n" + a.company + " has committed to sponsorship of the " + a.event +
           ". Please review the details and complete the invoicing process.\n\n" +
           "Note:\n\n" +
-          "- Please enter the Aptify Order ID in the Invoice Number field and enter the Invoice Date\n" +
-          "- Please enter the Sponsor comp code and number of comps in the applicable fields in the Sponsorship Portal.\n\n" +
+          "- Please enter the Aptify Order ID and the Invoice Date on your Registration Desk\n" +
+          "- Please enter the Sponsor comp code and number of comps on your Registration Desk.\n\n" +
+          "Registration Desk: https://resources.mismo.org/summit-hq/?desk\n\n" +
           "Note: If the invoice is under a different company name, please indicate that name in the Also Invoiced As field.\n\n" +
           "Application: " + a.appNo +
           "\nLevel: " + (lvl||"—") + "\nOpportunity: " + (oppLabel(a)||"—") +
@@ -2768,7 +2769,7 @@ a series deal is counted once, at its full amount.</div>
         body:"Hi there,\n\n" + a.company + " was invoiced on " + fmtDate(a.invoiceDate) + " for " +
           money(a.amountDue) + " (Order ID " + (a.invoiceNumber||"—") + ") and payment has not been received " +
           c.days + " days on." + summitWarn(a) + "\n\n" +
-          "This is follow-up " + (c.count+1) + ". Please chase the sponsor, then enter the follow-up date in the portal.\n\n" +
+          "This is follow-up " + (c.count+1) + ". Please chase the sponsor, then enter it on your Registration Desk: https://resources.mismo.org/summit-hq/?desk\n\n" +
           "Contact: " + (a.contactName||"—") + " <" + (a.contactEmail||"") + ">\n\nThanks,\nMISMO Programs & Operations"
       };
     }
@@ -3075,7 +3076,8 @@ a series deal is counted once, at its full amount.</div>
      "amountDue","amountPaid","compCode","numComps","invoiceNumber","billingName","invoiceDate","paymentStatus",
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
      "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day","workshopName",
-     "inKind","priceFlag","priceSent","contractVersion","acceptanceTitle","package","updatedAt"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
+     "inKind","priceFlag","priceSent","contractVersion","acceptanceTitle","package","updatedAt",
+     "deskAppliedAt","deskChases"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
     /* benefit checklist items, one field each so two people ticking different ones never clash */
     Object.keys(a).forEach(function(k){ if(/^bf:/.test(k) && a[k]) d[k] = a[k]; });
     return d;
@@ -4900,7 +4902,7 @@ a series deal is counted once, at its full amount.</div>
     else if(stage === "Submitted") note = a.inKind
       ? "<b>Waiting on Amy and Kelly.</b> This is an in-kind sponsorship, so there is no amount to set. Moving the status to Approved recognizes them and moves it straight to In Kind — no invoice, nothing to chase."
       : "<b>Waiting on Amy and Kelly.</b> Set the amount due, then move the status to Approved — that raises the invoice request and moves it to Pending Payment.";
-    else if(stage === "Approved") note = "<b>Waiting on Bernie.</b> Enter the Aptify order ID, the invoice date, the sponsor comp code and the number of comps. The status moves to Pending Payment once the order ID is in.";
+    else if(stage === "Approved") note = "<b>Waiting on Bernie.</b> He enters the Aptify order ID, the invoice date, the sponsor comp code and the number of comps on his Registration Desk in Summit HQ, and they come here on their own (or type them below). The status moves to Pending Payment once the order ID is in.";
     else if(stage === "Pending Payment"){
       var c = chaseState(a);
       note = "<b>Waiting on payment.</b> " + (a.invoiceDate ? ("Invoiced " + fmtDate(a.invoiceDate) + ", " + c.days + " days ago. ") : "") +
@@ -8633,6 +8635,8 @@ a series deal is counted once, at its full amount.</div>
   loadPriceList();
   loadWebFeeds();
   loadHqAgenda();
+  loadDeskFeed();
+  setInterval(loadDeskFeed, 5 * 60 * 1000);   // Bernie's entries come in while the portal is open
 
   function fromProspectus(r){
     var ref = txt(r.reference).toUpperCase();
@@ -8949,6 +8953,105 @@ a series deal is counted once, at its full amount.</div>
     setTimeout(function(){ moneyBusy = false; }, 30000);   // let the saves land before looking again
     return true;
   }
+  /* ============================================================
+     THE REGISTRATION DESK (Summit HQ, November 19, 2026)
+     Bernie works summit sponsorships from his Registration Desk in Summit HQ
+     (resources.mismo.org/summit-hq/?desk) and never opens this portal. The Desk only reads
+     data/applications.json; what he enters there is kept in Summit HQ's own data, in the
+     feed-desk-sponsor document, which this reads (never writes) and applies to the records:
+       { updatedAt, entries: { <applications id>: { appNo, company, invoiceNumber, invoiceDate,
+         compCode, numComps, to, codeSentAt, codeSentTo, codeSentBy,
+         followUps:[{on, by, at}], by, at } } }
+     - an entry is matched on the record id, then on appNo;
+     - a field that isn't there hasn't been entered, so the portal's value stays;
+     - the order ID works as if typed here (applyRules: Approved moves to Pending Payment);
+     - codeSentAt ticks the comps benefit ("comp code sent") at each of its summits;
+     - each follow-up not seen before (by its "at", kept in deskChases) counts as one chase,
+       the same as Log a Follow-Up: followUpCount goes up and lastFollowUpDate is the latest "on",
+       which restarts the 10-business-day count;
+     - an entry is applied only when its "at" is newer than deskAppliedAt on the record, so a
+       later edit made here is never overwritten by an older Desk entry.
+     Runs whenever someone who can edit has the portal open, and in the hourly background work.
+     The Desk reads these fields by name; if one is renamed, tell Jonna: event, status, company,
+     contactName, contactEmail, opportunity, amountDue, invoiceNumber, invoiceDate, compCode,
+     numComps, lastFollowUpDate, paymentReceivedDate, inKind. */
+  var deskFeed = null, deskSeen = {}, deskApplied = [];
+  function loadDeskFeed(){
+    var tok = RS && RS.token && RS.token(); if(!tok) return;
+    try{
+      fetch(RELAY_URL + "/summit-hq/data/feed-desk-sponsor", {cache:"no-store", headers:{"Authorization":"Bearer " + tok}})
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(b){ var d = b && b.data && (b.data.doc || b.data); if(d && d.entries){ deskFeed = d; applyDesk(); } }, function(){});
+    }catch(e){}
+  }
+  function deskLatest(e){
+    var t = String(e.at || "");
+    (e.followUps || []).forEach(function(f){ if(f && String(f.at || "") > t) t = String(f.at); });
+    if(String(e.codeSentAt || "") > t) t = String(e.codeSentAt);
+    return t;
+  }
+  function deskHas(v){ return v !== undefined && v !== null && String(v).trim() !== ""; }
+  function applyDesk(){
+    if(!deskFeed || !deskFeed.entries || !canWrite || !appsLoaded || !db) return 0;
+    var n = 0;
+    Object.keys(deskFeed.entries).forEach(function(key){
+      var e = deskFeed.entries[key]; if(!e || typeof e !== "object") return;
+      var a = findById(apps, key);
+      if(!a && e.appNo) a = apps.filter(function(x){ return String(x.appNo || "").toUpperCase() === String(e.appNo).toUpperCase(); })[0];
+      if(!a || a.id === draft) return;
+      var at = deskLatest(e);
+      if(!at || (a.deskAppliedAt && String(a.deskAppliedAt) >= at) || deskSeen[a.id] === at) return;
+      deskSeen[a.id] = at;
+      var after = JSON.parse(JSON.stringify(a)), said = [];
+      if(deskHas(e.invoiceNumber) && String(e.invoiceNumber).trim() !== String(a.invoiceNumber || "")){
+        after.invoiceNumber = String(e.invoiceNumber).trim(); said.push("order " + after.invoiceNumber);
+      }
+      if(deskHas(e.invoiceDate) && String(e.invoiceDate).slice(0, 10) !== String(a.invoiceDate || "")){
+        after.invoiceDate = String(e.invoiceDate).slice(0, 10); said.push("invoice date " + fmtDate(after.invoiceDate));
+      }
+      var codeBits = [];
+      if(deskHas(e.compCode) && String(e.compCode).trim() !== String(a.compCode || "")){ after.compCode = String(e.compCode).trim(); codeBits.push(after.compCode); }
+      if(deskHas(e.numComps) && String(e.numComps) !== String(a.numComps == null ? "" : a.numComps)){
+        after.numComps = isFinite(Number(e.numComps)) ? Number(e.numComps) : e.numComps; codeBits.push("(" + after.numComps + ")");
+      }
+      if(codeBits.length) said.push("code " + codeBits.join(" "));
+      if(deskHas(e.codeSentAt)){
+        var sentDay = String(e.codeSentAt).slice(0, 10), ticked = 0;
+        sharesOf(after).forEach(function(sh){
+          var k = "bf:" + sh.summit + ":comps", rec = after[k] || {};
+          if(rec.done) return;
+          after[k] = Object.assign({}, rec, {done: sentDay, by: e.codeSentBy || e.by || "Registration Desk"}); ticked++;
+        });
+        if(ticked) said.push("code emailed" + (e.codeSentTo || e.to ? " to " + (e.codeSentTo || e.to) : "") + " " + fmtDate(sentDay));
+      }
+      var seen = Array.isArray(a.deskChases) ? a.deskChases.slice() : [];
+      var fresh = (Array.isArray(e.followUps) ? e.followUps : []).filter(function(f){ return f && f.at && seen.indexOf(String(f.at)) < 0; });
+      if(fresh.length){
+        var lastOn = String(a.lastFollowUpDate || "");
+        fresh.forEach(function(f){ seen.push(String(f.at)); if(f.on && String(f.on).slice(0, 10) > lastOn) lastOn = String(f.on).slice(0, 10); });
+        after.deskChases = seen;
+        after.followUpCount = Number(a.followUpCount || 0) + fresh.length;
+        if(lastOn) after.lastFollowUpDate = lastOn;
+        said.push(fresh.length === 1 ? "follow-up " + after.followUpCount + " logged " + fmtDate(after.lastFollowUpDate)
+                                     : fresh.length + " follow-ups logged, the latest " + fmtDate(after.lastFollowUpDate));
+      }
+      after.deskAppliedAt = at;
+      /* the order ID moves an Approved record to Pending Payment, exactly as if typed here */
+      var fired = applyRules(a, after);
+      delete after.__alert_invoice; delete after.__alert_logo; delete after.__alert_paid;
+      if(!said.length){ saveApp(after); return; }   // nothing new, but don't look at this entry again
+      if(a.status !== after.status) fired.unshift("status " + a.status + " → " + after.status);
+      saveApp(after);
+      addLog(after.appNo, "From the Registration Desk: " + said.join(", ") + (fired.length ? "; " + fired.join("; ") : ""), e.by || "Registration Desk");
+      deskApplied.push({company: after.company || after.appNo, appNo: after.appNo, said: said.join(", ")});
+      n++;
+    });
+    window.__deskApplied = deskApplied;   // the hourly background work reports these
+    if(n) toast(deskApplied.slice(-n).map(function(x){ return x.company + ": " + x.said; }).join(" · "), "",
+                "From the Registration Desk", true);
+    return n;
+  }
+
   /* "Payments updated …" at the foot of the left panel (October 26, 2026): when MISMO Money last
      wrote its payments file (writtenAt), in this browser's time. Over three days old shows amber,
      since MISMO Money normally writes it every weekday morning. */
@@ -10492,6 +10595,7 @@ a series deal is counted once, at its full amount.</div>
         renderAll();
         takeInbox();
         paintMoneyBanner();
+        applyDesk();
       }catch(err){ loadFailed("reading the records", err && err.message); }
     }, failed("loading the records"));
     d.doc("log/main").onSnapshot(function(snap){

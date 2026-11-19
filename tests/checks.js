@@ -125,6 +125,11 @@ const appBy = async (page, test) => (await apps(page)).find(test);
 
   console.log('\nSponsorship Portal');
   const portal = await open('/sponsorship/?practice');
+  /* the summit board, where every application has a row (the Pipeline opens first since Nov 18, 2026) */
+  const toSummits = async () => {
+    await P(portal, () => { ['d-close','ld-close','bd-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await portal.click('.tab[data-view="pipeline"]');
+  };
 
   await check('opens with no errors, in practice mode', async () => {
     expect(await P(portal, () => !!window.__practice && !!document.getElementById('practice-bar')), 'the practice bar is missing, so practice.js did not load');
@@ -163,7 +168,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
 
   await check('a custom package can set the day at each summit, and the list hears about it', async () => {
-    await portal.click('tr[data-open="app-t-custom"]');
+    await toSummits(); await portal.click('tr[data-open="app-t-custom"]');
     await portal.waitForTimeout(500);
     expect(await portal.isVisible('#x-cday-Spring') && await portal.isVisible('#x-cday-Fall'), 'no Day choice on the Spring and Fall lines');
     expect(!(await portal.isVisible('#x-cday-Winter')), 'a Day choice shows for the Livestream, which has no days');
@@ -186,7 +191,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     if (HAVE_PROS) expect(a.contractVersion === '2027-v1', 'the contract version recorded is "' + a.contractVersion + '"');
     expect(a.acceptanceTitle === 'VP Marketing', 'the signer\'s title was not kept ("' + a.acceptanceTitle + '")');
     if (!HAVE_PROS) return;
-    await portal.click('tr[data-open="' + a.id + '"]');
+    await toSummits(); await portal.click('tr[data-open="' + a.id + '"]');
     await portal.waitForTimeout(400);
     const line = await P(portal, () => (document.querySelector('#drawer .contractline') || {}).textContent || '');
     expect(/Version 2027-v1/.test(line), 'the record does not show the contract version: "' + line + '"');
@@ -210,7 +215,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(Number(t.priceSent) === 5 && /40,500/.test(t.priceFlag || ''), 'the $5 was not flagged (' + t.priceFlag + ')');
     const g = await appBy(portal, x => x.prospectusRef === 'MS27-T0008');
     expect(/PLATINUM opportunity/.test(g.priceFlag || ''), 'a Platinum opportunity sold as Gold was not flagged (' + g.priceFlag + ')');
-    await portal.click('tr[data-open="' + t.id + '"]');
+    await toSummits(); await portal.click('tr[data-open="' + t.id + '"]');
     await portal.waitForTimeout(400);
     const warn = await P(portal, () => (document.querySelector('#drawer .dnote.warn') || {}).textContent || '');
     expect(/Check the price before approving/.test(warn) && /\$5\b/.test(warn), 'the record does not warn about the price: "' + warn + '"');
@@ -251,7 +256,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
 
   await check('approving keeps a change someone else saved a moment earlier', async () => {
-    await portal.click('tr[data-open="app-t-new"]');
+    await toSummits(); await portal.click('tr[data-open="app-t-new"]');
     await portal.waitForTimeout(500);
     /* while the record is open here, someone else saves a note and a new email on it */
     await P(portal, () => window.__practice.write('applications', d => {
@@ -304,7 +309,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     /* someone else's entry saved a moment ago must survive this screen's next one */
     await P(portal, () => window.__practice.write('log', d => { d.entries.unshift({ at: new Date().toISOString(), appNo: 'AN90001', what: 'note from another screen', who: 'Someone Else' }); }));
     await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
-    await portal.click('tr[data-open="app-t-spring"]');
+    await toSummits(); await portal.click('tr[data-open="app-t-spring"]');
     await portal.waitForTimeout(400);
     await portal.click('#drawer button:has-text("Pending")').catch(() => {});
     await portal.fill('#x-statusNotes', 'History check');
@@ -318,7 +323,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const old = await P(portal, () => window.__practice.file('log-' + new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 7)));
     expect(old && old.entries.some(e => e.appNo === 'AN90001'), 'last month\'s entries were not swept into their month\'s file');
     await P(portal, () => { const c = document.getElementById('d-close'); if (c && c.offsetParent) c.click(); });
-    await portal.click('tr[data-open="app-t-paid"]');
+    await toSummits(); await portal.click('tr[data-open="app-t-paid"]');
     await portal.waitForTimeout(400);
     await portal.click('#x-fullhist');
     await portal.waitForTimeout(1500);
@@ -367,6 +372,92 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(a['bf:Winter 2027:linkedin'] && a['bf:Winter 2027:linkedin'].by === 'Someone Else', 'another person\'s tick was overwritten');
     expect(a['bf:Winter 2027:chair'] && a['bf:Winter 2027:chair'].owner === 'Amy Moses', 'the owner change was not saved');
     await portal.click('.tab[data-view="pipeline"]').catch(() => {});
+  });
+
+  /* ---- one Pipeline, Other Sponsorships, the mismosponsor@ mailbox (November 18, 2026) ---- */
+  const fileOf = name => P(portal, n => window.__practice.file(n), name);
+  const toFlow = async () => {
+    await P(portal, () => { ['d-close','bd-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await portal.click('.tab[data-view="flow"]'); await portal.waitForTimeout(300);
+  };
+  await check('the Pipeline lists every kind of sponsorship, from lead to paid', async () => {
+    await toFlow();
+    await portal.click('[data-fgroup="all"]'); await portal.waitForTimeout(200);
+    const body = await P(portal, () => document.getElementById('flow-body').innerText);
+    for (const co of ['Wingtip Servicing', 'Litware Group', 'Fourth Coffee Test', 'Proseware Group Test', 'Contoso Mortgage'])
+      expect(body.indexOf(co) >= 0, co + ' is missing from the Pipeline');
+    expect(/Fourth Coffee Test[\s\S]*?AI Webinar Series/.test(body), 'the AI webinar sponsorship is not shown as its type');
+    await portal.click('[data-fgroup="hold"]'); await portal.waitForTimeout(200);
+    const hold = await P(portal, () => document.getElementById('flow-body').innerText);
+    expect(/Margie's Travel Test/.test(hold), 'a prospect saved under an old stage name ("Not Now — Follow Up") is not under Hold');
+    await portal.click('[data-fgroup="open"]'); await portal.click('[data-ftype="workgroup"]'); await portal.waitForTimeout(200);
+    const types = await P(portal, () => [...document.querySelectorAll('#flow-body tr td:nth-child(2)')].map(td => td.textContent.trim()));
+    expect(types.length && types.every(t => t === 'Workgroup'), 'the Workgroup filter shows other types: ' + types.join(', '));
+    await portal.click('[data-ftype=""]');
+  });
+  await check('a prospect\'s stage changes right in its row', async () => {
+    await toFlow();
+    await portal.selectOption('select[data-flowstage="lead-t-1"]', 'Meeting Scheduled');
+    await portal.waitForTimeout(1500);
+    const l = (await fileOf('leads')).docs['lead-t-1'];
+    expect(l.status === 'Meeting Scheduled', 'the stage was not saved: ' + l.status);
+    expect((l.history || []).some(h => /Contacted → Meeting Scheduled/.test(h.text)), 'the stage change is not in its notes');
+  });
+  await check('the AI Webinar Series moved into Other Sponsorships, keeping its split', async () => {
+    const o = (await fileOf('others')).docs['wb-t-1'], w = (await fileOf('webinars')).docs['wb-t-1'];
+    expect(o && o.otype === 'ai-webinar' && o.no === 'WB90001', 'the webinar record was not copied into others.json');
+    expect(w && !w.otype, 'webinars.json was changed; it is kept as it was');
+    await portal.click('.tab[data-view="other"]'); await portal.waitForTimeout(300);
+    const row = await P(portal, () => document.querySelector('#bill-body-other tr').innerText);
+    expect(/AI Webinar Series/.test(row) && /\$2,000/.test(row), 'the row does not show the type and MISMO\'s half: ' + row);
+  });
+  await check('a new sponsorship type can be added and used', async () => {
+    await portal.click('.tab[data-view="other"]');
+    await portal.click('#new-otype');
+    await portal.fill('#ot-name', 'Bootcamp Test');
+    await portal.fill('#ot-detail', 'Bootcamp');
+    await portal.click('#ot-save'); await portal.waitForTimeout(1200);
+    const st = (await fileOf('settings')) || {docs:{}};
+    const types = ((st.docs.main || {}).otherTypes || []).map(t => t.key);
+    expect(types.indexOf('bootcamp-test') >= 0, 'the type was not saved: ' + types.join(', '));
+    await portal.click('[data-newbill="other"]'); await portal.waitForTimeout(400);
+    const sel = await P(portal, () => document.getElementById('bx-otype').value);
+    expect(sel === 'bootcamp-test', 'a new sponsorship does not start as the type being looked at: ' + sel);
+    await P(portal, () => document.getElementById('bd-close').click());
+    await toFlow();
+    const btns = await P(portal, () => document.getElementById('flow-types').innerText);
+    expect(/Bootcamp Test/.test(btns), 'the Pipeline has no button for the new type');
+  });
+  await check('a workgroup prospect starts its sponsorship, filled in', async () => {
+    await toFlow();
+    await portal.click('tr[data-fid="lead-t-wg"] td:first-child'); await portal.waitForTimeout(500);
+    await portal.click('#ld-start'); await portal.waitForTimeout(500);
+    const vals = await P(portal, () => ({co: document.getElementById('bx-company').value, wg: document.getElementById('bx-workgroup').value, amt: document.getElementById('bx-amountDue').value}));
+    expect(vals.co === 'Litware Group' && vals.wg === 'API Community of Practice' && +vals.amt === 5000, 'the new workgroup sponsorship is not filled in: ' + JSON.stringify(vals));
+    await portal.click('#bd-save'); await portal.waitForTimeout(1800);
+    const wg = Object.values((await fileOf('workgroups')).docs).find(r => r.fromLead === 'lead-t-wg');
+    expect(wg, 'the workgroup sponsorship was not saved');
+    const l = (await fileOf('leads')).docs['lead-t-wg'];
+    expect(l.status === 'Converted to Sponsorship' && l.linkedBillNo === wg.no, 'the prospect was not marked: ' + l.status);
+  });
+  await check('emails to mismosponsor@ land on the right sponsor or prospect', async () => {
+    const tps = Object.values((await fileOf('touchpoints')).docs);
+    const nw = tps.find(t => t.coName === 'Northwind Lending');
+    expect(nw && /badge artwork is attached/.test(nw.summary) && nw.by === 'Jonna Critchley', 'the forwarded email is not on Northwind: ' + JSON.stringify(nw));
+    const leads = Object.values((await fileOf('leads')).docs);
+    const made = leads.find(l => l.company === 'Newco Lending Test');
+    expect(made && made.source === 'Email to mismosponsor@' && made.contactEmail === 'pat@newco-lending.test', 'no prospect was made from the unmatched email');
+    const mail = (await fileOf('mailin')).docs;
+    expect(mail['m-t-3'].st === 'need' && (mail['m-t-3'].cands || []).length > 1, 'an email several sponsors share is not waiting to be picked');
+    expect(!mail['m-t-1'].html, 'a logged email\'s HTML was kept in the mailbox file');
+    await toFlow();
+    await portal.click('[data-mailpick="m-t-3"][data-name="Contoso Mortgage"]'); await portal.waitForTimeout(1500);
+    const m3 = (await fileOf('mailin')).docs['m-t-3'];
+    expect(m3.st === 'logged' && m3.coName === 'Contoso Mortgage', 'picking a company did not log it: ' + m3.st);
+    await toSummits(); await portal.click('tr[data-open="app-t-paid"]'); await portal.waitForTimeout(500);
+    const dr = await P(portal, () => document.getElementById('drawer').innerText);
+    expect(/Badge artwork/.test(dr), 'the sponsor\'s record does not show its emails');
+    await P(portal, () => document.getElementById('d-close').click());
   });
 
   await check('nothing reaches a real address', async () => {

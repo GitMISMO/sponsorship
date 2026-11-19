@@ -694,6 +694,23 @@ const appBy = async (page, test) => (await apps(page)).find(test);
       });
       await page.ctx.close();
 
+      const pdf = await open(pg.url + '?practice', { wait: 1200 });
+      await check(pg.name + ': Download PDF leaves out the form and says where to apply', async () => {
+        expect(await pdf.isVisible('#pdf-btn'), 'there is no Download PDF button');
+        await pdf.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
+        await pdf.emulateMedia({ media: 'print' });
+        const st = await P(pdf, () => ({
+          reserve: getComputedStyle(document.getElementById('reserve')).display,
+          agree: getComputedStyle(document.querySelector('.agree-block')).display,
+          note: document.getElementById('print-note').innerText,
+          noteShown: getComputedStyle(document.getElementById('print-note')).display }));
+        expect(st.reserve === 'none' && st.agree === 'none', 'the application form or signing would be in the PDF');
+        expect(st.noteShown !== 'none' && /apply online at/.test(st.note) && /20\d\d/.test(st.note), 'the PDF does not say the date and where to apply: ' + st.note);
+        const bytes = (await pdf.pdf({ preferCSSPageSize: true, printBackground: true })).length;
+        expect(bytes > 50000, 'the PDF came out empty');
+      });
+      await pdf.ctx.close();
+
       const phone = await open(pg.url + '?practice', { viewport: { width: 390, height: 844 }, wait: 1200 });
       await check(pg.name + ': fits a phone screen with no sideways scrolling', async () => {
         const w = await P(phone, () => document.documentElement.scrollWidth);

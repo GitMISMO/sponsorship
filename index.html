@@ -945,6 +945,72 @@
     border:1px solid rgba(116,191,235,.18); box-shadow:0 10px 24px -14px rgba(6,32,47,.6); border-radius:12px !important;}
   .headline .stat{border-radius:10px; transition:transform .15s, background .15s;}
   .headline .stat:hover{transform:translateY(-2px);}
+  /* ---- Member 360's Members and Prospects, for sponsors (November 19, 2026) ---- */
+  .m-vhead{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin:0 0 16px;}
+  .m-vhead h1{font-size:26px; margin:0; color:var(--ink);} .m-vsub{font-size:14px; color:var(--ink-2); margin-top:4px;}
+  .m-tiles{margin-bottom:14px;}
+  .m-band{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr); gap:14px; padding:16px; margin:0 0 16px; border-radius:12px; color:#fff;
+    background:radial-gradient(120% 120% at 100% 0%, rgba(116,191,235,.18), rgba(116,191,235,0) 55%), linear-gradient(160deg,#10324a,#0b2436); border:1px solid rgba(116,191,235,.18);}
+  @media (max-width:1100px){ .m-band{grid-template-columns:1fr;} }
+  .m-bcol{background:rgba(255,255,255,.05); border:1px solid rgba(116,191,235,.18); border-radius:8px; padding:12px 14px; min-width:0;}
+  .m-bh{font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#74bfeb; margin-bottom:10px;} .m-bh span{color:rgba(255,255,255,.55); font-weight:500; letter-spacing:.02em; text-transform:none; margin-left:6px;}
+  .m-donut{display:flex; gap:14px; align-items:center;}
+  .m-ring{width:110px; height:110px; border-radius:50%; flex:0 0 auto; display:grid; place-items:center; position:relative;}
+  .m-ring::after{content:""; position:absolute; inset:16px; border-radius:50%; background:#0e2c42;}
+  .m-ring b{position:relative; z-index:1; font-size:22px; text-align:center; line-height:1.05;} .m-ring b small{display:block; font-size:10px; font-weight:500; color:rgba(255,255,255,.65);}
+  .m-leg{flex:1; min-width:0; font-size:12.5px; display:flex; flex-direction:column; gap:5px;}
+  .m-leg div{display:grid; grid-template-columns:10px minmax(0,1fr) auto auto; gap:8px; align-items:center;} .m-leg i{width:10px; height:10px; border-radius:2px;}
+  .m-leg em{font-style:normal; color:rgba(255,255,255,.55); font-size:11px; min-width:30px; text-align:right;}
+  .m-bars{display:flex; flex-direction:column; gap:6px; font-size:12.5px;}
+  .m-bar{all:unset; box-sizing:border-box; display:grid; grid-template-columns:118px minmax(0,1fr) 40px; gap:8px; align-items:center; cursor:pointer; padding:2px 0;}
+  .m-bar:hover span:first-child{color:#fff; text-decoration:underline;} .m-bar span:first-child{color:rgba(255,255,255,.82); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .m-bar .tr{height:8px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden;} .m-bar .tr i{display:block; height:100%; background:#e8b04a;}
+  .m-bar b{text-align:right; font-variant-numeric:tabular-nums;}
+  .m-bar.m-owe{grid-template-columns:118px minmax(0,1fr) 62px;} .m-bar em{font-style:normal; color:rgba(255,255,255,.55); font-size:11px;}
+  .m-bnote{font-size:12.5px; line-height:1.55; color:rgba(255,255,255,.78); margin-top:10px;}
+  .m-newp{padding:14px 16px; margin-bottom:16px;}
+  .m-filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center;}
+  .m-filters select, .m-filters input[type=search]{border:1px solid var(--border); border-radius:6px; padding:7px 9px; font:inherit; font-size:13px; background:var(--surface); color:var(--ink);}
+  .m-filters input[type=search]{min-width:220px; flex:1 1 220px;}
+  .m-count{margin-left:auto; font-size:12px; color:var(--ink-3);}
+  .m-chips{display:inline-flex; gap:2px; padding:3px; background:var(--surface-3); border-radius:8px; flex-wrap:wrap;}
+  .m-chips button{border:0; background:none; border-radius:6px; padding:5px 11px; font:inherit; font-size:12.5px; color:var(--ink-2); cursor:pointer;}
+  .m-chips button.on{background:var(--surface); color:var(--ink); font-weight:600; box-shadow:0 1px 2px rgba(6,32,47,.1);}
+  .m-rows{border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--surface);}
+  .m-alpha{display:flex; flex-wrap:wrap; gap:3px; padding:8px 10px; border-bottom:1px solid var(--rule); background:var(--surface-2);}
+  .m-alpha button{min-width:26px; height:26px; padding:0 6px; border:1px solid transparent; border-radius:5px; background:none; color:var(--navy-mid); font:600 12px/1 inherit; cursor:pointer;}
+  .m-alpha button:first-child{padding:0 10px; margin-right:4px;}
+  .m-alpha button:hover:not(:disabled):not(.on){background:var(--surface); border-color:var(--border);}
+  .m-alpha button.on{background:#0d314c; color:#fff; border-color:#0d314c;} .m-alpha button:disabled{color:var(--ink-3); opacity:.45; cursor:default;}
+  .m-rhead, .m-row{display:grid; grid-template-columns:minmax(0,2.2fr) minmax(0,1.6fr) minmax(0,.9fr) minmax(0,1.1fr) minmax(0,.95fr) minmax(0,.95fr) 14px; gap:12px; align-items:center; padding:10px 14px;}
+  .m-rhead{background:var(--surface-3); border-bottom:2px solid #0d314c; font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3); font-weight:600;}
+  .m-row{width:100%; background:var(--surface); border:0; border-bottom:1px solid var(--rule); font:inherit; font-size:13px; text-align:left; cursor:pointer; color:var(--ink);}
+  .m-row:hover{background:var(--surface-2);}
+  .m-row .nm{font-weight:600; min-width:0; overflow-wrap:anywhere;} .m-row .nm small{display:block; font-weight:400; font-size:11.5px; color:var(--ink-3); margin-top:1px;}
+  .m-row .muted{color:var(--ink-3);} .m-row .caret{color:var(--ink-3); font-size:10px;}
+  .m-row .what{font-size:12.5px; color:var(--ink-2); min-width:0;} .m-row .what small{display:block; color:var(--ink-3); font-size:11.5px;}
+  @media(max-width:860px){ .m-rhead{display:none;} .m-row{grid-template-columns:1fr auto; row-gap:5px;} .m-row .hide-sm{display:none;} .m-row .caret{display:none;} }
+  .m-more{display:block; width:100%; border:0; border-top:1px solid var(--rule); background:var(--surface-2); padding:10px; font:inherit; font-size:12.5px; color:var(--navy-mid); cursor:pointer; font-weight:600;}
+  .m-pill{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:2px 9px; border-radius:4px; white-space:nowrap; background:var(--chip); color:var(--ink-2);}
+  .m-pill::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--pc,var(--ink-3));}
+  .m-pill.l-sponsor{--pc:var(--good);} .m-pill.l-applied{--pc:var(--c1);} .m-pill.l-prospect{--pc:#e8b04a;} .m-pill.l-past{--pc:var(--ink-3);} .m-pill.l-lost{--pc:var(--bad);}
+  .m-pill.s-paid{--pc:var(--good); background:var(--good-soft); color:var(--good);} .m-pill.s-lost{--pc:var(--bad); background:var(--bad-soft); color:var(--bad);}
+  .m-pill.s-open{--pc:var(--c1);} .m-pill.s-close{--pc:var(--c4);}
+  /* the record, Member 360's overview */
+  .cp-stepcard{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 16px; margin:0 0 12px;}
+  .cp-stephd{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:baseline; margin-bottom:10px;}
+  .cp-stephd b{font-size:14px; color:var(--ink);} .cp-stephd span{font-size:12px; color:var(--ink-3);}
+  .cp-cards3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:0 0 12px;}
+  @media (max-width:900px){ .cp-cards3{grid-template-columns:1fr;} }
+  .cp-c3{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 14px; display:flex; flex-direction:column; gap:5px; min-width:0;}
+  .cp-c3 .k{font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:700;}
+  .cp-c3 .big{font-size:21px; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .cp-c3 .bar{height:6px; background:var(--surface-3); border-radius:2px; overflow:hidden;} .cp-c3 .bar i{display:block; height:100%; background:var(--good);}
+  .cp-c3 .s{font-size:12px; color:var(--ink-2);}
+  .cp-details{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-top:12px;}
+  .cp-details summary{cursor:pointer; font-weight:700; font-size:13px; color:var(--ink);}
+  .cp-dgrid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 16px; margin-top:10px;}
+  .cp-dgrid div span{display:block; font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); font-weight:700;} .cp-dgrid div b{font-size:13px; color:var(--ink);}
   /* To Do and Sponsors & Prospects (November 19, 2026) */
   .td-hero{grid-template-columns:minmax(0,1fr) auto; align-items:end;}
   .td-who .seg button{background:rgba(255,255,255,.08); color:#fff; border-color:rgba(116,191,235,.45);}
@@ -1404,11 +1470,11 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
          what", summit first, and the first thing seen is what needs to be done. To Do opens first; Sponsors &amp;
          Prospects is by summit and type. Home is At a Glance and the Pipeline moved under Records; the separate
          Sponsors and Prospects lists stay in the page, unlinked. -->
-    <button class="tab on" data-view="todo" type="button" title="To Do"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">To Do</span><span class="pip quiet" id="pip-todo">0</span></button>
-    <button class="tab" data-view="spx" type="button" title="Sponsors and Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-co"/></svg><span class="tlbl">Sponsors &amp; Prospects</span></button>
+    <button class="tab on" data-view="home" type="button" title="Home"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-home"/></svg><span class="tlbl">Home</span></button>
+    <button class="tab" data-view="todo" type="button" title="To Do"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">To Do</span><span class="pip quiet" id="pip-todo">0</span></button>
+    <button class="tab" data-view="spm" type="button" title="Sponsors and Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-co"/></svg><span class="tlbl">Sponsors and Prospects</span></button>
     <button class="tab" data-view="benefits" type="button" title="Sponsor Benefits"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Benefits</span><span class="pip quiet" id="pip-benefits">0</span></button>
     <div class="navgrp">Records</div>
-    <button class="tab" data-view="home" type="button" title="At a Glance"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-home"/></svg><span class="tlbl">At a Glance</span></button>
     <button class="tab" data-view="flow" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pipe"/></svg><span class="tlbl">Pipeline</span></button>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
@@ -1453,14 +1519,14 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
   </div>
 
   <!-- ================= HOME (November 18, 2026, in Member 360's look) ================= -->
-  <section class="view" id="view-home">
+  <section class="view on" id="view-home">
     <div class="hm-hero" id="home-hero"></div>
     <div class="hm-h2row"><h3 class="hm-h2">Sponsorship at a Glance</h3><span class="hm-asof">Live from the portal, MISMO Money and mismosponsor@</span></div>
     <div class="hm-grid" id="home-grid"></div>
   </section>
 
   <!-- ================= TO DO: what needs to be done, first thing (November 19, 2026) ================= -->
-  <section class="view on" id="view-todo">
+  <section class="view" id="view-todo">
     <div class="hm-hero td-hero"><div class="hm-hi"><div class="hm-eyebrow" id="td-date"></div><h1 id="td-hi"></h1><p id="td-say"></p></div>
       <div class="td-who"><span class="seg" id="td-who" role="group" aria-label="Whose work"></span></div></div>
     <div class="tdcols" id="td-cols">
@@ -1475,6 +1541,29 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div id="flow-new"></div>
       </div>
     </div>
+  </section>
+
+  <!-- ================= SPONSORS AND PROSPECTS, the Member 360 way (November 19, 2026) =================
+       Jonna: "let's go identical to member 360 but for sponsors". Member 360's Members and Prospects page,
+       with sponsors for members: the tiles, the band (by tier, by summit, the prospect pipeline), New
+       Prospects This Week, the Current / Prospect / Past / Lost / All tabs, filters, the A to Z bar and rows. -->
+  <section class="view" id="view-spm">
+    <div class="m-vhead"><div><h1>Sponsors and Prospects</h1>
+      <div class="m-vsub">Every sponsor, prospect and past sponsor, with contacts, sponsorship history and conversations.</div></div>
+      <div><button type="button" class="btn" id="spm-new">Add a Prospect</button></div></div>
+    <div class="cotiles m-tiles" id="spm-tiles"></div>
+    <div class="m-band" id="spm-band"></div>
+    <div class="panel m-newp" id="spm-newp"></div>
+    <div class="m-filters">
+      <div class="m-chips" id="spm-life" role="group" aria-label="Which companies"></div>
+      <input type="search" id="spm-q" placeholder="Filter by company or contact" aria-label="Filter">
+      <select id="spm-what" aria-label="Sponsorship"></select>
+      <select id="spm-stage" aria-label="Stage"></select>
+      <select id="spm-owner" aria-label="Owner"></select>
+      <span class="m-chips"><button type="button" id="spm-owes" aria-pressed="false">Outstanding Only</button></span>
+      <span class="m-count" id="spm-count"></span>
+    </div>
+    <div class="m-rows" id="spm-rows"></div>
   </section>
 
   <!-- ================= SPONSORS & PROSPECTS, summit first (November 19, 2026) ================= -->
@@ -1792,14 +1881,15 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="panel helppanel">
 
       <details class="hsec" open>
-        <summary>Start Here: To Do, and Sponsors &amp; Prospects</summary>
+        <summary>Start Here: Home, To Do, and Sponsors and Prospects</summary>
         <div class="hbody">
           <ul>
-            <li><b>To Do</b> opens first. It is what needs doing, in plain sections: <b>Follow Up Today</b> (prospects whose follow-up date has come, and follow-ups from logged touchpoints), <b>Applications to Review</b>, <b>Payments Past Due</b>, <b>Coming Up This Week</b>, <b>Prospects With No Follow-Up Date</b>, and <b>Waiting on an Invoice</b> (Bernie&rsquo;s, from his Registration Desk), plus emails to mismosponsor@ and new prospects. <b>My Work</b> shows only your prospects; <b>Everyone</b> shows the whole team&rsquo;s. Select any row to open the company.</li>
-            <li><b>Sponsors &amp; Prospects</b> is summit first. Pick a summit (or Workgroups, or another kind of sponsorship) and see, side by side, who is <b>sponsoring</b> it (what they bought and where it stands: Applied, Approved, Invoiced, Paid) and who is a <b>prospect</b> for it (stage and next follow-up). A 2027 Series sponsor shows at every summit it covers.</li>
-            <li>A summit prospect that hasn&rsquo;t picked a summit is listed under the summit list so you can choose one right there; the prospect&rsquo;s record has <b>Which Summit</b> too.</li>
-            <li>Select any company to see what they <b>sponsor</b>, what they are a <b>prospect for</b>, and <b>everything that&rsquo;s happened</b>: emails, calls, notes, applications, invoices and payments, newest first.</li>
-            <li><b>At a Glance</b> (the season and the money) and the <b>Pipeline</b> (every deal by stage) are under Records.</li>
+            <li>The portal works like Member 360. <b>Home</b> is the day and the season at a glance, with what&rsquo;s on your plate.</li>
+            <li><b>To Do</b> is what needs doing, in plain sections: follow-ups due today, applications to review, payments past due, what&rsquo;s coming up this week, prospects with no follow-up date, and invoices Bernie still has to raise. <b>My Work</b> or <b>Everyone</b>.</li>
+            <li><b>Sponsors and Prospects</b> is Member 360&rsquo;s Members and Prospects page for sponsors. The tiles and the tabs (<b>Current</b>, <b>Applied</b>, <b>Prospect</b>, <b>Past</b>, <b>Lost</b>, <b>All</b>) choose who is listed. The dark band shows current sponsors by tier, what is <b>outstanding</b> (approved or invoiced and not paid) for each summit, workgroups and each other kind, summit first, and the sponsor pipeline by stage; select any of them to list just those companies. Filter by summit or kind, stage and owner, tick <b>Outstanding Only</b>, or jump with the A to Z bar.</li>
+            <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there.</li>
+            <li>A summit prospect can say which summit it&rsquo;s for (<b>Which Summit</b> on the prospect); the summit filter then finds it.</li>
+            <li>The <b>Pipeline</b> (every deal by stage) is under Records.</li>
           </ul>
         </div>
       </details>
@@ -2416,7 +2506,7 @@ a series deal is counted once, at its full amount.</div>
   var leadQuickFilter = null; // "overdue" | "recent" | "converted" | null — set by clicking a Prospects stat card
   var leadBy = "status";      // Prospects "View By": status | owner | type
   var leadGroup = null;       // the one group being shown, set by clicking a group card
-  var currentView = "todo";
+  var currentView = "home";
   var summitView = "overall";
   var summitYear = null;
   var scopeYear = null;      // which season the figures, Pipeline and Applications show
@@ -3478,7 +3568,8 @@ a series deal is counted once, at its full amount.</div>
      summit picker moves, so it is kept here and re-applied whenever that tab is the
      one being shown. */
   var PAGES = {
-    home: {t:"At a Glance", s:"The season, the money and the team at a glance."},
+    home: {t:"Home", s:""},
+    spm: {t:"Sponsors and Prospects", s:""},
     todo: {t:"To Do", s:""},
     spx: {t:"Sponsors & Prospects", s:"Pick a summit, workgroups or another kind of sponsorship to see who is sponsoring it and who is a prospect for it. Select anyone to see everything they have done with MISMO."},
     companies: {t:"Sponsors",
@@ -7911,7 +8002,7 @@ a series deal is counted once, at its full amount.</div>
        answering a question nobody asked there. Money, Inventory and Prospects carry their
        own bands instead. */
     var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help" || v === "prospectus" || v === "benefits" ||
-                v === "workgroup" || v === "other" || v === "flow" || v === "home" || v === "companies" || v === "plist" || v === "todo" || v === "spx") ? "none" : "";
+                v === "workgroup" || v === "other" || v === "flow" || v === "home" || v === "companies" || v === "plist" || v === "todo" || v === "spx" || v === "spm") ? "none" : "";
     $("headline").style.display = hide;
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.id === "view-"+v); });
     if(v !== "pipeline" && stageKey) closeStage();
@@ -7924,7 +8015,8 @@ a series deal is counted once, at its full amount.</div>
     if(v === "plist") renderProspectList();
     if(v === "todo") renderTodo();
     if(v === "spx") renderSpx();
-    var ph = $("pagehead"); if(ph) ph.style.display = (v === "home" || v === "todo") ? "none" : "";
+    if(v === "spm") renderSpm();
+    var ph = $("pagehead"); if(ph) ph.style.display = (v === "home" || v === "todo" || v === "spm") ? "none" : "";
   }
 
   /* Copy Link on a prospectus card puts its address on the clipboard, ready to paste into an
@@ -9493,7 +9585,7 @@ a series deal is counted once, at its full amount.</div>
     paintDue(due.concat(late).concat(todo));
     paintMailBox();
     paintDrill();
-    renderTodo(); renderSpx();
+    renderTodo(); renderSpx(); renderSpm();
   }
   /* ---- the list under the headline: what makes up the number that was selected ---- */
   var DUE_SHOW = 4;
@@ -10373,6 +10465,203 @@ a series deal is counted once, at its full amount.</div>
       (unpicked.length ? ' (plus ' + unpicked.length + ' summit prospect' + (unpicked.length === 1 ? '' : 's') + ' not tied to a summit yet)' : '') + '</span>';
   }
 
+
+  /* ============================================================
+     SPONSORS AND PROSPECTS, the Member 360 way (November 19, 2026)
+     ============================================================ */
+  var spmState = lsGet("sponsorship:spm") || {life:"Sponsor", what:"", stage:"", owner:"", q:"", alpha:"", nweek:0};
+  spmState.q = ""; spmState.alpha = ""; spmState.shown = 50;
+  var LIFE = [["Sponsor","Current","Current Sponsors","sponsoring now","#5fd39a","l-sponsor"],
+              ["Applied","Applied","Applied","applications to review","#74bfeb","l-applied"],
+              ["Prospect","Prospect","Prospects","not sponsors yet","#e8b04a","l-prospect"],
+              ["Past Sponsor","Past","Past Sponsors","sponsored before","#b79cff","l-past"],
+              ["Lost","Lost","Lost","chose not to sponsor","#ff8f7d","l-lost"]];
+  var TIER_COL = {DIAMOND:"#9fd8f5", PLATINUM:"#c9d3dc", GOLD:"#e8b04a", SILVER:"#8fa3b5", BRONZE:"#c27a4a"};
+  function spmKeep(){ lsSet("sponsorship:spm", {life:spmState.life, what:spmState.what, stage:spmState.stage, owner:spmState.owner, nweek:spmState.nweek, owes:!!spmState.owes}); }
+  function spmWhatChoices(){
+    return [["", "All Sponsorships"]].concat(spxUpcoming().map(function(k){ return [k, (SUMMITS[k].label || k)]; }))
+      .concat([["workgroup", "Workgroups"]]).concat(otherTypes.map(function(t){ return ["type:" + t.key, t.name]; }));
+  }
+  function spmWhatMatch(c, w){
+    if(!w) return true;
+    if(SUMMITS[w]){
+      var yr = w.split(" ")[1];
+      return c.apps.some(function(a){ return a.status !== "Declined" && a.status !== "Written Off" && sharesOf(a).some(function(sh){ return sh.summit === w; }); }) ||
+        c.openLeads.some(function(l){ return leadType(l) === "summit" && (l.summit === w || l.summit === yr + " Series"); });
+    }
+    if(w === "workgroup") return c.types.indexOf("workgroup") >= 0;
+    return c.types.indexOf(w.slice(5)) >= 0;
+  }
+  function spmTopTier(c){
+    var best = "", rank = -1;
+    c.live.forEach(function(a){ if(a.status === "Submitted") return; var l = levelOf(a); if(l && (TIER_RANK[l] || 0) > rank){ rank = TIER_RANK[l] || 0; best = l; } });
+    return best;
+  }
+  /* what they sponsor, or what they are a prospect for, in a few words */
+  function spmWhat(c){
+    if(c.rel === "Sponsor" || c.rel === "Applied"){
+      var bits = c.live.map(function(a){ return (RE_SERIES.test(a.event || "") ? a.event : (a.event || "")) + (levelOf(a) ? " · " + tierLabel(levelOf(a)) : ""); })
+        .concat(c.liveB.map(function(r){ return r.__kind === "workgroup" ? (r.workgroup || "Workgroup") : otypeOf(r).name; }));
+      return bits.length ? esc(bits[0]) + (bits.length > 1 ? '<small>and ' + (bits.length - 1) + ' more</small>' : '') : '—';
+    }
+    if(c.rel === "Prospect"){
+      var l = c.openLeads[0]; if(!l) return '—';
+      var w = leadType(l) === "summit" ? "Prospect · " + (l.summit || "Summit") : "Prospect · " + typeName(leadType(l)) + (l.workgroup ? " (" + l.workgroup + ")" : "");
+      return esc(w) + (c.openLeads.length > 1 ? '<small>and ' + (c.openLeads.length - 1) + ' more</small>' : '');
+    }
+    var last = null;
+    c.apps.forEach(function(a){ if(a.status !== "Declined" && a.status !== "Submitted" && (!last || String(a.event) > String(last.event))) last = a; });
+    return last ? esc("Last: " + last.event + (levelOf(last) ? " · " + tierLabel(levelOf(last)) : "")) : '—';
+  }
+  function spmNext(c){
+    var t = today();
+    if(c.rel === "Prospect" || c.rel === "Lost"){
+      var nd = c.openLeads.map(function(l){ return l.nextFollowUpDate || ""; }).filter(Boolean).sort()[0];
+      if(!nd) return '<span class="muted">No follow-up</span>';
+      var d = parseDate(nd); return '<span class="' + (d && d <= t ? "bad" : "") + '">' + esc(fmtDate(nd)) + '</span>';
+    }
+    var nx = null;
+    c.live.forEach(function(a){ sharesOf(a).forEach(function(sh){ var o = (SUMMITS[sh.summit] || {}).opens; if(o && o >= iso(t) && (!nx || o < nx)) nx = o; }); });
+    return nx ? esc(fmtDate(nx)) : '<span class="muted">—</span>';
+  }
+  /* what is outstanding (Amy, November 19, 2026: "what is outstanding but by type/category, summit being the most
+     important"): approved or invoiced and not paid yet. A series sponsorship counts its share at each summit. */
+  function coOwed(c, w){
+    var out = 0;
+    c.apps.forEach(function(a){
+      if(a.id === draft || a.inKind || (a.status !== "Approved" && a.status !== "Pending Payment")) return;
+      var left = (Number(a.amountDue) || 0) - (Number(a.amountPaid) || 0); if(left <= 0) return;
+      if(!w) { out += left; return; }
+      if(SUMMITS[w]) sharesOf(a).forEach(function(sh){ if(sh.summit === w) out += left * sh.share; });
+    });
+    c.bills.forEach(function(r){
+      if(r.status !== "Draft" && r.status !== "Pending Payment") return;
+      var left = (Number(r.amountDue) || 0) - (Number(r.amountPaid) || 0); if(left <= 0) return;
+      var k = r.__kind === "workgroup" ? "workgroup" : "type:" + (r.otype || "");
+      if(!w || w === k) out += left;
+    });
+    return Math.round(out * 100) / 100;
+  }
+  function spmStageOf(c){ return c.stage || (c.rel === "Sponsor" ? "Paid" : ""); }
+  function renderSpm(){
+    if(!$("spm-rows") || !PIPE_OPEN || !others || !touches || !spmState) return;
+    FLOW_CACHE = pipeItems();
+    var map = companies(), all = Object.keys(map).map(function(k){ return map[k]; });
+    var cnt = {}; LIFE.forEach(function(L){ cnt[L[0]] = 0; }); all.forEach(function(c){ cnt[c.rel] = (cnt[c.rel] || 0) + 1; });
+    /* the tiles: one per kind of company, as on Member 360 */
+    $("spm-tiles").innerHTML = LIFE.map(function(L){
+      return '<button type="button" class="cotile' + (spmState.life === L[0] ? " on" : "") + '" data-spmlife="' + esc(L[0]) + '" style="--k:' + L[4] + '">' +
+        '<b>' + cnt[L[0]] + '</b><span class="l">' + esc(L[2]) + '</span><span class="s">' + esc(L[3]) + '</span></button>';
+    }).join("");
+    /* the band */
+    var cur = all.filter(function(c){ return c.rel === "Sponsor"; });
+    var byTier = {};
+    cur.forEach(function(c){ var tt = spmTopTier(c); var k = tt ? tt : (c.liveB[0] ? (c.liveB[0].__kind === "workgroup" ? "Workgroup" : otypeOf(c.liveB[0]).name) : "Other"); byTier[k] = (byTier[k] || 0) + 1; });
+    var tierKeys = ["DIAMOND","PLATINUM","GOLD","SILVER","BRONZE"].filter(function(k){ return byTier[k]; }).concat(Object.keys(byTier).filter(function(k){ return !TIER_COL[k]; }));
+    var extraCol = ["#5fd39a", "#b79cff", "#74bfeb", "#ff8f7d"], acc = 0, stops = [];
+    var colOf = function(k, i){ return TIER_COL[k] || extraCol[i % extraCol.length]; };
+    tierKeys.forEach(function(k, i){ var a = acc / (cur.length || 1) * 360; acc += byTier[k]; var b = acc / (cur.length || 1) * 360; stops.push(colOf(k, i) + " " + a + "deg " + b + "deg"); });
+    var ring = 'conic-gradient(' + (stops.length ? stops.join(",") : "rgba(255,255,255,.12) 0deg 360deg") + ')';
+    var col1 = '<div class="m-bcol"><div class="m-bh">Current Sponsors by Tier<span>select to see them</span></div><div class="m-donut"><div class="m-ring" style="background:' + ring + '"><b>' + cur.length + '<small>sponsors</small></b></div>' +
+      '<div class="m-leg">' + tierKeys.map(function(k, i){ return '<div><i style="background:' + colOf(k, i) + '"></i><span>' + esc(TIER_COL[k] ? tierLabel(k) : k) + '</span><b>' + byTier[k] + '</b><em>' + Math.round(byTier[k] / (cur.length || 1) * 100) + '%</em></div>'; }).join("") + '</div></div></div>';
+    var picks = spmWhatChoices().slice(1), maxW = 1, rowsW = picks.map(function(p){
+      var cs = all.filter(function(c){ return (c.rel === "Sponsor" || c.rel === "Applied") && spmWhatMatch(c, p[0]); });
+      var m = 0;
+      if(SUMMITS[p[0]]) apps.forEach(function(a){ if(a.id !== draft && APP_PLAIN[a.status] && a.status !== "Submitted") sharesOf(a).forEach(function(sh){ if(sh.summit === p[0]) m += (Number(a.amountDue) || 0) * sh.share; }); });
+      maxW = Math.max(maxW, cs.length); return [p[0], p[1].replace(/ Summit$/, ""), cs.length, m];
+    });
+    var openL = leads.filter(function(l){ return l.id !== leadDraft && !LEAD_CLOSED[l.status]; });
+    var noDate = openL.filter(function(l){ return !l.nextFollowUpDate; }).length, fc = openL.reduce(function(n, l){ return n + (Number(l.forecast) || 0); }, 0);
+    var owedRows = picks.map(function(p){
+      var owe = 0, n = 0; all.forEach(function(c){ var o = coOwed(c, p[0]); if(o > 0){ owe += o; n++; } });
+      return [p[0], p[1].replace(/ Summit$/, ""), owe, n];
+    }), maxO = Math.max.apply(null, owedRows.map(function(r){ return r[2]; }).concat([1])), totO = owedRows.reduce(function(x, r){ return x + r[2]; }, 0);
+    var col2 = '<div class="m-bcol"><div class="m-bh">Outstanding<span>approved or invoiced, not paid \u00b7 select one</span></div><div class="m-bars">' + owedRows.map(function(r){
+      return '<button type="button" class="m-bar m-owe" data-spmowe="' + esc(r[0]) + '"><span>' + esc(r[1]) + (r[3] ? ' <em>(' + r[3] + ')</em>' : '') + '</span><span class="tr"><i style="width:' + Math.round(r[2] / maxO * 100) + '%;background:#ff8f7d"></i></span><b>' + (r[2] ? esc(moneyK(r[2])) : '\u2014') + '</b></button>';
+    }).join("") + '</div><div class="m-bnote"><b>' + esc(money(totO)) + '</b> outstanding in all. ' + openL.length + ' open prospect' + (openL.length === 1 ? '' : 's') + (noDate ? ', ' + noDate + ' with no follow-up date' : '') + '.' +
+      (fc ? ' Prospect forecast ' + esc(money(fc)) + '.' : '') + '</div></div>';
+    var stagesP = PIPE_OPEN, cntS = {}, maxS = 1;
+    all.forEach(function(c){ if(c.stage) cntS[c.stage] = (cntS[c.stage] || 0) + 1; });
+    stagesP.forEach(function(sg){ maxS = Math.max(maxS, cntS[sg] || 0); });
+    var short = {"Meeting Scheduled":"Meeting", "Verbal Commitment":"Verbal", "Application In":"Application", "Pending Payment":"Invoiced"};
+    var col3 = '<div class="m-bcol"><div class="m-bh">Sponsor Pipeline<span>' + openL.length + ' prospects · select a stage</span></div><div class="m-bars">' + stagesP.map(function(sg){
+      return '<button type="button" class="m-bar" data-spmstage="' + esc(sg) + '"><span>' + esc(short[sg] || sg) + '</span><span class="tr"><i style="width:' + Math.round((cntS[sg] || 0) / maxS * 100) + '%"></i></span><b>' + (cntS[sg] || 0) + '</b></button>';
+    }).join("") + '</div></div>';
+    $("spm-band").innerHTML = col1 + col2 + col3;
+    /* New Prospects This Week */
+    var from = weekStart(spmState.nweek || 0), to = new Date(from); to.setDate(to.getDate() + 7);
+    var np = leads.filter(function(l){ var d = parseDate(l.createdDate); return l.id !== leadDraft && d && d >= from && d < to && !LEAD_CLOSED[l.status]; })
+      .sort(function(x, y){ return String(y.createdDate).localeCompare(String(x.createdDate)); });
+    $("spm-newp").innerHTML = '<div class="fbhead"><h3>New Prospects ' + (spmState.nweek ? "Last Week" : "This Week") + ' (' + np.length + ')</h3><span class="m-chips">' +
+      '<button type="button" data-spmweek="0" class="' + (!spmState.nweek ? "on" : "") + '">This Week</button><button type="button" data-spmweek="1" class="' + (spmState.nweek ? "on" : "") + '">Last Week</button></span></div>' +
+      (np.length ? np.slice(0, 6).map(function(l){
+        return '<div class="fbrow" data-spco="' + esc(companyKey(l.company)) + '"><span class="fbdate">' + esc(fmtDate(l.createdDate)) + '</span><span class="fbmain"><b>' + esc(l.company || l.leadNo) + '</b> <span class="sub2">' +
+          esc(leadType(l) === "summit" ? "Summit" + (l.summit ? " · " + l.summit : "") : typeName(leadType(l))) + (l.source ? " · " + esc(l.source) : "") + '</span></span></div>';
+      }).join("") + (np.length > 6 ? '<div class="fbmore">and ' + (np.length - 6) + ' more on the Prospect tab</div>' : '') : '<div class="fbempty">No new prospects ' + (spmState.nweek ? "last week" : "yet this week") + '.</div>');
+    /* filters */
+    $("spm-life").innerHTML = LIFE.map(function(L){ return '<button type="button" data-spmlife="' + esc(L[0]) + '" class="' + (spmState.life === L[0] ? "on" : "") + '">' + esc(L[1]) + ' (' + cnt[L[0]] + ')</button>'; }).join("") +
+      '<button type="button" data-spmlife="" class="' + (!spmState.life ? "on" : "") + '">All (' + all.length + ')</button>';
+    var opt = function(id, list, cur){ $(id).innerHTML = list.map(function(o){ return '<option value="' + esc(o[0]) + '"' + (o[0] === cur ? " selected" : "") + '>' + esc(o[1]) + '</option>'; }).join(""); };
+    opt("spm-what", spmWhatChoices(), spmState.what);
+    opt("spm-stage", [["", "All Stages"]].concat(PIPE_STAGES.map(function(sg){ return [sg, sg]; })), spmState.stage);
+    opt("spm-owner", [["", "All Owners"]].concat(BENEFIT_OWNERS.map(function(o){ return [o, o]; })).concat([["-", "Unassigned"]]), spmState.owner);
+    /* the rows */
+    var q = (spmState.q || "").toLowerCase();
+    var rows = all.filter(function(c){
+      if(spmState.life && c.rel !== spmState.life) return false;
+      if(!spmWhatMatch(c, spmState.what)) return false;
+      if(spmState.stage && spmStageOf(c) !== spmState.stage) return false;
+      if(spmState.owner && (spmState.owner === "-" ? c.owner : c.owner !== spmState.owner)) return false;
+      if(spmState.owes && !(coOwed(c, spmState.what) > 0)) return false;
+      if(q){ var hay = [c.name].concat(coContacts(c).map(function(p){ return p.name + " " + p.email; })).join(" ").toLowerCase(); if(hay.indexOf(q) < 0) return false; }
+      return true;
+    }).sort(function(x, y){ return String(x.name).localeCompare(String(y.name)); });
+    $("spm-count").textContent = rows.length + (rows.length === 1 ? " company" : " companies") +
+      (spmState.owes ? " \u00b7 " + money(rows.reduce(function(x, c){ return x + coOwed(c, spmState.what); }, 0)) + " outstanding" : "");
+    var ob = $("spm-owes"); if(ob){ ob.className = spmState.owes ? "on" : ""; ob.setAttribute("aria-pressed", spmState.owes ? "true" : "false"); }
+    var initial = function(nm){ var ch = String(nm || "").trim().charAt(0).toUpperCase(); return /[A-Z]/.test(ch) ? ch : "#"; };
+    var html = "";
+    if(rows.length > 50 || spmState.alpha){
+      var cntA = {}; rows.forEach(function(c){ var ch = initial(c.name); cntA[ch] = (cntA[ch] || 0) + 1; });
+      if(spmState.alpha && !cntA[spmState.alpha]) spmState.alpha = "";
+      html += '<div class="m-alpha" role="group" aria-label="Jump to a letter"><button type="button" data-spmalpha="" class="' + (!spmState.alpha ? "on" : "") + '">All</button>' +
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("").map(function(ch){ return '<button type="button" data-spmalpha="' + ch + '" class="' + (spmState.alpha === ch ? "on" : "") + '"' + (cntA[ch] ? '' : ' disabled') + '>' + ch + '</button>'; }).join("") + '</div>';
+      if(spmState.alpha) rows = rows.filter(function(c){ return initial(c.name) === spmState.alpha; });
+    }
+    var lifeOf = {}; LIFE.forEach(function(L){ lifeOf[L[0]] = L; });
+    html += '<div class="m-rhead"><span>Company</span><span>' + (spmState.life === "Prospect" ? "Prospect For" : "Sponsoring") + '</span><span>Status</span><span>Stage</span><span>Owner</span><span>' + (spmState.owes ? "Outstanding" : spmState.life === "Prospect" || spmState.life === "Lost" ? "Next Follow-Up" : "Next Summit") + '</span><span></span></div>';
+    if(!rows.length) html += '<div class="empty">Nothing matches these filters.</div>';
+    html += rows.slice(0, spmState.shown).map(function(c){
+      var L = lifeOf[c.rel] || LIFE[2], st = spmStageOf(c);
+      var stc = st === "Paid" ? "s-paid" : st === "Lost" ? "s-lost" : PL_STAGES.indexOf(st) >= 0 ? "s-open" : "s-close";
+      return '<button type="button" class="m-row" data-spco="' + esc(c.key) + '"><span class="nm">' + esc(c.name) + '<small>' + esc(c.contact ? (c.contact.email || c.contact.name) : "No contact yet") + '</small></span>' +
+        '<span class="what">' + spmWhat(c) + '</span><span class="hide-sm"><span class="m-pill ' + L[5] + '">' + esc(L[1] === "Current" ? "Sponsor" : L[1]) + '</span></span>' +
+        '<span>' + (st ? '<span class="m-pill ' + stc + '">' + esc(st) + '</span>' : '<span class="muted">—</span>') + '</span>' +
+        '<span class="hide-sm' + (c.owner ? '' : ' muted') + '">' + esc(c.owner || "Unassigned") + '</span><span class="hide-sm">' + (spmState.owes ? '<b class="bad">' + esc(money(coOwed(c, spmState.what))) + '</b>' : spmNext(c)) + '</span><span class="caret">▶</span></button>';
+    }).join("");
+    if(rows.length > spmState.shown) html += '<button type="button" class="m-more" data-spmmore="1">Show ' + Math.min(50, rows.length - spmState.shown) + ' More of ' + (rows.length - spmState.shown) + '</button>';
+    $("spm-rows").innerHTML = html;
+  }
+  document.addEventListener("click", function(ev){
+    var el = ev.target, b; if(!el || !el.closest) return;
+    var go = function(){ spmState.shown = 50; spmKeep(); renderSpm(); };
+    if((b = el.closest("[data-spmlife]"))){ spmState.life = b.getAttribute("data-spmlife"); spmState.alpha = ""; go(); return; }
+    if((b = el.closest("[data-spmwhat]"))){ spmState.what = b.getAttribute("data-spmwhat"); spmState.life = "Sponsor"; go(); $("spm-rows").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+    if((b = el.closest("[data-spmstage]"))){ spmState.stage = b.getAttribute("data-spmstage"); spmState.life = ""; go(); $("spm-rows").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+    if((b = el.closest("[data-spmowe]"))){ spmState.what = b.getAttribute("data-spmowe"); spmState.owes = true; spmState.life = ""; spmState.stage = ""; go(); $("spm-rows").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+    if(el.closest("#spm-owes")){ spmState.owes = !spmState.owes; if(spmState.owes){ spmState.life = ""; spmState.stage = ""; } go(); return; }
+    if((b = el.closest("[data-spmalpha]"))){ spmState.alpha = b.getAttribute("data-spmalpha"); renderSpm(); return; }
+    if((b = el.closest("[data-spmweek]"))){ spmState.nweek = +b.getAttribute("data-spmweek"); spmKeep(); renderSpm(); return; }
+    if(el.closest("[data-spmmore]")){ spmState.shown += 50; renderSpm(); return; }
+    if(el.closest("#spm-new")){ $("new-lead").click(); return; }
+  });
+  document.addEventListener("change", function(ev){
+    var el = ev.target; if(!el) return;
+    if(el.id === "spm-what"){ spmState.what = el.value; spmState.shown = 50; spmKeep(); renderSpm(); }
+    if(el.id === "spm-stage"){ spmState.stage = el.value; spmState.shown = 50; spmKeep(); renderSpm(); }
+    if(el.id === "spm-owner"){ spmState.owner = el.value; spmState.shown = 50; spmKeep(); renderSpm(); }
+  });
+  document.addEventListener("input", function(ev){ if(ev.target && ev.target.id === "spm-q"){ spmState.q = ev.target.value; spmState.shown = 50; renderSpm(); } });
   /* ---- To Do: what needs to be done, in plain sections, first thing ---- */
   function tdRow(date, dateBad, company, what, sub){
     return '<div class="fbrow" data-spco="' + esc(companyKey(company)) + '"><span class="fbdate' + (dateBad ? " bad" : "") + '">' + esc(date) + '</span>' +
@@ -10613,13 +10902,21 @@ a series deal is counted once, at its full amount.</div>
         '<label class="cp-owner" title="Change the owner"><i>' + esc(coInitials(c.owner || "?")) + '</i><span>Owner<b>' + esc(c.owner || "Unassigned") + '</b></span>' +
           (canWrite ? '<select data-coowner="' + esc(c.key) + '" aria-label="Owner"><option value="">Unassigned</option>' +
             BENEFIT_OWNERS.map(function(o){ return '<option' + (o === c.owner ? " selected" : "") + '>' + esc(o) + '</option>'; }).join("") + '</select>' : '') + '</label></div>' +
-      '<div class="cp-metrics">' +
-        '<div><span class="k">Sponsoring Since</span><span class="v">' + (c.since || "—") + '</span></div>' +
-        '<div><span class="k">Last 12 Months</span><span class="v">' + (c.money.committed ? esc(money(c.money.committed)) : "—") + '</span></div>' +
-        '<div><span class="k">Paid</span><span class="v">' + (c.money.paid ? esc(money(c.money.paid)) : "—") + '</span></div>' +
-        '<div><span class="k">Outstanding</span><span class="v' + (c.money.out ? " warn" : "") + '">' + (c.money.out ? esc(money(c.money.out)) : "—") + '</span></div>' +
-        '<div><span class="k">Last Touch</span><span class="v">' + (c.last ? esc(fmtDate(c.last)) : "—") + '</span></div>' +
-      '</div>' +
+      (function(){
+        /* Member 360's band: Level, Member Since, Membership Ends, Dues, Last Touch */
+        var tier = spmTopTier(c), ends = null;
+        c.live.forEach(function(a){ sharesOf(a).forEach(function(sh){ var o = (SUMMITS[sh.summit] || {}).opens; if(o && (!ends || o > ends)) ends = o; }); });
+        var yr = t.getMonth() >= 8 ? t.getFullYear() + 1 : t.getFullYear(), due = 0, paid = 0, any = false;
+        c.apps.forEach(function(a){ if(seasonOf(a) === yr && APP_PLAIN[a.status] && a.status !== "Submitted"){ any = true; due += Number(a.amountDue) || 0; paid += Number(a.amountPaid) || (a.status === "Paid" ? Number(a.amountDue) || 0 : 0); } });
+        var season = !any ? "Not sponsoring yet" : paid >= due ? "Paid" : paid ? money(paid) + " of " + money(due) : "Invoiced, " + money(due);
+        return '<div class="cp-metrics">' +
+          '<div><span class="k">Tier</span><span class="v">' + esc(tier ? tierLabel(tier) : (c.liveB.length ? typeName(c.liveB[0].__kind === "workgroup" ? "workgroup" : c.liveB[0].otype) : "\u2014")) + '</span></div>' +
+          '<div><span class="k">Sponsor Since</span><span class="v">' + (c.since || "\u2014") + '</span></div>' +
+          '<div><span class="k">Sponsorship Ends</span><span class="v">' + (ends ? esc(fmtDate(ends)) : "\u2014") + '</span></div>' +
+          '<div><span class="k">' + yr + ' Sponsorship</span><span class="v' + (any && paid < due ? " warn" : "") + '">' + esc(season) + '</span></div>' +
+          '<div><span class="k">Last Touch</span><span class="v">' + (c.last ? esc(fmtDate(c.last)) : "\u2014") + '</span></div>' +
+        '</div>';
+      })() +
       '<div class="cp-jr">' +
         '<div class="cp-jcol wide"><div class="cp-jl">Sponsorship Journey <span>' + (c.since ? "since " + c.since : "not a sponsor yet") + '</span></div>' +
           '<div class="cj-yrs">' + journey + '</div>' +
@@ -10681,16 +10978,55 @@ a series deal is counted once, at its full amount.</div>
             '<b class="' + (late ? "bad" : "") + '" style="white-space:nowrap;">' + esc(fmtDate(x.next.due)) + '</b>' +
             (canWrite ? '<button class="btn ghost sm" type="button" data-tpdone="' + esc(x.id) + '">Done</button>' : '') + '</div>';
         }).join("") + '</div>' : '';
-      /* plain words first (Amy, November 19, 2026): what they sponsor, what they are a prospect for, then
-         everything that has happened */
-      var sponsorFor = items.filter(function(it){ return it.kind !== "lead" && it.stage !== "Lost"; });
-      var prospectFor = openI.filter(function(it){ return it.kind === "lead"; });
-      h = '<div class="cp-sect"><h4>Sponsor For</h4>' + (sponsorFor.length ? sponsorFor.map(function(it){ return coSpRow(it); }).join("") :
-        '<div class="cp-card"><div class="fldnote" style="margin:0;">Not sponsoring anything right now.</div></div>') + '</div>' +
-        '<div class="cp-sect"><h4>Prospect For</h4>' + (prospectFor.length ? prospectFor.map(coOppCard).join("") :
-        '<div class="cp-card"><div class="fldnote" style="margin:0;">Not a prospect for anything right now. ' + (canWrite ? 'Use <b>Add a Prospective Sponsorship</b> to start one.' : '') + '</div></div>') + '</div>' + h;
-      h += '<div class="cp-sect"><h4>Everything That\u2019s Happened</h4>' + (acts.length ? acts.slice(0, 8).map(actRow).join("") : '<div class="fldnote" style="margin:0;">Nothing logged yet.</div>') +
-        (acts.length > 8 ? '<button class="btn ghost sm" type="button" data-cotab="activity" style="margin-top:8px;">See All ' + acts.length + '</button>' : '') + '</div>';
+      /* Member 360's overview (Jonna, November 19, 2026: "make it similar"): where each deal stands on its
+         stepper, then Money, Benefits Used and Open Deal, Key Contacts, Recent Activity and Company Details */
+      var deals = openI.length ? openI : items.filter(function(it){ return it.stage === "Paid"; }).slice(0, 2);
+      var steps = deals.map(function(it){
+        var title = it.kind === "lead" ? "Prospect for " + (it.rec && leadType(it.rec) === "summit" ? (it.rec.summit || "a summit") : typeName(it.type)) +
+          (it.what && it.rec && leadType(it.rec) !== "workgroup" ? " \u00b7 " + it.what : (it.kind === "lead" && it.rec && it.rec.workgroup ? " \u00b7 " + it.rec.workgroup : "")) : (it.what || typeName(it.type));
+        var nx = it.nextText ? "Next: " + it.nextText + (it.nextDate ? ", " + fmtDate(it.nextDate) : "") : (it.stage === "Paid" ? "Paid" : "");
+        return '<div class="cp-stepcard"><div class="cp-stephd"><b>' + esc(title) + '</b><span>' + esc(nx) + '</span></div>' + stepsBar(it) +
+          '<div class="cp-cardft" style="margin-top:8px;"><span class="sub2">' + esc(typeName(it.type)) + (it.no ? " \u00b7 " + esc(it.no) : "") + (it.amount ? " \u00b7 " + esc(money(it.amount)) : "") + '</span>' +
+          '<button class="btn ghost sm" type="button" data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '" data-direct="1">' + (it.kind === "lead" ? "Open the Prospect" : "Open the Sponsorship") + '</button></div></div>';
+      }).join("") || '<div class="cp-stepcard"><div class="cp-stephd"><b>Not sponsoring or a prospect right now</b></div><div class="fldnote" style="margin:0;">' +
+        (canWrite ? 'Use <b>Add a Prospective Sponsorship</b> to start one.' : '') + '</div></div>';
+      var bens = [], done = 0;
+      c.live.forEach(function(a){ benefitsOf(a).forEach(function(b){ bens.push(b); if(b.done) done++; }); });
+      var lastPaid = null;
+      c.apps.forEach(function(a){ if(a.paymentReceivedDate && (!lastPaid || a.paymentReceivedDate > lastPaid.d)) lastPaid = {d:a.paymentReceivedDate, m:Number(a.amountPaid) || Number(a.amountDue) || 0}; });
+      c.bills.forEach(function(r){ if(r.paymentReceivedDate && (!lastPaid || r.paymentReceivedDate > lastPaid.d)) lastPaid = {d:r.paymentReceivedDate, m:Number(r.amountPaid) || Number(r.amountDue) || 0}; });
+      var deal = openI.filter(function(it){ return it.kind === "lead"; })[0] || openI[0];
+      var cards = '<div class="cp-cards3">' +
+        '<div class="cp-c3"><span class="k">Money</span><span class="big">' + esc(money(c.money.life)) + '</span><span class="s">paid to MISMO, all time</span>' +
+          '<div class="bar"><i style="width:' + (c.money.committed ? Math.round(c.money.paid / c.money.committed * 100) : 0) + '%"></i></div>' +
+          '<span class="s">' + (lastPaid ? 'Last paid: <b>' + esc(money(lastPaid.m)) + '</b>, ' + esc(fmtDate(lastPaid.d)) : 'No payments yet') + '</span>' +
+          (c.money.out ? '<span class="s bad">Outstanding: <b>' + esc(money(c.money.out)) + '</b></span>' : '') +
+          '<button class="linkbtn" type="button" data-cotab="money">See payments</button></div>' +
+        '<div class="cp-c3"><span class="k">Benefits Used</span>' + (bens.length
+          ? '<span class="big">' + done + ' <small style="font-size:13px;font-weight:500;color:var(--ink-3);">of ' + bens.length + '</small></span><div class="bar"><i style="width:' + Math.round(done / bens.length * 100) + '%"></i></div>' +
+            '<span class="s">' + (bens.length - done ? (bens.length - done) + ' still to do, the next due ' + esc(fmtDate(bens.filter(function(b){ return !b.done; }).map(function(b){ return b.due; }).sort()[0] || "")) : 'Everything they are owed is done') + '</span>'
+          : '<span class="s">No benefits owed right now (benefits come with an approved summit sponsorship).</span>') +
+          '<button class="linkbtn" type="button" data-go="benefits">See benefits</button></div>' +
+        '<div class="cp-c3"><span class="k">Open Deal</span>' + (deal
+          ? '<span class="big" style="font-size:16px;">' + esc(deal.kind === "lead" ? "Sponsor pipeline" : typeName(deal.type) + " sponsorship") + '</span>' +
+            '<span class="s"><span class="st ' + (PIPE_TONE[deal.stage] || "") + '">' + esc(deal.stage) + '</span>' + (deal.amount ? ' &nbsp;<b>' + esc(money(deal.amount)) + '</b>' : '') + '</span>' +
+            '<span class="s">' + esc(deal.nextText ? "Next: " + deal.nextText : (deal.what || "")) + '</span>'
+          : '<span class="s">No open deal. ' + (canWrite ? 'Use <b>Add a Prospective Sponsorship</b>.' : '') + '</span>') + '</div>' +
+      '</div>';
+      var cons0 = cons.slice(0, 3);
+      var keyc = '<div class="cp-sect"><h4>Key Contacts <button class="linkbtn" type="button" data-cotab="contacts" style="float:right;">See all ' + cons.length + '</button></h4>' + (cons0.length ? cons0.map(function(p){
+        return '<div class="cp-row"><span class="cp-av">' + esc(coInitials(p.name || p.email)) + '</span><div class="cp-grow"><b>' + esc(p.name || p.email) + '</b>' +
+          '<span class="sub2">' + esc([p.role, p.email].filter(Boolean).join(" \u00b7 ")) + '</span></div>' + (p.email ? '<a class="btn ghost sm" href="mailto:' + esc(p.email) + '">Email</a>' : '') + '</div>';
+      }).join("") : '<div class="fldnote" style="margin:0;">No contacts on any record yet.</div>') + '</div>';
+      var recent = '<div class="cp-sect"><h4>Recent Activity' + (acts.length > 3 ? ' <button class="linkbtn" type="button" data-cotab="activity" style="float:right;">View all ' + acts.length + '</button>' : '') + '</h4>' +
+        (acts.length ? acts.slice(0, 3).map(actRow).join("") : '<div class="fldnote" style="margin:0;">Nothing logged yet.</div>') + '</div>';
+      var kinds = c.types.map(typeName).join(", ");
+      var details = '<details class="cp-details"><summary>Company Details</summary><div class="cp-dgrid">' +
+        [["Company", c.name], ["Relationship", c.rel], ["Owner", c.owner || "Unassigned"], ["Sponsor Since", c.since || "\u2014"], ["Kinds", kinds || "\u2014"],
+         ["Summit Sponsorships", String(c.apps.filter(function(a){ return a.status !== "Declined"; }).length)], ["Other Sponsorships", String(c.bills.length)],
+         ["Prospects", String(c.leads.length)], ["Contacts", String(cons.length)], ["Last Touch", c.last ? fmtDate(c.last) : "\u2014"]].map(function(x){
+          return '<div><span>' + esc(x[0]) + '</span><b>' + esc(x[1]) + '</b></div>'; }).join("") + '</div></details>';
+      h = steps + cards + h + keyc + recent + details;
       return h;
     }
     if(coTab === "sponsorships"){

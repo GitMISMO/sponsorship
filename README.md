@@ -38,6 +38,17 @@ reads the list through the Availability flow and compares it with the records. A
 has wrong or missing is sent to it again (at most once a day each), and a sold slot the list holds
 that no record accounts for is shown on Inventory to be cleared in SharePoint.
 
+## Sponsors and Prospects, the Member 360 way (November 19, 2026)
+
+Jonna: "make it similar" to Member 360, in how it works. **Home** opens first. **Sponsors and Prospects**
+(`view-spm`, `renderSpm`) follows Member 360's Members and Prospects: tiles by relationship (`LIFE`), a band
+(current sponsors by top tier, **Outstanding** by summit and kind via `coOwed`, summit first, and the sponsor
+pipeline), New Prospects This Week, the relationship tabs, summit/kind (`spmWhatMatch`), stage and owner filters,
+Outstanding Only, the A to Z bar and 50 rows at a time; choices are kept in `sponsorship:spm`. The company
+record's Overview follows Member 360's: stage bar per deal, Money / Benefits Used / Open Deal, Key Contacts,
+Recent Activity, Company Details; its band reads Tier, Sponsor Since, Sponsorship Ends, this season, Last Touch.
+The summit-first page (`view-spx`) stays in the page, unlinked.
+
 ## To Do and Sponsors & Prospects (November 19, 2026)
 
 From Amy's feedback ("easy to see who is a sponsor for what and who is a prospect for what", summit first, and

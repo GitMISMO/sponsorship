@@ -1010,6 +1010,9 @@
   .cp-details{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-top:12px;}
   .cp-details summary{cursor:pointer; font-weight:700; font-size:13px; color:var(--ink);}
   .cp-dgrid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 16px; margin-top:10px;}
+  .cp-actions a.btn{text-decoration:none;}
+  .cp-logo{display:inline-flex; align-items:center; gap:6px;} .cp-logo small{font-size:10px; font-weight:700; color:var(--ink-3); letter-spacing:.04em;}
+  .cp-dgrid div a.linkbtn{font-size:12.5px; font-weight:600; overflow-wrap:anywhere;} .cp-lgfrom{display:block; font-size:11px; color:var(--ink-3);}
   .cp-dgrid div span{display:block; font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); font-weight:700;} .cp-dgrid div b{font-size:13px; color:var(--ink);}
   /* the Outreach Planner (November 19, 2026), Member 360's, for sponsors */
   .op-range{font-size:13px; color:var(--ink-3); white-space:nowrap; padding-top:8px;}
@@ -2007,7 +2010,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>Who to Touch</b> suggests sponsors and prospects by reason: prospects with no next date, prospects gone quiet, current sponsors not in for the next summit, benefits still to use, sponsors gone quiet, and past sponsors to win back. Drag a name onto a day, or use <b>Plan for&hellip;</b>. Anyone touched in the last week or already on the plan drops off.</li>
             <li><b>Also Waiting</b> holds applications to review, payments past due, invoices Bernie still has to raise, the mismosponsor@ emails and new prospects. <b>All Follow-Ups</b> at the bottom lists every follow-up, open or done, by owner.</li>
             <li><b>Sponsors and Prospects</b> is Member 360&rsquo;s Members and Prospects page for sponsors. The tiles and the tabs (<b>Current</b>, <b>Applied</b>, <b>Prospect</b>, <b>Past</b>, <b>Lost</b>, <b>All</b>) choose who is listed. The dark band shows current sponsors by tier, what is <b>outstanding</b> (approved or invoiced and not paid) for each summit, workgroups and each other kind, summit first, and the sponsor pipeline by stage; select any of them to list just those companies. Filter by summit or kind, stage and owner, tick <b>Outstanding Only</b>, or jump with the A to Z bar.</li>
-            <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there.</li>
+            <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there. <b>Download Logo</b> saves the logo the sponsor sent with the online prospectus (from Sponsor Logos on the MISMO Summits site; you need to be signed in to MBA&rsquo;s SharePoint); a sponsor already on the website gets <b>Open the Logo</b> instead. The file is also under Company Details and on the application.</li>
             <li>A summit prospect can say which summit it&rsquo;s for (<b>Which Summit</b> on the prospect); the summit filter then finds it.</li>
             <li>The <b>Pipeline</b> (every deal by stage) is under Records.</li>
           </ul>
@@ -3094,6 +3097,33 @@ a series deal is counted once, at its full amount.</div>
   /* The SP-2026... number the prospectus gave the sponsor, typed onto the record by
      whoever enters the request. It is how the alerts flow finds the sponsor's logo. */
   function prospectusRef(a){ return String(a.prospectusRef || "").trim().toUpperCase(); }
+  /* The logo, as a file to download (Jonna, November 20, 2026: "make sure it's a downloadable file on
+     the company card"). The online prospectus saves it to Sponsor Logos on the MISMO Summits site as
+     "<reference> - <company>.<ext>"; the record keeps that name (logoFile), and older records find it
+     on their request in data/inbox.json. SharePoint's download.aspx hands it over as a file to anyone
+     signed in to MBA's SharePoint. A sponsor already on the website falls back to the website's logo. */
+  var LOGO_SITE = "https://mortgagebankersassociation.sharepoint.com/sites/MISMOSummits";
+  function logoFileOf(a){
+    if(!a) return "";
+    if(a.logoFile) return String(a.logoFile);
+    var ref = prospectusRef(a); if(!ref || !inboxItems) return "";
+    var r = inboxItems.filter(function(x){ return x && String(x.reference || "").trim().toUpperCase() === ref; })[0];
+    return r && r.logoFileName ? String(r.logoFileName) : "";
+  }
+  function logoDownloadUrl(file){ return LOGO_SITE + "/_layouts/15/download.aspx?SourceUrl=" + encodeURIComponent("/sites/MISMOSummits/Sponsor Logos/" + file); }
+  function logoOf(list){
+    var withFile = (list || []).filter(function(a){ return a && a.id !== draft && logoFileOf(a); })
+      .sort(function(x, y){ return String(y.dateSubmitted || "").localeCompare(String(x.dateSubmitted || "")); })[0];
+    if(withFile){ var f = logoFileOf(withFile);
+      return {url:logoDownloadUrl(f), file:f, ext:(/\.([a-z0-9]+)$/i.exec(f) || [])[1] || "", from:"Sent with " + (withFile.appNo || "the application"), download:true}; }
+    var web = "";
+    (list || []).some(function(a){ return Object.keys(webFeeds).some(function(sm){
+      var fd = webFeeds[sm]; if(!fd) return false;
+      var co = String(a.company || "").trim(), dom = (String(a.contactEmail || "").split("@")[1] || "").toLowerCase().replace(/^www\./, ""), nm = webNorm(WEB_NAMES[co] || co);
+      var hit = fd.filter(function(x){ return x.logo && ((nm && webNorm(x.name) === nm) || (dom && webHost(x.url) === dom)); })[0];
+      if(hit){ web = hit.logo; return true; } return false; }); });
+    return web ? {url:web, file:String(web).split("/").pop().split("?")[0], ext:(/\.([a-z0-9]+)(\?|$)/i.exec(web) || [])[1] || "", from:"On the website", download:false} : null;
+  }
 
   /* Is this email request about this record? Requests queued since October 7, 2026 carry the
      record's id. Older ones only carry its number, so they count only if queued on or after
@@ -3373,7 +3403,9 @@ a series deal is counted once, at its full amount.</div>
      "paymentReceivedDate","lastFollowUpDate","followUpCount","statusNotes","comments","logoDone",
      "invoiceRequestSentAt","logoRequestSentAt","prospectusRef","custom","day","workshopName",
      "inKind","priceFlag","priceSent","contractVersion","acceptanceTitle","package","updatedAt",
-     "deskAppliedAt","deskChases"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
+     "deskAppliedAt","deskChases",
+     /* the logo file the sponsor sent with the prospectus, as saved in Sponsor Logos (November 20, 2026) */
+     "logoFile"].forEach(function(k){ if(a[k]!==undefined && a[k]!=="") d[k]=a[k]; });
     /* benefit checklist items, one field each so two people ticking different ones never clash */
     Object.keys(a).forEach(function(k){ if(/^bf:/.test(k) && a[k]) d[k] = a[k]; });
     return d;
@@ -5381,7 +5413,9 @@ a series deal is counted once, at its full amount.</div>
       '<div class="fldnote">Done marks the logo collected and placed everywhere it belongs — ' +
       'the same thing Mark Done on the Pipeline tab does.</div></div>' +
       '<div class="fldnote" style="margin-top:10px;">' +
-      (a.prospectusRef ? 'The logo is filed under <b>' + esc(a.prospectusRef) +
+      (logoFileOf(a) ? '<a class="btn ghost sm" href="' + esc(logoDownloadUrl(logoFileOf(a))) + '" download target="_blank" rel="noopener">Download the Logo</a> ' +
+        '<span style="margin-left:6px;">' + esc(logoFileOf(a)) + ', in Sponsor Logos on the MISMO Summits site.</span>'
+      : a.prospectusRef ? 'The logo is filed under <b>' + esc(a.prospectusRef) +
         '</b> in the Sponsor Logos library, and the logo request points the team to it.'
         : 'No Prospectus Reference on this record, so the logo request asks the team to get the logo from the sponsor.') +
       '</div></div>';
@@ -8980,7 +9014,7 @@ a series deal is counted once, at its full amount.</div>
       acceptanceTitle: txt(r.signerTitle),
       contractVersion: r.agreed ? (txt(r.contractVersion) || contractVersionAt(txt(r.signedDate) || submitted)) : "",
       amountDue: isFinite(due) && due > 0 ? due : "", prospectusRef: ref, comments: notes.join(" "),
-      followUpCount: 0};
+      logoFile: txt(r.logoFileName), followUpCount: 0};
   }
   /* The price comes from the price list, never from the sponsor's browser (November 7, 2026).
      What the page sent is kept in priceSent; anything that doesn't fit is kept in priceFlag
@@ -11374,10 +11408,14 @@ a series deal is counted once, at its full amount.</div>
           ? '<div class="cp-big">' + daysBetween(t, nextSm.d) + ' <small>days</small></div><div class="cp-js">' + esc((SUMMITS[nextSm.s] || {}).label || nextSm.s) + '</div>'
           : '<div class="cp-big">—</div><div class="cp-js">no summit booked</div>') + '</div>' +
       '</div></div>';
+    var cLogo = logoOf(c.apps);
     html += '<div class="cp-actions">' +
       (canWrite ? '<button class="btn sm" type="button" data-conote="1">+ Log a Touchpoint</button>' +
         '<button class="btn ghost sm" type="button" data-coprospect="1">+ Add a Prospective Sponsorship</button>' : '') +
       (c.contact && c.contact.email ? '<a class="btn ghost sm" href="mailto:' + esc(c.contact.email) + '">Email ' + esc(c.contact.name || c.contact.email) + '</a>' : '') +
+      (cLogo ? '<a class="btn ghost sm cp-logo" href="' + esc(cLogo.url) + '"' + (cLogo.download ? ' download' : '') + ' target="_blank" rel="noopener" title="' + esc(cLogo.file + " \u00b7 " + cLogo.from) + '">' +
+        '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 13h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        (cLogo.download ? 'Download Logo' : 'Open the Logo') + (cLogo.ext ? ' <small>' + esc(cLogo.ext.toUpperCase()) + '</small>' : '') + '</a>' : '') +
       '</div><div id="cp-noteform" hidden></div>';
     var acts = coActivity(c), cons = coContacts(c);
     var tabs = [["overview","Overview",""],["sponsorships","Sponsorships",c.apps.length + c.bills.length],["activity","Activity",acts.length],["contacts","Contacts",cons.length],["money","Money",""]];
@@ -11470,7 +11508,9 @@ a series deal is counted once, at its full amount.</div>
         [["Company", c.name], ["Relationship", c.rel], ["Owner", c.owner || "Unassigned"], ["Sponsor Since", c.since || "\u2014"], ["Kinds", kinds || "\u2014"],
          ["Summit Sponsorships", String(c.apps.filter(function(a){ return a.status !== "Declined"; }).length)], ["Other Sponsorships", String(c.bills.length)],
          ["Prospects", String(c.leads.length)], ["Contacts", String(cons.length)], ["Last Touch", c.last ? fmtDate(c.last) : "\u2014"]].map(function(x){
-          return '<div><span>' + esc(x[0]) + '</span><b>' + esc(x[1]) + '</b></div>'; }).join("") + '</div></details>';
+          return '<div><span>' + esc(x[0]) + '</span><b>' + esc(x[1]) + '</b></div>'; }).join("") +
+        (function(){ var lg = logoOf(c.apps); return '<div><span>Logo</span>' + (lg ? '<a class="linkbtn" href="' + esc(lg.url) + '"' + (lg.download ? ' download' : '') + ' target="_blank" rel="noopener">' + esc(lg.file) + '</a><small class="cp-lgfrom">' + esc(lg.from) + '</small>' : '<b>None on file</b>') + '</div>'; })() +
+        '</div></details>';
       h = steps + cards + h + keyc + recent + details;
       return h;
     }

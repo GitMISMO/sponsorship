@@ -49,6 +49,16 @@ record's Overview follows Member 360's: stage bar per deal, Money / Benefits Use
 Recent Activity, Company Details; its band reads Tier, Sponsor Since, Sponsorship Ends, this season, Last Touch.
 The summit-first page (`view-spx`) stays in the page, unlinked.
 
+## The logo as a file (November 20, 2026)
+
+The online prospectus saves the sponsor's logo to Sponsor Logos on the MISMO Summits SharePoint site as
+`<reference> - <company>.<ext>` and sends that name as `logoFileName`. `fromProspectus` keeps it on the record
+as `logoFile`; records taken in before then find it on their request in `data/inbox.json` (`logoFileOf`).
+`logoDownloadUrl` builds SharePoint's `_layouts/15/download.aspx?SourceUrl=...` link, which hands the file
+over as a download to anyone signed in to MBA's SharePoint. `logoOf(apps)` picks the newest application with
+a file, else the website's logo from the sponsor feed. Shown as Download Logo in the company card's buttons,
+under Company Details, and as Download the Logo on the application.
+
 ## Just Came In (November 20, 2026)
 
 Home's hero starts with **Just Came In** (`.hm-in`, built in `renderHome`): every application still Submitted

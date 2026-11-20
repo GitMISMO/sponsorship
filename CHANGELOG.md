@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-20: The logo is a file to download: **Download Logo** on the company card (and under Company Details) and **Download the Logo** on the application, straight from Sponsor Logos on the MISMO Summits site. New applications keep the logo file name (logoFile); older ones find it on their prospectus request. Sponsors already on the website get Open the Logo.
 - 2026-11-20: Home: **Just Came In** across the top: applications waiting for review (newest first, with when, what and how much; select one to review it) and prospects added in the last two days. The headline counts the applications to review.
 - 2026-11-19: Outreach Planner: Up Next laid out evenly: the company with its initials and tag (spaced from the name), then Due, Owner and Contact in matching columns, and the buttons in a bar along the bottom with Next One.
 - 2026-11-19: To Do becomes the **Outreach Planner**, working like Member 360's: where to start and five number boxes, Everyone or one person, This Week / Next Week / Past Due, Up Next (Email, Log a Touchpoint, Move to…, Mark Done), a Monday-to-Friday board with Past Due where cards can be dragged to another day or ticked done, Undo, Communicated This Week, Who to Touch for sponsors and prospects (Plan for… or drag a name onto a day; planned touches are kept in data/plans.json), Also Waiting and All Follow-Ups.

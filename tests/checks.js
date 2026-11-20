@@ -607,13 +607,18 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await P(portal, () => { document.querySelector('#spm-q').value = 'Relecloud'; document.querySelector('#spm-q').dispatchEvent(new Event('input', {bubbles: true})); });
     await portal.waitForTimeout(250);
     await portal.click('#spm-rows .m-row'); await portal.waitForTimeout(500);
-    const href = await P(portal, () => { const a = document.querySelector('#co-panel a.cp-logo'); return a ? a.getAttribute('href') + '|' + a.hasAttribute('download') + '|' + a.innerText : ''; });
-    expect(/sharepoint\.com\/sites\/MISMOSummits\/_layouts\/15\/download\.aspx\?SourceUrl=/.test(href) && /MS27-T0008%20-%20Relecloud%20Tier%20Test\.png/.test(href) && /\|true\|/.test(href) && /Download Logo/.test(href),
-      'the company card has no logo download: ' + href);
+    expect(await portal.isVisible('#co-panel [data-logodl="co"]'), 'the company card has no Download Logo button');
+    const [dl1] = await Promise.all([portal.waitForEvent('download', { timeout: 8000 }), portal.click('#co-panel [data-logodl="co"]')]);
+    expect(dl1.suggestedFilename() === 'MS27-T0008 - Relecloud Tier Test.png', 'the logo downloaded with the wrong name: ' + dl1.suggestedFilename());
+    /* Add a Logo keeps a file on the company, and that one is then the download */
+    await portal.setInputFiles('#cp-logofile', { name: 'relecloud-new.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', 'base64') });
+    await portal.waitForTimeout(1200);
+    const [dl2] = await Promise.all([portal.waitForEvent('download', { timeout: 8000 }), portal.click('#co-panel [data-logodl="co"]')]);
+    expect(dl2.suggestedFilename() === 'relecloud-new.png', 'an added logo is not the one downloaded: ' + dl2.suggestedFilename());
     await P(portal, () => { const d = document.getElementById('co-close'); if (d) d.click(); });
     await openRec('app-ms27-t0008'); await portal.waitForTimeout(400);
-    const dl = await P(portal, () => { const a = [...document.querySelectorAll('#drawer a[download]')].find(x => /Download the Logo/.test(x.innerText)); return a ? a.getAttribute('href') : ''; });
-    expect(/download\.aspx/.test(dl) && /Relecloud/.test(dl), 'the application record has no logo download: ' + dl);
+    const [dl3] = await Promise.all([portal.waitForEvent('download', { timeout: 8000 }), portal.click('#drawer [data-logodl="app"]')]);
+    expect(/Relecloud/.test(dl3.suggestedFilename()), 'the application record has no logo download: ' + dl3.suggestedFilename());
     await P(portal, () => document.getElementById('d-close').click());
     await P(portal, () => { const q = document.querySelector('#spm-q'); q.value = ''; q.dispatchEvent(new Event('input', {bubbles: true})); });
   });

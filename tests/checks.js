@@ -601,6 +601,22 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(!/Contoso Mortgage/.test(due), 'a done card is still past due');
     await portal.click('[data-opwhen="0"]'); await portal.waitForTimeout(150);
   });
+  /* the logo is a file to download on the company card (Jonna, November 20, 2026) */
+  await check('the logo the sponsor sent can be downloaded from the company card and the record', async () => {
+    await toCos('');
+    await P(portal, () => { document.querySelector('#spm-q').value = 'Relecloud'; document.querySelector('#spm-q').dispatchEvent(new Event('input', {bubbles: true})); });
+    await portal.waitForTimeout(250);
+    await portal.click('#spm-rows .m-row'); await portal.waitForTimeout(500);
+    const href = await P(portal, () => { const a = document.querySelector('#co-panel a.cp-logo'); return a ? a.getAttribute('href') + '|' + a.hasAttribute('download') + '|' + a.innerText : ''; });
+    expect(/sharepoint\.com\/sites\/MISMOSummits\/_layouts\/15\/download\.aspx\?SourceUrl=/.test(href) && /MS27-T0008%20-%20Relecloud%20Tier%20Test\.png/.test(href) && /\|true\|/.test(href) && /Download Logo/.test(href),
+      'the company card has no logo download: ' + href);
+    await P(portal, () => { const d = document.getElementById('co-close'); if (d) d.click(); });
+    await openRec('app-ms27-t0008'); await portal.waitForTimeout(400);
+    const dl = await P(portal, () => { const a = [...document.querySelectorAll('#drawer a[download]')].find(x => /Download the Logo/.test(x.innerText)); return a ? a.getAttribute('href') : ''; });
+    expect(/download\.aspx/.test(dl) && /Relecloud/.test(dl), 'the application record has no logo download: ' + dl);
+    await P(portal, () => document.getElementById('d-close').click());
+    await P(portal, () => { const q = document.querySelector('#spm-q'); q.value = ''; q.dispatchEvent(new Event('input', {bubbles: true})); });
+  });
   await check('Sponsors and Prospects works like Member 360: tabs, filters, outstanding by summit', async () => {
     await toCos('Sponsor');
     let rows = await P(portal, () => document.getElementById('spm-rows').innerText);

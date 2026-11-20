@@ -1021,12 +1021,28 @@
   .op-filters select{border:1px solid var(--border); border-radius:6px; padding:7px 9px; font:inherit; font-size:13px; background:var(--surface); color:var(--ink);}
   .op-dn{font-style:normal; margin-left:6px; background:var(--bad); color:#fff; border-radius:4px; padding:0 6px; font-size:11px; font-weight:700;}
   #op-undo{margin-left:auto;}
-  .op-next{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px 18px; align-items:center; background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--sky); border-radius:8px; padding:12px 16px; margin:0 0 14px;}
-  .op-nl{grid-column:1/-1; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:700; display:flex; gap:10px;} .op-nl span{font-weight:500; letter-spacing:0; text-transform:none;}
-  .op-nm{font-size:17px; font-weight:700;} .op-nm .linkbtn{font-size:17px; font-weight:700;}
-  .op-nw{font-size:13.5px; color:var(--ink); margin-top:3px;} .op-nd{font-size:12.5px; color:var(--ink-2); margin-top:3px;} .op-nd .bad{color:var(--bad);}
-  .op-na{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end;}
-  @media (max-width:760px){ .op-next{grid-template-columns:1fr;} .op-na{justify-content:flex-start;} }
+  /* Up Next: who and what on the left, the facts in even columns, the buttons in a bar along the bottom
+     (Jonna, November 19, 2026: no long box with a blank gap, the tag not jammed against the name) */
+  .op-next{background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--sky); border-radius:8px; margin:0 0 14px; overflow:hidden;}
+  .op-nl{display:flex; align-items:center; gap:10px; padding:10px 16px 0; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:700;}
+  .op-nl span{font-weight:600; letter-spacing:0; text-transform:none; background:var(--chip); color:var(--ink-2); border-radius:4px; padding:1px 7px;}
+  .op-nb{display:grid; grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr)); gap:16px; align-items:center; padding:10px 16px 14px;}
+  .op-who{display:flex; gap:12px; align-items:center; min-width:0;}
+  .op-who .cobadge{width:42px; height:42px; font-size:14px;}
+  .op-nm{display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; min-width:0;}
+  .op-nm .op-co{all:unset; cursor:pointer; font-size:17px; font-weight:700; color:var(--ink); line-height:1.25;}
+  .op-nm .op-co:hover{text-decoration:underline; color:var(--navy-mid);} .op-nm .op-co:focus-visible{outline:2px solid var(--sky); outline-offset:2px;}
+  .op-nm .m-pill{font-size:10.5px; padding:2px 8px;}
+  .op-nw{font-size:13px; color:var(--ink-2); margin-top:3px; overflow-wrap:anywhere;}
+  .op-fact{border-left:1px solid var(--rule); padding-left:14px; min-width:0;}
+  .op-fact span{display:block; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:700; margin-bottom:3px;}
+  .op-fact b{display:block; font-size:13.5px; color:var(--ink); overflow-wrap:anywhere;} .op-fact b.bad{color:var(--bad);}
+  .op-fact small{display:block; font-size:11.5px; color:var(--ink-3); overflow-wrap:anywhere;}
+  .op-na{display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:10px 16px; background:var(--surface-2); border-top:1px solid var(--rule);}
+  .op-na .op-skip{margin-left:auto;}
+  .op-na a.btn{text-decoration:none;}
+  @media (max-width:900px){ .op-nb{grid-template-columns:repeat(3,minmax(0,1fr));} .op-who{grid-column:1/-1;} .op-fact:nth-child(2){border-left:0; padding-left:0;} }
+  @media (max-width:560px){ .op-nb{grid-template-columns:1fr 1fr;} .op-fact{border-left:0; padding-left:0;} .op-fact.ct{grid-column:1/-1;} .op-na .op-skip{margin-left:0;} .op-who{align-items:flex-start;} }
   .op-sel{border:1px solid var(--border); border-radius:6px; padding:5px 8px; font:inherit; font-size:12.5px; background:var(--surface); color:var(--ink); max-width:100%;}
   .op-board{display:grid; grid-template-columns:repeat(var(--cols,5),minmax(150px,1fr)); gap:10px; margin:0 0 18px; overflow-x:auto; padding-bottom:4px; align-items:stretch;}
   .op-board.op-due{display:block;}
@@ -10996,18 +11012,22 @@ a series deal is counted once, at its full amount.</div>
     var nx = mode === "1" ? null : queue[opSkip];
     if(nx){
       var nc = cmap[nx.key] || {}, ct = nc.contact || {}, lf = LIFE.filter(function(x){ return x[0] === nc.rel; })[0];
+      var dueTxt = nx.day < T ? '<b class="bad">Was due ' + esc(opShort(nx.day)) + '</b><small>' + daysBetween(parseDate(nx.day), t) + ' days ago</small>'
+        : nx.day === T ? '<b>Today</b><small>' + esc(opDow(T) + ", " + opShort(T)) + '</small>' : '<b>' + esc(opDow(nx.day) + ", " + opShort(nx.day)) + '</b><small>this week</small>';
       $("op-next").innerHTML = '<div class="op-next" data-opk="' + nx.kind + '" data-opid="' + esc(nx.id) + '">' +
         '<div class="op-nl">Up Next' + (queue.length > 1 ? '<span>' + (opSkip + 1) + ' of ' + queue.length + '</span>' : '') + '</div>' +
-        '<div class="op-nb"><div class="op-nm"><button type="button" class="linkbtn" data-spco="' + esc(nx.key) + '">' + esc(nx.name) + '</button>' +
-          (lf ? ' <span class="m-pill ' + lf[5] + '">' + esc(nc.rel) + '</span>' : '') + '</div>' +
-          '<div class="op-nw">' + esc((nx.kind === "plan" ? "" : "Follow-up: ") + nx.what) + '</div>' +
-          '<div class="op-nd">' + (nx.day < T ? '<b class="bad">Was due ' + esc(fmtDate(nx.day)) + '</b>' : nx.day === T ? '<b>Due today</b>' : 'Due ' + esc(opDayName(nx.day))) +
-            ' · ' + esc(nx.owner || "No owner") + (ct.name || ct.email ? ' · ' + esc(ct.name || "") + (ct.email ? ' (' + esc(ct.email) + ')' : '') : '') + '</div></div>' +
+        '<div class="op-nb"><div class="op-who"><span class="cobadge">' + esc(coInitials(nx.name)) + '</span><div style="min-width:0">' +
+          '<div class="op-nm"><button type="button" class="op-co" data-spco="' + esc(nx.key) + '">' + esc(nx.name) + '</button>' +
+            (lf ? '<span class="m-pill ' + lf[5] + '">' + esc(nc.rel) + '</span>' : '') + '</div>' +
+          '<div class="op-nw">' + esc((nx.kind === "plan" ? "Planned touch: " : "Follow-up: ") + nx.what) + '</div></div></div>' +
+          '<div class="op-fact"><span>Due</span>' + dueTxt + '</div>' +
+          '<div class="op-fact"><span>Owner</span><b>' + esc(nx.owner || "No owner") + '</b><small>' + esc(nx.kind === "plan" ? "planned touch" : nx.kind === "touch" ? "from a touchpoint" : "prospect follow-up") + '</small></div>' +
+          '<div class="op-fact ct"><span>Contact</span>' + (ct.name || ct.email ? '<b>' + esc(ct.name || ct.email) + '</b>' + (ct.name && ct.email ? '<small>' + esc(ct.email) + '</small>' : '') : '<b>None on file</b>') + '</div></div>' +
         '<div class="op-na">' + (ct.email ? '<a class="btn ghost sm" href="mailto:' + esc(ct.email) + '">Email</a>' : '') +
           (canWrite ? '<button type="button" class="btn sm" data-oplog="' + esc(nx.key) + '">Log a Touchpoint</button>' +
-            '<select class="op-sel" data-opmove="1" aria-label="Move ' + esc(nx.name) + ' to a day">' + opDayOpts("Move to…") + '</select>' +
+            '<select class="op-sel" data-opmove="1" aria-label="Move ' + esc(nx.name) + ' to a day">' + opDayOpts("Move to\u2026") + '</select>' +
             '<button type="button" class="btn ghost sm" data-opmark="1">Mark Done</button>' : '') +
-          (queue.length > 1 ? '<button type="button" class="linkbtn" data-opskip="1">Show the next one</button>' : '') + '</div></div>';
+          (queue.length > 1 ? '<button type="button" class="btn ghost sm op-skip" data-opskip="1">Next One \u2192</button>' : '') + '</div></div>';
     } else $("op-next").innerHTML = "";
     /* who to touch */
     var busy = {}, endNext = iso(addDaysD(opMonday(1), 6));

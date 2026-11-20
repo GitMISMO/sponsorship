@@ -388,6 +388,10 @@ const appBy = async (page, test) => (await apps(page)).find(test);
 
   /* ---- one Pipeline, Other Sponsorships, the mismosponsor@ mailbox (November 18, 2026) ---- */
   const fileOf = name => P(portal, n => window.__practice.file(n), name);
+  const toTodo = async () => {
+    await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await portal.click('.tab[data-view="todo"]'); await portal.waitForTimeout(300);
+  };
   const toFlow = async () => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
     await portal.click('.tab[data-view="flow"]'); await portal.waitForTimeout(300);
@@ -518,7 +522,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const mail = (await fileOf('mailin')).docs;
     expect(mail['m-t-3'].st === 'need' && (mail['m-t-3'].cands || []).length > 1, 'an email several sponsors share is not waiting to be picked');
     expect(!mail['m-t-1'].html, 'a logged email\'s HTML was kept in the mailbox file');
-    await toFlow();
+    await toTodo();
     await portal.click('[data-mailpick="m-t-3"][data-name="Contoso Mortgage"]'); await portal.waitForTimeout(1500);
     const m3 = (await fileOf('mailin')).docs['m-t-3'];
     expect(m3.st === 'logged' && m3.coName === 'Contoso Mortgage', 'picking a company did not log it: ' + m3.st);
@@ -529,9 +533,11 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
 
   /* ---- companies, like Member 360 (November 18, 2026) ---- */
-  const toCos = async () => {
+  /* Sponsors & Prospects, summit first (November 19, 2026) */
+  const toCos = async (pick) => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
-    await portal.click('.tab[data-view="companies"]'); await portal.waitForTimeout(300);
+    await portal.click('.tab[data-view="spx"]'); await portal.waitForTimeout(300);
+    await portal.click('[data-spxpick="' + (pick || 'Winter 2027') + '"]'); await portal.waitForTimeout(200);
   };
   await check('Home shows the day and the season at a glance', async () => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
@@ -539,47 +545,40 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const t = await P(portal, () => document.getElementById('view-home').innerText);
     expect(/Good (morning|afternoon|evening)/.test(t) && /On Your Plate/i.test(t) && /Sales Pipeline/i.test(t) && /Team Activity/i.test(t), 'Home is missing its parts');
   });
-  await check('every company is one row, with all of its sponsorships', async () => {
-    await toCos();
-    const row = co => P(portal, k => { const r = document.querySelector('tr[data-co="' + k + '"]'); return r ? r.innerText : ''; }, co);
-    const fc = await row('fourthcoffeetest');
-    expect(/Sponsor/.test(fc) && /AI Webinar Series/.test(fc), 'Fourth Coffee Test is not a sponsor with its AI webinar sponsorship: ' + fc);
-    const nw = await row('northwindlending');
-    expect(/Sponsor/.test(nw) && /Winter 2027/.test(nw), 'Northwind Lending does not show its summit sponsorship: ' + nw);
-    const n = await P(portal, () => document.querySelectorAll('#co-body tr[data-co]').length);
-    const keys = await P(portal, () => [...document.querySelectorAll('#co-body tr[data-co]')].map(r => r.getAttribute('data-co')));
-    expect(new Set(keys).size === n, 'a company is listed twice');
+  await check('To Do opens first and says what needs doing', async () => {
+    await toTodo();
+    const first = await P(portal, () => document.querySelector('#tabband .tab').getAttribute('data-view'));
+    expect(first === 'todo', 'To Do is not the first page in the menu');
+    await portal.click('[data-tdwho="all"]'); await portal.waitForTimeout(200);
+    const t = await P(portal, () => document.getElementById('view-todo').innerText);
+    expect(/Follow Up Today/i.test(t) && /Wingtip Servicing/.test(t), 'a prospect follow-up that is due is not under Follow Up Today');
+    expect(/Applications to Review/i.test(t) && /Tailspin Data/.test(t), 'an application waiting for review is not listed');
+    expect(/Emails to mismosponsor@/i.test(t), 'the mismosponsor@ emails are not on To Do');
   });
-  await check('Sponsors and Prospects are separate pages, and one click shows the summit prospects', async () => {
-    await toCos();
-    const spons = await P(portal, () => document.getElementById('co-body').innerText);
-    expect(!/Wingtip Servicing/.test(spons), 'a prospect (Wingtip Servicing) is listed on Sponsors');
-    await P(portal, () => { const c = document.getElementById('co-close'); if (c && c.offsetParent) c.click(); });
-    await portal.click('.tab[data-view="plist"]'); await portal.waitForTimeout(300);
-    await portal.click('[data-plwho="all"]'); await portal.click('[data-plshow="open"]');
-    await portal.click('[data-pltype="summit"]'); await portal.waitForTimeout(200);
-    const types = await P(portal, () => [...document.querySelectorAll('#pl-body tr td:nth-child(2)')].map(td => td.textContent.trim()));
-    expect(types.length && types.every(t => t === 'Summit'), 'Summit shows other types: ' + types.join(', '));
-    const body = await P(portal, () => document.getElementById('pl-body').innerText);
-    expect(/Wingtip Servicing/.test(body) && !/Northwind Lending/.test(body), 'the summit prospects are wrong: ' + body.slice(0, 200));
-    /* My Prospects: only the signed-in person's */
-    await portal.click('[data-plwho="mine"]'); await portal.waitForTimeout(200);
-    const owners = await P(portal, () => [...document.querySelectorAll('#pl-body tr td:nth-child(5)')].map(td => td.textContent.trim()));
-    expect(owners.every(o => o === 'Practice User'), 'My Prospects shows other people\'s: ' + owners.join(', '));
-    /* the choice is remembered */
-    const kept = await P(portal, () => JSON.parse(localStorage.getItem('sponsorship:plist') || '{}'));
-    expect(kept.type === 'summit' && kept.who === 'mine', 'the Prospects choice is not remembered');
-    await portal.click('[data-plwho="all"]'); await portal.click('[data-pltype=""]');
-    /* the Pipeline says what it lists */
-    await toFlow();
-    const say = await P(portal, () => document.getElementById('flow-say').innerText);
-    expect(/prospect/.test(say) && /being closed/.test(say), 'the Pipeline does not say what it lists: ' + say);
-    const fun = await P(portal, () => document.getElementById('flow-funnel').innerText);
-    expect(/PROSPECTS|Prospects/.test(fun) && /Being Closed/i.test(fun), 'the Pipeline stages are not split into prospects and sponsorships being closed');
+  await check('Sponsors & Prospects shows who is sponsoring each summit and who is a prospect for it', async () => {
+    await toCos('Winter 2027');
+    const sp = await P(portal, () => document.getElementById('spx-spons').innerText);
+    expect(/Northwind Lending/.test(sp) && /Platinum/i.test(sp) && /Paid/.test(sp), 'Northwind is not sponsoring Winter 2027: ' + sp.slice(0, 200));
+    expect(/Contoso Mortgage/.test(sp), 'a 2027 Series sponsor is not listed at Winter');
+    await portal.click('[data-spxwho="all"]'); await portal.waitForTimeout(200);
+    let pr = await P(portal, () => document.getElementById('spx-pros').innerText);
+    expect(/haven.t picked a summit/i.test(pr) && /Wingtip Servicing/.test(pr), 'a summit prospect with no summit is not listed to be sorted');
+    /* tie Wingtip to Spring: it then shows as a Spring prospect */
+    await portal.selectOption('#spx-pros select[data-leadsummit="lead-t-1"]', 'Spring 2027'); await portal.waitForTimeout(1200);
+    expect((await fileOf('leads')).docs['lead-t-1'].summit === 'Spring 2027', 'the summit was not saved on the prospect');
+    await toCos('Spring 2027');
+    pr = await P(portal, () => document.getElementById('spx-pros').innerText);
+    expect(/Wingtip Servicing/.test(pr) && !/haven.t picked[\s\S]*Wingtip/i.test(pr), 'Wingtip is not a Spring prospect: ' + pr.slice(0, 200));
+    await toCos('workgroup');
+    pr = await P(portal, () => document.getElementById('spx-pros').innerText + ' | ' + document.getElementById('spx-spons').innerText);
+    expect(/Litware Group/.test(pr), 'the workgroup page does not show its sponsor or prospect');
+    await toCos('type:ai-webinar');
+    const ai = await P(portal, () => document.getElementById('spx-spons').innerText);
+    expect(/Fourth Coffee Test/.test(ai), 'the AI Webinar Series sponsor is not listed');
   });
   await check('a company record shows its emails and sponsorships, and takes a note and an owner', async () => {
     await toCos();
-    await portal.click('tr[data-co="northwindlending"]'); await portal.waitForTimeout(500);
+    await portal.click('#spx-spons [data-spco="northwindlending"]'); await portal.waitForTimeout(500);
     const band = await P(portal, () => document.querySelector('#cp-body .cp-band').innerText);
     expect(/Northwind Lending/.test(band) && /\$15,000/.test(band), 'the company band is wrong: ' + band.slice(0, 200));
     await portal.click('[data-cotab="activity"]');
@@ -602,7 +601,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const due = await P(portal, () => document.getElementById('flow-drill').innerText);
     expect(/Northwind Lending/.test(due), 'the follow-up is not in Follow-Ups Due on the Pipeline');
     await portal.click('#flow-drill [data-fdrill=""]');
-    await toCos(); await portal.click('#co-body tr[data-co="northwindlending"]'); await portal.waitForTimeout(400);
+    await toCos(); await portal.click('#spx-spons [data-spco="northwindlending"]'); await portal.waitForTimeout(400);
     await portal.click('[data-cotab="overview"]');
     await portal.click('#cp-body [data-tpdone="' + tp.id + '"]'); await portal.waitForTimeout(1200);
     const after = (await fileOf('touchpoints')).docs[tp.id];

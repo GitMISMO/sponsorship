@@ -38,6 +38,19 @@ reads the list through the Availability flow and compares it with the records. A
 has wrong or missing is sent to it again (at most once a day each), and a sold slot the list holds
 that no record accounts for is shown on Inventory to be cleared in SharePoint.
 
+## To Do and Sponsors & Prospects (November 19, 2026)
+
+From Amy's feedback ("easy to see who is a sponsor for what and who is a prospect for what", summit first, and
+what needs to be done as the first thing seen). **To Do** (`view-todo`, `renderTodo`) is the default view: follow-ups
+due (open prospects' `nextFollowUpDate` and `touchFollowUps`), applications to review, payments past due, coming up
+this week, prospects with no follow-up date, waiting on an invoice, and the moved mismosponsor@ and New Prospects
+boxes; My Work / Everyone is kept in `sponsorship:todo`. **Sponsors & Prospects** (`view-spx`, `renderSpx`): one
+button per upcoming summit (`spxUpcoming`), Workgroups and each other type; sponsors are applications whose
+`sharesOf` include that summit (or active workgroup/other records), prospects are open leads of that kind; a summit
+lead carries `summit` (a summit key or "<year> Series"), and leads without one are listed under each summit of their
+season with a picker (`data-leadsummit`). The old Home is **At a Glance** and the Pipeline sit under Records; the
+Sponsors and Prospects list views (`companies`, `plist`) stay in the page, unlinked.
+
 ## Companies (November 18, 2026)
 
 It's about the company, not the sponsorship, the way Member 360 works. A company is every record

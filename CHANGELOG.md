@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-19: Simpler, from Amy's feedback: **To Do** opens first with what needs doing in plain sections (My Work / Everyone); **Sponsors & Prospects** is summit first, sponsors and prospects side by side for each summit, workgroups and each other type, and a summit prospect can be tied to a summit (Which Summit). The company record leads with Sponsor For, Prospect For and Everything That's Happened, in words rather than record numbers. At a Glance and the Pipeline moved under Records.
 - 2026-11-19: Sponsors and Prospects split in two (Amy). Sponsors lists sponsors, applicants and past sponsors with type buttons; Prospects lists every prospect, one row each, with one-click type buttons, My Prospects / Everyone (remembered), stage tiles, the stage changed in its row, and a count of your follow-ups due. The Pipeline says what it lists: its stages in two rows, Prospects and Sponsorships Being Closed, with matching buttons.
 - 2026-11-19: Prospectuses tab: Download PDF on each prospectus (today's availability, no application form).
 - 2026-11-19: Registration Desk: a paid-on date from the Desk (for payments MISMO Money never sees) marks the record Paid, with the usual Payment Made email. The invoice request to Bernie no longer mentions the Also Invoiced As field (MISMO Money fills it in).

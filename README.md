@@ -49,6 +49,23 @@ record's Overview follows Member 360's: stage bar per deal, Money / Benefits Use
 Recent Activity, Company Details; its band reads Tier, Sponsor Since, Sponsorship Ends, this season, Last Touch.
 The summit-first page (`view-spx`) stays in the page, unlinked.
 
+## Outreach Planner (November 19, 2026)
+
+To Do now looks and works like Member 360's Outreach Planner (`view-todo`, `renderTodo`, nav label Outreach Planner).
+Items come from `opItems()`: open prospects' `nextFollowUpDate` (kind `lead`), a prospect follow-up marked done
+(`lastFollowUp` on the lead, kind `leaddone`, so it shows as done and can be reopened), touchpoint next steps no open
+prospect carries (`touches[].next`, kind `touch`), and planned touches in **`data/plans.json`** (kind `plan`:
+`{co, coName, day, owner, lane, by, at, done, doneBy}`). The page: the navy headline (`#op-top`, where to start and
+five number boxes), Everyone / one person and This Week / Next Week / Past Due chips (`sponsorship:planner`), Up Next
+(Email, Log a Touchpoint, Move to…, Mark Done, Show the next one), the week board (Past Due plus Monday to Friday;
+weekend dates sit on Friday), Communicated This Week, Who to Touch (`OP_LANES` / `opLanes`: prospects with no next
+date, prospects gone quiet 30+ days, current sponsors not in for the next summit, benefits due in 30 days, sponsors
+gone quiet 60+ days, past sponsors to win back; anyone touched in the last 7 days or with an open item through next
+week is left out), Also Waiting (applications to review, payments past due, waiting on an invoice, the mismosponsor@
+emails, New Prospects) and All Follow-Ups. Dragging a card (`dragstart`/`drop` on `.op-day[data-opday]`) moves a plan's
+day, a touchpoint's `next.due` or a prospect's `nextFollowUpDate`; `opMove`, `opDone`, `opAddPlan` and `opDropPlan`
+each push onto the Undo stack.
+
 ## To Do and Sponsors & Prospects (November 19, 2026)
 
 From Amy's feedback ("easy to see who is a sponsor for what and who is a prospect for what", summit first, and

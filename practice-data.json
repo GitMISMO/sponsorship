@@ -39,7 +39,13 @@
       "wb-t-1": {"no": "WB90001", "company": "Fourth Coffee Test", "webinar": "AI in Servicing", "status": "Pending Payment", "invoiceNumber": "990120", "invoiceDate": "{{today-50}}", "amountDue": 4000, "contactName": "Quinn Test", "contactEmail": "quinn@fourthcoffee.test", "about": "an AI webinar record from before Other Sponsorships: copied into others.json on first open"}
     }},
     "others": {"docs": {}},
-    "touchpoints": {"docs": {}},
+    "touchpoints": {"docs": {
+      "tp-t-fu": {"co": "coholendingtest", "coName": "Coho Lending Test", "date": "{{today-3}}", "type": "Call", "about": "summit", "contact": "", "summary": "Talked through the Fall 2027 invoice; they want a copy for their AP team.", "by": "Amy Moses", "at": "{{today-3}}T15:00:00.000Z", "via": "touchpoint", "next": {"text": "Send the invoice copy to their AP team", "due": "{{today+1}}"}}
+    }},
+    "plans": {"docs": {
+      "pl-t-1": {"co": "northwindlending", "coName": "Northwind Lending", "day": "{{today}}", "owner": "Amy Moses", "lane": "squiet", "by": "Amy Moses", "at": "{{today-1}}T14:00:00.000Z"},
+      "pl-t-late": {"co": "contosomortgage", "coName": "Contoso Mortgage", "day": "{{today-10}}", "owner": "Kelly Bradshaw", "lane": "benefits", "by": "Kelly Bradshaw", "at": "{{today-12}}T14:00:00.000Z"}
+    }},
     "mailin": {"docs": {
       "m-t-1": {"from": "jcritchley@mismo.org", "to": "mismosponsor@mismo.org", "subject": "FW: Badge artwork", "received": "{{today-1}}T14:00:00Z", "html": "<p>Logging this.</p><p>From: Avery Test &lt;avery@example.org&gt;<br>Sent: Monday<br>To: Jonna Critchley &lt;jcritchley@mismo.org&gt;<br>Subject: Badge artwork</p><p>Hi Jonna, the badge artwork is attached. Avery</p>", "about": "a forward from staff: the person forwarded is a Northwind contact, so it is logged on Northwind"},
       "m-t-2": {"from": "pat@newco-lending.test", "to": "mismosponsor@mismo.org; kbradshaw@mismo.org", "subject": "Sponsoring the Spring summit", "received": "{{today}}T10:00:00Z", "html": "<p>Hi Kelly, we would like to hear about sponsoring Spring.</p><p>Company: Newco Lending Test</p><p>Pat Test</p>", "about": "nobody matches: a new prospect is made"},

@@ -1011,6 +1011,66 @@
   .cp-details summary{cursor:pointer; font-weight:700; font-size:13px; color:var(--ink);}
   .cp-dgrid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 16px; margin-top:10px;}
   .cp-dgrid div span{display:block; font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); font-weight:700;} .cp-dgrid div b{font-size:13px; color:var(--ink);}
+  /* the Outreach Planner (November 19, 2026), Member 360's, for sponsors */
+  .op-range{font-size:13px; color:var(--ink-3); white-space:nowrap; padding-top:8px;}
+  .op-hl{border-radius:12px; padding:18px 20px 16px; margin:0 0 14px; color:#fff; background:radial-gradient(120% 120% at 100% 0%, rgba(116,191,235,.18), transparent 55%), linear-gradient(160deg,#10324a,#0b2436);}
+  .op-hd{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#a9d8f3; font-weight:700;}
+  .op-say{font-size:16px; line-height:1.5; margin:6px 0 14px; max-width:900px;} .op-say em{font-style:normal; font-weight:700; color:#a9d8f3;}
+  .op-tiles{margin:0;} .op-tiles .cotile{background:rgba(255,255,255,.05);} .op-tiles .cotile.bad b{color:#ff8f7d;}
+  .op-filters{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:0 0 12px;}
+  .op-filters select{border:1px solid var(--border); border-radius:6px; padding:7px 9px; font:inherit; font-size:13px; background:var(--surface); color:var(--ink);}
+  .op-dn{font-style:normal; margin-left:6px; background:var(--bad); color:#fff; border-radius:4px; padding:0 6px; font-size:11px; font-weight:700;}
+  #op-undo{margin-left:auto;}
+  .op-next{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px 18px; align-items:center; background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--sky); border-radius:8px; padding:12px 16px; margin:0 0 14px;}
+  .op-nl{grid-column:1/-1; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:700; display:flex; gap:10px;} .op-nl span{font-weight:500; letter-spacing:0; text-transform:none;}
+  .op-nm{font-size:17px; font-weight:700;} .op-nm .linkbtn{font-size:17px; font-weight:700;}
+  .op-nw{font-size:13.5px; color:var(--ink); margin-top:3px;} .op-nd{font-size:12.5px; color:var(--ink-2); margin-top:3px;} .op-nd .bad{color:var(--bad);}
+  .op-na{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end;}
+  @media (max-width:760px){ .op-next{grid-template-columns:1fr;} .op-na{justify-content:flex-start;} }
+  .op-sel{border:1px solid var(--border); border-radius:6px; padding:5px 8px; font:inherit; font-size:12.5px; background:var(--surface); color:var(--ink); max-width:100%;}
+  .op-board{display:grid; grid-template-columns:repeat(var(--cols,5),minmax(150px,1fr)); gap:10px; margin:0 0 18px; overflow-x:auto; padding-bottom:4px; align-items:stretch;}
+  .op-board.op-due{display:block;}
+  @media (max-width:700px){ .op-board{grid-template-columns:1fr;} }
+  .op-day{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px; min-height:170px; display:flex; flex-direction:column; gap:6px; min-width:0; transition:border-color .15s, box-shadow .15s;}
+  .op-day.today{border-color:var(--sky); box-shadow:inset 0 4px 0 var(--sky);} .op-day.past{opacity:.8;} .op-day.catch{background:var(--bad-soft); border-color:var(--bad);}
+  .op-day.over{border-color:var(--sky); box-shadow:0 0 0 2px var(--sky);}
+  body.op-dragging .op-day[data-opday]:not([data-opday=""]){border-style:dashed; border-color:var(--sky);}
+  .op-dh{display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 6px; padding:0 2px 6px; border-bottom:1px solid var(--rule);}
+  .op-dh b{font-size:14px;} .op-dh span{font-size:12px; color:var(--ink-3);}
+  .op-dh em{font-style:normal; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:4px; background:var(--sky); color:#062033;}
+  .op-dc{margin-left:auto; font-style:normal; font-size:11px; font-weight:600; color:var(--ink-3);} .op-dc.ok{color:var(--good);}
+  .op-prog{height:4px; border-radius:2px; background:var(--rule); overflow:hidden;} .op-prog i{display:block; height:4px; background:var(--good);}
+  .op-list{display:flex; flex-direction:column; gap:6px; flex:1;}
+  .op-drop{border:2px dashed var(--border); border-radius:6px; padding:18px 8px; text-align:center; color:var(--ink-3); font-size:12px; flex:1; display:flex; align-items:center; justify-content:center;}
+  .op-card{display:grid; grid-template-columns:16px minmax(0,1fr) auto; gap:6px; align-items:start; padding:7px 8px; border:1px solid var(--border); border-left:3px solid var(--lc); border-radius:6px; background:var(--surface); cursor:pointer; font-size:12.5px; transition:transform .12s, box-shadow .12s;}
+  .op-card:hover{transform:translateY(-1px); box-shadow:0 4px 12px rgba(6,32,47,.12);} .op-card.dragging{opacity:.5;}
+  .op-card input{margin:2px 0 0;} .op-main{min-width:0; display:flex; flex-direction:column; gap:2px;}
+  .op-main b{overflow-wrap:anywhere;} .op-sub{color:var(--ink-2); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;}
+  .op-late{color:var(--bad); font-size:11px; font-weight:600;} .op-main .op-sel{margin-top:4px; align-self:flex-start;}
+  .op-card.done{opacity:.6;} .op-card.done b{text-decoration:line-through;}
+  .op-side{display:flex; flex-direction:column; align-items:flex-end; gap:4px;}
+  .op-own{display:inline-flex; width:22px; height:22px; border-radius:5px; background:#14486e; color:#a9d8f3; font-size:10px; font-weight:700; align-items:center; justify-content:center;} .op-own.none{background:var(--chip); color:var(--ink-3);}
+  .op-x{border:0; background:none; color:var(--ink-3); font-size:16px; line-height:1; cursor:pointer; padding:0 2px;} .op-x:hover{color:var(--bad);}
+  .op-pastlist{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:8px;}
+  .op-empty{padding:16px; color:var(--ink-3); font-size:13px; background:var(--surface); border:1px dashed var(--border); border-radius:8px;}
+  .op-sect{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin:0 0 14px;}
+  .op-sect summary{cursor:pointer; font-weight:700; font-size:14px;} .op-sect .cnt{margin-left:8px; font-size:12px; font-weight:600; color:var(--ink-3);}
+  .op-sbody{margin-top:10px; display:flex; flex-direction:column; gap:6px;}
+  .op-frow{display:grid; grid-template-columns:96px minmax(0,1fr) auto; gap:10px; padding:7px 4px; border-bottom:1px solid var(--rule); font-size:13px; cursor:pointer;}
+  .op-frow:hover{background:var(--surface-2);} .op-frow .d{color:var(--ink-3); font-size:12px;} .op-frow small{display:block; color:var(--ink-3); font-size:11.5px;} .op-frow .muted{color:var(--ink-3);}
+  .op-whobox{padding:14px 16px; margin:4px 0 12px;} .op-whobox h2{margin:0 0 4px;}
+  .op-mixbar{display:flex; height:10px; border-radius:3px; overflow:hidden; background:var(--surface-3); margin:10px 0 8px;}
+  .op-mixkey{display:flex; flex-wrap:wrap; gap:6px 14px;} .op-mixkey button{all:unset; cursor:pointer; display:inline-flex; gap:6px; align-items:center; font-size:12.5px; color:var(--ink-2);}
+  .op-mixkey button:hover{color:var(--ink); text-decoration:underline;} .op-mixkey i{width:10px; height:10px; border-radius:2px;} .op-mixkey b{color:var(--ink);}
+  .op-lanes{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; margin:0 0 20px; align-items:start;}
+  .op-lane{background:var(--surface); border:1px solid var(--border); border-top:4px solid var(--lc); border-radius:8px; overflow:hidden; transition:box-shadow .3s;}
+  .op-lane.flash{box-shadow:0 0 0 3px var(--lc);}
+  .op-lh{display:flex; justify-content:space-between; gap:8px; padding:12px 14px 2px; font-size:14px;} .op-lh span{font-weight:700; font-size:18px;}
+  .op-ls{padding:0 14px 8px; font-size:12px; color:var(--ink-3);} .op-ls.none{padding:6px 14px 12px;}
+  .op-lrow{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; padding:7px 14px; border-top:1px solid var(--rule); cursor:grab;}
+  .op-lrow .nm{min-width:0;} .op-lrow .nm .linkbtn{font-weight:600; text-align:left;} .op-lrow small{display:block; font-size:11.5px; color:var(--ink-3);}
+  .op-lrow .op-sel{max-width:130px;}
+  .op-h2{font-size:18px; margin:6px 0 10px;}
   /* To Do and Sponsors & Prospects (November 19, 2026) */
   .td-hero{grid-template-columns:minmax(0,1fr) auto; align-items:end;}
   .td-who .seg button{background:rgba(255,255,255,.08); color:#fff; border-color:rgba(116,191,235,.45);}
@@ -1471,7 +1531,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
          Prospects is by summit and type. Home is At a Glance and the Pipeline moved under Records; the separate
          Sponsors and Prospects lists stay in the page, unlinked. -->
     <button class="tab on" data-view="home" type="button" title="Home"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-home"/></svg><span class="tlbl">Home</span></button>
-    <button class="tab" data-view="todo" type="button" title="To Do"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">To Do</span><span class="pip quiet" id="pip-todo">0</span></button>
+    <button class="tab" data-view="todo" type="button" title="Outreach Planner"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Outreach Planner</span><span class="pip quiet" id="pip-todo">0</span></button>
     <button class="tab" data-view="spm" type="button" title="Sponsors and Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-co"/></svg><span class="tlbl">Sponsors and Prospects</span></button>
     <button class="tab" data-view="benefits" type="button" title="Sponsor Benefits"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Benefits</span><span class="pip quiet" id="pip-benefits">0</span></button>
     <div class="navgrp">Records</div>
@@ -1525,10 +1585,28 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="hm-grid" id="home-grid"></div>
   </section>
 
-  <!-- ================= TO DO: what needs to be done, first thing (November 19, 2026) ================= -->
+  <!-- ================= OUTREACH PLANNER (November 19, 2026) =================
+       To Do, laid out and working like Member 360's Outreach Planner: the headline and number boxes,
+       Up Next, the week board (Past Due and Monday to Friday, drag a card onto a day), Who to Touch,
+       what else is waiting, and every follow-up. Plans are kept in data/plans.json. -->
   <section class="view" id="view-todo">
-    <div class="hm-hero td-hero"><div class="hm-hi"><div class="hm-eyebrow" id="td-date"></div><h1 id="td-hi"></h1><p id="td-say"></p></div>
-      <div class="td-who"><span class="seg" id="td-who" role="group" aria-label="Whose work"></span></div></div>
+    <div class="m-vhead"><div><h1>Outreach Planner</h1>
+      <div class="m-vsub">Plan who to reach this week and next, catch up on anything past due, and log each touch. Drag a card onto a day, or use Plan for&hellip; on any name.</div></div>
+      <div class="op-range" id="op-range"></div></div>
+    <div class="op-hl" id="op-top"></div>
+    <div class="op-filters">
+      <div class="m-chips" id="op-who" role="group" aria-label="Whose week"></div>
+      <div class="m-chips" id="op-when" role="group" aria-label="Which week"></div>
+      <button type="button" class="btn ghost sm" id="op-undo" hidden></button>
+    </div>
+    <div id="op-next"></div>
+    <div class="op-board" id="op-board"></div>
+    <details class="op-sect" id="op-comm"><summary>Communicated This Week<span class="cnt" id="op-comm-n"></span></summary><div class="op-sbody" id="op-comm-rows"></div></details>
+    <div class="panel op-whobox"><h2>Who to Touch</h2>
+      <div class="psub">Sponsors and prospects who could use a personal touch, by reason. Drag a name onto a day or use Plan for&hellip;. Anyone touched in the last week, or already on the plan, drops off.</div>
+      <div class="op-mix" id="op-mix"></div></div>
+    <div class="op-lanes" id="op-lanes"></div>
+    <h2 class="op-h2" id="op-also">Also Waiting</h2>
     <div class="tdcols" id="td-cols">
       <div id="td-cards"></div>
       <div class="panel flowbox tdcard" id="flow-mailbox">
@@ -1541,6 +1619,10 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div id="flow-new"></div>
       </div>
     </div>
+    <details class="op-sect" id="op-fu"><summary>All Follow-Ups<span class="cnt" id="op-fu-n"></span></summary>
+      <div class="op-sbody"><div class="op-filters"><select id="op-fu-owner" aria-label="Owner"></select>
+        <div class="m-chips" id="op-fu-show" role="group" aria-label="Open or done"></div></div>
+        <div id="op-fu-rows"></div></div></details>
   </section>
 
   <!-- ================= SPONSORS AND PROSPECTS, the Member 360 way (November 19, 2026) =================
@@ -1881,11 +1963,15 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="panel helppanel">
 
       <details class="hsec" open>
-        <summary>Start Here: Home, To Do, and Sponsors and Prospects</summary>
+        <summary>Start Here: Home, the Outreach Planner, and Sponsors and Prospects</summary>
         <div class="hbody">
           <ul>
             <li>The portal works like Member 360. <b>Home</b> is the day and the season at a glance, with what&rsquo;s on your plate.</li>
-            <li><b>To Do</b> is what needs doing, in plain sections: follow-ups due today, applications to review, payments past due, what&rsquo;s coming up this week, prospects with no follow-up date, and invoices Bernie still has to raise. <b>My Work</b> or <b>Everyone</b>.</li>
+            <li><b>Outreach Planner</b> (it was To Do) works like Member 360&rsquo;s. The dark band says where to start and counts what you communicated this week, follow-ups due, what is past due, what is planned and the applications waiting for review; select a number to go to it. Choose <b>Everyone</b> or one person, and <b>This Week</b>, <b>Next Week</b> or <b>Past Due</b>.</li>
+            <li><b>Up Next</b> is the oldest thing past due, then today&rsquo;s: <b>Email</b> them, <b>Log a Touchpoint</b>, <b>Move to&hellip;</b> another day or <b>Mark Done</b>. <b>Show the next one</b> skips ahead.</li>
+            <li>The <b>week board</b> has a column for each weekday (and <b>Past Due</b> when something was missed). Each card is a prospect&rsquo;s follow-up date, a next step from a touchpoint, or a planned touch. Drag a card onto another day to move it (a prospect&rsquo;s follow-up date moves with it), tick it when it&rsquo;s done, or select it to open the company. <b>Undo</b> takes back the last change.</li>
+            <li><b>Who to Touch</b> suggests sponsors and prospects by reason: prospects with no next date, prospects gone quiet, current sponsors not in for the next summit, benefits still to use, sponsors gone quiet, and past sponsors to win back. Drag a name onto a day, or use <b>Plan for&hellip;</b>. Anyone touched in the last week or already on the plan drops off.</li>
+            <li><b>Also Waiting</b> holds applications to review, payments past due, invoices Bernie still has to raise, the mismosponsor@ emails and new prospects. <b>All Follow-Ups</b> at the bottom lists every follow-up, open or done, by owner.</li>
             <li><b>Sponsors and Prospects</b> is Member 360&rsquo;s Members and Prospects page for sponsors. The tiles and the tabs (<b>Current</b>, <b>Applied</b>, <b>Prospect</b>, <b>Past</b>, <b>Lost</b>, <b>All</b>) choose who is listed. The dark band shows current sponsors by tier, what is <b>outstanding</b> (approved or invoiced and not paid) for each summit, workgroups and each other kind, summit first, and the sponsor pipeline by stage; select any of them to list just those companies. Filter by summit or kind, stage and owner, tick <b>Outstanding Only</b>, or jump with the A to Z bar.</li>
             <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there.</li>
             <li>A summit prospect can say which summit it&rsquo;s for (<b>Which Summit</b> on the prospect); the summit filter then finds it.</li>
@@ -3269,6 +3355,8 @@ a series deal is counted once, at its full amount.</div>
      "stype","workgroup","forecast","nextStep","source","linkedBillNo",
      /* November 19, 2026: which summit a summit prospect is for (Sponsors & Prospects is summit first) */
      "summit",
+     /* the follow-up last marked done on the Outreach Planner, so it can show as done and be undone */
+     "lastFollowUp",
      "updatedAt"].forEach(function(k){ if(l[k]!==undefined && l[k]!=="") d[k]=l[k]; });
     return d;
   }
@@ -3570,7 +3658,7 @@ a series deal is counted once, at its full amount.</div>
   var PAGES = {
     home: {t:"Home", s:""},
     spm: {t:"Sponsors and Prospects", s:""},
-    todo: {t:"To Do", s:""},
+    todo: {t:"Outreach Planner", s:""},
     spx: {t:"Sponsors & Prospects", s:"Pick a summit, workgroups or another kind of sponsorship to see who is sponsoring it and who is a prospect for it. Select anyone to see everything they have done with MISMO."},
     companies: {t:"Sponsors",
       s:"Every company that sponsors MISMO now, has applied, or has sponsored before, one row each with all of its " +
@@ -10351,7 +10439,6 @@ a series deal is counted once, at its full amount.</div>
      ============================================================ */
   function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k) || "null"); }catch(e){ return null; } }
   function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
-  var tdState = lsGet("sponsorship:todo") || {who:""};
   var spxState = lsGet("sponsorship:spx") || {pick:"", who:"all"};
   /* the summits still to come, soonest first: what a summit prospect can be for */
   function spxUpcoming(){
@@ -10674,83 +10761,403 @@ a series deal is counted once, at its full amount.</div>
       items.slice(0, cap).join("") + (items.length > cap ? '<div class="fbmore"><button type="button" class="linkbtn" data-tdmore="' + esc(title) + '">See all ' + items.length + '</button></div>' : '') + '</div>';
   }
   var tdMore = {};
+  /* ---- Outreach Planner (November 19, 2026) ----
+     Jonna: rework To Do to look and work like Member 360's Outreach Planner. Follow-ups come from
+     the prospects (their next follow-up date) and from touchpoints (a next step no open prospect
+     carries); planned touches are kept in data/plans.json as {co, coName, day, owner, lane, by, at,
+     done}. A card can be dragged onto another day; marking one done can be undone. */
+  var plans = [], plansSeen = false, opUndo = [], opDrag = null, opSkip = 0;
+  var opState = lsGet("sponsorship:planner") || {};
+  if(!opState.when) opState.when = "0";
+  if(!opState.fu) opState.fu = "open";
+  if(!opState.open) opState.open = {};
+  function opKeep(){ lsSet("sponsorship:planner", opState); }
+  var OP_LANES = [
+    {id:"nodate", name:"Prospects With No Next Date", c:"#f0b94a", say:"Open prospects with no follow-up date. Give each one a day."},
+    {id:"quiet", name:"Prospects Gone Quiet", c:"#ff8f7d", say:"Open prospects nobody has touched in 30 days or more."},
+    {id:"next", name:"Not In for the Next Summit", c:"#74bfeb", say:"Current sponsors with nothing for the next summit yet."},
+    {id:"benefits", name:"Benefits Still to Use", c:"#5fd39a", say:"Sponsors with a benefit still to send or use in the next 30 days."},
+    {id:"squiet", name:"Sponsors Gone Quiet", c:"#b79cff", say:"Current sponsors nobody has touched in 60 days or more."},
+    {id:"winback", name:"Win Back Past Sponsors", c:"#9aa9b6", say:"Companies that sponsored before and have no open prospect now."}
+  ];
+  var OP_LANE = {}; OP_LANES.forEach(function(l){ OP_LANE[l.id] = l; });
+  function opMonday(off){ var d = today(); d.setDate(d.getDate() - (d.getDay() + 6) % 7 + 7 * (off || 0)); return d; }
+  function opShort(s){ var d = parseDate(s); return d ? d.toLocaleDateString("en-US", {month:"short", day:"numeric"}) : ""; }
+  function opDow(s){ var d = parseDate(s); return d ? d.toLocaleDateString("en-US", {weekday:"short"}) : ""; }
+  function opDayName(s){ var T = iso(today()); return s === T ? "today" : opDow(s) + ", " + opShort(s); }
+  function opForOf(l){ return leadType(l) === "summit" ? (l.summit ? l.summit + " Summit prospect" : "Summit prospect") : typeName(leadType(l)) + " prospect" + (l.workgroup ? " (" + l.workgroup + ")" : ""); }
+  function opFirst(n){ return String(n || "").split(" ")[0]; }
+  function opBadge(n){ return n ? '<span class="op-own" title="' + esc(n) + '">' + esc(String(n).split(/\s+/).map(function(w){ return w.charAt(0); }).join("").slice(0, 2).toUpperCase()) + '</span>' : '<span class="op-own none" title="No owner">?</span>'; }
+  /* every follow-up and planned touch, whatever week it is in */
+  function opItems(){
+    var out = [];
+    leads.forEach(function(l){
+      if(l.id === leadDraft || !leadOpen(l)) return;
+      var nm = l.company || l.leadNo, k = companyKey(l.company);
+      if(l.nextFollowUpDate) out.push({kind:"lead", id:l.id, key:k, name:nm, day:String(l.nextFollowUpDate).slice(0, 10), what:l.nextStep || opForOf(l), owner:l.owner || "", done:false, l:l});
+      var lf = l.lastFollowUp;
+      if(lf && lf.due && lf.done) out.push({kind:"leaddone", id:l.id, key:k, name:nm, day:lf.due, what:lf.text || opForOf(l), owner:l.owner || "", done:true, l:l});
+    });
+    touches.forEach(function(t){
+      if(t.archived || !t.co || !t.next || !t.next.due || t.next.onLead) return;
+      out.push({kind:"touch", id:t.id, key:t.co, name:t.coName || t.co, day:String(t.next.due).slice(0, 10), what:t.next.text || (t.type || "Follow up"), owner:t.next.owner || t.by || "", done:!!t.next.done, t:t});
+    });
+    plans.forEach(function(p){
+      if(!p.co || !p.day) return;
+      out.push({kind:"plan", id:p.id, key:p.co, name:p.coName || p.co, day:p.day, what:p.note || (OP_LANE[p.lane] ? OP_LANE[p.lane].name : "Planned touch"), owner:p.owner || "", done:!!p.done, p:p});
+    });
+    return out;
+  }
+  function opFind(kind, id){ return opItems().filter(function(x){ return x.kind === kind && x.id === id; })[0] || null; }
+  function opCan(){
+    if(db && canWrite) return true;
+    toast("You can look at the plan, but your access does not allow changes.", "bad", "Read Only"); return false;
+  }
+  function opErr(e){ toast("That change did not save" + (e && e.message ? ": " + e.message : "") + ". Try again.", "bad", "Not Saved"); }
+  function opPush(label, fn){ opUndo.push({label:label, fn:fn}); if(opUndo.length > 10) opUndo.shift(); opPaintUndo(); }
+  function opPaintUndo(){ var b = $("op-undo"); if(!b) return; var u = opUndo[opUndo.length - 1]; b.hidden = !u; if(u) b.textContent = "Undo: " + u.label; }
+  function opClone(o){ return JSON.parse(JSON.stringify(o)); }
+  function opHist(l, text){ l.history = (l.history || []).concat([{at:new Date().toISOString(), who:whoAmI(), text:text}]); }
+  /* plan a touch: a company onto a day */
+  function opAddPlan(key, name, day, lane){
+    if(!key || !day || !opCan()) return;
+    var c = coOf(key);
+    var id = "pl-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    var doc = {co:key, coName:name || (c && c.name) || key, day:day, owner:opState.who || (c && c.owner) || whoAmI(), lane:lane || "", by:whoAmI(), at:new Date().toISOString()};
+    plans.push(Object.assign({id:id}, doc));
+    db.doc("plans/" + id).set(doc).catch(opErr);
+    toast(doc.coName + " is planned for " + opDayName(day) + ".", "", "Planned");
+    opPush("plan " + doc.coName, function(){ plans = plans.filter(function(p){ return p.id !== id; }); db.doc("plans/" + id).delete().catch(opErr); renderTodo(); });
+    renderTodo();
+  }
+  function opDropPlan(id){
+    var p = plans.filter(function(x){ return x.id === id; })[0]; if(!p || !opCan()) return;
+    var keep = opClone(p); delete keep.id;
+    plans = plans.filter(function(x){ return x.id !== id; });
+    db.doc("plans/" + id).delete().catch(opErr);
+    opPush("take " + (p.coName || p.co) + " off", function(){ plans.push(Object.assign({id:id}, keep)); db.doc("plans/" + id).set(keep).catch(opErr); renderTodo(); });
+    renderTodo();
+  }
+  /* move a card to another day: a plan, a touchpoint's next step, or a prospect's follow-up date */
+  function opMove(x, day){
+    if(!x || !day || x.day === day || x.done || !opCan()) return;
+    var from = x.day;
+    if(x.kind === "plan"){
+      x.p.day = day; db.doc("plans/" + x.id).update({day:day}).catch(opErr);
+      opPush("move " + x.name, function(){ x.p.day = from; db.doc("plans/" + x.id).update({day:from}).catch(opErr); renderTodo(); });
+    } else if(x.kind === "touch"){
+      x.t.next = Object.assign({}, x.t.next, {due:day}); db.doc("touchpoints/" + x.id).update({next:x.t.next}).catch(opErr);
+      opPush("move " + x.name, function(){ x.t.next = Object.assign({}, x.t.next, {due:from}); db.doc("touchpoints/" + x.id).update({next:x.t.next}).catch(opErr); renderFlow(); });
+    } else if(x.kind === "lead"){
+      var before = opClone(x.l), after = opClone(x.l);
+      after.nextFollowUpDate = day; opHist(after, "Follow-up moved from " + fmtDate(from) + " to " + fmtDate(day) + ".");
+      saveLead(after);
+      opPush("move " + x.name, function(){ var now = findById(leads, before.id); if(now){ var back = opClone(now); back.nextFollowUpDate = from; opHist(back, "Follow-up moved back to " + fmtDate(from) + "."); saveLead(back); } });
+    }
+    toast(x.name + " moved to " + opDayName(day) + ".", "", "Moved");
+    renderFlow();
+  }
+  /* mark done, or not done */
+  function opDone(x, done){
+    if(!x || !opCan()) return;
+    var T = iso(today()), me = whoAmI();
+    if(x.kind === "plan"){
+      x.p.done = done ? T : ""; x.p.doneBy = done ? me : "";
+      db.doc("plans/" + x.id).update({done:x.p.done, doneBy:x.p.doneBy}).catch(opErr);
+      opPush((done ? "done: " : "not done: ") + x.name, function(){ x.p.done = done ? "" : T; x.p.doneBy = done ? "" : me; db.doc("plans/" + x.id).update({done:x.p.done, doneBy:x.p.doneBy}).catch(opErr); renderTodo(); });
+    } else if(x.kind === "touch"){
+      var was = Object.assign({}, x.t.next), nx = Object.assign({}, x.t.next);
+      if(done){ nx.done = T; nx.doneBy = me; } else { delete nx.done; delete nx.doneBy; }
+      x.t.next = nx; db.doc("touchpoints/" + x.id).update({next:nx}).catch(opErr);
+      opPush((done ? "done: " : "not done: ") + x.name, function(){ x.t.next = was; db.doc("touchpoints/" + x.id).update({next:was}).catch(opErr); renderFlow(); });
+    } else if(x.kind === "lead" && done){
+      var after = opClone(x.l);
+      after.lastFollowUp = {due:x.day, text:x.l.nextStep || "", done:T, by:me};
+      delete after.nextFollowUpDate;
+      if(T > (after.lastContactDate || "")) after.lastContactDate = T;
+      opHist(after, "Follow-up done" + (x.l.nextStep ? ": " + x.l.nextStep : "") + ".");
+      saveLead(after);
+      addLog(after.leadNo, "follow-up done with " + x.name, me);
+      opPush("done: " + x.name, function(){ var now = findById(leads, x.id); if(!now) return; var back = opClone(now); back.nextFollowUpDate = x.day; delete back.lastFollowUp; opHist(back, "Follow-up reopened."); saveLead(back); });
+    } else if(x.kind === "leaddone" && !done){
+      var re = opClone(x.l); re.nextFollowUpDate = x.day; delete re.lastFollowUp; opHist(re, "Follow-up reopened."); saveLead(re);
+    }
+    toast(done ? x.name + " is done." + (x.kind === "lead" ? " Give them a next follow-up date when you know it." : "") : x.name + " is back on the plan.", "", done ? "Done" : "Reopened");
+    renderFlow();
+  }
+  function opDayOpts(sel){
+    var T = iso(today()), o = '<option value="">' + (sel || "Plan for…") + '</option>';
+    [0, 1].forEach(function(off){
+      o += '<optgroup label="' + (off ? "Next Week" : "This Week") + '">';
+      for(var i = 0; i < 5; i++){ var d = iso(addDaysD(opMonday(off), i)); if(d >= T) o += '<option value="' + d + '">' + (d === T ? "Today, " + opShort(d) : opDow(d) + ", " + opShort(d)) + '</option>'; }
+      o += '</optgroup>';
+    });
+    return o;
+  }
+  function opCard(x, T, withMove){
+    var L = x.kind === "plan" ? OP_LANE[x.p.lane] : null, late = !x.done && x.day < T;
+    return '<div class="op-card' + (x.done ? ' done' : '') + (late ? ' late' : '') + '"' + (x.done ? '' : ' draggable="true"') +
+      ' data-opk="' + x.kind + '" data-opid="' + esc(x.id) + '" data-spco="' + esc(x.key) + '" style="--lc:' + (L ? L.c : x.kind === "plan" ? "#9aa9b6" : "var(--sky)") + '" tabindex="0" role="button">' +
+      '<input type="checkbox" data-opdone="1"' + (x.done ? ' checked' : '') + (canWrite ? '' : ' disabled') + ' aria-label="Mark ' + esc(x.name) + ' done">' +
+      '<span class="op-main"><b>' + esc(x.name) + '</b><span class="op-sub">' + esc((x.kind === "plan" ? "" : "Follow-up: ") + x.what) + '</span>' +
+        (late ? '<span class="op-late">Was due ' + esc(opShort(x.day)) + '</span>' : '') +
+        (withMove && !x.done ? '<select class="op-sel" data-opmove="1" aria-label="Move ' + esc(x.name) + ' to a day">' + opDayOpts("Move to…") + '</select>' : '') + '</span>' +
+      '<span class="op-side">' + opBadge(x.owner) + (x.kind === "plan" ? '<button type="button" class="op-x" data-opdrop="' + esc(x.id) + '" title="Take off the plan" aria-label="Take ' + esc(x.name) + ' off the plan">×</button>' : '') + '</span></div>';
+  }
+  /* Who to Touch: suggestions, by reason, leaving out anyone already planned or touched this week */
+  function opLanes(cmap, busy){
+    var S = {}, t = today(), lim = iso(addDaysD(t, 30)), nextS = spxUpcoming()[0] || "";
+    OP_LANES.forEach(function(l){ S[l.id] = []; });
+    Object.keys(cmap).forEach(function(k){
+      var c = cmap[k]; if(busy[k]) return;
+      if(opState.who && c.owner !== opState.who) return;
+      var quiet = c.last ? daysBetween(parseDate(c.last), t) : 9999;
+      if(quiet < 7) return;
+      var lastTxt = c.last ? "last touched " + opShort(c.last) : "no touches logged";
+      if(c.rel === "Prospect" && c.openLeads.length){
+        var nd = c.openLeads.filter(function(l){ return !l.nextFollowUpDate; });
+        if(nd.length) S.nodate.push({c:c, why:opForOf(nd[0]) + " · " + lastTxt});
+        else if(quiet >= 30) S.quiet.push({c:c, why:opForOf(c.openLeads[0]) + " · " + lastTxt});
+        return;
+      }
+      if(c.rel === "Sponsor"){
+        var bens = [];
+        c.live.forEach(function(a){ benefitsOf(a).forEach(function(b){ if(!b.done && b.due && b.due <= lim) bens.push(b); }); });
+        bens.sort(function(a, b){ return String(a.due).localeCompare(String(b.due)); });
+        var inNext = !nextS || c.apps.some(function(a){ return a.status !== "Declined" && sharesOf(a).some(function(sh){ return sh.summit === nextS; }); });
+        if(!inNext && !c.openLeads.length) S.next.push({c:c, why:"Nothing for " + nextS + " yet · " + lastTxt});
+        else if(bens.length) S.benefits.push({c:c, why:bens.length + (bens.length === 1 ? " benefit" : " benefits") + " to do, first due " + opShort(bens[0].due)});
+        else if(quiet >= 60) S.squiet.push({c:c, why:c.last ? "Last touched " + fmtDate(c.last) : "No touches logged"});
+        return;
+      }
+      if(c.rel === "Past Sponsor" && !c.openLeads.length) S.winback.push({c:c, why:(c.since ? "Sponsor since " + c.since + " · " : "") + lastTxt});
+    });
+    OP_LANES.forEach(function(l){ S[l.id].sort(function(a, b){ return (b.c.money.life - a.c.money.life) || a.c.name.localeCompare(b.c.name); }); });
+    return S;
+  }
   function renderTodo(){
-    if(!$("td-cards") || !PIPE_OPEN || !others || !touches || !tdState) return;
-    var me = whoAmI(), t = today(), wk = addDaysD(t, 7);
-    var openLeads = leads.filter(function(l){ return l.id !== leadDraft && leadOpen(l); });
-    if(!tdState.who) tdState.who = openLeads.some(function(l){ return l.owner === me; }) ? "mine" : "all";
-    var mine = function(owner){ return tdState.who !== "mine" || owner === me; };
-    var forOf = function(l){ return leadType(l) === "summit" ? (l.summit ? l.summit + " Summit prospect" : "Summit prospect") : typeName(leadType(l)) + " prospect" + (l.workgroup ? " (" + l.workgroup + ")" : ""); };
-    /* 1. follow-ups that are due or overdue (prospects and touchpoints) */
-    var due = [], soon = [], noDate = [];
-    openLeads.forEach(function(l){
-      if(!mine(l.owner)) return;
-      var d = l.nextFollowUpDate ? parseDate(l.nextFollowUpDate) : null;
-      if(!d) { noDate.push(l); return; }
-      if(d <= t) due.push(l); else if(d <= wk) soon.push(l);
+    if(!$("op-board") || !PIPE_OPEN || !others || !touches) return;
+    var me = whoAmI(), t = today(), T = iso(t);
+    var every = opItems();
+    if(opState.who === undefined){
+      opState.who = BENEFIT_OWNERS.indexOf(me) >= 0 && every.some(function(x){ return x.owner === me && !x.done; }) ? me : "";
+    }
+    var w = opState.who || "", mode = opState.when, off = mode === "1" ? 1 : 0;
+    var mon = opMonday(off), ws = iso(mon), fri = iso(addDaysD(mon, 4)), we = iso(addDaysD(mon, 6));
+    var all = every.filter(function(x){ return !w || x.owner === w; });
+    var past = all.filter(function(x){ return !x.done && x.day < T; }).sort(function(a, b){ return a.day.localeCompare(b.day); });
+    var review = apps.filter(function(a){ return a.id !== draft && a.status === "Submitted"; });
+    $("op-range").textContent = (mode === "due" ? "Past due as of " + opDayName(T).replace(/^today$/, opShort(T)) : (off ? "Next week: " : "This week: ") + opShort(ws) + " – " + opShort(fri));
+    /* the chips */
+    $("op-who").innerHTML = [["", "Everyone"]].concat(BENEFIT_OWNERS.map(function(o){ return [o, opFirst(o)]; })).map(function(x){
+      return '<button type="button" data-opwho="' + esc(x[0]) + '" class="' + (x[0] === w ? "on" : "") + '" aria-pressed="' + (x[0] === w) + '">' + esc(x[1]) + '</button>';
+    }).join("");
+    $("op-when").innerHTML = [["0", "This Week"], ["1", "Next Week"], ["due", "Past Due"]].map(function(x){
+      return '<button type="button" data-opwhen="' + x[0] + '" class="' + (x[0] === mode ? "on" : "") + '" aria-pressed="' + (x[0] === mode) + '">' + x[1] +
+        (x[0] === "due" && past.length ? '<em class="op-dn">' + past.length + '</em>' : '') + '</button>';
+    }).join("");
+    opPaintUndo();
+    /* the board */
+    var days = [0, 1, 2, 3, 4].map(function(i){ return iso(addDaysD(mon, i)); });
+    var cols = {catch:[]}; days.forEach(function(d){ cols[d] = []; });
+    all.forEach(function(x){
+      if(x.day > we) return;
+      if(x.day < ws){ if(off || x.done) return; cols.catch.push(x); return; }
+      cols[x.day > fri ? fri : x.day].push(x);
     });
-    var tps = touchFollowUps(0).filter(function(x){ return mine(x.owner); });
-    var dueRows = due.sort(function(a, b){ return String(a.nextFollowUpDate).localeCompare(String(b.nextFollowUpDate)); }).map(function(l){
-      var late = daysBetween(parseDate(l.nextFollowUpDate), t);
-      return tdRow(late ? late + (late === 1 ? " day late" : " days late") : "Today", late > 0, l.company || l.leadNo, esc(forOf(l)) + ' · ' + esc(leadStage(l)),
-        (l.nextStep ? esc(l.nextStep) : 'No next step written') + ' · ' + esc(l.owner || "Unassigned"));
-    }).concat(tps.map(function(x){
-      return tdRow(fmtDate(x.nextDate), parseDate(x.nextDate) < t, x.company, esc((x.tp && x.tp.about ? typeName(x.tp.about) : "General") + " follow-up"), esc(x.nextText) + (x.owner ? ' · ' + esc(x.owner) : ''));
-    }));
-    var soonRows = soon.sort(function(a, b){ return String(a.nextFollowUpDate).localeCompare(String(b.nextFollowUpDate)); }).map(function(l){
-      return tdRow(fmtDate(l.nextFollowUpDate), false, l.company || l.leadNo, esc(forOf(l)), (l.nextStep ? esc(l.nextStep) : '') + (l.owner ? ' · ' + esc(l.owner) : ''));
-    });
-    var noDateRows = noDate.map(function(l){ return tdRow("No date", false, l.company || l.leadNo, esc(forOf(l)) + ' · ' + esc(leadStage(l)), 'Give them a follow-up date · ' + esc(l.owner || "Unassigned")); });
-    /* 2. applications to review */
-    var review = apps.filter(function(a){ return a.id !== draft && a.status === "Submitted"; })
-      .sort(function(a, b){ return String(a.dateSubmitted || "").localeCompare(String(b.dateSubmitted || "")); })
+    var totN = 0, doneN = 0, html = "";
+    var order = function(a, b){ return (a.done - b.done) || (a.kind === "plan") - (b.kind === "plan") || a.name.localeCompare(b.name); };
+    if(mode === "due"){
+      html = past.length ? '<div class="op-pastlist">' + past.map(function(x){ return opCard(x, T, true); }).join("") + '</div>'
+        : '<div class="op-empty">Nothing is past due' + (w ? " for " + esc(opFirst(w)) : "") + '. Everything was done on its day.</div>';
+      $("op-board").className = "op-board op-due";
+    } else {
+      $("op-board").className = "op-board";
+      ["catch"].concat(days).forEach(function(k){
+        var items = (cols[k] || []).sort(order), isC = k === "catch";
+        if(isC && !items.length) return;
+        if(!isC) items.forEach(function(x){ totN++; if(x.done) doneN++; });
+        var dn = items.filter(function(x){ return x.done; }).length;
+        html += '<div class="op-day' + (isC ? " catch" : "") + (k === T ? " today" : "") + (!isC && k < T ? " past" : "") + '" data-opday="' + (isC ? "" : k) + '">' +
+          '<div class="op-dh"><b>' + (isC ? "Past Due" : opDow(k)) + '</b><span>' + (isC ? "before this week" : opShort(k)) + '</span>' + (k === T ? '<em>Today</em>' : '') +
+            (items.length && !isC ? '<i class="op-dc' + (dn === items.length ? " ok" : "") + '">' + dn + '/' + items.length + '</i>' : '') + '</div>' +
+          (items.length && !isC ? '<div class="op-prog"><i style="width:' + Math.round(dn / items.length * 100) + '%"></i></div>' : '') +
+          '<div class="op-list">' + items.map(function(x){ return opCard(x, T); }).join("") +
+            (!items.length ? '<div class="op-drop">Drop a card here</div>' : '') + '</div></div>';
+      });
+    }
+    $("op-board").innerHTML = html;
+    $("op-board").style.setProperty("--cols", $("op-board").children.length || 1);
+    FLOW_CACHE = pipeItems();
+    var cmap = companies();
+    /* Up Next: the oldest thing past due, then today's, then the rest of the week */
+    var queue = past.concat(all.filter(function(x){ return !x.done && x.day >= T && x.day <= iso(addDaysD(opMonday(0), 6)); }).sort(function(a, b){ return a.day.localeCompare(b.day); }));
+    if(opSkip >= queue.length) opSkip = 0;
+    var nx = mode === "1" ? null : queue[opSkip];
+    if(nx){
+      var nc = cmap[nx.key] || {}, ct = nc.contact || {}, lf = LIFE.filter(function(x){ return x[0] === nc.rel; })[0];
+      $("op-next").innerHTML = '<div class="op-next" data-opk="' + nx.kind + '" data-opid="' + esc(nx.id) + '">' +
+        '<div class="op-nl">Up Next' + (queue.length > 1 ? '<span>' + (opSkip + 1) + ' of ' + queue.length + '</span>' : '') + '</div>' +
+        '<div class="op-nb"><div class="op-nm"><button type="button" class="linkbtn" data-spco="' + esc(nx.key) + '">' + esc(nx.name) + '</button>' +
+          (lf ? ' <span class="m-pill ' + lf[5] + '">' + esc(nc.rel) + '</span>' : '') + '</div>' +
+          '<div class="op-nw">' + esc((nx.kind === "plan" ? "" : "Follow-up: ") + nx.what) + '</div>' +
+          '<div class="op-nd">' + (nx.day < T ? '<b class="bad">Was due ' + esc(fmtDate(nx.day)) + '</b>' : nx.day === T ? '<b>Due today</b>' : 'Due ' + esc(opDayName(nx.day))) +
+            ' · ' + esc(nx.owner || "No owner") + (ct.name || ct.email ? ' · ' + esc(ct.name || "") + (ct.email ? ' (' + esc(ct.email) + ')' : '') : '') + '</div></div>' +
+        '<div class="op-na">' + (ct.email ? '<a class="btn ghost sm" href="mailto:' + esc(ct.email) + '">Email</a>' : '') +
+          (canWrite ? '<button type="button" class="btn sm" data-oplog="' + esc(nx.key) + '">Log a Touchpoint</button>' +
+            '<select class="op-sel" data-opmove="1" aria-label="Move ' + esc(nx.name) + ' to a day">' + opDayOpts("Move to…") + '</select>' +
+            '<button type="button" class="btn ghost sm" data-opmark="1">Mark Done</button>' : '') +
+          (queue.length > 1 ? '<button type="button" class="linkbtn" data-opskip="1">Show the next one</button>' : '') + '</div></div>';
+    } else $("op-next").innerHTML = "";
+    /* who to touch */
+    var busy = {}, endNext = iso(addDaysD(opMonday(1), 6));
+    every.forEach(function(x){ if(!x.done && x.day <= endNext) busy[x.key] = 1; });
+    var S = opLanes(cmap, busy), sugN = 0;
+    OP_LANES.forEach(function(l){ sugN += S[l.id].length; });
+    var tot = sugN || 1;
+    $("op-mix").innerHTML = '<div class="op-mixbar">' + OP_LANES.map(function(l){ var n = S[l.id].length; return n ? '<span style="width:' + (n / tot * 100) + '%;background:' + l.c + '" title="' + esc(l.name) + ': ' + n + '"></span>' : ''; }).join("") + '</div>' +
+      '<div class="op-mixkey">' + OP_LANES.map(function(l){ return '<button type="button" data-opmix="' + l.id + '"><i style="background:' + l.c + '"></i>' + esc(l.name) + '<b>' + S[l.id].length + '</b></button>'; }).join("") + '</div>';
+    $("op-lanes").innerHTML = OP_LANES.map(function(l){
+      var list = S[l.id], open = opState.open[l.id], show = open ? list : list.slice(0, 5);
+      return '<div class="op-lane" id="op-lane-' + l.id + '" style="--lc:' + l.c + '"><div class="op-lh"><b>' + esc(l.name) + '</b><span>' + list.length + '</span></div>' +
+        '<div class="op-ls">' + esc(l.say) + '</div>' +
+        (list.length ? show.map(function(s){
+          return '<div class="op-lrow" draggable="true" data-opnew="' + esc(s.c.key) + '" data-name="' + esc(s.c.name) + '" data-lane="' + l.id + '">' +
+            '<span class="nm"><button type="button" class="linkbtn" data-spco="' + esc(s.c.key) + '">' + esc(s.c.name) + '</button><small>' + esc(s.why) + '</small></span>' +
+            (canWrite ? '<select class="op-sel" data-opplan="' + esc(s.c.key) + '" data-name="' + esc(s.c.name) + '" data-lane="' + l.id + '" aria-label="Plan ' + esc(s.c.name) + ' for a day">' + opDayOpts() + '</select>' : '') + '</div>';
+        }).join("") : '<div class="op-ls none">Nobody right now.</div>') +
+        (list.length > 5 ? '<button type="button" class="m-more" data-oplane="' + l.id + '">' + (open ? "Show fewer" : "See all " + list.length) + '</button>' : '') + '</div>';
+    }).join("");
+    /* communicated this week */
+    var tws = iso(opMonday(0)), twe = iso(addDaysD(opMonday(0), 6));
+    var comm = touches.filter(function(x){ return !x.archived && x.date >= tws && x.date <= twe && (!w || x.by === w); })
+      .sort(function(a, b){ return String(b.date).localeCompare(String(a.date)); });
+    var commCos = {}; comm.forEach(function(x){ commCos[x.co] = 1; });
+    $("op-comm-n").textContent = comm.length;
+    $("op-comm-rows").innerHTML = comm.length ? comm.map(function(x){
+      return '<div class="op-frow" data-spco="' + esc(x.co) + '"><span class="d">' + esc(opDow(x.date) + ", " + opShort(x.date)) + '</span>' +
+        '<span><b>' + esc(x.coName || x.co) + '</b> <span class="muted">' + esc((x.type || "Note") + (x.about ? " about " + typeName(x.about) : "")) + '</span><small>' + esc(String(x.summary || x.subject || "").slice(0, 140)) + '</small></span>' +
+        '<span class="muted">' + esc(x.by || "") + '</span></div>';
+    }).join("") : '<div class="op-empty">Nothing logged this week yet. Log a Touchpoint from Up Next or any company record.</div>';
+    /* the headline and the number boxes */
+    var fuWk = all.filter(function(x){ return x.kind !== "plan" && !x.done && x.day >= ws && x.day <= we; }).length;
+    var planN = all.filter(function(x){ return x.kind === "plan" && x.day >= ws && x.day <= we; }).length;
+    var em = function(s){ return '<em>' + esc(s) + '</em>'; };
+    var say = w ? em(opFirst(w)) + ": " : "";
+    var todays = all.filter(function(x){ return !x.done && x.day === T; });
+    var firstLane = OP_LANES.map(function(l){ return S[l.id][0] ? {l:l, s:S[l.id][0]} : null; }).filter(Boolean)[0];
+    if(mode === "due") say += past.length ? em(past.length + (past.length === 1 ? " follow-up or planned touch" : " follow-ups and planned touches")) + (past.length === 1 ? " wasn't" : " weren't") + " finished on " + (past.length === 1 ? "its" : "their") + " day. Move each one to a new day, or mark it done." : "Nothing is past due.";
+    else if(!off && past.length) say += "Start with " + em(past[0].name) + " (" + esc(past[0].what.replace(/\.$/, "")) + "), due " + esc(opShort(past[0].day)) + (past.length > 1 ? ", then " + (past.length - 1) + " more past due. " : ". ");
+    else if(!off && todays.length) say += "Today: " + em(todays.slice(0, 2).map(function(x){ return x.name; }).join(" and ")) + (todays.length > 2 ? " and " + (todays.length - 2) + " more" : "") + ". ";
+    else if(!totN && firstLane) say += (off ? "Nothing is planned for next week yet. " : "Nothing is planned yet. ") + "A good first touch: " + em(firstLane.s.c.name) + " (" + esc(firstLane.l.name.toLowerCase()) + "). ";
+    else if(totN) say += em(String(totN - doneN)) + " of " + totN + (totN === 1 ? " follow-up or planned touch" : " follow-ups and planned touches") + " still to do" + (off ? " next week" : " this week") + ". ";
+    if(mode !== "due" && review.length) say += em(review.length + (review.length === 1 ? " application" : " applications")) + " waiting for review.";
+    else if(mode !== "due" && sugN) say += em(sugN + (sugN === 1 ? " sponsor or prospect" : " sponsors and prospects")) + " could use a touch.";
+    var tile = function(k, val, lab, sub, col, bad){ return '<button type="button" class="cotile' + (bad ? " bad" : "") + '" style="--k:' + col + '" data-optile="' + k + '"><b>' + val + '</b><span class="l">' + esc(lab) + '</span><span class="s">' + esc(sub) + '</span></button>'; };
+    var hlDate = mode === "due" ? "Past Due · As of " + opDow(T) + ", " + opShort(T) : (off ? "Next Week" : "This Week") + " · " + opShort(ws) + " – " + opShort(fri);
+    $("op-top").innerHTML = '<div class="op-hd">' + esc(hlDate) + '</div><div class="op-say">' + say + '</div><div class="cotiles op-tiles">' +
+      (off ? tile("plan", totN, "Planned for Next Week", "follow-ups and planned touches", "#74bfeb")
+           : tile("comm", comm.length, "Communicated This Week", Object.keys(commCos).length + (Object.keys(commCos).length === 1 ? " company" : " companies"), "#74bfeb")) +
+      tile("fu", fuWk, "Follow-Ups Due", off ? "next week" : "this week", "#b79cff") +
+      tile("late", past.length, "Past Due", past.length ? "catch these up first" : "nothing late", "#ff8f7d", past.length > 0) +
+      tile("plan", planN, "Planned", off ? "touches next week" : "touches this week", "#5fd39a") +
+      tile("apps", review.length, "Applications to Review", review.length ? "waiting on a yes" : "none waiting", "#f0b94a") + '</div>';
+    /* also waiting: applications, payments and invoices (the rest of the old To Do) */
+    var tdr = review.slice().sort(function(a, b){ return String(a.dateSubmitted || "").localeCompare(String(b.dateSubmitted || "")); })
       .map(function(a){ var d = parseDate(a.dateSubmitted), n = d ? daysBetween(d, t) : 0;
         return tdRow(n ? n + (n === 1 ? " day" : " days") : "Today", n > 3, a.company || a.appNo, esc(a.event + (levelOf(a) ? " · " + tierLabel(levelOf(a)) : "") + (oppLabel(a) ? " · " + oppLabel(a) : "")),
           'Review and approve' + (Number(a.amountDue) ? ' · ' + esc(money(a.amountDue)) : '')); });
-    /* 3. payments past due */
     var late = [];
     apps.forEach(function(a){ if(a.id === draft || a.status !== "Pending Payment") return; var c = chaseState(a);
       if(c.overdue) late.push(tdRow(c.days + " days", true, a.company || a.appNo, esc(a.event) + ' · ' + esc(money(a.amountDue)),
         'Invoiced ' + esc(fmtDate(a.invoiceDate)) + (c.count ? ' · chased ' + c.count + (c.count === 1 ? ' time' : ' times') : ' · not chased yet') + ' (Bernie, on his Registration Desk)')); });
     billAll().forEach(function(r){ var o = billOverdue(r); if(!o.late) return;
       late.push(tdRow(o.days + " days", true, r.company || r.no, esc(r.__kind === "workgroup" ? (r.workgroup || "Workgroup") : otypeOf(r).name) + ' · ' + esc(money(r.amountDue)), 'Invoiced ' + esc(fmtDate(r.invoiceDate)))); });
-    /* 4. waiting on an invoice */
     var inv = [];
     apps.forEach(function(a){ if(a.id === draft || a.status !== "Approved" || a.inKind) return;
       inv.push(tdRow(a.approvedDate ? fmtDate(a.approvedDate) : "", false, a.company || a.appNo, esc(a.event) + ' · ' + esc(money(a.amountDue)), 'Bernie raises the invoice and the comp code on his Registration Desk')); });
     billAll().forEach(function(r){ if((r.status || "Draft") !== "Draft" || r.archived || r.id === billDraftId) return;
       inv.push(tdRow("", false, r.company || r.no, esc(r.__kind === "workgroup" ? (r.workgroup || "Workgroup") : otypeOf(r).name) + ' · ' + esc(money(r.amountDue)), 'Not invoiced yet: raise it in Aptify and enter the order ID')); });
-    tdMore = {"Follow Up Today": dueRows, "Coming Up This Week": soonRows, "Prospects With No Follow-Up Date": noDateRows,
-              "Applications to Review": review, "Payments Past Due": late, "Waiting on an Invoice": inv};
-    $("td-cards").innerHTML =
-      tdCard("urgent", "Follow Up Today", dueRows, "nothing due — all caught up") +
-      tdCard("urgent", "Applications to Review", review, "none waiting") +
-      tdCard("urgent", "Payments Past Due", late, "none") +
-      tdCard("soon", "Coming Up This Week", soonRows, "nothing in the next 7 days") +
-      tdCard("soon", "Prospects With No Follow-Up Date", noDateRows, "every prospect has one") +
-      tdCard("info", "Waiting on an Invoice", inv, "none");
-    var me1 = String(me).split(" ")[0];
-    $("td-date").textContent = new Date().toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric"});
-    $("td-hi").textContent = greet() + (me1 && me1 !== "MISMO" ? ", " + me1 : "");
-    var bits = [];
-    if(dueRows.length) bits.push(dueRows.length + " follow-up" + (dueRows.length === 1 ? "" : "s") + " due");
-    if(review.length) bits.push(review.length + " application" + (review.length === 1 ? "" : "s") + " to review");
-    if(late.length) bits.push(late.length + " payment" + (late.length === 1 ? "" : "s") + " past due");
-    if(soonRows.length) bits.push(soonRows.length + " coming up this week");
-    $("td-say").textContent = bits.length ? "Today: " + bits.join(", ") + "." : "Nothing is due today. Everything below is up to date.";
-    $("td-who").innerHTML = [["mine", "My Work"], ["all", "Everyone"]].map(function(w){
-      return '<button type="button" data-tdwho="' + w[0] + '" aria-pressed="' + (tdState.who === w[0] ? "true" : "false") + '">' + w[1] + '</button>';
-    }).join("");
-    var pip = $("pip-todo"), n = dueRows.length + review.length + late.length;
+    tdMore = {"Applications to Review": tdr, "Payments Past Due": late, "Waiting on an Invoice": inv};
+    $("td-cards").innerHTML = tdCard("urgent", "Applications to Review", tdr, "none waiting") +
+      tdCard("urgent", "Payments Past Due", late, "none") + tdCard("info", "Waiting on an Invoice", inv, "none");
+    /* every follow-up */
+    var fo = $("op-fu-owner"), fow = opState.fuOwner || "";
+    fo.innerHTML = '<option value="">Every Owner</option>' + BENEFIT_OWNERS.map(function(o){ return '<option' + (o === fow ? " selected" : "") + '>' + esc(o) + '</option>'; }).join("") + '<option value="-"' + (fow === "-" ? " selected" : "") + '>No Owner</option>';
+    $("op-fu-show").innerHTML = [["open", "Open"], ["done", "Done"]].map(function(x){ return '<button type="button" data-opfu="' + x[0] + '" class="' + (opState.fu === x[0] ? "on" : "") + '">' + x[1] + '</button>'; }).join("");
+    var fus = every.filter(function(x){ return x.kind !== "plan" && (opState.fu === "done" ? x.done : !x.done) && (!fow || (fow === "-" ? !x.owner : x.owner === fow)); })
+      .sort(function(a, b){ return opState.fu === "done" ? b.day.localeCompare(a.day) : a.day.localeCompare(b.day); });
+    $("op-fu-n").textContent = every.filter(function(x){ return x.kind !== "plan" && !x.done; }).length;
+    $("op-fu-rows").innerHTML = fus.length ? fus.map(function(x){ return opCard(x, T, !x.done); }).join("") : '<div class="op-empty">' + (opState.fu === "done" ? "Nothing marked done yet." : "No open follow-ups. Next steps added when logging a touchpoint, and prospects' follow-up dates, show up here.") + '</div>';
+    var pip = $("pip-todo"), n = past.length + todays.length + review.length;
     if(pip){ pip.textContent = n; pip.className = "pip" + (n ? "" : " quiet"); }
   }
+  function opItemOf(el){ var c = el.closest("[data-opk]"); return c ? opFind(c.getAttribute("data-opk"), c.getAttribute("data-opid")) : null; }
+  /* drag a card or a name onto a day */
+  document.addEventListener("dragstart", function(ev){
+    var el = ev.target; if(!el || !el.closest) return;
+    var c = el.closest(".op-card[draggable]"), r = el.closest(".op-lrow[draggable]");
+    if(c){ opDrag = {kind:"move", k:c.getAttribute("data-opk"), id:c.getAttribute("data-opid")}; c.classList.add("dragging"); }
+    else if(r) opDrag = {kind:"new", key:r.getAttribute("data-opnew"), name:r.getAttribute("data-name"), lane:r.getAttribute("data-lane")};
+    else return;
+    try{ ev.dataTransfer.effectAllowed = "move"; ev.dataTransfer.setData("text/plain", opDrag.id || opDrag.key); }catch(e){}
+    document.body.classList.add("op-dragging");
+  });
+  document.addEventListener("dragend", function(){
+    opDrag = null; document.body.classList.remove("op-dragging");
+    document.querySelectorAll(".op-day.over, .op-card.dragging").forEach(function(x){ x.classList.remove("over"); x.classList.remove("dragging"); });
+  });
+  document.addEventListener("dragover", function(ev){
+    if(!opDrag || !ev.target.closest) return; var d = ev.target.closest(".op-day[data-opday]");
+    if(!d || !d.getAttribute("data-opday")) return;
+    ev.preventDefault(); document.querySelectorAll(".op-day.over").forEach(function(x){ if(x !== d) x.classList.remove("over"); }); d.classList.add("over");
+  });
+  document.addEventListener("drop", function(ev){
+    if(!opDrag || !ev.target.closest) return; var d = ev.target.closest(".op-day[data-opday]");
+    if(!d || !d.getAttribute("data-opday")) return;
+    ev.preventDefault(); var day = d.getAttribute("data-opday"), g = opDrag; opDrag = null;
+    document.body.classList.remove("op-dragging");
+    if(g.kind === "new") opAddPlan(g.key, g.name, day, g.lane); else opMove(opFind(g.k, g.id), day);
+  });
+  document.addEventListener("change", function(ev){
+    var el = ev.target; if(!el || !el.closest || !el.closest("#view-todo")) return;
+    if(el.getAttribute("data-opdone")){ var x = opItemOf(el); if(x) opDone(x, el.checked); else el.checked = !el.checked; return; }
+    if(el.getAttribute("data-opmove")){ var y = opItemOf(el); if(el.value && y) opMove(y, el.value); return; }
+    if(el.getAttribute("data-opplan")){ if(el.value) opAddPlan(el.getAttribute("data-opplan"), el.getAttribute("data-name"), el.value, el.getAttribute("data-lane")); return; }
+    if(el.id === "op-fu-owner"){ opState.fuOwner = el.value; opKeep(); renderTodo(); }
+  });
+  document.addEventListener("keydown", function(ev){
+    if(ev.key !== "Enter" || !ev.target || !ev.target.classList || !ev.target.classList.contains("op-card")) return;
+    var k = ev.target.getAttribute("data-spco"); if(k) openCompany(k);
+  });
   /* clicks and the summit picker */
   document.addEventListener("click", function(ev){
     var el = ev.target, b; if(!el || !el.closest) return;
     if(el.closest("select")) return;
     if((b = el.closest("[data-spxpick]"))){ spxState.pick = b.getAttribute("data-spxpick"); lsSet("sponsorship:spx", spxState); renderSpx(); return; }
     if((b = el.closest("[data-spxwho]"))){ spxState.who = b.getAttribute("data-spxwho"); lsSet("sponsorship:spx", spxState); renderSpx(); return; }
-    if((b = el.closest("[data-tdwho]"))){ tdState.who = b.getAttribute("data-tdwho"); lsSet("sponsorship:todo", tdState); renderTodo(); return; }
+    /* the Outreach Planner */
+    if(el.closest("input") || el.closest("a[href^='mailto:']")) return;
+    if((b = el.closest("[data-opwho]"))){ opState.who = b.getAttribute("data-opwho"); opSkip = 0; opKeep(); renderTodo(); return; }
+    if((b = el.closest("[data-opwhen]"))){ opState.when = b.getAttribute("data-opwhen"); opKeep(); renderTodo(); return; }
+    if((b = el.closest("[data-opfu]"))){ opState.fu = b.getAttribute("data-opfu"); opKeep(); renderTodo(); return; }
+    if((b = el.closest("[data-opdrop]"))){ opDropPlan(b.getAttribute("data-opdrop")); return; }
+    if((b = el.closest("[data-opmark]"))){ var mx = opItemOf(b); if(mx) opDone(mx, true); return; }
+    if((b = el.closest("[data-oplog]"))){ var lk = b.getAttribute("data-oplog"); openCompany(lk, "overview"); coNoteForm(); return; }
+    if(el.closest("[data-opskip]")){ opSkip++; renderTodo(); return; }
+    if((b = el.closest("[data-oplane]"))){ var ln = b.getAttribute("data-oplane"); opState.open[ln] = !opState.open[ln]; opKeep(); renderTodo(); return; }
+    if((b = el.closest("[data-opmix]"))){ var lc = $("op-lane-" + b.getAttribute("data-opmix")); if(lc){ lc.scrollIntoView({behavior:"smooth", block:"center"}); lc.classList.add("flash"); setTimeout(function(){ lc.classList.remove("flash"); }, 1200); } return; }
+    if(el.closest("#op-undo")){ var u = opUndo.pop(); if(u){ u.fn(); toast("Undone.", "", "Undo"); } opPaintUndo(); return; }
+    if((b = el.closest("[data-optile]"))){
+      var tk = b.getAttribute("data-optile"), go = null;
+      if(tk === "comm"){ go = $("op-comm"); go.open = true; }
+      else if(tk === "fu"){ opState.fu = "open"; opKeep(); renderTodo(); go = $("op-fu"); go.open = true; }
+      else if(tk === "late"){ opState.when = "due"; opKeep(); renderTodo(); go = $("op-board"); }
+      else if(tk === "plan") go = $("op-board");
+      else if(tk === "apps") go = $("op-also");
+      if(go) go.scrollIntoView({behavior:"smooth", block:"start"});
+      return;
+    }
     if((b = el.closest("[data-tdmore]"))){
       var k = b.getAttribute("data-tdmore"), card = b.closest(".tdc");
       if(card && tdMore[k]) card.innerHTML = '<div class="fbhead"><h3>' + esc(k) + '<b>' + tdMore[k].length + '</b></h3></div>' + tdMore[k].join("");
@@ -11442,6 +11849,8 @@ a series deal is counted once, at its full amount.</div>
     d.collection("touchpoints").onSnapshot(function(snap){
       touches = copyDocs(snap); touchSeen = true; mailRun(); renderFlow(); renderCo();
     }, function(e){ touchSeen = true; });
+    /* planned touches on the Outreach Planner (November 19, 2026) */
+    d.collection("plans").onSnapshot(function(snap){ plans = copyDocs(snap); plansSeen = true; renderTodo(); }, function(){ plansSeen = true; });
     d.collection("outbox").onSnapshot(function(snap){
       try{ outbox = copyDocs(snap); outboxLoaded = true; renderAll(); paintMoneyBanner();
            if(listSync.state === "waiting") setTimeout(checkListSync, 8000); }catch(err){}

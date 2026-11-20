@@ -51,13 +51,20 @@ The summit-first page (`view-spx`) stays in the page, unlinked.
 
 ## The logo as a file (November 20, 2026)
 
-The online prospectus saves the sponsor's logo to Sponsor Logos on the MISMO Summits SharePoint site as
-`<reference> - <company>.<ext>` and sends that name as `logoFileName`. `fromProspectus` keeps it on the record
-as `logoFile`; records taken in before then find it on their request in `data/inbox.json` (`logoFileOf`).
-`logoDownloadUrl` builds SharePoint's `_layouts/15/download.aspx?SourceUrl=...` link, which hands the file
-over as a download to anyone signed in to MBA's SharePoint. `logoOf(apps)` picks the newest application with
-a file, else the website's logo from the sponsor feed. Shown as Download Logo in the company card's buttons,
-under Company Details, and as Download the Logo on the application.
+Download Logo works without a SharePoint sign-in. The online prospectus sends the logo (`logoBase64`) and its file
+name (`logoFileName`, `<reference> - <company>.<ext>`). The Sponsorship Intake flow saves it to Sponsor Logos on
+the MISMO Summits site as before and, in its last step (**Save Logo**, after the sponsor's confirmation email, run
+even if that email fails), also PUTs it to the relay as `data/logo-<reference in lower case>.json`
+(`{reference, name, type, data, at}`). `fromProspectus` keeps the file name on the record as `logoFile`; older records
+find it on their request in `data/inbox.json` (`logoFileOf`).
+
+`logoOf(apps, companyKey)` picks, in order: a logo added on the company card (`data/logo-co-<key>.json`, noted on
+`companies/<key>.logo`), the newest application's `data/logo-<reference>.json`, then the website's logo from the
+sponsor feed. The file is read once on click (`db.once`, never polled) and handed over as a download with its own
+name; if the relay has no copy (a request from before November 20, or a logo too big for the relay's 6 MB limit), it
+falls back to SharePoint's `_layouts/15/download.aspx` link. **+ Add a Logo** / **Replace Logo** on the company card
+saves a file of up to 4 MB with `db.putOnce`. Download Logo is on the company card and under Company Details, and
+Download the Logo is on the application.
 
 ## Just Came In (November 20, 2026)
 

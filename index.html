@@ -1012,6 +1012,7 @@
   .cp-dgrid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 16px; margin-top:10px;}
   .cp-actions a.btn{text-decoration:none;}
   .cp-logo{display:inline-flex; align-items:center; gap:6px;} .cp-logo small{font-size:10px; font-weight:700; color:var(--ink-3); letter-spacing:.04em;}
+  .cp-dgrid div .linkbtn{font-size:12.5px; text-align:left;} label.cp-logo{cursor:pointer;}
   .cp-dgrid div a.linkbtn{font-size:12.5px; font-weight:600; overflow-wrap:anywhere;} .cp-lgfrom{display:block; font-size:11px; color:var(--ink-3);}
   .cp-dgrid div span{display:block; font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); font-weight:700;} .cp-dgrid div b{font-size:13px; color:var(--ink);}
   /* the Outreach Planner (November 19, 2026), Member 360's, for sponsors */
@@ -2010,7 +2011,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>Who to Touch</b> suggests sponsors and prospects by reason: prospects with no next date, prospects gone quiet, current sponsors not in for the next summit, benefits still to use, sponsors gone quiet, and past sponsors to win back. Drag a name onto a day, or use <b>Plan for&hellip;</b>. Anyone touched in the last week or already on the plan drops off.</li>
             <li><b>Also Waiting</b> holds applications to review, payments past due, invoices Bernie still has to raise, the mismosponsor@ emails and new prospects. <b>All Follow-Ups</b> at the bottom lists every follow-up, open or done, by owner.</li>
             <li><b>Sponsors and Prospects</b> is Member 360&rsquo;s Members and Prospects page for sponsors. The tiles and the tabs (<b>Current</b>, <b>Applied</b>, <b>Prospect</b>, <b>Past</b>, <b>Lost</b>, <b>All</b>) choose who is listed. The dark band shows current sponsors by tier, what is <b>outstanding</b> (approved or invoiced and not paid) for each summit, workgroups and each other kind, summit first, and the sponsor pipeline by stage; select any of them to list just those companies. Filter by summit or kind, stage and owner, tick <b>Outstanding Only</b>, or jump with the A to Z bar.</li>
-            <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there. <b>Download Logo</b> saves the logo the sponsor sent with the online prospectus (from Sponsor Logos on the MISMO Summits site; you need to be signed in to MBA&rsquo;s SharePoint); a sponsor already on the website gets <b>Open the Logo</b> instead. The file is also under Company Details and on the application.</li>
+            <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there. <b>Download Logo</b> saves the logo the sponsor sent with the online prospectus, straight from the portal (no SharePoint sign-in). <b>+ Add a Logo</b> keeps a logo a sponsor emailed (up to 4 MB), and <b>Replace Logo</b> swaps it. A sponsor already on the website gets <b>Open the Logo</b>. The file is also under Company Details and on the application.</li>
             <li>A summit prospect can say which summit it&rsquo;s for (<b>Which Summit</b> on the prospect); the summit filter then finds it.</li>
             <li>The <b>Pipeline</b> (every deal by stage) is under Records.</li>
           </ul>
@@ -3111,18 +3112,87 @@ a series deal is counted once, at its full amount.</div>
     return r && r.logoFileName ? String(r.logoFileName) : "";
   }
   function logoDownloadUrl(file){ return LOGO_SITE + "/_layouts/15/download.aspx?SourceUrl=" + encodeURIComponent("/sites/MISMOSummits/Sponsor Logos/" + file); }
-  function logoOf(list){
+  /* Where the logo comes from, best first (Jonna, November 20, 2026: "can it be that I don't have to
+     be logged in?"):
+       1. a logo added on the company card: data/logo-co-<company key>.json
+       2. the logo sent with the online prospectus: the Intake flow keeps a copy in
+          data/logo-<reference>.json, read with the portal's own sign-in (no SharePoint needed);
+          if that copy isn't there (a request from before November 20, or a file too big for the
+          relay), the SharePoint download link is used instead
+       3. the logo on the website (sponsor feed), opened as is */
+  function logoOf(list, key){
+    var cd = key && coDocs[key] && coDocs[key].logo;
+    if(cd && cd.name) return {store:"logo-co-" + key, file:cd.name, ext:(/\.([a-z0-9]+)$/i.exec(cd.name) || [])[1] || "", from:"Added by " + (cd.by || "the team") + (cd.at ? ", " + fmtDate(String(cd.at).slice(0, 10)) : ""), url:""};
     var withFile = (list || []).filter(function(a){ return a && a.id !== draft && logoFileOf(a); })
       .sort(function(x, y){ return String(y.dateSubmitted || "").localeCompare(String(x.dateSubmitted || "")); })[0];
     if(withFile){ var f = logoFileOf(withFile);
-      return {url:logoDownloadUrl(f), file:f, ext:(/\.([a-z0-9]+)$/i.exec(f) || [])[1] || "", from:"Sent with " + (withFile.appNo || "the application"), download:true}; }
+      return {store:"logo-" + refKey(prospectusRef(withFile)), url:logoDownloadUrl(f), file:f, ext:(/\.([a-z0-9]+)$/i.exec(f) || [])[1] || "", from:"Sent with " + (withFile.appNo || "the application")}; }
     var web = "";
     (list || []).some(function(a){ return Object.keys(webFeeds).some(function(sm){
       var fd = webFeeds[sm]; if(!fd) return false;
       var co = String(a.company || "").trim(), dom = (String(a.contactEmail || "").split("@")[1] || "").toLowerCase().replace(/^www\./, ""), nm = webNorm(WEB_NAMES[co] || co);
       var hit = fd.filter(function(x){ return x.logo && ((nm && webNorm(x.name) === nm) || (dom && webHost(x.url) === dom)); })[0];
       if(hit){ web = hit.logo; return true; } return false; }); });
-    return web ? {url:web, file:String(web).split("/").pop().split("?")[0], ext:(/\.([a-z0-9]+)(\?|$)/i.exec(web) || [])[1] || "", from:"On the website", download:false} : null;
+    return web ? {store:"", url:web, file:String(web).split("/").pop().split("?")[0], ext:(/\.([a-z0-9]+)(\?|$)/i.exec(web) || [])[1] || "", from:"On the website", web:true} : null;
+  }
+  var logoPick = {};   // what each Download Logo button on screen downloads, by its data-logodl
+  function logoBtn(lg, id, cls, label){
+    logoPick[id] = lg;
+    return '<button type="button" class="' + cls + '" data-logodl="' + esc(id) + '" title="' + esc(lg.file + " \u00b7 " + lg.from) + '">' +
+      '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 13h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      esc(label || (lg.web ? "Open the Logo" : "Download Logo")) + (lg.ext && !label ? ' <small>' + esc(lg.ext.toUpperCase()) + '</small>' : '') + '</button>';
+  }
+  function logoSaveBlob(x, fallbackName){
+    var bin = atob(String(x.data).replace(/^data:[^,]*,/, "")), arr = new Uint8Array(bin.length);
+    for(var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    var url = URL.createObjectURL(new Blob([arr], {type:x.type || "application/octet-stream"}));
+    var a = document.createElement("a"); a.href = url; a.download = x.name || fallbackName || "logo"; a.style.display = "none";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 1500);
+  }
+  function logoDownload(id, btn){
+    var lg = logoPick[id]; if(!lg) return;
+    if(!lg.store){ window.open(lg.url, "_blank", "noopener"); return; }
+    if(!db || !db.once){ if(lg.url) window.open(lg.url, "_blank", "noopener"); return; }
+    var was = btn ? btn.innerHTML : "";
+    if(btn){ btn.disabled = true; btn.textContent = "Getting the logo\u2026"; }
+    var done = function(){ if(btn){ btn.disabled = false; btn.innerHTML = was; } };
+    db.once(lg.store).then(function(d){
+      var x = d && (d.data ? d : (d.docs && d.docs.main));
+      if(x && x.data){ logoSaveBlob(x, lg.file); done(); return; }
+      done();
+      if(lg.url){ toast("There is no copy in the portal yet, so it is opening from SharePoint (sign in to MBA if asked). If nothing opens, allow pop-ups for this page.", "", "Logo"); window.open(lg.url, "_blank", "noopener"); }
+      else toast("The logo file could not be found.", "bad", "Logo");
+    }, function(){ done(); if(lg.url) window.open(lg.url, "_blank", "noopener"); else toast("The logo could not be read. Try again.", "bad", "Logo"); });
+  }
+  document.addEventListener("click", function(ev){
+    var b = ev.target && ev.target.closest && ev.target.closest("[data-logodl]"); if(!b) return;
+    ev.preventDefault(); ev.stopPropagation(); logoDownload(b.getAttribute("data-logodl"), b.tagName === "BUTTON" && b.classList.contains("btn") ? b : null);
+  }, true);
+  document.addEventListener("change", function(ev){
+    var el = ev.target; if(!el || el.id !== "cp-logofile" || !coOpen) return;
+    var f = el.files && el.files[0]; el.value = ""; if(f) logoAdd(coOpen, f);
+  });
+  /* Add a Logo on the company card: kept in the portal (data/logo-co-<key>.json) for a sponsor who
+     emailed their logo, or to replace the one they sent */
+  var LOGO_ADD_MAX = 4 * 1024 * 1024;
+  function logoAdd(key, file){
+    if(!file || !key || !db || !canWrite) return;
+    if(file.size > LOGO_ADD_MAX){ toast("That file is " + Math.round(file.size / 1024 / 1024 * 10) / 10 + " MB. The portal keeps logos up to 4 MB; save a smaller PNG or SVG.", "bad", "Logo Too Big"); return; }
+    var rd = new FileReader();
+    rd.onload = function(){
+      var url = String(rd.result || ""), i = url.indexOf(",");
+      var doc = {name:file.name, type:file.type || "", data:url.slice(i + 1), at:new Date().toISOString(), by:whoAmI(), company:(coOf(key) || {}).name || key};
+      db.putOnce("logo-co-" + key, doc).then(function(){
+        var meta = {name:file.name, type:file.type || "", at:doc.at, by:doc.by};
+        coDocs[key] = Object.assign({}, coDocs[key] || {}, {logo:meta});
+        db.doc("companies/" + key).update({logo:meta});
+        addLog("", "logo added for " + doc.company + " (" + file.name + ")", whoAmI());
+        toast(file.name + " is saved on " + doc.company + ". Anyone in the portal can download it.", "", "Logo Saved");
+        paintCompany();
+      }, function(e){ toast("The logo did not save" + (e && e.message ? ": " + e.message : "") + ". Try again.", "bad", "Not Saved"); });
+    };
+    rd.readAsDataURL(file);
   }
 
   /* Is this email request about this record? Requests queued since October 7, 2026 carry the
@@ -5413,7 +5483,7 @@ a series deal is counted once, at its full amount.</div>
       '<div class="fldnote">Done marks the logo collected and placed everywhere it belongs — ' +
       'the same thing Mark Done on the Pipeline tab does.</div></div>' +
       '<div class="fldnote" style="margin-top:10px;">' +
-      (logoFileOf(a) ? '<a class="btn ghost sm" href="' + esc(logoDownloadUrl(logoFileOf(a))) + '" download target="_blank" rel="noopener">Download the Logo</a> ' +
+      (logoFileOf(a) ? logoBtn(logoOf([a]), "app", "btn ghost sm cp-logo", "Download the Logo") + ' ' +
         '<span style="margin-left:6px;">' + esc(logoFileOf(a)) + ', in Sponsor Logos on the MISMO Summits site.</span>'
       : a.prospectusRef ? 'The logo is filed under <b>' + esc(a.prospectusRef) +
         '</b> in the Sponsor Logos library, and the logo request points the team to it.'
@@ -8606,6 +8676,13 @@ a series deal is counted once, at its full amount.</div>
       readLog: function(name){
         return call("GET", name).then(function(b){ return (clean(b.data, "log").entries) || []; });
       },
+      /* A file read once, on request, and never kept or re-read: the logo files (November 20,
+         2026), which can be a few MB each and must not ride along with the 20-second re-reads. */
+      once: function(name){ return call("GET", name).then(function(b){ return b ? b.data : null; }); },
+      /* write a whole file once (a logo), over whatever is there */
+      putOnce: function(name, content){
+        return call("GET", name).then(function(b){ return call("PUT", name, {content:content, sha:(b && b.sha) || null}); });
+      },
       /* A file this page only reads and never writes, handed over exactly as stored
          (null until whoever owns it has written it). There is deliberately no save. */
       raw: function(name, cb){
@@ -11408,14 +11485,14 @@ a series deal is counted once, at its full amount.</div>
           ? '<div class="cp-big">' + daysBetween(t, nextSm.d) + ' <small>days</small></div><div class="cp-js">' + esc((SUMMITS[nextSm.s] || {}).label || nextSm.s) + '</div>'
           : '<div class="cp-big">—</div><div class="cp-js">no summit booked</div>') + '</div>' +
       '</div></div>';
-    var cLogo = logoOf(c.apps);
+    var cLogo = logoOf(c.apps, c.key);
     html += '<div class="cp-actions">' +
       (canWrite ? '<button class="btn sm" type="button" data-conote="1">+ Log a Touchpoint</button>' +
         '<button class="btn ghost sm" type="button" data-coprospect="1">+ Add a Prospective Sponsorship</button>' : '') +
       (c.contact && c.contact.email ? '<a class="btn ghost sm" href="mailto:' + esc(c.contact.email) + '">Email ' + esc(c.contact.name || c.contact.email) + '</a>' : '') +
-      (cLogo ? '<a class="btn ghost sm cp-logo" href="' + esc(cLogo.url) + '"' + (cLogo.download ? ' download' : '') + ' target="_blank" rel="noopener" title="' + esc(cLogo.file + " \u00b7 " + cLogo.from) + '">' +
-        '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 13h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-        (cLogo.download ? 'Download Logo' : 'Open the Logo') + (cLogo.ext ? ' <small>' + esc(cLogo.ext.toUpperCase()) + '</small>' : '') + '</a>' : '') +
+      (cLogo ? logoBtn(cLogo, "co", "btn ghost sm cp-logo") : '') +
+      (canWrite ? '<label class="btn ghost sm cp-logo" title="Save a logo file on this company so anyone in the portal can download it">' + (cLogo && !cLogo.web ? "Replace Logo" : "+ Add a Logo") +
+        '<input type="file" id="cp-logofile" accept=".png,.svg,.jpg,.jpeg,.eps,.ai,.pdf,image/*" hidden></label>' : '') +
       '</div><div id="cp-noteform" hidden></div>';
     var acts = coActivity(c), cons = coContacts(c);
     var tabs = [["overview","Overview",""],["sponsorships","Sponsorships",c.apps.length + c.bills.length],["activity","Activity",acts.length],["contacts","Contacts",cons.length],["money","Money",""]];
@@ -11509,7 +11586,7 @@ a series deal is counted once, at its full amount.</div>
          ["Summit Sponsorships", String(c.apps.filter(function(a){ return a.status !== "Declined"; }).length)], ["Other Sponsorships", String(c.bills.length)],
          ["Prospects", String(c.leads.length)], ["Contacts", String(cons.length)], ["Last Touch", c.last ? fmtDate(c.last) : "\u2014"]].map(function(x){
           return '<div><span>' + esc(x[0]) + '</span><b>' + esc(x[1]) + '</b></div>'; }).join("") +
-        (function(){ var lg = logoOf(c.apps); return '<div><span>Logo</span>' + (lg ? '<a class="linkbtn" href="' + esc(lg.url) + '"' + (lg.download ? ' download' : '') + ' target="_blank" rel="noopener">' + esc(lg.file) + '</a><small class="cp-lgfrom">' + esc(lg.from) + '</small>' : '<b>None on file</b>') + '</div>'; })() +
+        (function(){ var lg = logoOf(c.apps, c.key); if(lg) logoPick.cod = lg; return '<div><span>Logo</span>' + (lg ? '<button type="button" class="linkbtn" data-logodl="cod">' + esc(lg.file) + '</button><small class="cp-lgfrom">' + esc(lg.from) + '</small>' : '<b>None on file</b>') + '</div>'; })() +
         '</div></details>';
       h = steps + cards + h + keyc + recent + details;
       return h;

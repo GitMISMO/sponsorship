@@ -42,6 +42,7 @@
     "touchpoints": {"docs": {
       "tp-t-fu": {"co": "coholendingtest", "coName": "Coho Lending Test", "date": "{{today-3}}", "type": "Call", "about": "summit", "contact": "", "summary": "Talked through the Fall 2027 invoice; they want a copy for their AP team.", "by": "Amy Moses", "at": "{{today-3}}T15:00:00.000Z", "via": "touchpoint", "next": {"text": "Send the invoice copy to their AP team", "due": "{{today+1}}"}}
     }},
+    "logo-ms27-t0008": {"reference": "MS27-T0008", "name": "MS27-T0008 - Relecloud Tier Test.png", "type": "image/png", "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", "at": "{{today-1}}T15:00:00.000Z"},
     "plans": {"docs": {
       "pl-t-1": {"co": "northwindlending", "coName": "Northwind Lending", "day": "{{today}}", "owner": "Amy Moses", "lane": "squiet", "by": "Amy Moses", "at": "{{today-1}}T14:00:00.000Z"},
       "pl-t-late": {"co": "contosomortgage", "coName": "Contoso Mortgage", "day": "{{today-10}}", "owner": "Kelly Bradshaw", "lane": "benefits", "by": "Kelly Bradshaw", "at": "{{today-12}}T14:00:00.000Z"}

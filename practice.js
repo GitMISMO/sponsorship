@@ -134,6 +134,8 @@
     Object.keys(p).forEach(function(k){ if(k !== "logoBase64" && k !== "secret") item[k] = p[k]; });
     item.submittedAt = item.submittedAt || new Date().toISOString();
     item.logoFile = p.logoBase64 ? "practice-logo.png" : "";
+    /* the Intake flow also keeps the logo itself, so the portal can hand it over without SharePoint (November 20, 2026) */
+    if(p.logoBase64 && p.reference) s.files["logo-" + String(p.reference).toLowerCase()] = {data: {reference: p.reference, name: p.logoFileName || "logo", type: p.logoContentType || "", data: p.logoBase64, at: new Date().toISOString()}, sha: 1};
     s.files.inbox.data.list.push(item);
     s.files.inbox.sha++;
     s.list.push({reference: item.reference, program: item.program, tier: item.tier, opportunity: item.opportunity,

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-20: Download Logo no longer needs a SharePoint sign-in: the Sponsorship Intake flow keeps a copy of each logo in the portal's data (data/logo-<reference>.json) and the portal hands it over as a file. + Add a Logo / Replace Logo on the company card keeps a logo a sponsor emailed. SharePoint is the fallback for older requests.
 - 2026-11-20: The logo is a file to download: **Download Logo** on the company card (and under Company Details) and **Download the Logo** on the application, straight from Sponsor Logos on the MISMO Summits site. New applications keep the logo file name (logoFile); older ones find it on their prospectus request. Sponsors already on the website get Open the Logo.
 - 2026-11-20: Home: **Just Came In** across the top: applications waiting for review (newest first, with when, what and how much; select one to review it) and prospects added in the last two days. The headline counts the applications to review.
 - 2026-11-19: Outreach Planner: Up Next laid out evenly: the company with its initials and tag (spaced from the name), then Due, Owner and Contact in matching columns, and the buttons in a bar along the bottom with Next One.

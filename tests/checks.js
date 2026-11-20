@@ -546,6 +546,10 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await portal.click('.tab[data-view="home"]'); await portal.waitForTimeout(300);
     const t = await P(portal, () => document.getElementById('view-home').innerText);
     expect(/Good (morning|afternoon|evening)/.test(t) && /On Your Plate/i.test(t) && /Sales Pipeline/i.test(t) && /Team Activity/i.test(t), 'Home is missing its parts');
+    /* a new application is the first thing on Home (Jonna, November 20, 2026) */
+    const came = await P(portal, () => { const x = document.querySelector('#home-hero .hm-in'); return x ? x.innerText : ''; });
+    expect(/Just Came In/i.test(came) && /New Application/i.test(came) && /applications? waiting for review/.test(came), 'an application waiting for review is not under Just Came In: ' + came.slice(0, 200));
+    expect(await P(portal, () => document.querySelector('#home-hero').firstElementChild.classList.contains('hm-in')), 'Just Came In is not at the top of Home');
   });
   /* the Outreach Planner: To Do, the Member 360 way (November 19, 2026) */
   await check('the Outreach Planner works like Member 360: board, Up Next, drag, done, undo, plan', async () => {

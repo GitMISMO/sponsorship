@@ -49,6 +49,13 @@ record's Overview follows Member 360's: stage bar per deal, Money / Benefits Use
 Recent Activity, Company Details; its band reads Tier, Sponsor Since, Sponsorship Ends, this season, Last Touch.
 The summit-first page (`view-spx`) stays in the page, unlinked.
 
+## Just Came In (November 20, 2026)
+
+Home's hero starts with **Just Came In** (`.hm-in`, built in `renderHome`): every application still Submitted
+(newest `dateSubmitted` first) and open prospects created in the last two days, up to four cards (two on a phone),
+each opening the record itself (`data-fkind`/`data-fid`/`data-direct`). The headline sentence also counts the
+applications to review.
+
 ## Outreach Planner (November 19, 2026)
 
 To Do now looks and works like Member 360's Outreach Planner (`view-todo`, `renderTodo`, nav label Outreach Planner).

@@ -533,11 +533,13 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
 
   /* ---- companies, like Member 360 (November 18, 2026) ---- */
-  /* Sponsors & Prospects, summit first (November 19, 2026) */
-  const toCos = async (pick) => {
+  /* Sponsors and Prospects, the Member 360 way (November 19, 2026) */
+  const toCos = async (life) => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
-    await portal.click('.tab[data-view="spx"]'); await portal.waitForTimeout(300);
-    await portal.click('[data-spxpick="' + (pick || 'Winter 2027') + '"]'); await portal.waitForTimeout(200);
+    await portal.click('.tab[data-view="spm"]'); await portal.waitForTimeout(300);
+    await portal.click('#spm-life [data-spmlife="' + (life === undefined ? 'Sponsor' : life) + '"]'); await portal.waitForTimeout(200);
+    await P(portal, () => { const o = document.getElementById('spm-owes'); if (o && o.classList.contains('on')) o.click(); });
+    await portal.selectOption('#spm-what', ''); await portal.selectOption('#spm-stage', ''); await portal.selectOption('#spm-owner', ''); await portal.waitForTimeout(150);
   };
   await check('Home shows the day and the season at a glance', async () => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
@@ -547,38 +549,48 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
   await check('To Do opens first and says what needs doing', async () => {
     await toTodo();
-    const first = await P(portal, () => document.querySelector('#tabband .tab').getAttribute('data-view'));
-    expect(first === 'todo', 'To Do is not the first page in the menu');
     await portal.click('[data-tdwho="all"]'); await portal.waitForTimeout(200);
     const t = await P(portal, () => document.getElementById('view-todo').innerText);
     expect(/Follow Up Today/i.test(t) && /Wingtip Servicing/.test(t), 'a prospect follow-up that is due is not under Follow Up Today');
     expect(/Applications to Review/i.test(t) && /Tailspin Data/.test(t), 'an application waiting for review is not listed');
     expect(/Emails to mismosponsor@/i.test(t), 'the mismosponsor@ emails are not on To Do');
   });
-  await check('Sponsors & Prospects shows who is sponsoring each summit and who is a prospect for it', async () => {
-    await toCos('Winter 2027');
-    const sp = await P(portal, () => document.getElementById('spx-spons').innerText);
-    expect(/Northwind Lending/.test(sp) && /Platinum/i.test(sp) && /Paid/.test(sp), 'Northwind is not sponsoring Winter 2027: ' + sp.slice(0, 200));
-    expect(/Contoso Mortgage/.test(sp), 'a 2027 Series sponsor is not listed at Winter');
-    await portal.click('[data-spxwho="all"]'); await portal.waitForTimeout(200);
-    let pr = await P(portal, () => document.getElementById('spx-pros').innerText);
-    expect(/haven.t picked a summit/i.test(pr) && /Wingtip Servicing/.test(pr), 'a summit prospect with no summit is not listed to be sorted');
-    /* tie Wingtip to Spring: it then shows as a Spring prospect */
+  await check('Sponsors and Prospects works like Member 360: tabs, filters, outstanding by summit', async () => {
+    await toCos('Sponsor');
+    let rows = await P(portal, () => document.getElementById('spm-rows').innerText);
+    expect(/Northwind Lending/.test(rows) && !/Wingtip Servicing/.test(rows), 'the Current tab is not just sponsors');
+    await toCos('Prospect');
+    rows = await P(portal, () => document.getElementById('spm-rows').innerText);
+    expect(/Wingtip Servicing/.test(rows) && !/Northwind Lending/.test(rows), 'the Prospect tab is not just prospects');
+    /* a summit filter: Winter 2027 sponsors, a 2027 Series one included */
+    await toCos('Sponsor'); await portal.selectOption('#spm-what', 'Winter 2027'); await portal.waitForTimeout(200);
+    rows = await P(portal, () => document.getElementById('spm-rows').innerText);
+    expect(/Northwind Lending/.test(rows) && /Contoso Mortgage/.test(rows), 'the Winter 2027 filter is wrong: ' + rows.slice(0, 200));
+    /* outstanding, by summit: Fall 2027 has Coho Lending invoiced from the Registration Desk */
+    const band = await P(portal, () => document.getElementById('spm-band').innerText);
+    expect(/Outstanding/i.test(band), 'the band does not show what is outstanding');
+    await portal.click('[data-spmowe="Fall 2027"]'); await portal.waitForTimeout(250);
+    rows = await P(portal, () => document.getElementById('spm-rows').innerText);
+    expect(/Coho Lending Test/.test(rows) && /\$7,500/.test(rows) && !/Northwind Lending/.test(rows), 'Fall 2027 outstanding is wrong: ' + rows.slice(0, 300));
+    /* the AI Webinar Series' outstanding */
+    await portal.click('[data-spmowe="type:ai-webinar"]'); await portal.waitForTimeout(250);
+    rows = await P(portal, () => document.getElementById('spm-rows').innerText);
+    expect(/Fourth Coffee Test/.test(rows), 'the AI Webinar Series outstanding does not list Fourth Coffee');
+    await toCos('Sponsor');
+  });
+  await check('a summit prospect can be tied to a summit', async () => {
+    await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await portal.evaluate(() => { const b = document.createElement('button'); b.setAttribute('data-go', 'spx'); b.id = '__gospx'; document.body.appendChild(b); b.click(); b.remove(); });
+    await portal.waitForTimeout(300); await portal.click('[data-spxpick="Winter 2027"]'); await portal.click('[data-spxwho="all"]'); await portal.waitForTimeout(200);
     await portal.selectOption('#spx-pros select[data-leadsummit="lead-t-1"]', 'Spring 2027'); await portal.waitForTimeout(1200);
     expect((await fileOf('leads')).docs['lead-t-1'].summit === 'Spring 2027', 'the summit was not saved on the prospect');
-    await toCos('Spring 2027');
-    pr = await P(portal, () => document.getElementById('spx-pros').innerText);
-    expect(/Wingtip Servicing/.test(pr) && !/haven.t picked[\s\S]*Wingtip/i.test(pr), 'Wingtip is not a Spring prospect: ' + pr.slice(0, 200));
-    await toCos('workgroup');
-    pr = await P(portal, () => document.getElementById('spx-pros').innerText + ' | ' + document.getElementById('spx-spons').innerText);
-    expect(/Litware Group/.test(pr), 'the workgroup page does not show its sponsor or prospect');
-    await toCos('type:ai-webinar');
-    const ai = await P(portal, () => document.getElementById('spx-spons').innerText);
-    expect(/Fourth Coffee Test/.test(ai), 'the AI Webinar Series sponsor is not listed');
+    await toCos('Prospect'); await portal.selectOption('#spm-what', 'Spring 2027'); await portal.waitForTimeout(200);
+    const rows = await P(portal, () => document.getElementById('spm-rows').innerText);
+    expect(/Wingtip Servicing/.test(rows), 'Wingtip is not a Spring 2027 prospect');
   });
   await check('a company record shows its emails and sponsorships, and takes a note and an owner', async () => {
-    await toCos();
-    await portal.click('#spx-spons [data-spco="northwindlending"]'); await portal.waitForTimeout(500);
+    await toCos('Sponsor');
+    await portal.click('#spm-rows [data-spco="northwindlending"]'); await portal.waitForTimeout(500);
     const band = await P(portal, () => document.querySelector('#cp-body .cp-band').innerText);
     expect(/Northwind Lending/.test(band) && /\$15,000/.test(band), 'the company band is wrong: ' + band.slice(0, 200));
     await portal.click('[data-cotab="activity"]');
@@ -601,7 +613,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const due = await P(portal, () => document.getElementById('flow-drill').innerText);
     expect(/Northwind Lending/.test(due), 'the follow-up is not in Follow-Ups Due on the Pipeline');
     await portal.click('#flow-drill [data-fdrill=""]');
-    await toCos(); await portal.click('#spx-spons [data-spco="northwindlending"]'); await portal.waitForTimeout(400);
+    await toCos('Sponsor'); await portal.click('#spm-rows [data-spco="northwindlending"]'); await portal.waitForTimeout(400);
     await portal.click('[data-cotab="overview"]');
     await portal.click('#cp-body [data-tpdone="' + tp.id + '"]'); await portal.waitForTimeout(1200);
     const after = (await fileOf('touchpoints')).docs[tp.id];

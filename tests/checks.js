@@ -547,13 +547,55 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const t = await P(portal, () => document.getElementById('view-home').innerText);
     expect(/Good (morning|afternoon|evening)/.test(t) && /On Your Plate/i.test(t) && /Sales Pipeline/i.test(t) && /Team Activity/i.test(t), 'Home is missing its parts');
   });
-  await check('To Do opens first and says what needs doing', async () => {
+  /* the Outreach Planner: To Do, the Member 360 way (November 19, 2026) */
+  await check('the Outreach Planner works like Member 360: board, Up Next, drag, done, undo, plan', async () => {
     await toTodo();
-    await portal.click('[data-tdwho="all"]'); await portal.waitForTimeout(200);
+    await portal.click('[data-opwho=""]'); await portal.click('[data-opwhen="0"]'); await portal.waitForTimeout(250);
     const t = await P(portal, () => document.getElementById('view-todo').innerText);
-    expect(/Follow Up Today/i.test(t) && /Wingtip Servicing/.test(t), 'a prospect follow-up that is due is not under Follow Up Today');
-    expect(/Applications to Review/i.test(t) && /Tailspin Data/.test(t), 'an application waiting for review is not listed');
-    expect(/Emails to mismosponsor@/i.test(t), 'the mismosponsor@ emails are not on To Do');
+    expect(/Outreach Planner/.test(t) && /Up Next/i.test(t) && /Who to Touch/.test(t) && /All Follow-Ups/.test(t), 'the planner is missing its parts');
+    expect(/Communicated This Week/i.test(t) && /Follow-Ups Due/i.test(t) && /Applications to Review/i.test(t), 'the number boxes are missing');
+    const board = await P(portal, () => document.getElementById('op-board').innerText);
+    expect(/Northwind Lending/.test(board), 'a touch planned for today is not on the board');
+    expect(/Past Due/.test(board) && /Contoso Mortgage/.test(board), 'a planned touch from last week is not under Past Due');
+    expect(/Applications to Review/.test(t) && /Tailspin Data/.test(t), 'an application waiting for review is not under Also Waiting');
+    expect(/Emails to mismosponsor@/i.test(t), 'the mismosponsor@ emails are not on the planner');
+    await P(portal, () => { document.getElementById('op-fu').open = true; });
+    const fu = await P(portal, () => document.getElementById('op-fu-rows').innerText);
+    expect(/Wingtip Servicing/.test(fu) && /Coho Lending Test/.test(fu) && /invoice copy/.test(fu), 'All Follow-Ups is missing a prospect follow-up or a touchpoint next step: ' + fu.slice(0, 200));
+    /* drag Northwind's planned touch to another day, then undo */
+    const T = await P(portal, () => { const d = new Date(), m = d.getMonth() + 1, x = d.getDate(); return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (x < 10 ? '0' : '') + x; });
+    const other = await P(portal, T => { const d = [...document.querySelectorAll('#op-board .op-day[data-opday]')].map(x => x.getAttribute('data-opday')).filter(x => x && x !== T); return d[d.length - 1] || ''; }, T);
+    if (other) {
+      await portal.dragAndDrop('#op-board .op-card[data-opid="pl-t-1"]', '#op-board .op-day[data-opday="' + other + '"]'); await portal.waitForTimeout(1200);
+      let pl = (await fileOf('plans')).docs['pl-t-1'];
+      expect(pl.day === other, 'dragging a card onto a day did not move it: ' + pl.day + ' vs ' + other);
+      await portal.click('#op-undo'); await portal.waitForTimeout(1200);
+      pl = (await fileOf('plans')).docs['pl-t-1'];
+      expect(pl.day === T, 'Undo did not put the card back: ' + pl.day);
+    }
+    /* tick the past-due plan done */
+    await portal.click('#op-board .op-card[data-opid="pl-t-late"] input[data-opdone]'); await portal.waitForTimeout(1200);
+    expect(((await fileOf('plans')).docs['pl-t-late'] || {}).done === T, 'ticking a card did not mark it done');
+    /* a prospect's follow-up marked done, then undone */
+    await portal.click('#op-fu-rows .op-card[data-opk="lead"][data-opid="lead-t-1"] input[data-opdone]'); await portal.waitForTimeout(1200);
+    let wl = (await fileOf('leads')).docs['lead-t-1'];
+    expect(!wl.nextFollowUpDate && wl.lastFollowUp && wl.lastFollowUp.done === T, 'marking a prospect follow-up done did not save: ' + JSON.stringify(wl.lastFollowUp));
+    await portal.click('#op-undo'); await portal.waitForTimeout(1200);
+    wl = (await fileOf('leads')).docs['lead-t-1'];
+    expect(wl.nextFollowUpDate && !wl.lastFollowUp, 'Undo did not reopen the prospect follow-up');
+    /* plan someone from Who to Touch */
+    const sel = await P(portal, () => { const s = document.querySelector('#op-lanes select[data-opplan]'); if (!s) return null; const o = [...s.options].find(o => o.value); return o ? {key: s.getAttribute('data-opplan'), v: o.value} : null; });
+    expect(sel, 'Who to Touch has nobody to plan');
+    if (sel) {
+      await portal.selectOption('#op-lanes select[data-opplan="' + sel.key + '"]', sel.v); await portal.waitForTimeout(1200);
+      const made = Object.values((await fileOf('plans')).docs).find(p => p.co === sel.key && p.day === sel.v);
+      expect(made && made.lane, 'Plan for... did not add a planned touch');
+    }
+    /* Past Due chip */
+    await portal.click('[data-opwhen="due"]'); await portal.waitForTimeout(250);
+    const due = await P(portal, () => document.getElementById('op-board').innerText);
+    expect(!/Contoso Mortgage/.test(due), 'a done card is still past due');
+    await portal.click('[data-opwhen="0"]'); await portal.waitForTimeout(150);
   });
   await check('Sponsors and Prospects works like Member 360: tabs, filters, outstanding by summit', async () => {
     await toCos('Sponsor');

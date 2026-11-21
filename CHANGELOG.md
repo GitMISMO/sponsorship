@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-21: Prospects is the same page as Sponsors, for prospects (Jonna): Open / On Hold / Lost tiles; a band with open prospects by stage, the forecast by summit and kind, and prospects by summit; New Prospects in the same place as New Sponsors; the same filters (Open / Hold / Lost / All, search, prospect for, stage, owner, My Prospects Only) and the same rows, one per prospect, each opening its company.
 - 2026-11-21: Prospects: **New Prospects** at the top, like New Sponsors: added this month, last month, this year, any month or any dates, by kind, with the forecast total; select one to open its company.
 - 2026-11-21: A prospect's stage is set on its company card (a Stage box beside Which Summit, or a step on its bar), not in the Pipeline or Prospects list; the lists show it.
 - 2026-11-21: Prospects: Which Summit is no longer a picker in each row. It is set on the prospect in its company card and the list shows it (or "Summit not picked yet").

@@ -959,6 +959,7 @@
   .m-ring::after{content:""; position:absolute; inset:16px; border-radius:50%; background:#0e2c42;}
   .m-ring b{position:relative; z-index:1; font-size:22px; text-align:center; line-height:1.05;} .m-ring b small{display:block; font-size:10px; font-weight:500; color:rgba(255,255,255,.65);}
   .m-leg{flex:1; min-width:0; font-size:12.5px; display:flex; flex-direction:column; gap:5px;}
+  .m-legb{cursor:pointer;} .m-legb:hover span{color:#fff; text-decoration:underline;}
   .m-leg div{display:grid; grid-template-columns:10px minmax(0,1fr) auto auto; gap:8px; align-items:center;} .m-leg i{width:10px; height:10px; border-radius:2px;}
   .m-leg em{font-style:normal; color:rgba(255,255,255,.55); font-size:11px; min-width:30px; text-align:right;}
   .m-bars{display:flex; flex-direction:column; gap:6px; font-size:12.5px;}
@@ -1781,26 +1782,24 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
        Amy: "I can't just click to see all my summit sponsor prospects". One click on a type, and
        My Prospects / Everyone; the choice is remembered in this browser. -->
   <section class="view" id="view-plist">
+    <!-- the same page as Sponsors, for prospects (Jonna, November 21, 2026: "the pages should basically be identical,
+         one is for sponsors the other is for prospects") -->
+    <div class="m-vhead"><div><h1>Prospects</h1>
+      <div class="m-vsub">Every prospect: open, on hold, or lost, one row each. Select one to open its company, where you set its stage and which summit it is for. Sponsors are on the Sponsors page.</div></div>
+      <button class="btn sm" id="pl-new" type="button" title="Opens a blank prospect" style="white-space:nowrap;">Add a Prospect</button></div>
+    <div class="cotiles m-tiles spm-tiles3" id="pl-tiles"></div>
+    <div class="m-band" id="pl-band"></div>
     <div class="panel m-newp" id="pl-newp"></div>
-    <div class="cotiles" id="pl-tiles"></div>
-    <div class="panel">
-      <div class="filters flowfilters">
-        <span class="seg" id="pl-types" role="group" aria-label="Type of sponsorship"></span>
-        <span class="seg" id="pl-who" role="group" aria-label="Whose prospects"></span>
-        <span class="seg" id="pl-show" role="group" aria-label="Which prospects"></span>
-        <select id="pl-summit" aria-label="Which summit"></select>
-        <input type="search" id="pl-q" placeholder="Company or contact">
-        <span class="fbcount" id="pl-count"></span>
-        <button class="btn sm" id="pl-new" type="button" title="Opens a blank prospect">Add a Prospect</button>
-      </div>
-      <div class="tablewrap">
-        <table class="flowtable">
-          <thead><tr><th>Company</th><th>Type</th><th>Interested In</th><th>Stage</th><th>Owner</th>
-            <th class="r">Forecast</th><th>Next Follow-Up</th><th>Last Touch</th></tr></thead>
-          <tbody id="pl-body"></tbody>
-        </table>
-      </div>
+    <div class="m-filters">
+      <div class="m-chips" id="pl-life" role="group" aria-label="Which prospects"></div>
+      <input type="search" id="pl-q" placeholder="Filter by company or contact" aria-label="Filter">
+      <select id="pl-what" aria-label="Prospect for"></select>
+      <select id="pl-stage" aria-label="Stage"></select>
+      <select id="pl-owner" aria-label="Owner"></select>
+      <span class="m-chips"><button type="button" id="pl-mine" aria-pressed="false">My Prospects Only</button></span>
+      <span class="m-count" id="pl-count"></span>
     </div>
+    <div class="m-rows" id="pl-rows"></div>
   </section>
 
   <!-- ================= PIPELINE: every sponsorship, lead to paid (November 18, 2026) ================= -->
@@ -2080,7 +2079,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there. <b>Download Logo</b> saves the logo the sponsor sent with the online prospectus, straight from the portal (no SharePoint sign-in). <b>+ Add a Logo</b> keeps a logo a sponsor emailed (up to 4 MB), and <b>Replace Logo</b> swaps it. A sponsor already on the website gets <b>Open the Logo</b>. The file is also under Company Details and on the application.</li>
             <li><b>New Sponsors</b> on Sponsors lists every sponsorship that started in a period: <b>This Month</b>, <b>Last Month</b>, <b>This Year</b>, any month from <b>Pick a Month</b>, or your own <b>Dates</b>, for Summit, Workgroup, Other or all of them, with the total.</li>
             <li>The <b>Pipeline</b> shows one kind at a time: <b>Summit</b> (where it opens), <b>Workgroup</b> or <b>Other</b>. Every number and stage box lists what makes it up.</li>
-            <li><b>Prospects</b> lists every prospect, one row each. Pick Summit, Workgroup or Other and My Prospects; pick a summit to see who is a prospect for it. <b>New Prospects</b> at the top lists the prospects added this month, last month, this year, any month or any dates, by kind. <b>Which Summit</b> is set on the prospect's box in its company card (select the row) and shows in the list.</li>
+            <li><b>Prospects</b> is the same page as Sponsors, for prospects: Open, On Hold and Lost across the top; open prospects by stage, the forecast and prospects by summit (select any to see them); <b>New Prospects</b> for this month, last month, this year, any month or any dates; then the filters (what they are a prospect for, stage, owner, My Prospects Only, remembered) and one row per prospect. Select a row to open its company, where you set the stage and <b>Which Summit</b>.</li>
             <li><b>Summit Sponsorships</b>, <b>Workgroup Sponsorships</b> and <b>Other Sponsorships</b> are the full lists of each kind.</li>
             <li><b>One company card.</b> Wherever you select a sponsorship or a prospect (these pages, the Pipeline, Home), it opens inside its company&rsquo;s card, under <b>&larr; Back to</b> the company, the way Member 360 does. The card itself shows everything the company has: every sponsorship, prospect and conversation.</li>
           </ul>
@@ -3891,10 +3890,7 @@ a series deal is counted once, at its full amount.</div>
       s:"Every company that sponsors MISMO now, has applied, or has sponsored before, one row each with all of its " +
         "sponsorships: summit, workgroup and every other kind. Pick a type to see only those. Select a company to see its " +
         "whole relationship with MISMO: sponsorships, prospects, emails, notes, contacts and money."},
-    plist: {t:"Prospects",
-      s:"Everyone you are working toward a sponsorship with, one row per prospect. Pick Summit, Workgroup or Other and My Prospects to see " +
-        "just yours, and pick a summit to see who is a prospect for it; the page remembers your choice. Select a row to open the company, where you set a prospect\u2019s stage and which summit a summit prospect is for. " +
-        "A prospect leaves this list once they apply (summit) or their sponsorship is started (workgroup and other types)."},
+    plist: {t:"Prospects", s:""},
     flow: {t:"Pipeline",
       s:"Where every deal stands, from first contact to paid, one kind at a time: <b>Summit</b> (where it opens), <b>Workgroup</b> or <b>Other</b>. The top row is " +
         "prospects (Lead to Verbal Commitment); the second is sponsorships being closed (Application In to Pending Payment). " +
@@ -8340,7 +8336,7 @@ a series deal is counted once, at its full amount.</div>
     if(v === "todo") renderTodo();
     if(v === "spx") renderSpx();
     if(v === "spm") renderSpm();
-    var ph = $("pagehead"); if(ph) ph.style.display = (v === "home" || v === "todo" || v === "spm") ? "none" : "";
+    var ph = $("pagehead"); if(ph) ph.style.display = (v === "home" || v === "todo" || v === "spm" || v === "plist") ? "none" : "";
   }
 
   /* Copy Link on a prospectus card puts its address on the clipboard, ready to paste into an
@@ -11578,89 +11574,132 @@ a series deal is counted once, at its full amount.</div>
   /* ---------------- Prospects (November 19, 2026) ----------------
      One row per prospect (a company with a summit and a workgroup prospect has two), from the same
      items the Pipeline lists. plState is remembered per browser. */
-  var plState = (function(){ try{ return JSON.parse(localStorage.getItem("sponsorship:plist") || "null"); }catch(e){ return null; } })() ||
-                {type:"", who:"", show:"open", stage:"", q:""};
-  plState.q = ""; plState.stage = plState.stage || "";
-  function plKeep(){ try{ localStorage.setItem("sponsorship:plist", JSON.stringify({type:plState.type, who:plState.who, show:plState.show, summit:plState.summit || ""})); }catch(e){} }
+  var plState = (function(){ try{ return JSON.parse(localStorage.getItem("sponsorship:plist2") || "null"); }catch(e){ return null; } })() ||
+                {life:"open", what:"", stage:"", owner:"", mine:null};
+  plState.q = ""; plState.shown = 50; plState.alpha = "";
+  function plKeep(){ try{ localStorage.setItem("sponsorship:plist2", JSON.stringify({life:plState.life, what:plState.what, stage:plState.stage, owner:plState.owner, mine:plState.mine})); }catch(e){} }
+  var PL_LIFE = [["open", "Open", "Open Prospects", "being worked on", "#e8b04a", "l-prospect"],
+                 ["hold", "Hold", "On Hold", "not now, follow up later", "#74bfeb", "l-applied"],
+                 ["lost", "Lost", "Lost", "chose not to sponsor", "#ff8f7d", "l-lost"]];
+  function plLifeOf(it){ return it.stage === "Hold" ? "hold" : it.stage === "Lost" ? "lost" : PL_STAGES.indexOf(it.stage) >= 0 ? "open" : ""; }
+  /* what a prospect is for, matched against the Sponsors page's picks (a summit, Workgroups, each other type),
+     plus "summit:-" for a summit prospect with no summit picked yet */
+  function plWhatMatch(it, w){
+    if(!w) return true;
+    var ty = (it.rec && leadType(it.rec)) || it.type, sm = (it.rec || {}).summit || "";
+    if(w === "summit:-") return coTypeOf(ty) === "summit" && !sm;
+    if(SUMMITS[w]) return coTypeOf(ty) === "summit" && (sm === w || (/Series$/.test(sm) && w.split(" ")[1] === sm.split(" ")[0]));
+    if(w === "workgroup") return coTypeOf(ty) === "workgroup";
+    return ty === w.slice(5);
+  }
+  function plForOf(it){
+    var r = it.rec || {}, ty = leadType(r);
+    if(coTypeOf(ty) === "summit") return r.summit ? esc(r.summit.replace(/ Summit$/, "")) + '<small>Summit</small>' : 'Summit<small>which summit not picked yet</small>';
+    return esc(typeName(ty)) + (r.workgroup ? '<small>' + esc(r.workgroup) + '</small>' : '');
+  }
   function renderProspectList(){
-    if(!$("pl-body") || !PIPE_OPEN || !others || !touches || !plState) return;
+    if(!$("pl-rows") || !PIPE_OPEN || !others || !touches || !plState) return;
     var me = whoAmI(), t = today();
+    var all = pipeItems(true).filter(function(it){ return it.kind === "lead" && plLifeOf(it); });
+    var mineAll = all.filter(function(it){ return it.owner === me && plLifeOf(it) === "open"; });
+    if(plState.mine == null) plState.mine = mineAll.length > 0;
+    var mineOk = function(it){ return !plState.mine || it.owner === me; };
+    var cnt = {open:0, hold:0, lost:0}; all.forEach(function(it){ if(mineOk(it)) cnt[plLifeOf(it)]++; });
+    /* the tiles: open, on hold and lost, as the Sponsors page has current, applied and past */
+    $("pl-tiles").innerHTML = PL_LIFE.map(function(L){
+      var fc = all.filter(function(it){ return mineOk(it) && plLifeOf(it) === L[0]; }).reduce(function(n, it){ return n + (it.amount || 0); }, 0);
+      return '<button type="button" class="cotile' + (plState.life === L[0] ? " on" : "") + '" data-pllife="' + L[0] + '" style="--k:' + L[4] + '">' +
+        '<b>' + cnt[L[0]] + '</b><span class="l">' + esc(L[2]) + '</span><span class="s">' + esc(L[3]) + (fc && L[0] !== "lost" ? " · " + esc(moneyK(fc)) + " forecast" : "") + '</span></button>';
+    }).join("");
+    /* the band: open prospects by stage; forecast by summit and kind; prospects by summit */
+    var open = all.filter(function(it){ return mineOk(it) && plLifeOf(it) === "open"; });
+    var tones = {"Lead":"#74bfeb", "Contacted":"#5fb3e6", "Meeting Scheduled":"#e8b04a", "Proposal":"#b79cff", "Verbal Commitment":"#5fd39a"};
+    var bySt = {}; open.forEach(function(it){ bySt[it.stage] = (bySt[it.stage] || 0) + 1; });
+    var acc = 0, stops = [];
+    PL_STAGES.forEach(function(sg){ if(!bySt[sg]) return; var a0 = acc / (open.length || 1) * 360; acc += bySt[sg]; stops.push(tones[sg] + " " + a0 + "deg " + (acc / (open.length || 1) * 360) + "deg"); });
+    var ring = 'conic-gradient(' + (stops.length ? stops.join(",") : "rgba(255,255,255,.12) 0deg 360deg") + ')';
+    var col1 = '<div class="m-bcol"><div class="m-bh">Open Prospects by Stage<span>select to see them</span></div><div class="m-donut"><div class="m-ring" style="background:' + ring + '"><b>' + open.length + '<small>' + (open.length === 1 ? "prospect" : "prospects") + '</small></b></div>' +
+      '<div class="m-leg">' + PL_STAGES.map(function(sg){ var n = bySt[sg] || 0;
+        return '<div class="m-legb" data-plstage="' + esc(sg) + '"><i style="background:' + tones[sg] + '"></i><span>' + esc(sg) + '</span><b>' + n + '</b><em>' + Math.round(n / (open.length || 1) * 100) + '%</em></div>'; }).join("") + '</div></div></div>';
+    var picks = spmWhatChoices().slice(1).concat([["summit:-", "Summit Not Picked"]]);
+    var rowsP = picks.map(function(pk){
+      var here = open.filter(function(it){ return plWhatMatch(it, pk[0]); });
+      return [pk[0], pk[1].replace(/ Summit$/, ""), here.length, here.reduce(function(n, it){ return n + (it.amount || 0); }, 0)];
+    }).filter(function(r){ return r[0] !== "summit:-" || r[2]; });
+    var maxF = Math.max.apply(null, rowsP.map(function(r){ return r[3]; }).concat([1])), maxN = Math.max.apply(null, rowsP.map(function(r){ return r[2]; }).concat([1]));
+    var totF = open.reduce(function(n, it){ return n + (it.amount || 0); }, 0);
+    var col2 = '<div class="m-bcol"><div class="m-bh">Forecast<span>open prospects · select one</span></div><div class="m-bars">' + rowsP.map(function(r){
+      return '<button type="button" class="m-bar m-owe" data-plpick="' + esc(r[0]) + '"><span>' + esc(r[1]) + (r[2] ? ' <em>(' + r[2] + ')</em>' : '') + '</span><span class="tr"><i style="width:' + Math.round(r[3] / maxF * 100) + '%;background:#e8b04a"></i></span><b>' + (r[3] ? esc(moneyK(r[3])) : '—') + '</b></button>';
+    }).join("") + '</div><div class="m-bnote"><b>' + esc(money(totF)) + '</b> forecast in all.</div></div>';
+    var col3 = '<div class="m-bcol"><div class="m-bh">Prospects by Summit<span>open prospects · select one</span></div><div class="m-bars">' + rowsP.map(function(r){
+      return '<button type="button" class="m-bar" data-plpick="' + esc(r[0]) + '"><span>' + esc(r[1]) + '</span><span class="tr"><i style="width:' + Math.round(r[2] / maxN * 100) + '%;background:#74bfeb"></i></span><b>' + r[2] + '</b></button>';
+    }).join("") + '</div></div>';
+    $("pl-band").innerHTML = col1 + col2 + col3;
     paintNewBox("pr");
-    var all = pipeItems(true).filter(function(it){ return it.kind === "lead"; });
-    var mine = all.filter(function(it){ return it.owner === me && PL_STAGES.indexOf(it.stage) >= 0; });
-    if(!plState.who) plState.who = mine.length ? "mine" : "all";
-    var showOk = function(it){
-      return plState.show === "hold" ? it.stage === "Hold" : plState.show === "lost" ? it.stage === "Lost" : PL_STAGES.indexOf(it.stage) >= 0;
-    };
-    var whoOk = function(it){ return plState.who !== "mine" || it.owner === me; };
-    /* Summit, Workgroup, Other, the same as the Pipeline (November 21, 2026); a summit prospect can be
-       narrowed to the summit it is for */
-    if(plState.type && ["summit", "workgroup", "other"].indexOf(plState.type) < 0) plState.type = coTypeOf(plState.type);
-    var sumOk = function(it){
-      if(!plState.summit) return true;
-      if(coTypeOf(it.type) !== "summit") return false;
-      var w = (it.rec || {}).summit || "";
-      if(plState.summit === "-") return !w;
-      return w === plState.summit || (/Series$/.test(w) && plState.summit.split(" ")[1] === w.split(" ")[0]);
-    };
-    var typeOk = function(it, ty){ return (!ty || coTypeOf(it.type) === ty) && sumOk(it); };
-    /* the stage tiles count what the type and owner buttons are showing */
-    var base = all.filter(function(it){ return whoOk(it) && typeOk(it, plState.type) && PL_STAGES.indexOf(it.stage) >= 0; });
-    var tones = ["#74bfeb", "#5fb3e6", "#e8b04a", "#b79cff", "#5fd39a"];
-    $("pl-tiles").innerHTML = PL_STAGES.map(function(sg, i){
-      var here = base.filter(function(it){ return it.stage === sg; }), sum = here.reduce(function(n, it){ return n + (it.amount || 0); }, 0);
-      return '<button type="button" class="cotile' + (plState.stage === sg ? " on" : "") + '" data-plstage="' + esc(sg) + '" style="--k:' + tones[i] + '">' +
-        '<b>' + here.length + '</b><span class="l">' + esc(sg) + '</span><span class="s">' + (sum ? esc(money(sum)) + " forecast" : "&nbsp;") + '</span></button>';
-    }).join("");
-    var sc = spxSummitChoices(), ps = $("pl-summit");
-    if(ps) ps.innerHTML = '<option value="">Every Summit</option>' + sc.map(function(x){ return '<option' + (x === plState.summit ? " selected" : "") + '>' + esc(x) + '</option>'; }).join("") +
-      '<option value="-"' + (plState.summit === "-" ? " selected" : "") + '>Summit Not Picked Yet</option>';
-    $("pl-types").innerHTML = [["", "All"], ["summit", "Summit"], ["workgroup", "Workgroup"], ["other", "Other"]].map(function(tc){
-      var cnt = all.filter(function(it){ return whoOk(it) && showOk(it) && typeOk(it, tc[0]); }).length;
-      return '<button type="button" data-pltype="' + esc(tc[0]) + '" aria-pressed="' + (plState.type === tc[0] ? "true" : "false") + '">' + esc(tc[1]) + ' <span class="segn">' + cnt + '</span></button>';
-    }).join("");
-    $("pl-who").innerHTML = [["mine", "My Prospects"], ["all", "Everyone"]].map(function(w){
-      return '<button type="button" data-plwho="' + w[0] + '" aria-pressed="' + (plState.who === w[0] ? "true" : "false") + '">' + w[1] + '</button>';
-    }).join("");
-    $("pl-show").innerHTML = [["open", "Open"], ["hold", "Hold"], ["lost", "Lost"]].map(function(w){
-      return '<button type="button" data-plshow="' + w[0] + '" aria-pressed="' + (plState.show === w[0] ? "true" : "false") + '">' + w[1] + '</button>';
-    }).join("");
+    /* filters */
+    $("pl-life").innerHTML = PL_LIFE.map(function(L){ return '<button type="button" data-pllife="' + L[0] + '" class="' + (plState.life === L[0] ? "on" : "") + '">' + esc(L[1]) + ' (' + cnt[L[0]] + ')</button>'; }).join("") +
+      '<button type="button" data-pllife="" class="' + (!plState.life ? "on" : "") + '">All (' + (cnt.open + cnt.hold + cnt.lost) + ')</button>';
+    var opt = function(id, list, cur){ $(id).innerHTML = list.map(function(o){ return '<option value="' + esc(o[0]) + '"' + (o[0] === cur ? " selected" : "") + '>' + esc(o[1]) + '</option>'; }).join(""); };
+    opt("pl-what", [["", "All Prospects"]].concat(picks), plState.what);
+    opt("pl-stage", [["", "All Stages"]].concat(PL_STAGES.map(function(sg){ return [sg, sg]; })), plState.stage);
+    opt("pl-owner", [["", "All Owners"]].concat(BENEFIT_OWNERS.map(function(o){ return [o, o]; })).concat([["-", "Unassigned"]]), plState.owner);
+    var mb = $("pl-mine"); if(mb){ mb.className = plState.mine ? "on" : ""; mb.setAttribute("aria-pressed", plState.mine ? "true" : "false"); }
+    /* the rows: one per prospect */
     var q = (plState.q || "").toLowerCase();
     var rows = all.filter(function(it){
-      if(!whoOk(it) || !showOk(it) || !typeOk(it, plState.type)) return false;
-      if(plState.stage && plState.show === "open" && it.stage !== plState.stage) return false;
-      if(q){ var r = it.rec || {}; if([it.company, it.contact, it.what, r.contactEmail, r.notes].join(" ").toLowerCase().indexOf(q) < 0) return false; }
+      if(!mineOk(it)) return false;
+      if(plState.life && plLifeOf(it) !== plState.life) return false;
+      if(!plWhatMatch(it, plState.what)) return false;
+      if(plState.stage && it.stage !== plState.stage) return false;
+      if(plState.owner && (plState.owner === "-" ? it.owner : it.owner !== plState.owner)) return false;
+      if(q){ var r = it.rec || {}; if([it.company, it.contact, r.contactEmail, r.notes].join(" ").toLowerCase().indexOf(q) < 0) return false; }
       return true;
-    }).sort(function(x, y){
-      var nx = x.nextDate || "9999", ny = y.nextDate || "9999";
-      return nx !== ny ? (nx < ny ? -1 : 1) : String(x.company).localeCompare(String(y.company));
-    });
-    var due = mine.filter(function(it){ return it.nextDate && parseDate(it.nextDate) <= t; }).length;
+    }).sort(function(x, y){ return String(x.company).localeCompare(String(y.company)); });
+    $("pl-count").textContent = rows.length + (rows.length === 1 ? " prospect" : " prospects") +
+      (rows.reduce(function(n, it){ return n + (it.amount || 0); }, 0) ? " · " + money(rows.reduce(function(n, it){ return n + (it.amount || 0); }, 0)) + " forecast" : "");
+    var due = mineAll.filter(function(it){ return it.nextDate && parseDate(it.nextDate) <= t; }).length;
     var pip = $("pip-plist"); if(pip){ pip.textContent = due; pip.className = "pip" + (due ? "" : " quiet"); pip.title = due ? due + " of your prospects due for a follow-up" : ""; }
-    $("pl-count").textContent = rows.length + (rows.length === 1 ? " prospect" : " prospects");
-    if(!rows.length){
-      $("pl-body").innerHTML = '<tr><td colspan="8"><div class="empty">No prospects here' + (plState.who === "mine" ? " owned by you. Try Everyone" : ". Try another type") + ', or Add a Prospect.</div></td></tr>';
-      return;
+    var initial = function(nm){ var ch = String(nm || "").trim().charAt(0).toUpperCase(); return /[A-Z]/.test(ch) ? ch : "#"; };
+    var html = "";
+    if(rows.length > 50 || plState.alpha){
+      var cntA = {}; rows.forEach(function(it){ var ch = initial(it.company); cntA[ch] = (cntA[ch] || 0) + 1; });
+      if(plState.alpha && !cntA[plState.alpha]) plState.alpha = "";
+      html += '<div class="m-alpha" role="group" aria-label="Jump to a letter"><button type="button" data-plalpha="" class="' + (!plState.alpha ? "on" : "") + '">All</button>' +
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("").map(function(ch){ return '<button type="button" data-plalpha="' + ch + '" class="' + (plState.alpha === ch ? "on" : "") + '"' + (cntA[ch] ? '' : ' disabled') + '>' + ch + '</button>'; }).join("") + '</div>';
+      if(plState.alpha) rows = rows.filter(function(it){ return initial(it.company) === plState.alpha; });
     }
-    $("pl-body").innerHTML = rows.map(function(it){
-      /* the stage is changed on the company card, not in the list (Jonna, November 21, 2026) */
-      var stCell = '<span class="st ' + (PIPE_TONE[it.stage] || "") + '">' + esc(it.stage) + '</span>';
-      var nd = it.nextDate ? parseDate(it.nextDate) : null, over = nd && nd <= t;
-      return '<tr data-fkind="lead" data-fid="' + esc(it.id) + '">' +
-        '<td><b>' + esc(it.company) + '</b>' + (it.contact ? '<div class="sub2">' + esc(it.contact) + '</div>' : '') + '</td>' +
-        '<td><span class="tag ftype">' + esc(typeName(it.type)) + '</span></td>' +
-        /* Which Summit is set on the prospect, in its company card, and only shown here (Jonna, November 21, 2026:
-           "why would this not be done in the right pane ... it should populate from the company card") */
-        '<td>' + (coTypeOf(it.type) === "summit"
-          ? ((it.rec && it.rec.summit) ? esc(it.rec.summit) : '<span class="sub2">Summit not picked yet</span>')
-          : esc(it.what || "\u2014")) + '</td><td>' + stCell + '</td>' +
-        '<td>' + esc(it.owner || "Unassigned") + '</td>' +
-        '<td class="r num">' + (it.amount ? esc(money(it.amount)) : "\u2014") + '</td>' +
-        '<td>' + (it.nextDate ? '<span class="' + (over ? "bad" : "") + '">' + esc(fmtDate(it.nextDate)) + '</span>' : '<span class="sub2">Not set</span>') +
-          (it.nextText ? '<div class="sub2">' + esc(it.nextText) + '</div>' : '') + '</td>' +
-        '<td>' + (it.last ? esc(fmtDate(it.last)) : "\u2014") + '</td></tr>';
+    var lifeL = {}; PL_LIFE.forEach(function(L){ lifeL[L[0]] = L; });
+    html += '<div class="m-rhead"><span>Company</span><span>Prospect For</span><span>Status</span><span>Stage</span><span>Owner</span><span>Next Follow-Up</span><span></span></div>';
+    if(!rows.length) html += '<div class="empty">' + (plState.mine ? "None of yours match these filters. Turn off My Prospects Only to see everyone’s." : "Nothing matches these filters.") + '</div>';
+    html += rows.slice(0, plState.shown).map(function(it){
+      var L = lifeL[plLifeOf(it)], st = it.stage, stc = st === "Lost" ? "s-lost" : st === "Hold" ? "s-close" : "s-open";
+      var nd = it.nextDate ? parseDate(it.nextDate) : null;
+      return '<button type="button" class="m-row" data-spco="' + esc(companyKey(it.company)) + '" data-plid="' + esc(it.id) + '"><span class="nm">' + esc(it.company) + '<small>' + esc(it.contact || (it.rec || {}).contactEmail || "No contact yet") + '</small></span>' +
+        '<span class="what">' + plForOf(it) + '</span><span class="hide-sm"><span class="m-pill ' + L[5] + '">' + esc(L[1]) + '</span></span>' +
+        '<span><span class="m-pill ' + stc + '">' + esc(st) + '</span></span>' +
+        '<span class="hide-sm' + (it.owner ? '' : ' muted') + '">' + esc(it.owner || "Unassigned") + '</span>' +
+        '<span class="hide-sm">' + (it.nextDate ? '<span class="' + (nd && nd <= t ? "bad" : "") + '">' + esc(fmtDate(it.nextDate)) + '</span>' + (it.nextText ? '<small class="muted" style="display:block;font-size:11.5px;">' + esc(it.nextText) + '</small>' : '') : '<span class="muted">No follow-up</span>') + '</span>' +
+        '<span class="caret">▶</span></button>';
     }).join("");
+    if(rows.length > plState.shown) html += '<button type="button" class="m-more" data-plmore="1">Show ' + Math.min(50, rows.length - plState.shown) + ' More of ' + (rows.length - plState.shown) + '</button>';
+    $("pl-rows").innerHTML = html;
   }
+  document.addEventListener("click", function(ev){
+    var el = ev.target, b; if(!el || !el.closest) return;
+    var go = function(){ plState.shown = 50; plKeep(); renderProspectList(); };
+    if((b = el.closest("[data-pllife]"))){ plState.life = b.getAttribute("data-pllife"); plState.alpha = ""; go(); return; }
+    if((b = el.closest("[data-plpick]"))){ plState.what = b.getAttribute("data-plpick"); plState.life = "open"; plState.stage = ""; plState.alpha = ""; go(); $("pl-rows").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+    if((b = el.closest("[data-plstage]"))){ plState.stage = b.getAttribute("data-plstage"); plState.life = "open"; go(); $("pl-rows").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+    if(el.closest("#pl-mine")){ plState.mine = !plState.mine; go(); return; }
+    if((b = el.closest("[data-plalpha]"))){ plState.alpha = b.getAttribute("data-plalpha"); renderProspectList(); return; }
+    if(el.closest("[data-plmore]")){ plState.shown += 50; renderProspectList(); return; }
+  });
+  document.addEventListener("change", function(ev){
+    var el = ev.target; if(!el) return;
+    if(el.id === "pl-what"){ plState.what = el.value; plState.shown = 50; plKeep(); renderProspectList(); }
+    if(el.id === "pl-stage"){ plState.stage = el.value; if(el.value) plState.life = "open"; plState.shown = 50; plKeep(); renderProspectList(); }
+    if(el.id === "pl-owner"){ plState.owner = el.value; plState.shown = 50; plKeep(); renderProspectList(); }
+  });
 
   /* the sponsorships a company has now or is working toward, as small labels */
   function coSponsorChips(c){
@@ -12214,10 +12253,6 @@ a series deal is counted once, at its full amount.</div>
     if((b = el.closest("[data-go]"))){ ev.preventDefault(); showView(b.getAttribute("data-go")); window.scrollTo(0, 0); return; }
     if((b = el.closest("[data-corel]"))){ var r = b.getAttribute("data-corel"); coState.rel = coState.rel === r ? "" : r; renderCompanies(); return; }
     if((b = el.closest("[data-cotype]"))){ coState.type = b.getAttribute("data-cotype"); renderCompanies(); return; }
-    if((b = el.closest("[data-pltype]"))){ plState.type = b.getAttribute("data-pltype"); plKeep(); renderProspectList(); return; }
-    if((b = el.closest("[data-plwho]"))){ plState.who = b.getAttribute("data-plwho"); plKeep(); renderProspectList(); return; }
-    if((b = el.closest("[data-plshow]"))){ plState.show = b.getAttribute("data-plshow"); plState.stage = ""; plKeep(); renderProspectList(); return; }
-    if((b = el.closest("[data-plstage]"))){ var ps = b.getAttribute("data-plstage"); plState.stage = plState.stage === ps ? "" : ps; plState.show = "open"; renderProspectList(); return; }
     if(el.closest("#pl-new")){ $("new-lead").click(); return; }
     if((b = el.closest("[data-cotab]"))){ coTab = b.getAttribute("data-cotab"); paintCompany(); return; }
     if((b = el.closest("[data-actf]"))){ actFilter = b.getAttribute("data-actf"); paintCompany(); return; }
@@ -12245,13 +12280,12 @@ a series deal is counted once, at its full amount.</div>
     var el = ev.target; if(!el) return;
     if(el.id === "co-owner"){ coState.owner = el.value; renderCompanies(); }
     if(el.id === "co-type"){ coState.type = el.value; renderCompanies(); }
-    if(el.id === "pl-summit"){ plState.summit = el.value; if(el.value && el.value !== "-") plState.type = "summit"; plKeep(); renderProspectList(); }
     if(el.getAttribute && el.getAttribute("data-coowner")) coSetOwner(el.getAttribute("data-coowner"), el.value);
     if(el.getAttribute && el.getAttribute("data-tpabout")) coSetAbout(el.getAttribute("data-tpabout"), el.value);
   });
   document.addEventListener("input", function(ev){
     if(ev.target && ev.target.id === "co-q"){ coState.q = ev.target.value; renderCompanies(); }
-    if(ev.target && ev.target.id === "pl-q"){ plState.q = ev.target.value; renderProspectList(); }
+    if(ev.target && ev.target.id === "pl-q"){ plState.q = ev.target.value; plState.shown = 50; renderProspectList(); }
   });
 
   showView(currentView);

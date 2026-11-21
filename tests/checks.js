@@ -388,6 +388,24 @@ const appBy = async (page, test) => (await apps(page)).find(test);
 
   /* ---- one Pipeline, Other Sponsorships, the mismosponsor@ mailbox (November 18, 2026) ---- */
   const fileOf = name => P(portal, n => window.__practice.file(n), name);
+  /* a save that doesn't land says so, and no email goes about it (Guidehouse, November 20, 2026) */
+  await check('an approval that fails to save says Not Saved, sends no email, and shows what is saved', async () => {
+    const before = (await fileOf('applications')).docs['app-ms27-t0008'];
+    const ob0 = Object.keys((await fileOf('outbox') || {docs: {}}).docs || {}).length;
+    await openRec('app-ms27-t0008'); await portal.waitForTimeout(300);
+    await P(portal, () => window.__practice.failNext('applications', 1));
+    await portal.click('#drawer [data-setstatus="Approved"]'); await portal.waitForTimeout(4000);
+    const after = (await fileOf('applications')).docs['app-ms27-t0008'];
+    expect(after.status === before.status, 'the failed save changed the record anyway: ' + after.status);
+    const ob1 = Object.keys((await fileOf('outbox') || {docs: {}}).docs || {}).length;
+    expect(ob1 === ob0, 'an email was queued for an approval that did not save');
+    const tst = await P(portal, () => document.getElementById('toast').innerText);
+    expect(/NOT saved/i.test(tst), 'no Not Saved message: ' + tst.slice(0, 200));
+    const local = await P(portal, () => document.getElementById('d-msg').textContent);
+    expect(/Not saved/.test(local), 'the panel does not say Not saved: ' + local);
+    await P(portal, () => window.__practice.failNext('applications', 0));
+    await P(portal, () => document.getElementById('d-close').click());
+  });
   const toTodo = async () => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
     await portal.click('.tab[data-view="todo"]'); await portal.waitForTimeout(300);

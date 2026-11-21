@@ -8493,34 +8493,44 @@ a series deal is counted once, at its full amount.</div>
      it under, the contact, the application or prospect number, the Aptify order ID,
      the prospectus reference and the opportunity. */
   function searchable(v){ return String(v == null ? "" : v).toLowerCase(); }
+  /* The search finds the company, and opens its card (Jonna, November 21, 2026: "when I search a company
+     the company card should come up, not a specific sponsorship card"). It still searches every record
+     (application and order numbers, contacts, billing names, workgroups), but each company is listed once. */
   window.__portalFind = function(t){
-    var out = [];
-    apps.forEach(function(a){
-      var hay = [a.company, a.billingName, a.contactName, a.contactEmail, a.appNo,
-                 a.opportunity, a.invoiceNumber, a.prospectusRef, a.event].map(searchable).join(" ");
-      if(hay.indexOf(t) < 0) return;
-      var where = [a.appNo, a.event, a.status].filter(Boolean).join(" \u00b7 ");
-      if(a.billingName && searchable(a.billingName).indexOf(t) >= 0 &&
-         searchable(a.company).indexOf(t) < 0){ where += " \u00b7 invoiced as " + a.billingName; }
-      out.push({group:"Sponsors", name:a.company || a.appNo, where:where,
-        go:function(){ showView("flow"); openDrawer(a.id, null); }});
-    });
-    leads.forEach(function(l){
-      var hay = [l.company, l.contactName, l.contactEmail, l.contactPhone, l.leadNo,
-                 l.owner, l.interestedIn, l.status].map(searchable).join(" ");
-      if(hay.indexOf(t) < 0) return;
-      var where = [l.leadNo, l.status, l.owner].filter(Boolean).join(" \u00b7 ");
-      out.push({group:"Prospects", name:l.company || l.leadNo, where:where,
-        go:function(){ showView("flow"); openLeadDrawer(l.id, null); }});
-    });
-    billAll().forEach(function(r){
-      var hay = [r.company, r.billingName, r.contactName, r.contactEmail, r.no, r.invoiceNumber,
-                 r.workgroup, r.what, r.webinar].map(searchable).join(" ");
-      if(hay.indexOf(t) < 0) return;
-      var k = r.__kind;
-      out.push({group: k === "other" ? "Other Sponsorships" : "Workgroups", name:r.company || r.no,
-        where:[r.no, k === "other" ? otypeOf(r).name : r.workgroup, r.status].filter(Boolean).join(" \u00b7 "),
-        go:function(){ showView("flow"); openBill(k, r.id); }});
+    FLOW_CACHE = pipeItems();
+    var map = companies(), out = [];
+    var has = function(v){ return v != null && v !== "" && searchable(v).indexOf(t) >= 0; };
+    Object.keys(map).forEach(function(k){
+      var c = map[k], why = "", any = has(c.name);
+      /* each record's searchable fields; the first that matches (other than the company's own name) says why it came up */
+      var look = function(fields){
+        fields.forEach(function(f){
+          if(!has(f[0])) return; any = true;
+          if(!why && f[1] && !has(c.name)) why = f[1];
+        });
+      };
+      c.apps.forEach(function(a){
+        look([[a.company, ""], [a.billingName, "invoiced as " + a.billingName], [a.contactName, "contact " + a.contactName],
+              [a.contactEmail, "contact " + a.contactEmail], [a.appNo, a.appNo], [a.invoiceNumber, "order " + a.invoiceNumber],
+              [a.prospectusRef, a.prospectusRef], [a.opportunity, a.opportunity], [a.event, ""]]);
+      });
+      c.leads.forEach(function(l){
+        look([[l.company, ""], [l.contactName, "contact " + l.contactName], [l.contactEmail, "contact " + l.contactEmail],
+              [l.contactPhone, "contact " + l.contactName], [l.leadNo, l.leadNo], [l.interestedIn, ""]]);
+      });
+      c.bills.forEach(function(r){
+        look([[r.company, ""], [r.billingName, "invoiced as " + r.billingName], [r.contactName, "contact " + r.contactName],
+              [r.contactEmail, "contact " + r.contactEmail], [r.no, r.no], [r.invoiceNumber, "order " + r.invoiceNumber],
+              [r.workgroup, r.workgroup], [r.what, ""], [r.webinar, ""]]);
+      });
+      if(!any) return;
+      var spons = (c.live || []).map(function(a){ return [a.event, levelOf(a) ? tierLabel(levelOf(a)) : ""].filter(Boolean).join(" "); })
+        .concat((c.liveB || []).map(function(r){ return r.__kind === "workgroup" ? (r.workgroup || "Workgroup") : otypeOf(r).name; }))
+        .filter(Boolean);
+      var where = [c.rel, spons.length > 2 ? spons.slice(0, 2).join(", ") + " +" + (spons.length - 2) : spons.join(", "), why]
+        .filter(Boolean).join(" \u00b7 ");
+      out.push({group:/Prospect|Lost/.test(c.rel) ? "Prospects" : "Sponsors", name:c.name, where:where,
+        go:function(){ openCompany(k, "overview"); }});
     });
     return out;
   };

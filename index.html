@@ -1129,7 +1129,7 @@
   .spx-sub{font-size:11.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3); font-weight:700; margin:14px 0 2px;}
   .spx-pick-s{font:inherit; font-size:12px; padding:3px 6px; border:1px solid var(--border-strong); border-radius:4px; background:var(--surface-2); color:var(--ink);}
   /* Home */
-  .hm-hero{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:18px; color:#fff; border-radius:12px; padding:22px 24px; margin-bottom:22px;
+  .hm-hero{display:grid; grid-template-columns:minmax(0,1fr); gap:18px; color:#fff; border-radius:12px; padding:22px 24px; margin-bottom:22px;
     position:relative; overflow:hidden; background:radial-gradient(120% 120% at 100% 0%, rgba(116,191,235,.22), rgba(116,191,235,0) 55%), linear-gradient(160deg,#10324a,#0b2436);
     border:1px solid rgba(116,191,235,.18); box-shadow:0 10px 24px -14px rgba(6,32,47,.6);}
   .hm-hero::after{content:""; position:absolute; right:-60px; top:-80px; width:280px; height:280px; border-radius:50%;
@@ -1212,6 +1212,8 @@
   .hm-need .t{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} .hm-need .t b{font-weight:600; margin-right:6px;} .hm-need .t span{color:rgba(255,255,255,.7);}
   .hm-need .w{font-size:12px; color:rgba(255,255,255,.55);}
   .hm-clear{font-size:13px; color:rgba(255,255,255,.7); padding:6px 2px;}
+  .cp-sumpick{display:inline-flex; align-items:center; gap:6px; margin-left:auto; margin-right:8px; font-size:12px; color:var(--ink-3);}
+  .cp-sumpick select{font:inherit; font-size:12.5px; padding:4px 6px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--ink);}
   .hm-all{margin-top:4px; font-size:13px; font-weight:600; color:#74bfeb; cursor:pointer;} .hm-all:hover{color:#fff;}
   .hm-h2row{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0 0 12px; flex-wrap:wrap;}
   .hm-h2{font-size:20px; font-weight:700; margin:0; color:var(--ink);} .hm-asof{font-size:12.5px; color:var(--ink-3);}
@@ -2066,7 +2068,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <summary>Start Here: Home, the Outreach Planner, Sponsors and Prospects</summary>
         <div class="hbody">
           <ul>
-            <li>The portal works like Member 360. <b>Home</b> is the day and the season at a glance, with what&rsquo;s on your plate.</li>
+            <li>The portal works like Member 360. <b>Home</b> is the day and the season at a glance, with Just Came In across the top.</li>
             <li><b>Outreach Planner</b> (it was To Do) works like Member 360&rsquo;s. The dark band says where to start and counts what you communicated this week, follow-ups due, what is past due, what is planned and the applications waiting for review; select a number to go to it. Choose <b>Everyone</b> or one person, and <b>This Week</b>, <b>Next Week</b> or <b>Past Due</b>.</li>
             <li><b>Up Next</b> is the oldest thing past due, then today&rsquo;s: <b>Email</b> them, <b>Log a Touchpoint</b>, <b>Move to&hellip;</b> another day or <b>Mark Done</b>. <b>Show the next one</b> skips ahead.</li>
             <li>The <b>week board</b> has a column for each weekday (and <b>Past Due</b> when something was missed). Each card is a prospect&rsquo;s follow-up date, a next step from a touchpoint, or a planned touch. Drag a card onto another day to move it (a prospect&rsquo;s follow-up date moves with it), tick it when it&rsquo;s done, or select it to open the company. <b>Undo</b> takes back the last change.</li>
@@ -2076,7 +2078,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there. <b>Download Logo</b> saves the logo the sponsor sent with the online prospectus, straight from the portal (no SharePoint sign-in). <b>+ Add a Logo</b> keeps a logo a sponsor emailed (up to 4 MB), and <b>Replace Logo</b> swaps it. A sponsor already on the website gets <b>Open the Logo</b>. The file is also under Company Details and on the application.</li>
             <li><b>New Sponsors</b> on Sponsors lists every sponsorship that started in a period: <b>This Month</b>, <b>Last Month</b>, <b>This Year</b>, any month from <b>Pick a Month</b>, or your own <b>Dates</b>, for Summit, Workgroup, Other or all of them, with the total.</li>
             <li>The <b>Pipeline</b> shows one kind at a time: <b>Summit</b> (where it opens), <b>Workgroup</b> or <b>Other</b>. Every number and stage box lists what makes it up.</li>
-            <li><b>Prospects</b> lists every prospect, one row each. Pick Summit, Workgroup or Other and My Prospects; pick a summit to see who is a prospect for it, and set <b>Which Summit</b> right in the row.</li>
+            <li><b>Prospects</b> lists every prospect, one row each. Pick Summit, Workgroup or Other and My Prospects; pick a summit to see who is a prospect for it. <b>Which Summit</b> is set on the prospect's box in its company card (select the row) and shows in the list.</li>
             <li><b>Summit Sponsorships</b>, <b>Workgroup Sponsorships</b> and <b>Other Sponsorships</b> are the full lists of each kind.</li>
             <li><b>One company card.</b> Wherever you select a sponsorship or a prospect (these pages, the Pipeline, Home), it opens inside its company&rsquo;s card, under <b>&larr; Back to</b> the company, the way Member 360 does. The card itself shows everything the company has: every sponsorship, prospect and conversation.</li>
           </ul>
@@ -2212,7 +2214,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <summary>Home, Sponsors and Prospects: It&rsquo;s About the Company</summary>
         <div class="hbody">
           <ul>
-            <li><b>Home</b> is the day at a glance: what&rsquo;s on your plate this week (follow-ups due and invoices past due), the summit season&rsquo;s money, the sales pipeline, the next summit, emails to mismosponsor@, money by type and what the team has been doing. Select any tile to go to it.</li>
+            <li><b>Home</b> is the day at a glance: what just came in, a line on the season (past due and follow-ups due open the Pipeline), the summit season&rsquo;s money, the sales pipeline, the next summit, emails to mismosponsor@, and money by type. Select any tile to go to it.</li>
             <li><b>Sponsors</b> lists every company that sponsors now, has applied, or has sponsored before, once each: every sponsorship it has, the stage it&rsquo;s at, its owner, its money over the last 12 months and its last touch. The tiles and the type buttons (Summit, Workgroup, each other type) filter the list.</li>
             <li><b>Prospects</b> lists every prospect, one row each: its type, what they&rsquo;re interested in, the stage (change it right in the row), the owner, the forecast, the next follow-up and the last touch. One click on <b>Summit</b> and <b>My Prospects</b> shows just your summit prospects, and the page remembers that choice in your browser. The tiles count each stage; select one to see only it. <b>Hold</b> and <b>Lost</b> show the rest. The red count on the menu is your prospects due for a follow-up.</li>
             <li><b>The company record</b> brings everything together: its sponsorships of every kind and its prospects, its year-by-year sponsorship journey, money, contacts, and one Activity timeline of emails, notes and changes. Change a prospect&rsquo;s stage on its stage bar, <b>Log a Touchpoint</b> (a call, email, meeting or conversation, what it was about, and a next step with a follow-up date), set the company&rsquo;s <b>Owner</b>, or <b>Add a Prospective Sponsorship</b>. The buttons on each sponsorship open the record itself.</li>
@@ -3889,7 +3891,7 @@ a series deal is counted once, at its full amount.</div>
         "whole relationship with MISMO: sponsorships, prospects, emails, notes, contacts and money."},
     plist: {t:"Prospects",
       s:"Everyone you are working toward a sponsorship with, one row per prospect. Pick Summit, Workgroup or Other and My Prospects to see " +
-        "just yours, and pick a summit to see who is a prospect for it; the page remembers your choice. Set which summit a summit prospect is for, change a stage right in its row, and select a row to open the company. " +
+        "just yours, and pick a summit to see who is a prospect for it; the page remembers your choice. Change a stage right in its row, and select a row to open the company, where you set which summit a summit prospect is for. " +
         "A prospect leaves this list once they apply (summit) or their sponsorship is started (workgroup and other types)."},
     flow: {t:"Pipeline",
       s:"Where every deal stands, from first contact to paid, one kind at a time: <b>Summit</b> (where it opens), <b>Workgroup</b> or <b>Other</b>. The top row is " +
@@ -11555,10 +11557,12 @@ a series deal is counted once, at its full amount.</div>
     var l = findById(leads, el.getAttribute("data-leadsummit")); if(!l || !el.value) return;
     var after = JSON.parse(JSON.stringify(l)); after.summit = el.value;
     after.history = (after.history || []).concat([{at:iso(today()), who:whoAmI(), text:"Summit set to " + el.value + "."}]);
-    saveLead(after);
-    addLog(after.leadNo, "prospect for " + el.value, whoAmI());
-    toast((after.company || after.leadNo) + " is a prospect for " + el.value + ".", "", "Saved");
-    renderSpx(); renderTodo(); renderProspectList();
+    var pick = el.value;
+    saveLead(after).then(function(){
+      addLog(after.leadNo, "prospect for " + pick, whoAmI());
+      toast((after.company || after.leadNo) + " is a prospect for " + pick + ".", "", "Saved");
+    }, function(){});
+    renderSpx(); renderTodo(); renderProspectList(); if(coOpen) paintCompany();
   });
   /* ---------------- Prospects (November 19, 2026) ----------------
      One row per prospect (a company with a summit and a workgroup prospect has two), from the same
@@ -11636,9 +11640,10 @@ a series deal is counted once, at its full amount.</div>
       return '<tr data-fkind="lead" data-fid="' + esc(it.id) + '">' +
         '<td><b>' + esc(it.company) + '</b>' + (it.contact ? '<div class="sub2">' + esc(it.contact) + '</div>' : '') + '</td>' +
         '<td><span class="tag ftype">' + esc(typeName(it.type)) + '</span></td>' +
-        '<td>' + (coTypeOf(it.type) === "summit" && canWrite
-          ? '<select class="spx-pick-s pl-sum" data-leadsummit="' + esc(it.id) + '" aria-label="Which summit for ' + esc(it.company) + '"><option value="">Which Summit\u2026</option>' +
-              sc.concat((it.rec && it.rec.summit && sc.indexOf(it.rec.summit) < 0) ? [it.rec.summit] : []).map(function(x){ return '<option' + (x === (it.rec || {}).summit ? " selected" : "") + '>' + esc(x) + '</option>'; }).join("") + '</select>'
+        /* Which Summit is set on the prospect, in its company card, and only shown here (Jonna, November 21, 2026:
+           "why would this not be done in the right pane ... it should populate from the company card") */
+        '<td>' + (coTypeOf(it.type) === "summit"
+          ? ((it.rec && it.rec.summit) ? esc(it.rec.summit) : '<span class="sub2">Summit not picked yet</span>')
           : esc(it.what || "\u2014")) + '</td><td>' + stCell + '</td>' +
         '<td>' + esc(it.owner || "Unassigned") + '</td>' +
         '<td class="r num">' + (it.amount ? esc(money(it.amount)) : "\u2014") + '</td>' +
@@ -11804,6 +11809,16 @@ a series deal is counted once, at its full amount.</div>
         '<i></i><span>' + esc(short[s] || s) + '</span></button>';
     }).join("") + '</div>';
   }
+  /* Which Summit for a summit prospect, set right on its company card (Jonna, November 21, 2026) */
+  function coSummitPick(it){
+    if(it.kind !== "lead" || !it.rec || leadType(it.rec) !== "summit") return "";
+    var cur = it.rec.summit || "", sc = spxSummitChoices();
+    if(cur && sc.indexOf(cur) < 0) sc = sc.concat([cur]);
+    if(!canWrite) return '<span class="cp-sumpick">Which Summit <b>' + esc(cur || "Not picked yet") + '</b></span>';
+    return '<label class="cp-sumpick">Which Summit <select class="spx-pick-s" data-leadsummit="' + esc(it.id) + '" aria-label="Which summit for ' + esc(it.company) + '">' +
+      (cur ? '' : '<option value="">Not picked yet</option>') +
+      sc.map(function(x){ return '<option' + (x === cur ? " selected" : "") + '>' + esc(x) + '</option>'; }).join("") + '</select></label>';
+  }
   function coOppCard(it){
     var r = it.rec, open = it.kind === "lead" ? "See the Prospect" : "See the Details";
     return '<div class="cp-card opp"><div class="cp-head"><div><span class="tag ftype" style="border-left:3px solid ' + TYPE_COLOR[coTypeOf(it.type)] + '">' + esc(typeName(it.type)) + '</span> ' +
@@ -11812,7 +11827,7 @@ a series deal is counted once, at its full amount.</div>
       '<div class="cp-next"><div><span class="k">' + (it.kind === "lead" ? "Next Step" : "Waiting On") + '</span>' +
         '<span class="t">' + esc(it.nextText || (it.kind === "lead" ? "No next step set" : it.stage)) + '</span></div>' +
         '<div class="r">' + (it.nextDate ? '<b' + (parseDate(it.nextDate) <= today() ? ' class="bad"' : '') + '>' + esc(fmtDate(it.nextDate)) + '</b><span>follow-up</span>' : '') + '</div></div>' +
-      '<div class="cp-cardft"><span class="sub2">' + esc(it.no || "") + (it.owner ? " · " + esc(it.owner) : "") + '</span>' +
+      '<div class="cp-cardft"><span class="sub2">' + esc(it.no || "") + (it.owner ? " · " + esc(it.owner) : "") + '</span>' + coSummitPick(it) +
         '<button class="btn ghost sm" type="button" data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '" data-direct="1">' + open + '</button></div></div>';
   }
   function coTabHtml(c, acts, cons){
@@ -11836,7 +11851,7 @@ a series deal is counted once, at its full amount.</div>
           (it.what && it.rec && leadType(it.rec) !== "workgroup" ? " \u00b7 " + it.what : (it.kind === "lead" && it.rec && it.rec.workgroup ? " \u00b7 " + it.rec.workgroup : "")) : (it.what || typeName(it.type));
         var nx = it.nextText ? "Next: " + it.nextText + (it.nextDate ? ", " + fmtDate(it.nextDate) : "") : (it.stage === "Paid" ? "Paid" : "");
         return '<div class="cp-stepcard"><div class="cp-stephd"><b>' + esc(title) + '</b><span>' + esc(nx) + '</span></div>' + stepsBar(it) +
-          '<div class="cp-cardft" style="margin-top:8px;"><span class="sub2">' + esc(typeName(it.type)) + (it.no ? " \u00b7 " + esc(it.no) : "") + (it.amount ? " \u00b7 " + esc(money(it.amount)) : "") + '</span>' +
+          '<div class="cp-cardft" style="margin-top:8px;"><span class="sub2">' + esc(typeName(it.type)) + (it.no ? " \u00b7 " + esc(it.no) : "") + (it.amount ? " \u00b7 " + esc(money(it.amount)) : "") + '</span>' + coSummitPick(it) +
           '<button class="btn ghost sm" type="button" data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '" data-direct="1">' + (it.kind === "lead" ? "See the Prospect" : "See the Details") + '</button></div></div>';
       }).join("") || '<div class="cp-stepcard"><div class="cp-stephd"><b>Not sponsoring or a prospect right now</b></div><div class="fldnote" style="margin:0;">' +
         (canWrite ? 'Use <b>Add a Prospective Sponsorship</b> to start one.' : '') + '</div></div>';
@@ -12130,14 +12145,9 @@ a series deal is counted once, at its full amount.</div>
       (due.length ? ', <a class="hm-em late" data-go="flow">' + due.length + ' follow-up' + (due.length === 1 ? "" : "s") + ' due</a>' : '') +
       (inApps.length ? ', <a class="hm-em" data-go="todo">' + inApps.length + ' application' + (inApps.length === 1 ? "" : "s") + ' to review</a>' : '') +
       (newP.length ? ', and <a class="hm-em" data-go="plist">' + newP.length + ' new prospect' + (newP.length === 1 ? "" : "s") + ' this week</a>' : '') + '.' +
-      (nextSm ? ' ' + esc((SUMMITS[nextSm].label || nextSm).replace(/ Summit$/, "")) + ' opens in ' + smDays + ' days.' : '') + '</p></div>' +
-      '<div class="hm-needs"><div class="hm-nh">On Your Plate <span>next 7 days</span></div>' +
-      (plate.length ? plate.slice(0, 5).map(function(it){
-        return '<button type="button" class="hm-need' + (it.late || (it.nextDate && parseDate(it.nextDate) < t) ? " late" : "") + '" data-co="' + esc(companyKey(it.company)) + '">' +
-          '<span class="d">' + esc(it.late ? "Past due" : fmtDate(it.nextDate).replace(/, \d{4}$/, "")) + '</span><span class="t"><b>' + esc(it.company) + '</b><span>' + esc(it.nextText || it.stage) + '</span></span>' +
-          '<span class="w">' + esc((it.owner || "").split(" ")[0]) + '</span></button>';
-      }).join("") : '<div class="hm-clear">Nothing due in the next week.</div>') +
-      '<a class="hm-all" data-go="flow">Open the Pipeline →</a></div>';
+      (nextSm ? ' ' + esc((SUMMITS[nextSm].label || nextSm).replace(/ Summit$/, "")) + ' opens in ' + smDays + ' days.' : '') + '</p></div>';
+    /* On Your Plate (the next 7 days beside the greeting) removed: Jonna, November 21, 2026, "don't like this".
+       Past due and follow-ups due are still in the sentence, and the Outreach Planner has the list. */
 
     /* tiles */
     var stageN = PIPE_OPEN.map(function(sg){ return [sg, open.filter(function(it){ return it.stage === sg; }).length]; });

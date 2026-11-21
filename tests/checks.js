@@ -506,7 +506,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
   await check('a prospect\'s stage changes on its company card, not in the list', async () => {
     await toFlow();
-    expect(!(await P(portal, () => !!document.querySelector('#flow-body select[data-flowstage], #pl-body select[data-flowstage]'))), 'a list still has a stage picker in the row');
+    expect(!(await P(portal, () => !!document.querySelector('#flow-body select[data-flowstage], #pl-rows select[data-flowstage]'))), 'a list still has a stage picker in the row');
     await openRec('lead-t-1');
     if (await portal.isVisible('#cp-dockback')) { await portal.click('#cp-dockback'); await portal.waitForTimeout(400); }
     if (!(await portal.isVisible('#co-panel select[data-flowstage="lead-t-1"]'))) { await portal.click('#co-panel [data-cotab="overview"]'); await portal.waitForTimeout(300); }
@@ -700,7 +700,8 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   await check('New Prospects at the top of Prospects lists the prospects added in a period', async () => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
     await portal.click('.tab[data-view="plist"]'); await portal.waitForTimeout(300);
-    expect(await P(portal, () => document.querySelector('#view-plist').firstElementChild.id === 'pl-newp'), 'New Prospects is not at the top of Prospects');
+    const shape = await P(portal, () => ['view-spm', 'view-plist'].map(v => [...document.querySelectorAll('#' + v + ' > *')].map(e => e.className).join(' / ')));
+    expect(shape[0] === shape[1], 'Prospects is not laid out the same as Sponsors: ' + JSON.stringify(shape));
     await portal.click('#pl-newp [data-npp="custom"]'); await portal.waitForTimeout(200);
     await portal.fill('#pnp-from', '2020-01-01'); await P(portal, () => document.getElementById('pnp-from').dispatchEvent(new Event('change', {bubbles: true})));
     await portal.fill('#pnp-to', '2030-12-31'); await P(portal, () => document.getElementById('pnp-to').dispatchEvent(new Event('change', {bubbles: true})));
@@ -718,10 +719,11 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   await check('prospects can be narrowed to a summit, and a summit prospect says which summit', async () => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c) c.click(); }); });
     await portal.click('.tab[data-view="plist"]'); await portal.waitForTimeout(300);
-    await portal.click('[data-plwho="all"]'); await portal.click('[data-pltype="summit"]'); await portal.waitForTimeout(200);
-    expect(!(await P(portal, () => !!document.querySelector('#pl-body select[data-leadsummit]'))), 'the list still has a Which Summit picker in the row');
+    if (await P(portal, () => document.getElementById('pl-mine').classList.contains('on'))) await portal.click('#pl-mine');
+    await portal.click('#pl-life [data-pllife=""]'); await portal.waitForTimeout(200);
+    expect(!(await P(portal, () => !!document.querySelector('#pl-rows select'))), 'the list still has a picker in a row');
     /* set on the prospect in its company card */
-    await portal.click('#pl-body tr[data-fid="lead-t-1"] td:first-child'); await portal.waitForTimeout(500);
+    await portal.click('#pl-rows [data-plid="lead-t-1"]'); await portal.waitForTimeout(500);
     const cpick = '#co-panel select[data-leadsummit="lead-t-1"]';
     expect(await portal.isVisible(cpick), 'the company card has no Which Summit for the prospect');
     const opt = await P(portal, s => [...document.querySelector(s).options].map(o => o.value).find(v => /Spring/.test(v)), cpick);
@@ -729,12 +731,14 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(((await fileOf('leads')).docs['lead-t-1'] || {}).summit === opt, 'the summit was not saved on the prospect');
     await P(portal, () => { ['ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
     await portal.click('.tab[data-view="plist"]'); await portal.waitForTimeout(300);
-    const listed = await P(portal, () => (document.querySelector('#pl-body tr[data-fid="lead-t-1"]') || {}).innerText || '');
+    const listed = await P(portal, () => (document.querySelector('#pl-rows [data-plid="lead-t-1"]') || {}).innerText || '');
     expect(listed.indexOf(opt) >= 0, 'the list does not show the summit set on the card: ' + listed);
-    await portal.selectOption('#pl-summit', opt); await portal.waitForTimeout(250);
-    const rows = await P(portal, () => document.getElementById('pl-body').innerText);
-    expect(/Wingtip Servicing/.test(rows) && !/Newco Lending Test/.test(rows), 'the summit filter is wrong: ' + rows.slice(0, 200));
-    await portal.selectOption('#pl-summit', ''); await portal.click('[data-pltype=""]');
+    await portal.selectOption('#pl-what', opt); await portal.waitForTimeout(250);
+    const rows = await P(portal, () => document.getElementById('pl-rows').innerText);
+    expect(/Wingtip Servicing/.test(rows) && !/Newco Lending Test/.test(rows) && !/Litware Group/.test(rows), 'the summit filter is wrong: ' + rows.slice(0, 300));
+    const band = await P(portal, () => document.getElementById('pl-band').innerText);
+    expect(/Open Prospects by Stage/i.test(band) && /Forecast/i.test(band) && /Prospects by Summit/i.test(band), 'the Prospects band is missing parts: ' + band.slice(0, 200));
+    await portal.selectOption('#pl-what', ''); await portal.click('#pl-life [data-pllife="open"]');
   });
   await check('Sponsors and Prospects works like Member 360: tabs, filters, outstanding by summit', async () => {
     await toCos('Sponsor');

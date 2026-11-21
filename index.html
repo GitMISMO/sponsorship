@@ -1190,10 +1190,11 @@
   .hm-inh{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin:0 0 10px;}
   .hm-inh b{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#f0b94a;} .hm-inh span{font-size:13px; color:rgba(255,255,255,.8);}
   .hm-inh .hm-all{margin:0 0 0 auto;}
-  .hm-ingrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px;}
+  .hm-ingrid{display:grid; grid-template-columns:repeat(var(--cols,4),minmax(0,1fr)); gap:10px;}
+  @media (max-width:1100px){ .hm-ingrid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));} }
   .hm-incard{all:unset; box-sizing:border-box; cursor:pointer; display:flex; flex-direction:column; gap:4px; padding:12px 14px; border-radius:6px; min-width:0;
     background:rgba(255,255,255,.08); border-left:4px solid #f0b94a; color:#fff; transition:background .15s, transform .15s;}
-  .hm-incard.lead{border-left-color:#74bfeb;}
+  .hm-incard.lead, .hm-incard.done{border-left-color:#5fd39a;} .hm-incard.done .hm-intag, .hm-incard.done .hm-infoot span{color:#5fd39a;}
   @media (max-width:600px){ .hm-incard:nth-child(n+3){display:none;} .hm-incard b{font-size:16px;} }
   .hm-incard:hover{background:rgba(255,255,255,.14); transform:translateY(-1px);} .hm-incard:focus-visible{outline:2px solid #f0b94a; outline-offset:2px;}
   .hm-intag{display:flex; gap:8px; align-items:center; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:#f0b94a;}
@@ -1201,7 +1202,7 @@
   .hm-intag em{font-style:normal; letter-spacing:0; text-transform:none; font-weight:600; background:rgba(255,255,255,.12); color:#fff; border-radius:4px; padding:1px 7px;}
   .hm-incard b{font-size:18px; font-weight:700; line-height:1.25; overflow-wrap:anywhere;}
   .hm-inwhat{font-size:12.5px; color:rgba(255,255,255,.75); overflow-wrap:anywhere;}
-  .hm-infoot{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-top:4px; font-size:12.5px;}
+  .hm-infoot{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-top:auto; padding-top:4px; font-size:12.5px;}
   .hm-infoot i{font-style:normal; font-weight:700; font-variant-numeric:tabular-nums;} .hm-infoot span{color:#f0b94a; font-weight:600;} .hm-incard.lead .hm-infoot span{color:#74bfeb;}
   .hm-needs{background:rgba(255,255,255,.07); border:1px solid rgba(116,191,235,.25); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px; position:relative; z-index:1; min-width:0;}
   .hm-nh{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:rgba(255,255,255,.7); display:flex; gap:8px; align-items:baseline;}
@@ -12172,26 +12173,33 @@ a series deal is counted once, at its full amount.</div>
        want to immediately see"): applications waiting for review, newest first, and prospects added in
        the last two days, across the top of Home */
     var ago = function(d){ var n = d ? daysBetween(d, t) : 0; return n <= 0 ? "Today" : n === 1 ? "Yesterday" : n + " days ago"; };
-    var inApps = apps.filter(function(a){ return a.id !== draft && a.status === "Submitted"; })
-      .sort(function(x, y){ return String(y.dateSubmitted || "").localeCompare(String(x.dateSubmitted || "")); })
-      .map(function(a){ var d = parseDate(a.dateSubmitted);
-        return {kind:"app", id:a.id, co:a.company || a.appNo, when:d, tag:"New Application",
-          what:[a.event, levelOf(a) ? tierLabel(levelOf(a)) : "", oppLabel(a)].filter(Boolean).join(" \u00b7 "),
-          amt:Number(a.amountDue) || 0, go:"Review It"}; });
-    var two = new Date(t); two.setDate(two.getDate() - 2);
-    var inLeads = leads.filter(function(l){ var d = parseDate(l.createdDate); return d && d >= two && l.id !== leadDraft && !LEAD_CLOSED[l.status]; })
-      .sort(function(x, y){ return String(y.createdDate || "").localeCompare(String(x.createdDate || "")); })
-      .map(function(l){ return {kind:"lead", id:l.id, co:l.company || l.leadNo, when:parseDate(l.createdDate), tag:"New Prospect",
-          what:[opForOf(l), l.source || ""].filter(Boolean).join(" \u00b7 "), amt:Number(l.forecast) || 0, go:"Open It"}; });
-    var came = inApps.concat(inLeads), cameShow = came.slice(0, 4);
-    var cameHtml = came.length ? '<div class="hm-in"><div class="hm-inh"><b>Just Came In</b><span>' + (inApps.length ? inApps.length + (inApps.length === 1 ? " application" : " applications") + " waiting for review" : "") +
-        (inApps.length && inLeads.length ? " \u00b7 " : "") + (inLeads.length ? inLeads.length + (inLeads.length === 1 ? " new prospect" : " new prospects") + " in the last two days" : "") + '</span>' +
-        (came.length > 4 ? '<a class="hm-all" data-go="todo">See all ' + came.length + ' \u2192</a>' : '') + '</div>' +
-      '<div class="hm-ingrid">' + cameShow.map(function(x){
-        return '<button type="button" class="hm-incard ' + x.kind + '" data-fkind="' + x.kind + '" data-fid="' + esc(x.id) + '" data-direct="1">' +
+    /* Just Came In (Jonna, November 21, 2026: "don't need new prospects, but if new sponsors received through the
+       prospectus, then i want to see them there for the month"): every application that came in through a
+       prospectus this month, whatever it is at now, and any still waiting for review from before */
+    var monthStart = iso(new Date(t.getFullYear(), t.getMonth(), 1));
+    var inApps = apps.filter(function(a){ return a.id !== draft && a.status === "Submitted"; });
+    var cameApps = apps.filter(function(a){
+        if(a.id === draft || a.status === "Declined") return false;
+        return a.status === "Submitted" || (prospectusRef(a) && String(a.dateSubmitted || "").slice(0, 10) >= monthStart);
+      })
+      .sort(function(x, y){ return (x.status === "Submitted" ? 0 : 1) - (y.status === "Submitted" ? 0 : 1) || String(y.dateSubmitted || "").localeCompare(String(x.dateSubmitted || "")); })
+      .map(function(a){ var d = parseDate(a.dateSubmitted), wait = a.status === "Submitted";
+        return {kind:"app", id:a.id, co:a.company || a.appNo, when:d, tag:wait ? "To Review" : a.status, wait:wait,
+          what:[a.event, levelOf(a) ? tierLabel(levelOf(a)) : "", oppLabel(a)].filter(Boolean).join(" · "),
+          amt:Number(a.amountDue) || 0, go:wait ? "Review It" : "Open It"}; });
+    var monthN = cameApps.filter(function(x){ return !x.wait || (x.when && iso(x.when) >= monthStart); }).length;
+    var came = cameApps, cameShow = came.slice(0, 8);
+    var monthName = t.toLocaleDateString("en-US", {month:"long"});
+    var cameHtml = came.length ? '<div class="hm-in"><div class="hm-inh"><b>Just Came In</b><span>' +
+        [monthN ? monthN + (monthN === 1 ? " sponsor" : " sponsors") + " through the prospectus in " + monthName : "",
+         inApps.length ? inApps.length + (inApps.length === 1 ? " application" : " applications") + " waiting for review" : ""].filter(Boolean).join(" · ") + '</span>' +
+        (came.length > 8 ? '<a class="hm-all" data-go="pipeline">See all ' + came.length + ' →</a>' : '') + '</div>' +
+      /* as many columns as fill the rows evenly (no lone card on a second row) */
+      '<div class="hm-ingrid" style="--cols:' + (cameShow.length <= 5 ? cameShow.length : cameShow.length === 6 ? 3 : 4) + '">' + cameShow.map(function(x){
+        return '<button type="button" class="hm-incard ' + (x.wait ? "app" : "app done") + '" data-fkind="app" data-fid="' + esc(x.id) + '" data-direct="1">' +
           '<span class="hm-intag">' + esc(x.tag) + '<em>' + esc(ago(x.when)) + '</em></span>' +
           '<b>' + esc(x.co) + '</b><span class="hm-inwhat">' + esc(x.what || "") + '</span>' +
-          '<span class="hm-infoot">' + (x.amt ? '<i>' + esc(money(x.amt)) + '</i>' : '<i></i>') + '<span>' + esc(x.go) + ' \u2192</span></span></button>';
+          '<span class="hm-infoot">' + (x.amt ? '<i>' + esc(money(x.amt)) + '</i>' : '<i></i>') + '<span>' + esc(x.go) + ' →</span></span></button>';
       }).join("") + '</div></div>' : '';
     $("home-hero").innerHTML = cameHtml + '<div class="hm-hi"><div class="hm-eyebrow">' + esc(new Date().toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"})) + '</div>' +
       '<h1>' + esc(greet()) + (me && me !== "MISMO" ? ", " + esc(me) : "") + '</h1>' +

@@ -116,7 +116,8 @@ saves of a file fail.
 ## Just Came In (November 20, 2026)
 
 Home's hero starts with **Just Came In** (`.hm-in`, built in `renderHome`): every application still Submitted
-(newest `dateSubmitted` first) and open prospects created in the last two days, up to four cards (two on a phone),
+(first), then every application that came in through a prospectus (`prospectusRef`) this calendar month, whatever its
+status now (not Declined), newest first; no prospects (Jonna, November 21, 2026). Up to eight cards (two on a phone),
 each opening the record itself (`data-fkind`/`data-fid`/`data-direct`). The headline sentence also counts the
 applications to review.
 

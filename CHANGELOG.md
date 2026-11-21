@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-21: Outreach Planner: the week runs as rows, one per day (and Past Due), with the cards across each row; Who to Touch starts closed (with how many) and opens on a click.
 - 2026-11-21: Home: Just Came In shows the sponsors that came in through the prospectus this month (each with where it is now) and any application still waiting for review; new prospects are no longer there.
 - 2026-11-21: Prospects is the same page as Sponsors, for prospects (Jonna): Open / On Hold / Lost tiles; a band with open prospects by stage, the forecast by summit and kind, and prospects by summit; New Prospects in the same place as New Sponsors; the same filters (Open / Hold / Lost / All, search, prospect for, stage, owner, My Prospects Only) and the same rows, one per prospect, each opening its company.
 - 2026-11-21: Prospects: **New Prospects** at the top, like New Sponsors: added this month, last month, this year, any month or any dates, by kind, with the forecast total; select one to open its company.

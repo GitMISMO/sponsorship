@@ -1050,11 +1050,20 @@
   @media (max-width:560px){ .op-nb{grid-template-columns:1fr 1fr;} .op-fact{border-left:0; padding-left:0;} .op-fact.ct{grid-column:1/-1;} .op-na .op-skip{margin-left:0;} .op-who{align-items:flex-start;} }
   .op-sel{border:1px solid var(--border); border-radius:6px; padding:5px 8px; font:inherit; font-size:12.5px; background:var(--surface); color:var(--ink); max-width:100%;}
   .op-board{margin:0 0 18px;}
-  .op-week{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; align-items:start;}
-  @media (max-width:980px){ .op-week{grid-template-columns:repeat(3,minmax(0,1fr));} }
+  /* the week as rows, one per day, cards running across (Jonna, November 21, 2026: "can it be on a horizontal
+     row instead of vertical columns") */
+  .op-week{display:flex; flex-direction:column; gap:6px;}
+  .op-week .op-day{display:grid; grid-template-columns:150px minmax(0,1fr); grid-template-rows:auto 1fr; column-gap:14px; row-gap:6px; align-items:start; padding:8px 12px;}
+  .op-week .op-dh{grid-column:1; grid-row:1; border-bottom:0; padding:4px 0 0;}
+  .op-week .op-dc{margin-left:0;}
+  .op-week .op-prog{grid-column:1; grid-row:2; align-self:start;}
+  .op-week .op-list{grid-column:2; grid-row:1 / span 2; flex-direction:row; flex-wrap:wrap; gap:8px;}
+  .op-week .op-list .op-card{flex:0 0 250px; max-width:100%;}
+  .op-week .op-drop, body.op-dragging .op-week .op-drop{flex:1 1 auto; text-align:left; padding:7px 10px;}  /* no jump in height while dragging */
+  @media (max-width:700px){ .op-week .op-day{grid-template-columns:1fr;} .op-week .op-list{grid-column:1; grid-row:auto;} .op-week .op-list .op-card{flex:1 1 100%;} }
   .op-catch{background:var(--bad-soft); border:1px solid var(--bad); border-radius:8px; padding:10px 12px 12px; margin:0 0 10px;}
-  .op-catch .op-dh{border-bottom:0; padding-bottom:8px;} .op-catch .op-dh b{color:var(--bad);} .op-hint{margin-left:auto; font-size:11.5px; color:var(--ink-3);}
-  .op-catch{width:fit-content; max-width:100%;}
+  .op-catch{display:grid; grid-template-columns:150px minmax(0,1fr); column-gap:14px; align-items:start; padding:8px 12px; margin:0 0 6px;}
+  .op-catch .op-dh{border-bottom:0; padding:4px 0 0;} .op-catch .op-hint{margin-left:0; flex-basis:100%;} .op-catch .op-dh b{color:var(--bad);} .op-hint{margin-left:auto; font-size:11.5px; color:var(--ink-3);}
   .op-catchgrid{display:flex; flex-wrap:wrap; gap:8px;} .op-catchgrid .op-card{flex:0 0 250px; max-width:100%;}
   .op-board.op-due{display:block;}
   @media (max-width:700px){ .op-board{grid-template-columns:1fr;} }
@@ -1699,10 +1708,11 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div id="op-next"></div>
     <div class="op-board" id="op-board"></div>
     <details class="op-sect" id="op-comm"><summary>Communicated This Week<span class="cnt" id="op-comm-n"></span></summary><div class="op-sbody" id="op-comm-rows"></div></details>
-    <div class="panel op-whobox"><h2>Who to Touch</h2>
-      <div class="psub">Sponsors and prospects who could use a personal touch, by reason. Drag a name onto a day or use Plan for&hellip;. Anyone touched in the last week, or already on the plan, drops off.</div>
-      <div class="op-mix" id="op-mix"></div></div>
-    <div class="op-lanes" id="op-lanes"></div>
+    <!-- closed until opened (Jonna, November 21, 2026: "can the who to touch be auto collapsed") -->
+    <details class="op-sect op-whosect" id="op-whosect"><summary>Who to Touch<span class="cnt" id="op-who-n"></span></summary>
+      <div class="psub" style="margin:8px 0 0;">Sponsors and prospects who could use a personal touch, by reason. Drag a name onto a day or use Plan for&hellip;. Anyone touched in the last week, or already on the plan, drops off.</div>
+      <div class="op-mix" id="op-mix"></div>
+      <div class="op-lanes" id="op-lanes"></div></details>
     <!-- Also Waiting (Jonna, November 21, 2026: "this section is weird"): one panel, a number box for each kind
          of thing waiting, and the list for the one selected underneath, full width. No empty cards. -->
     <div class="aw" id="op-also">
@@ -11391,6 +11401,7 @@ a series deal is counted once, at its full amount.</div>
     var S = opLanes(cmap, busy), sugN = 0;
     OP_LANES.forEach(function(l){ sugN += S[l.id].length; });
     var tot = sugN || 1;
+    if($("op-who-n")) $("op-who-n").textContent = sugN;
     $("op-mix").innerHTML = '<div class="op-mixbar">' + OP_LANES.map(function(l){ var n = S[l.id].length; return n ? '<span style="width:' + (n / tot * 100) + '%;background:' + l.c + '" title="' + esc(l.name) + ': ' + n + '"></span>' : ''; }).join("") + '</div>' +
       '<div class="op-mixkey">' + OP_LANES.map(function(l){ return '<button type="button" data-opmix="' + l.id + '"><i style="background:' + l.c + '"></i>' + esc(l.name) + '<b>' + S[l.id].length + '</b></button>'; }).join("") + '</div>';
     $("op-lanes").innerHTML = !sugN ? '<div class="op-empty">Nobody needs a touch right now: everyone has been touched in the last week or is already on the plan.</div>' : OP_LANES.map(function(l){
@@ -11541,7 +11552,7 @@ a series deal is counted once, at its full amount.</div>
     if(el.closest("[data-opskip]")){ opSkip++; renderTodo(); return; }
     if((b = el.closest("[data-oplane]"))){ var ln = b.getAttribute("data-oplane"); opState.open[ln] = !opState.open[ln]; opKeep(); renderTodo(); return; }
     if((b = el.closest("[data-awt]"))){ opState.aw = b.getAttribute("data-awt"); opState.awPicked = true; opKeep(); renderTodo(); return; }
-    if((b = el.closest("[data-opmix]"))){ var lc = $("op-lane-" + b.getAttribute("data-opmix")); if(lc){ lc.scrollIntoView({behavior:"smooth", block:"center"}); lc.classList.add("flash"); setTimeout(function(){ lc.classList.remove("flash"); }, 1200); } return; }
+    if((b = el.closest("[data-opmix]"))){ if($("op-whosect")) $("op-whosect").open = true; var lc = $("op-lane-" + b.getAttribute("data-opmix")); if(lc){ lc.scrollIntoView({behavior:"smooth", block:"center"}); lc.classList.add("flash"); setTimeout(function(){ lc.classList.remove("flash"); }, 1200); } return; }
     if(el.closest("#op-undo")){ var u = opUndo.pop(); if(u){ u.fn(); toast("Undone.", "", "Undo"); } opPaintUndo(); return; }
     if((b = el.closest("[data-optile]"))){
       var tk = b.getAttribute("data-optile"), go = null;

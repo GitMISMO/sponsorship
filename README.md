@@ -66,6 +66,41 @@ falls back to SharePoint's `_layouts/15/download.aspx` link. **+ Add a Logo** / 
 saves a file of up to 4 MB with `db.putOnce`. Download Logo is on the company card and under Company Details, and
 Download the Logo is on the application.
 
+## Activity, System Health, Forwarded Emails (November 21, 2026)
+
+Asked for by Jonna ("create an activity tab like member 360 and a system health tab ... to make this a rock solid program").
+
+- **Activity** (`view-activity`, `renderActivity`, under Records): rows from the activity log (`log/main` plus the monthly
+  `log-YYYY-MM` files, read with `db.readLog` for the period picked), touchpoints (not the ones made from mismosponsor@
+  emails), `mailin` (each forwarded email, with its status) and `plans`. Entries by the portal itself, the robot, the
+  online prospectus, the Registration Desk and the like (`ACT_AUTO`) are left out. Four boxes (Changes Saved,
+  Touchpoints, Forwarded Emails, People Active), the band (Last 14 Days, Who Did What, Kind of Work) and the filters
+  (search, Who, What, When) work as Member 360's; a company name opens its card.
+- **System Health** (`view-health`, `hlCheck`, `hlPaint`; the menu button `#tab-health` shows for the admin role only,
+  with a red count in `#pip-health`). Rows: MISMO Money Payments (late after 2 days, red after 4), Prospectus
+  Applications (`inbox`), Applications Taken In (inbox references with no record and not in `inbox-taken`), the
+  mismosponsor@ mailbox, Forwarded Emails Without a Company, the Registration Desk, the Summit HQ agenda and MISMO Media
+  (read through the relay with the viewer's sign-in; "Your sign-in can't read it" is not a fault), the price list, the
+  Sponsorship Requests list check (`listSync`), the Team Emails flow (anything queued over 20 minutes and not in
+  `outbox-sent`), failed emails in 7 days, failed saves in 7 days, storage (biggest data file against the relay's 1 MB
+  limit, admin only, every 6 hours), the hourly robot (`robotAt`) and **Rule Checks** (`hlRuleChecks`: made-up examples
+  through `companyKey`, `sharesOf`, `leadStage`, `coTypeOf`, `prospectusRef`, `appLive`, and data checks for duplicate
+  application, prospect and prospectus numbers, applications with no company and prospects for an unknown summit).
+- Every open copy checks 45 seconds after opening and every 30 minutes; the result is kept in `data/health.json` as
+  `health/main` (at most every 30 minutes unless the red list changes; the robot's runs set `robotAt`). `saveFailed`
+  also keeps each failed save as `health/e…` (the same message once an hour per browser). Nothing is emailed from it;
+  the GitHub health check (`tests/health.js`, 8 am ET) still emails Jonna when it fails.
+- **Version notice**: the page fingerprints itself (`verRead`) and checks every 15 minutes; when a newer one is
+  published, `#ver-bar` asks to reload. The version shows under Checks on System Health.
+- **Numbers never given twice**: `nextAppNo` and `nextLeadNo` remember the highest number this page has handed out
+  (`givenNo`). The rule check found two prospects with the same number in practice when a re-read arrived between two
+  new prospects.
+- **Forwarded Emails tile** on Home (`.hm-fwd`, `data-hmfwd`), as Member 360's: the count of emails to mismosponsor@
+  that still need a company, the newest two, and what else is waiting; selecting it opens the Outreach Planner's Also
+  Waiting on the mismosponsor@ list. When everything matched it says so and there is nothing to do.
+- Outreach Planner: the week is rows (`.op-week .op-day` is a grid: the day on the left, the cards across), and Who to
+  Touch is a closed `<details>` (`#op-whosect`) with its count. Menu pages open at the top.
+
 ## Sponsors, Prospects, Also Waiting, MISMO Media (November 21, 2026)
 
 - **Sponsors** (`view-spm`, nav label Sponsors) lists only companies that sponsor now, applied or sponsored before

@@ -214,6 +214,12 @@
       '<button type="button" data-reset style="' + btn + 'background:#fff;color:#7c2d12;border:0;font-weight:600">Reset Test Data</button>' +
       '<a data-leave style="color:#fff;text-decoration:underline">Leave Practice</a></div>';
     document.body.appendChild(bar);
+    /* the menu stops above the card, so its last items (Activity, System Health) can be reached and scrolled to
+       (November 21, 2026) */
+    var place = function(){ var el = document.getElementById("side"); if(!el) return;
+      var r = el.getBoundingClientRect(), pad = (r.width && r.right < window.innerWidth * 0.6) ? bar.offsetHeight + 20 : 0;
+      el.style.paddingBottom = pad ? pad + "px" : ""; };
+    place(); window.addEventListener("resize", place); setInterval(place, 1000);
     var more = bar.querySelector("[data-more]"), fold = bar.querySelector("[data-fold]");
     fold.onclick = function(){
       var open = more.style.display !== "none";

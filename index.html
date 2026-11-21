@@ -1226,6 +1226,44 @@
   .cp-picks{display:inline-flex; flex-wrap:wrap; gap:6px 12px; margin-left:auto; justify-content:flex-end;}
   .cp-sumpick{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-3);}
   .cp-sumpick select{font:inherit; font-size:12.5px; padding:4px 6px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--ink);}
+  /* ---- Activity (November 21, 2026) ---- */
+  .act-tiles4{grid-template-columns:repeat(4,minmax(0,1fr)) !important;}
+  @media (max-width:700px){ .act-tiles4{grid-template-columns:repeat(2,minmax(0,1fr)) !important;} }
+  .act-bars{display:grid; grid-template-columns:repeat(14,minmax(0,1fr)); gap:4px; align-items:end; height:132px;}
+  .act-b{display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:3px; min-width:0;}
+  .act-b i{display:block; width:100%; max-width:22px; min-height:2px; border-radius:2px 2px 0 0; background:#74bfeb;} .act-b.we i{background:rgba(116,191,235,.45);} .act-b.on i{background:#f0b94a;}
+  .act-b em{font-style:normal; font-size:10.5px; color:rgba(255,255,255,.75);} .act-b span{font-size:10.5px; color:rgba(255,255,255,.55);}
+  .act-kbar{display:flex; height:12px; border-radius:3px; overflow:hidden; background:rgba(255,255,255,.1); margin:6px 0 12px;} .act-kbar button{all:unset; cursor:pointer; height:100%;}
+  .act-key{display:flex; flex-direction:column; gap:7px;} .act-key button{all:unset; cursor:pointer; display:flex; align-items:center; gap:8px; font-size:12.5px; color:rgba(255,255,255,.82);}
+  .act-key button:hover{color:#fff; text-decoration:underline;} .act-key i{width:10px; height:10px; border-radius:2px; flex:0 0 auto;} .act-key b{margin-left:auto; color:#fff;}
+  .act-list{margin-top:4px;}
+  .act-day{font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); margin:16px 0 6px;} .act-day:first-child{margin-top:2px;}
+  .act-r{display:grid; grid-template-columns:64px minmax(0,1fr) auto; gap:12px; align-items:start; padding:9px 12px; border:1px solid var(--border); border-left:3px solid var(--k); border-radius:6px; background:var(--surface); margin-bottom:6px;}
+  .act-t{font-size:12px; color:var(--ink-3); white-space:nowrap; padding-top:2px;}
+  .act-l{font-size:13.5px; color:var(--ink); line-height:1.45;} .act-l b{font-weight:600;} .act-l .linkbtn{font-size:13.5px;}
+  .act-d{font-size:12.5px; color:var(--ink-2); margin-top:2px; overflow-wrap:anywhere;}
+  .act-s{display:inline-block; font-size:11px; font-weight:600; line-height:1.6; padding:0 7px; border-radius:4px; margin-left:6px; background:var(--surface-2); color:var(--ink-2); border:1px solid var(--border); vertical-align:1px;}
+  .act-s.warn{background:rgba(217,119,6,.14); color:var(--warn); border-color:rgba(217,119,6,.35);}
+  .act-a{display:flex; gap:8px; align-items:center;} .act-empty{padding:28px; text-align:center; color:var(--ink-3);} .act-more{display:block; margin:12px auto 4px;}
+  @media (max-width:640px){ .act-r{grid-template-columns:1fr; gap:4px;} }
+  /* ---- System Health (November 21, 2026) ---- */
+  .hl-sum{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:0 0 14px;}
+  .hl-k{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px;} .hl-k b{display:block; font-size:22px; font-weight:700; line-height:1.15;} .hl-k span{font-size:12px; color:var(--ink-3);}
+  .hl-k.bad b{color:var(--bad);} .hl-k.warn b{color:var(--warn);} .hl-k.ok b{color:var(--good);}
+  .hl-grid{display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:14px; align-items:start;} .hl-col{display:grid; gap:14px;}
+  @media (max-width:980px){ .hl-grid{grid-template-columns:1fr;} .hl-sum{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  .hl-card{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 14px;} .hl-card h2{margin:0 0 6px; font-size:16px;} .hl-sub{font-size:12.5px; font-weight:500; color:var(--ink-3); margin-left:6px;}
+  .hl-r{display:grid; grid-template-columns:12px minmax(0,1fr) auto; gap:4px 10px; align-items:start; padding:9px 0; border-top:1px solid var(--rule);} .hl-card h2 + .hl-r{border-top:0;}
+  .hl-d{width:10px; height:10px; border-radius:50%; margin-top:4px; background:var(--ink-3);} .hl-d.ok{background:var(--good);} .hl-d.warn{background:var(--warn);} .hl-d.bad{background:var(--bad);} .hl-d.info{background:var(--border);}
+  .hl-n{font-weight:600; font-size:13.5px;} .hl-w{font-size:12px; color:var(--ink-3); margin-top:1px;} .hl-t{font-size:12px; color:var(--ink-2); margin-top:3px;}
+  .hl-s{font-size:12px; font-weight:700; text-align:right; white-space:nowrap;} .hl-s.ok{color:var(--good);} .hl-s.warn{color:var(--warn);} .hl-s.bad{color:var(--bad);} .hl-s.info{color:var(--ink-3); font-weight:600;}
+  .hl-list{grid-column:2 / -1; font-size:12px; color:var(--ink-2); margin:4px 0 0; padding:6px 9px; background:var(--surface-2); border-radius:6px; max-height:180px; overflow:auto;} .hl-list div + div{margin-top:4px;}
+  .hl-foot{font-size:12px; color:var(--ink-3); margin-top:8px; padding-top:8px; border-top:1px solid var(--rule);}
+  .hl-cg{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:2px 18px; margin-top:4px;}
+  .hl-c{display:grid; grid-template-columns:12px minmax(0,1fr); gap:8px; padding:6px 0; border-top:1px solid var(--rule); font-size:12.5px;} .hl-c .x{font-size:11.5px; color:var(--bad); margin-top:2px;}
+  #ver-bar{position:fixed; left:50%; top:76px; transform:translateX(-50%); z-index:9999; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-left:4px solid #74bfeb; border-radius:6px; box-shadow:0 8px 24px rgba(6,32,47,.18); padding:9px 12px; display:flex; gap:12px; align-items:center; font-size:13px; max-width:calc(100vw - 32px);}
+  .hm-fwdrow{margin-top:8px; min-width:0;} .hm-fwdrow b{display:block; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;} .hm-fwdrow span{display:block; font-size:12px; color:rgba(255,255,255,.65);}
+  .hm-fwd .hm-sub{margin-top:10px;}
   .hm-all{margin-top:4px; font-size:13px; font-weight:600; color:#74bfeb; cursor:pointer;} .hm-all:hover{color:#fff;}
   .hm-h2row{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0 0 12px; flex-wrap:wrap;}
   .hm-h2{font-size:20px; font-weight:700; margin:0; color:var(--ink);} .hm-asof{font-size:12.5px; color:var(--ink-3);}
@@ -1596,6 +1634,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 <symbol id="ico-search" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6.9" cy="6.9" r="4.6"/><path d="M10.3 10.3 14 14"/></g></symbol>
 <symbol id="ico-expand" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="ico-shrink" viewBox="0 0 24 24"><path d="M20 10h-6V4M4 14h6v6M14 10l7-7M10 14l-7 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="ico-pulse" viewBox="0 0 16 16"><path d="M1.5 8.5h3l1.5-4 3 8 1.5-4h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="ico-home" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2.5 7.2 8 2.6l5.5 4.6"/><path d="M4 6.2v7.2h3V10h2v3.4h3V6.2"/></g></symbol>
 <symbol id="ico-co" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="2" y="3" width="7" height="10.5" rx="1"/><path d="M9 7h5v6.5H9M4.3 5.6h2.4M4.3 8h2.4M4.3 10.4h2.4"/></g></symbol>
 <symbol id="ico-chev" viewBox="0 0 16 16"><path d="M6 3.4 10.6 8 6 12.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -1645,8 +1684,11 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
     <button class="tab" data-view="prospectus" type="button" title="Prospectuses"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-doc"/></svg><span class="tlbl">Prospectuses</span></button>
+    <button class="tab" data-view="activity" type="button" title="Activity"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-log"/></svg><span class="tlbl">Activity</span></button>
     <div class="navgrp">Help</div>
     <button class="tab" data-view="help" type="button" title="Help"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-help"/></svg><span class="tlbl">Help</span></button>
+    <!-- System Health, for admins (Jonna, November 21, 2026) -->
+    <button class="tab" data-view="health" id="tab-health" type="button" title="System Health" hidden><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pulse"/></svg><span class="tlbl">System Health</span><span class="pip quiet" id="pip-health">0</span></button>
   </nav>
   <div class="side-ft">
     <!-- when MISMO Money last sent payments (October 26, 2026; like Member 360's "Payments updated") -->
@@ -2073,6 +2115,32 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     </div>
   </section>
 
+  <!-- ================= ACTIVITY (Jonna, November 21, 2026: "like member 360") ================= -->
+  <section class="view" id="view-activity">
+    <div class="m-vhead"><div><h1>Activity</h1>
+      <div class="m-vsub">What the team saved, changed, logged or forwarded to mismosponsor@, newest first. Things the portal and the hourly robot do on their own aren't listed. Select a box, a name or a kind of work to see just those.</div></div></div>
+    <div class="cotiles m-tiles act-tiles4" id="act-tiles"></div>
+    <div class="m-band" id="act-band"></div>
+    <div class="m-filters">
+      <input type="search" id="act-q" placeholder="Search activity and companies" aria-label="Search activity">
+      <select id="act-who" aria-label="Who"></select>
+      <select id="act-what" aria-label="What"></select>
+      <select id="act-days" aria-label="When"><option value="7">Last 7 Days</option><option value="30" selected>Last 30 Days</option><option value="90">Last 90 Days</option><option value="">All Time</option></select>
+      <span class="m-count" id="act-count"></span>
+    </div>
+    <div class="act-list" id="act-list"></div>
+  </section>
+
+  <!-- ================= SYSTEM HEALTH (Jonna, November 21, 2026), for admins ================= -->
+  <section class="view" id="view-health">
+    <div class="m-vhead"><div><h1>System Health</h1>
+      <div class="m-vsub">Whether everything feeding and leaving the Sponsorship Portal is working. Every open copy of the portal checks every 30 minutes, and the robot every hour; a red count shows on System Health in the menu when something needs a look.</div></div>
+      <button type="button" class="btn sm" id="hl-now" style="white-space:nowrap;">Check Now</button></div>
+    <div class="hl-sum" id="hl-sum"></div>
+    <div class="hl-grid"><div class="hl-card" id="hl-feeds"></div><div class="hl-col"><div class="hl-card" id="hl-email"></div><div class="hl-card" id="hl-saves"></div><div class="hl-card" id="hl-checks"></div></div></div>
+    <div class="hl-card" id="hl-rules" style="margin-top:14px;"></div>
+  </section>
+
   <section class="view" id="view-help">
     <div class="panel helppanel">
 
@@ -2080,11 +2148,11 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <summary>Start Here: Home, the Outreach Planner, Sponsors and Prospects</summary>
         <div class="hbody">
           <ul>
-            <li>The portal works like Member 360. <b>Home</b> is the day and the season at a glance, with Just Came In across the top.</li>
+            <li>The portal works like Member 360. <b>Home</b> is the day and the season at a glance, with <b>Just Came In</b> across the top (this month&rsquo;s sponsors from the prospectus, and any application waiting for review). The <b>Forwarded Emails</b> tile counts only the emails to mismosponsor@ that still need a company; when every email matched, there is nothing to do there. Select it to pick them.</li>
             <li><b>Outreach Planner</b> (it was To Do) works like Member 360&rsquo;s. The dark band says where to start and counts what you communicated this week, follow-ups due, what is past due, what is planned and the applications waiting for review; select a number to go to it. Choose <b>Everyone</b> or one person, and <b>This Week</b>, <b>Next Week</b> or <b>Past Due</b>.</li>
             <li><b>Up Next</b> is the oldest thing past due, then today&rsquo;s: <b>Email</b> them, <b>Log a Touchpoint</b>, <b>Move to&hellip;</b> another day or <b>Mark Done</b>. <b>Show the next one</b> skips ahead.</li>
-            <li>The <b>week board</b> has a column for each weekday (and <b>Past Due</b> when something was missed). Each card is a prospect&rsquo;s follow-up date, a next step from a touchpoint, or a planned touch. Drag a card onto another day to move it (a prospect&rsquo;s follow-up date moves with it), tick it when it&rsquo;s done, or select it to open the company. <b>Undo</b> takes back the last change.</li>
-            <li><b>Who to Touch</b> suggests sponsors and prospects by reason: prospects with no next date, prospects gone quiet, current sponsors not in for the next summit, benefits still to use, sponsors gone quiet, and past sponsors to win back. Drag a name onto a day, or use <b>Plan for&hellip;</b>. Anyone touched in the last week or already on the plan drops off.</li>
+            <li>The <b>week board</b> has a row for each weekday, with that day&rsquo;s cards running across (and <b>Past Due</b> as the first row when something was missed). Each card is a prospect&rsquo;s follow-up date, a next step from a touchpoint, or a planned touch. Drag a card onto another day to move it (a prospect&rsquo;s follow-up date moves with it), tick it when it&rsquo;s done, or select it to open the company. <b>Undo</b> takes back the last change.</li>
+            <li><b>Who to Touch</b> starts closed, with how many it suggests; select it to open it. It suggests sponsors and prospects by reason: prospects with no next date, prospects gone quiet, current sponsors not in for the next summit, benefits still to use, sponsors gone quiet, and past sponsors to win back. Drag a name onto a day, or use <b>Plan for&hellip;</b>. Anyone touched in the last week or already on the plan drops off.</li>
             <li><b>Also Waiting</b> holds applications to review, payments past due, invoices Bernie still has to raise, the mismosponsor@ emails and new prospects. <b>All Follow-Ups</b> at the bottom lists every follow-up, open or done, by owner.</li>
             <li><b>Sponsors</b> is Member 360&rsquo;s Members page for sponsors, sponsors only: the tiles and tabs (<b>Current</b>, <b>Applied</b>, <b>Past</b>, <b>All</b>) choose who is listed. The dark band shows current sponsors by tier, what is <b>outstanding</b> for each summit, workgroups and each other kind, and <b>Sponsors by Summit</b>; select any of them to list just those companies. Filter by summit or kind, stage and owner, tick <b>Outstanding Only</b>, or jump with the A to Z bar. Prospects have their own page, <b>Prospects</b>.</li>
             <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there. <b>Download Logo</b> saves the logo the sponsor sent with the online prospectus, straight from the portal (no SharePoint sign-in). <b>+ Add a Logo</b> keeps a logo a sponsor emailed (up to 4 MB), and <b>Replace Logo</b> swaps it. A sponsor already on the website gets <b>Open the Logo</b>. The file is also under Company Details and on the application.</li>
@@ -2260,10 +2328,23 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
           <ul>
             <li>Forward an email to <b>mismosponsor@mismo.org</b>, or Cc or Bcc it on an email to a sponsor, and it lands on that sponsor or prospect&rsquo;s record under <b>Emails</b>, the same way 360@ works for Member 360.</li>
             <li>The portal finds the company from the outside address in the email (for a forward, the person in the forwarded email): first by a contact email it already has, then by the company&rsquo;s email domain.</li>
-            <li>If several companies share the address, it waits on the Pipeline under <b>Emails to mismosponsor@</b> for someone to pick the right one, or mark it <b>Not Needed</b>.</li>
+            <li>If several companies share the address, it waits for someone to pick the right one, or mark it <b>Not Needed</b>: it shows on Home&rsquo;s <b>Forwarded Emails</b> tile and under <b>Also Waiting</b> on the Outreach Planner.</li>
             <li>If no company matches and it&rsquo;s a real company address, a <b>new prospect</b> is made from it and the email is logged there. It&rsquo;s listed with <b>Looks Right</b> so someone can check it. Free email (Gmail and the like), automated senders and tools never make a prospect.</li>
             <li>To choose the company yourself, put <b>sponsor: Company Name</b> as the first line when you forward, or <b>[sponsor: Company Name]</b> in the subject.</li>
             <li>Emails are logged by whoever has the portal open, and every hour by the robot, so nothing waits long. Nothing is ever sent from the mailbox.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="hsec">
+        <summary>Activity and System Health</summary>
+        <div class="hbody">
+          <ul>
+            <li><b>Activity</b> (under Records) works like Member 360&rsquo;s: everything the team saved or changed, the touchpoints they logged, the emails they forwarded to mismosponsor@ and the outreach they planned, newest first and grouped by day. What the portal and the hourly robot do on their own isn&rsquo;t listed.</li>
+            <li>The boxes across the top count changes, touchpoints, forwarded emails and people for the period picked. The dark band shows the last 14 days, <b>Who Did What</b> and the <b>Kind of Work</b>. Select a box, a name or a kind to see just those, or use the search, Who, What and When filters. A company name opens its card.</li>
+            <li><b>System Health</b> (under Help, for admins) shows whether everything feeding and leaving the portal is working: MISMO Money payments, applications from the prospectus and whether they were taken in, the mismosponsor@ mailbox, the Registration Desk, the Summit HQ agenda and MISMO Media; the price list and the Sponsorship Requests list check; the Team Emails flow and any failed emails; failed saves; how full the data files are; the hourly robot; and <b>Rule Checks</b>, made-up examples run through the portal&rsquo;s own code plus checks on the records (no duplicate numbers, every application has a company).</li>
+            <li>Every open copy of the portal checks every 30 minutes, and the robot every hour. A red number on System Health in the menu means something needs a look. Nothing is emailed from it: the GitHub health check every morning at 8 am ET emails Jonna if it fails.</li>
+            <li>When a newer version of the portal is published, a bar at the top asks you to reload, so nobody keeps working in an old copy.</li>
           </ul>
         </div>
       </details>
@@ -2302,6 +2383,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
           <ul>
             <li><b>This portal&rsquo;s page:</b> GitHub, GitMISMO/sponsorship.</li>
             <li><b>Its records:</b> GitHub, GitMISMO/sponsorship-data (private). That&rsquo;s applications, prospects, workgroup sponsorships, other sponsorships and their types (settings), the emails logged from mismosponsor@ (mailin, touchpoints and the monthly mailtext files), the email requests and the payments file MISMO Money writes, which the portal only reads. The old AI webinar file (webinars) is kept as it was.</li>
+            <li><b>System Health:</b> its last shared check and any failed saves are kept in data/health.json in GitMISMO/sponsorship-data.</li>
             <li><b>The mismosponsor@ mailbox:</b> the Power Automate flow <b>Sponsorship - mismosponsor Mailbox</b> on Jonna&rsquo;s account adds each email to the mailin file.</li>
             <li><b>The prospectus:</b> GitHub, GitMISMO/Sponsorship-Prospectus.</li>
             <li><b>SharePoint, MISMO Summits site:</b> the Sponsorship Requests list and the Sponsor Logos library.</li>
@@ -2765,19 +2847,25 @@ a series deal is counted once, at its full amount.</div>
     (typeof logEntries !== "undefined" ? logEntries : []).forEach(function(e){ see(e.appNo); });
     return max;
   }
+  /* the highest number this page has handed out, so a number is never given twice even when a re-read of the
+     records arrives between two new ones (System Health's rule check found two prospects with PR00004 in practice,
+     November 21, 2026) */
+  var givenNo = {AN:0, PR:0};
   function nextAppNo(){
-    var max = usedNos("AN");
+    var max = Math.max(usedNos("AN"), givenNo.AN);
     apps.forEach(function(a){
       var m = /^AN0*(\d+)$/.exec(a.appNo||""); if(m) max = Math.max(max, +m[1]);
     });
+    givenNo.AN = max + 1;
     var n = String(max+1); while(n.length<5) n = "0"+n;
     return "AN"+n;
   }
   function nextLeadNo(){
-    var max = usedNos("PR");
+    var max = Math.max(usedNos("PR"), givenNo.PR);
     leads.forEach(function(l){
       var m = /^PR0*(\d+)$/.exec(l.leadNo||""); if(m) max = Math.max(max, +m[1]);
     });
+    givenNo.PR = max + 1;
     var n = String(max+1); while(n.length<5) n = "0"+n;
     return "PR"+n;
   }
@@ -3704,6 +3792,7 @@ a series deal is counted once, at its full amount.</div>
      a failed save was dropped without a word and "Saved" still showed.) */
   function saveFailed(name, who, e, appId){
     if(e && e.code === "invalid_argument"){ canWrite = false; readOnlyNotice(); return; }
+    try{ hlLogErr(name, e); }catch(x){}
     var why = e && e.code === "SIGNED_OUT" ? "you were signed out" : e && e.status === 409 ? "someone else was saving at the same moment" : "the data store didn't answer";
     toast((who || "That record") + " was NOT saved (" + why + "). The screen now shows what is saved. Please make the change again.", "bad", "Not Saved", true);
     if(db && db.reload) db.reload(name).then(function(){
@@ -3946,6 +4035,8 @@ a series deal is counted once, at its full amount.</div>
         "shows what was invoiced and what MISMO keeps. Terms are net 30; a past-due notice for MBA\u2019s team is " +
         "drafted on the record for you to approve. Select a row to open its record."},
     log: {t:"Activity", s:"Every status change and every alert sent, most recent first."},
+    activity: {t:"Activity", s:""},
+    health: {t:"System Health", s:""},
     help: {t:"How the Sponsorship Portal Works",
       s:"The process from application to payment, what happens automatically, who gets which email, " +
         "and the limits worth knowing. Select a section to open it."}
@@ -8333,7 +8424,7 @@ a series deal is counted once, at its full amount.</div>
        answering a question nobody asked there. Money, Inventory and Prospects carry their
        own bands instead. */
     var hide = (v === "money" || v === "stock" || v === "leads" || v === "log" || v === "help" || v === "prospectus" || v === "benefits" ||
-                v === "workgroup" || v === "other" || v === "flow" || v === "home" || v === "companies" || v === "plist" || v === "todo" || v === "spx" || v === "spm") ? "none" : "";
+                v === "workgroup" || v === "other" || v === "flow" || v === "home" || v === "companies" || v === "plist" || v === "todo" || v === "spx" || v === "spm" || v === "activity" || v === "health") ? "none" : "";
     $("headline").style.display = hide;
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.id === "view-"+v); });
     if(v !== "pipeline" && stageKey) closeStage();
@@ -8347,7 +8438,9 @@ a series deal is counted once, at its full amount.</div>
     if(v === "todo") renderTodo();
     if(v === "spx") renderSpx();
     if(v === "spm") renderSpm();
-    var ph = $("pagehead"); if(ph) ph.style.display = (v === "home" || v === "todo" || v === "spm" || v === "plist") ? "none" : "";
+    if(v === "activity") renderActivity();
+    if(v === "health"){ hlPaint(); if(!HL.rows) hlCheck(); }
+    var ph = $("pagehead"); if(ph) ph.style.display = (v === "home" || v === "todo" || v === "spm" || v === "plist" || v === "activity" || v === "health") ? "none" : "";
   }
 
   /* Copy Link on a prospectus card puts its address on the clipboard, ready to paste into an
@@ -10300,7 +10393,7 @@ a series deal is counted once, at its full amount.</div>
     if(logged.length) toast(logged.length === 1 ? "An email to mismosponsor@ is logged on " + logged[0].co.name + "." :
       logged.length + " emails to mismosponsor@ are logged.", "", "Logged");
     if(need.length) toast((need.length === 1 ? "An email needs" : need.length + " emails need") +
-      " a company. Pick it on the Pipeline, under Emails to mismosponsor@.", "warn", "Pick a Company");
+      " a company. Pick it from Home, on the Forwarded Emails tile.", "warn", "Pick a Company");
     renderFlow();
   }
   /* a logged email's entry is trimmed from the mailbox file after 60 days (its email stays on the
@@ -12233,6 +12326,10 @@ a series deal is counted once, at its full amount.</div>
     var byType = {summit:0, workgroup:0, other:0};
     all.forEach(function(it){ if(it.kind !== "lead" && (it.stage === "Paid" || PIPE_OPEN.indexOf(it.stage) >= 0) && within(it.created || iso(t), 365)) byType[coTypeOf(it.type)] += it.amount; });
     var typeTot = byType.summit + byType.workgroup + byType.other || 1;
+    var fwdNeed = Object.keys(mailDocs).filter(function(id){ return mailDocs[id] && mailDocs[id].st === "need"; })
+      .sort(function(a, b){ return String(mailDocs[b].received || "").localeCompare(String(mailDocs[a].received || "")); });
+    var fwdWait = Object.keys(mailDocs).filter(function(id){ return mailDocs[id] && !mailDocs[id].st; }).length;
+    var fwdMk = Object.keys(mailDocs).filter(function(id){ var d = mailDocs[id]; return d && d.st === "logged" && d.mk && !d.mkOk; }).length;
     var mailWeek = 0, mailNeed = 0;
     Object.keys(mailDocs).forEach(function(id){ var d = mailDocs[id]; if(!d) return; if(d.st === "need") mailNeed++; if(d.st === "logged" && d.doneAt && new Date(d.doneAt) >= wk) mailWeek++; });
     var map = companies(), cos = Object.keys(map).map(function(k){ return map[k]; });
@@ -12259,14 +12356,399 @@ a series deal is counted once, at its full amount.</div>
       '<button type="button" class="hm-tile" data-go="benefits" style="--k:#b79cff"><div class="hm-top"><span class="hm-lab">Next Summit</span></div>' +
         (nextSm ? '<div class="hm-big">' + smDays + ' <small>days</small></div><div class="hm-sub">' + esc(SUMMITS[nextSm].label) + ' · <b>' + benOpen + '</b> benefits still to do</div>'
                 : '<div class="hm-big">—</div>') + '</button>' +
-      '<button type="button" class="hm-tile" data-go="flow" style="--k:#ff8f7d"><div class="hm-top"><span class="hm-lab">mismosponsor@</span>' + (mailNeed ? '<span class="hm-pill hot">' + mailNeed + ' to pick</span>' : '') + '</div>' +
-        '<div class="hm-big">' + mailWeek + ' <small>logged this week</small></div><div class="hm-sub">Forward, Cc or Bcc mismosponsor@mismo.org</div></button>' +
+      /* Forwarded Emails, as Member 360's tile (Jonna, November 21, 2026: "if it was able to match everything that was
+         forwarded then nothing need to be there"): only the emails to mismosponsor@ that still need a company */
+      '<button type="button" class="hm-tile hm-fwd" data-hmfwd="1" style="--k:#f2b366"><div class="hm-top"><span class="hm-lab">Forwarded Emails</span>' + (fwdNeed.length ? '<span class="hm-pill hot">Pick a company</span>' : '') + '</div>' +
+        '<div class="hm-big">' + fwdNeed.length + ' <small>' + (fwdNeed.length === 1 ? "needs a company" : "need a company") + '</small></div>' +
+        fwdNeed.slice(0, 2).map(function(id){ var d = mailDocs[id], m = d.m || {};
+          return '<div class="hm-fwdrow"><b>' + esc(m.subject || d.subject || "(no subject)") + '</b><span>' + esc([m.by || m.fromName || m.from || "Someone", d.received ? fmtDate(String(d.received).slice(0, 10)).replace(/, \d{4}$/, "") : ""].filter(Boolean).join(" \u00b7 ")) + '</span></div>'; }).join("") +
+        '<div class="hm-sub">' + esc([fwdNeed.length > 2 ? (fwdNeed.length - 2) + " more" : "", fwdWait ? fwdWait + " waiting to be logged" : "", fwdMk ? fwdMk + " new prospect" + (fwdMk === 1 ? "" : "s") + " to check" : "",
+          !fwdNeed.length && !fwdWait ? "Every email forwarded to " + MAIL_ADDR + " has a company" : ""].filter(Boolean).join(" \u00b7 ")) + (fwdNeed.length ? " \u00b7 select to read them and pick" : "") + '</div></button>' +
       '<button type="button" class="hm-tile" data-go="spm" style="--k:#5fd39a"><div class="hm-top"><span class="hm-lab">By Type</span><span class="hm-pill">12 months</span></div>' +
         '<div class="hm-stack">' + ["summit","workgroup","other"].map(function(k){ return '<i style="width:' + (byType[k] / typeTot * 100).toFixed(1) + '%;background:' + TYPE_COLOR[k] + '"></i>'; }).join("") + '</div>' +
         '<div class="hm-trio">' + [["summit","Summit"],["workgroup","Workgroup"],["other","Other"]].map(function(k){
           return '<div class="hm-tc" style="--c:' + TYPE_COLOR[k[0]] + '"><b>' + esc(moneyK(byType[k[0]])) + '</b><span>' + k[1] + '</span></div>'; }).join("") + '</div></button>';
     /* Team Activity is gone from Home (Jonna, November 21, 2026); each record's History keeps it */
   }
+
+  /* ================= Activity (Jonna, November 21, 2026: "create an activity tab like member 360") =================
+     What the team did, newest first: every change written to the activity log (data/log.json and its monthly
+     files), touchpoints logged on a company, emails forwarded to mismosponsor@, and planned outreach. Things the
+     portal or the robot do on their own aren't listed. Figure boxes, a navy band (the last 14 days, who did what,
+     the kind of work) and the filters work as Member 360's do: select a box, a name or a kind to filter the list. */
+  var ACT = {log:{}, months:{}, lim:60, loading:false};
+  var ACT_AUTO = /^(system|price list|sponsorship robot|robot|mismo money|portal|sponsorship portal|online prospectus|registration desk|summit hq|mismo media|claude|mismo)$/i;
+  var ACT_KINDS = [["", "Everything"], ["tp", "Touchpoints"], ["mail", "Forwarded Emails"], ["plans", "Outreach Planner"],
+                   ["prospect", "Prospects"], ["sponsorship", "Sponsorships"], ["email", "Emails and the Requests List"]];
+  var ACT_KC = {tp:"#74bfeb", mail:"#5fd39a", plans:"#b79cff", prospect:"#e8b04a", sponsorship:"#ff8f7d", email:"#4f8fc0"};
+  function actMonths(n){
+    var out = [], d = new Date(); d.setDate(15);
+    for(var i = 0; i < n; i++){ out.push("log-" + d.toISOString().slice(0, 7)); d.setMonth(d.getMonth() - 1); }
+    return out;
+  }
+  function actLoad(days){
+    if(!db || !db.readLog || ACT.loading) return;
+    var n = days ? Math.min(13, Math.ceil(Number(days) / 30) + 1) : 13;
+    var want = actMonths(n).filter(function(m){ return !ACT.months[m]; });
+    if(!want.length) return;
+    ACT.loading = true;
+    Promise.all(want.map(function(m){ return db.readLog(m).then(function(list){ ACT.months[m] = 1; return list || []; }, function(){ ACT.months[m] = 1; return []; }); }))
+      .then(function(lists){ lists.forEach(function(list){ list.forEach(function(e){ if(e && e.at) ACT.log[logKey(e)] = e; }); }); })
+      .then(function(){ ACT.loading = false; if(currentView === "activity") renderActivity(); }, function(){ ACT.loading = false; });
+  }
+  /* which record a number belongs to: an application, a prospect, a workgroup or other sponsorship */
+  function actNoIndex(){
+    var m = {};
+    apps.forEach(function(a){ if(a.appNo) m[a.appNo] = {co:a.company || "", kind:"sponsorship"}; });
+    leads.forEach(function(l){ if(l.leadNo) m[l.leadNo] = {co:l.company || "", kind:"prospect"}; });
+    billAll().forEach(function(r){ if(r.no) m[r.no] = {co:r.company || "", kind:"sponsorship"}; });
+    return m;
+  }
+  function actRows(){
+    var rows = [], idx = actNoIndex(), seen = {};
+    logEntries.forEach(function(e){ if(e && e.at) ACT.log[logKey(e)] = e; });
+    Object.keys(ACT.log).forEach(function(k){
+      var e = ACT.log[k]; if(!e || !e.at || seen[k]) return; seen[k] = 1;
+      var who = String(e.who || "").trim(); if(!who || ACT_AUTO.test(who)) return;
+      var what = String(e.what || ""), hit = idx[e.appNo] || {};
+      var kind = /queued to email|emailed|request|alert|payment follow|sent to the sponsorship requests list|invoice email|past-due notice/i.test(what) ? "email"
+        : (hit.kind === "prospect" || /prospect/i.test(what)) ? "prospect" : "sponsorship";
+      rows.push({key:"log-" + k, type:"log", kind:kind, at:e.at, who:who, label:what, detail:e.appNo || "", co:hit.co || ""});
+    });
+    touches.forEach(function(t){
+      if(!t || t.archived || t.via === "mismosponsor") return;
+      var who = String(t.by || "").trim(); if(!who || ACT_AUTO.test(who)) return;
+      rows.push({key:"tp-" + t.id, type:"tp", kind:"tp", at:t.at || (t.date ? t.date + "T12:00:00" : ""), who:who,
+        label:"logged a " + String(t.type || "touchpoint").toLowerCase(), detail:String(t.summary || t.subject || "").replace(/\s+/g, " ").slice(0, 140), co:t.coName || t.co || ""});
+    });
+    Object.keys(mailDocs).forEach(function(id){
+      var d = mailDocs[id]; if(!d) return;
+      var m = d.m || {}, who = String(m.by || "").trim(); if(!who) return;
+      rows.push({key:"ml-" + id, type:"mail", kind:"mail", at:d.received || d.seen || "", who:who, label:"forwarded an email to " + MAIL_ADDR,
+        detail:m.subject || d.subject || "(no subject)", co:d.coName || "", st:d.st || "", mid:id});
+    });
+    plans.forEach(function(p){
+      if(!p) return;
+      var who = String(p.by || "").trim();
+      if(who && !ACT_AUTO.test(who) && p.at) rows.push({key:"pl-" + p.id, type:"plan", kind:"plans", at:p.at, who:who, label:"planned outreach for " + fmtDate(p.day), detail:p.lane ? (OP_LANES.filter(function(l){ return l.id === p.lane; })[0] || {}).name || "" : "", co:p.coName || ""});
+    });
+    return rows.filter(function(r){ return r.at; }).sort(function(x, y){ return String(y.at).localeCompare(String(x.at)); });
+  }
+  function actWho(r){ var me = whoAmI(); return r.who === me ? "You" : r.who; }
+  function actDayLabel(at){
+    var d = new Date(at); if(isNaN(d)) return "Earlier";
+    var k = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate())), t = iso(today()), y = iso(new Date(today().getTime() - 864e5));
+    if(k === t) return "Today"; if(k === y) return "Yesterday";
+    var o = {weekday:"long", month:"long", day:"numeric"}; if(d.getFullYear() !== today().getFullYear()) o.year = "numeric";
+    return d.toLocaleDateString("en-US", o);
+  }
+  function actSt(r){
+    if(r.type !== "mail") return "";
+    return r.st === "logged" ? '<span class="act-s">Logged</span>' : r.st === "need" ? '<span class="act-s warn">Needs a company</span>'
+      : r.st === "skipped" ? '<span class="act-s">Not needed</span>' : '<span class="act-s">Waiting to be logged</span>';
+  }
+  function renderActivity(){
+    var box = $("act-list"); if(!box || !db) return;
+    var wd = $("act-days"), ws = $("act-who"), wt = $("act-what"), q = $("act-q");
+    if(!wt.options.length) wt.innerHTML = ACT_KINDS.map(function(k){ return '<option value="' + k[0] + '">' + esc(k[1]) + '</option>'; }).join("");
+    actLoad(wd.value);
+    var all = actRows();
+    var names = Object.keys(all.reduce(function(m, r){ m[actWho(r)] = 1; return m; }, {})).sort(function(a, b){ return a === "You" ? 1 : b === "You" ? -1 : a.localeCompare(b); });
+    var cur = ws.value;
+    ws.innerHTML = '<option value="">Everyone</option>' + names.map(function(n){ return '<option' + (n === cur ? " selected" : "") + '>' + esc(n) + '</option>'; }).join("");
+    var span = Number(wd.value) || 0, since = span ? new Date(Date.now() - span * 864e5).toISOString() : "";
+    var inR = all.filter(function(r){ return !since || String(r.at) >= since; });
+    /* figure boxes */
+    var rangeT = span ? "last " + span + " days" : "all time";
+    var cnt = function(k){ return inR.filter(function(r){ return r.kind === k; }).length; };
+    var ppl = Object.keys(inR.reduce(function(m, r){ m[actWho(r)] = 1; return m; }, {})).length;
+    $("act-tiles").innerHTML = [["", "Changes Saved", inR.length, rangeT, "#74bfeb"], ["tp", "Touchpoints", cnt("tp"), "logged by the team", "#5fb3e6"],
+      ["mail", "Forwarded Emails", cnt("mail"), "sent to " + MAIL_ADDR, "#5fd39a"], ["who", "People Active", ppl, rangeT, "#b79cff"]].map(function(x){
+      return '<button type="button" class="cotile" data-actk="' + x[0] + '" style="--k:' + x[4] + '"><b>' + x[2] + '</b><span class="l">' + esc(x[1]) + '</span><span class="s">' + esc(x[3]) + '</span></button>';
+    }).join("");
+    /* the band: the last 14 days, who did what, the kind of work */
+    var days = [], per = [];
+    for(var i = 13; i >= 0; i--){ var dd = new Date(today().getTime() - i * 864e5); days.push(dd); }
+    days.forEach(function(dd){ var k = iso(dd); per.push(all.filter(function(r){ var x = new Date(r.at); return !isNaN(x) && iso(new Date(x.getFullYear(), x.getMonth(), x.getDate())) === k; }).length); });
+    var mx = Math.max.apply(null, per.concat([1])), DW = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+    var col1 = '<div class="m-bcol"><div class="m-bh">Last 14 Days<span>' + per.reduce(function(a, b){ return a + b; }, 0) + ' changes</span></div><div class="act-bars">' +
+      days.map(function(dd, i){ return '<div class="act-b' + (i === 13 ? " on" : "") + (dd.getDay() % 6 === 0 ? " we" : "") + '" title="' + esc(fmtDate(iso(dd))) + ': ' + per[i] + '"><em>' + (per[i] || "") + '</em><i style="height:' + Math.round(per[i] / mx * 100) + '%"></i><span>' + DW[dd.getDay()] + '</span></div>'; }).join("") + '</div></div>';
+    var bp = {}; inR.forEach(function(r){ var w = actWho(r); bp[w] = (bp[w] || 0) + 1; });
+    var pk = Object.keys(bp).sort(function(a, b){ return a === "You" ? 1 : b === "You" ? -1 : a.localeCompare(b); }), pmx = Math.max.apply(null, pk.map(function(k){ return bp[k]; }).concat([1]));
+    var col2 = '<div class="m-bcol"><div class="m-bh">Who Did What<span>' + esc(rangeT) + ' · select a name</span></div><div class="m-bars">' +
+      (pk.length ? pk.map(function(k){ return '<button type="button" class="m-bar" data-actwho="' + esc(k) + '"><span>' + esc(k) + '</span><span class="tr"><i style="width:' + Math.round(bp[k] / pmx * 100) + '%;background:#b79cff"></i></span><b>' + bp[k] + '</b></button>'; }).join("")
+        : '<div class="m-bnote">Nothing saved in this range.</div>') + '</div></div>';
+    var bk = {}; inR.forEach(function(r){ bk[r.kind] = (bk[r.kind] || 0) + 1; });
+    var kk = ACT_KINDS.slice(1).filter(function(k){ return bk[k[0]]; }), kt = inR.length || 1;
+    var col3 = '<div class="m-bcol"><div class="m-bh">Kind of Work<span>' + esc(rangeT) + '</span></div><div class="act-kbar">' +
+      kk.map(function(k){ return '<button type="button" data-actkind="' + k[0] + '" title="' + esc(k[1]) + ': ' + bk[k[0]] + '" style="width:' + (100 * bk[k[0]] / kt) + '%;background:' + ACT_KC[k[0]] + '"></button>'; }).join("") + '</div>' +
+      '<div class="act-key">' + kk.map(function(k){ return '<button type="button" data-actkind="' + k[0] + '"><i style="background:' + ACT_KC[k[0]] + '"></i>' + esc(k[1]) + ' <b>' + bk[k[0]] + '</b></button>'; }).join("") +
+      (kk.length ? '' : '<div class="m-bnote">Nothing in this range.</div>') + '</div></div>';
+    $("act-band").innerHTML = col1 + col2 + col3;
+    /* the list */
+    var who = ws.value, what = wt.value, qq = String(q.value || "").trim().toLowerCase();
+    var rows = inR.filter(function(r){
+      if(who && actWho(r) !== who) return false;
+      if(what && r.kind !== what) return false;
+      if(qq && [r.label, r.detail, r.co, actWho(r)].join(" ").toLowerCase().indexOf(qq) < 0) return false;
+      return true;
+    });
+    $("act-count").textContent = rows.length + (rows.length === 1 ? " change" : " changes") + (ACT.loading ? " · loading earlier months…" : "");
+    var html = "", day = "";
+    if(!rows.length) html = '<div class="act-empty">' + (all.length ? "Nothing matches these filters." : "No activity yet.") + '</div>';
+    rows.slice(0, ACT.lim).forEach(function(r){
+      var dl = actDayLabel(r.at); if(dl !== day){ day = dl; html += '<div class="act-day">' + esc(dl) + '</div>'; }
+      var tm = String(r.at).slice(10) === "T12:00:00" ? "" : new Date(r.at).toLocaleTimeString("en-US", {hour:"numeric", minute:"2-digit"});
+      var k = companyKey(r.co);
+      html += '<div class="act-r" style="--k:' + ACT_KC[r.kind] + '"><div class="act-t">' + esc(tm) + '</div><div class="act-m"><div class="act-l"><b>' + esc(actWho(r)) + '</b> ' + esc(r.label) +
+        (r.co ? (r.type === "mail" ? ", logged on " : " · ") + (k ? '<button type="button" class="linkbtn" data-spco="' + esc(k) + '">' + esc(r.co) + '</button>' : esc(r.co)) : '') + ' ' + actSt(r) + '</div>' +
+        (r.detail ? '<div class="act-d">' + esc(r.detail) + '</div>' : '') + '</div>' +
+        (r.type === "mail" && r.st === "need" ? '<div class="act-a"><button type="button" class="btn sm" data-hmfwd="1">Pick the Company</button></div>' : '<div class="act-a"></div>') + '</div>';
+    });
+    if(rows.length > ACT.lim) html += '<button type="button" class="btn ghost act-more" data-actmore="1">Show ' + Math.min(100, rows.length - ACT.lim) + ' More of ' + (rows.length - ACT.lim) + '</button>';
+    box.innerHTML = html;
+  }
+  document.addEventListener("click", function(ev){
+    var el = ev.target, b; if(!el || !el.closest) return;
+    var pick = function(id, v){ var s = $(id); if(!s) return; s.value = v; ACT.lim = 60; renderActivity(); };
+    if((b = el.closest("[data-actk]"))){ var k = b.getAttribute("data-actk"); if(k === "who") pick("act-who", ""); else { $("act-who").value = ""; pick("act-what", k); } return; }
+    if((b = el.closest("[data-actwho]"))){ pick("act-who", b.getAttribute("data-actwho")); return; }
+    if((b = el.closest("[data-actkind]"))){ pick("act-what", b.getAttribute("data-actkind")); return; }
+    if(el.closest("[data-actmore]")){ ACT.lim += 100; renderActivity(); return; }
+    /* the Forwarded Emails tile on Home, and Pick the Company on Activity: the emails waiting for a company, on the Outreach Planner */
+    if(el.closest("[data-hmfwd]")){
+      showView("todo"); window.scrollTo(0, 0);
+      opState.aw = "mail"; opState.awPicked = true; opKeep(); renderTodo();
+      var go = $("op-also"); if(go) go.scrollIntoView({behavior:"smooth", block:"start"});
+      return;
+    }
+  });
+  document.addEventListener("change", function(ev){ var t = ev.target; if(t && /^act-(who|what|days)$/.test(t.id)){ ACT.lim = 60; renderActivity(); } });
+  document.addEventListener("input", function(ev){ var t = ev.target; if(t && t.id === "act-q"){ ACT.lim = 60; renderActivity(); } });
+
+  /* ================= System Health (Jonna, November 21, 2026: "a system health tab ... to make this a rock solid
+     program") =================
+     Whether everything feeding and leaving the portal is working: when each feed last updated, whether the Team
+     Emails flow is sending, the Sponsorship Requests list check, saves that failed, how full the data files are, the
+     hourly robot, and rule checks that run made-up examples through the portal's own code. Every open copy checks
+     every 30 minutes (the robot hourly) and keeps the result in data/health.json (health/main); failed saves are
+     kept there too (health/e…). It shows in the menu for admins, with a red count when something needs a look.
+     Nothing is emailed from here: the 8 am GitHub health check already emails Jonna when it fails. */
+  var HL = {rows:null, at:"", busy:false, hm:null, errs:[], checks:[], store:null, ext:{}, inErr:false, errSeen:{}};
+  var myRole = "";
+  function hlAge(s){ var t = Date.parse(s || ""); return isNaN(t) ? Infinity : (Date.now() - t) / 864e5; }
+  function hlWhen(s){
+    var t = Date.parse(s || ""); if(isNaN(t)) return "Never";
+    var d = new Date(t), a = (Date.now() - t) / 6e4;
+    var ago = a < 2 ? "just now" : a < 60 ? Math.round(a) + " min ago" : a < 1440 ? Math.round(a / 60) + " hr ago" : Math.round(a / 1440) + " day" + (Math.round(a / 1440) === 1 ? "" : "s") + " ago";
+    return d.toLocaleDateString("en-US", {month:"short", day:"numeric"}) + ", " + d.toLocaleTimeString("en-US", {hour:"numeric", minute:"2-digit"}) + " · " + ago;
+  }
+  function hlIsAdmin(){ return myRole === "admin"; }
+  /* another system's file through the relay, read only, with the viewer's own sign-in */
+  function hlExt(path){
+    var tok = RS && RS.token && RS.token(); if(!tok) return Promise.resolve({no:"signed out"});
+    return fetch(RELAY_URL + "/" + path, {cache:"no-store", headers:{"Authorization":"Bearer " + tok}})
+      .then(function(r){ if(r.status === 403 || r.status === 401) return {no:"no access"}; if(!r.ok) return {no:"HTTP " + r.status}; return r.json().then(function(b){ return {data:(b && b.data) || null}; }); }, function(e){ return {no:String(e && e.message || e)}; });
+  }
+  function hlSaved(d){ d = d || {}; return d.savedAt || d.writtenAt || d.updatedAt || (d.doc && (d.doc.savedAt || d.doc.updatedAt)) || ""; }
+  /* feeds: how often each should update, in days, before it shows late (yellow) and then stale (red) */
+  var HL_FEEDS = [
+    {key:"money", name:"MISMO Money Payments", what:"Paid Aptify sponsorship orders, matched to the records", every:"Daily", late:2, bad:4, at:function(){ return moneyFeed && (moneyFeed.writtenAt || moneyFeed.savedAt) || ""; }},
+    {key:"intake", name:"Prospectus Applications", what:"The Sponsorship Intake flow: applications from the online prospectus", every:"When one comes in", info:true, own:"inbox"},
+    {key:"mailin", name:"mismosponsor@ Mailbox", what:"Emails forwarded, copied or Bcc'd to " + MAIL_ADDR, every:"When one comes in", info:true, own:"mailin"},
+    {key:"desk", name:"Registration Desk (Summit HQ)", what:"Bernie's invoices, comp codes and payment follow-ups", every:"When the Desk saves", info:true, ext:"summit-hq/data/feed-desk-sponsor"},
+    {key:"agenda", name:"Summit HQ Agenda", what:"Sponsors marked on each summit's agenda", every:"When the agenda changes", info:true, ext:"summit-hq/data/sponsor-agenda"},
+    {key:"media", name:"MISMO Media Benefits", what:"LinkedIn posts and Mic'd Up invitations done for sponsors", every:"When MISMO Media saves", info:true, ext:"marketing-hq/data/feed-sponsor-benefits"}];
+  function hlCheck(){
+    if(HL.busy || !db) return Promise.resolve(HL.rows);
+    HL.busy = true;
+    var rows = [];
+    return Promise.all(HL_FEEDS.map(function(f){
+      if(f.at) return Promise.resolve({at:f.at()});
+      if(f.own) return db.once(f.own).then(function(d){ return {at:hlSaved(d), data:d}; }, function(){ return {no:"couldn't be read"}; });
+      return hlExt(f.ext).then(function(r){ return r.no ? r : {at:hlSaved(r.data), data:r.data}; });
+    })).then(function(res){
+      HL_FEEDS.forEach(function(f, i){
+        var r = res[i] || {}, at = r.at || "", lv, note;
+        if(r.no){ lv = r.no === "no access" ? "info" : "warn"; note = r.no === "no access" ? "Your sign-in can't read it" : "Couldn't be read"; }
+        else if(f.info){ lv = "info"; note = ""; }
+        else { var a = hlAge(at); lv = !at ? "bad" : a > f.bad ? "bad" : a > f.late ? "warn" : "ok"; note = !at ? "Couldn't be read" : lv === "bad" ? "Hasn't updated in " + Math.floor(a) + " days" : lv === "warn" ? "Running late" : "On time"; }
+        rows.push({grp:"feeds", key:"feed-" + f.key, name:f.name, what:f.what, when:at, every:f.every, level:lv, note:note, feed:true});
+      });
+      /* applications the intake flow saved that nobody's portal has taken in yet */
+      var have = {}; apps.forEach(function(a){ if(a.prospectusRef) have[refKey(a.prospectusRef)] = 1; });
+      var waiting = (inboxItems || []).filter(function(x){ var k = x && refKey(x.reference); return k && !have[k] && !inboxTaken[k]; });
+      var inAt = hlSaved((res[1] || {}).data);
+      rows.push({grp:"feeds", key:"intake-taken", name:"Applications Taken In", what:"Each application from the prospectus becomes a record the next time the portal is open (or within the hour by the robot)",
+        when:"", every:"", level:waiting.length && hlAge(inAt) * 24 > 2 ? "bad" : waiting.length ? "warn" : "ok", note:waiting.length ? waiting.length + " waiting to be taken in" : "All taken in"});
+      var need = Object.keys(mailDocs).filter(function(id){ return mailDocs[id] && mailDocs[id].st === "need"; });
+      rows.push({grp:"feeds", key:"mail-need", name:"Forwarded Emails Without a Company", what:"Emails to " + MAIL_ADDR + " the portal couldn't match to one company", when:"", every:"",
+        level:need.length ? "warn" : "ok", note:need.length ? need.length + " to pick" : "None"});
+      rows.push({grp:"feeds", key:"price-list", name:"Price List", what:"Tiers, prices, slots and packages from the Sponsorship-Prospectus price list", when:"", every:"Each time the portal opens",
+        level:priceListReady ? "ok" : "warn", note:priceListReady ? "Loaded (" + priceListFrom + ")" : "Not loaded yet"});
+      var ls = listSync || {};
+      rows.push({grp:"feeds", key:"list-sync", name:"Sponsorship Requests List", what:"The SharePoint list the prospectuses read sold slots from, checked against the records", when:ls.at ? new Date(ls.at).toISOString() : "", every:"Each time the portal opens",
+        level:ls.state === "ok" ? "ok" : ls.state === "off" ? "warn" : ls.state === "error" ? "bad" : "info",
+        note:ls.state === "ok" ? "Matches the records" : ls.state === "off" ? (ls.resend.length + " to send again, " + ls.extra.length + " extra on the list") : ls.state === "error" ? "Couldn't check: " + ls.err : "Checking"});
+      /* email: anything queued and not sent, and failures */
+      var stuck = outbox.filter(function(o){ return o && o.status === "queued" && !outboxSent[o.id] && hlAge(o.queuedAt) * 1440 > 20; });
+      var last = ""; Object.keys(outboxSent).forEach(function(id){ var s = outboxSent[id]; if(s && s.sentAt && s.sentAt > last) last = s.sentAt; });
+      rows.push({grp:"email", key:"email-flow", name:"Team Emails Flow", what:"Power Automate sending the emails and list updates the portal queues", when:last, every:"Within a minute",
+        level:stuck.length ? "bad" : "ok", note:stuck.length ? stuck.length + " waiting more than 20 minutes" : "Nothing waiting", ids:stuck.map(function(o){ return o.id; })});
+      var fails = outbox.filter(function(o){ return o && (o.status === "failed" || (outboxSent[o.id] && /fail/i.test(outboxSent[o.id].status || ""))) && hlAge(o.queuedAt) <= 7; });
+      rows.push({grp:"email", key:"email-failed", name:"Failed Emails, Last 7 Days", what:"Emails or list updates the flow could not send", when:fails.length ? fails.map(function(o){ return o.queuedAt; }).sort().pop() : "", every:"",
+        level:fails.length ? "bad" : "ok", note:fails.length ? fails.length + " failed" : "None", ids:fails.map(function(o){ return o.id; })});
+      /* saves */
+      var errs = HL.errs.filter(function(x){ return hlAge(x.at) <= 7; });
+      rows.push({grp:"saves", key:"saves-failed", name:"Failed Saves, Last 7 Days", what:"Changes someone made that did not save (the portal says Not Saved on screen)", when:errs.length ? errs[0].at : "", every:"",
+        level:errs.length ? "warn" : "ok", note:errs.length ? errs.length + " failed save" + (errs.length === 1 ? "" : "s") : "None"});
+      return hlStorage().then(function(st){
+        var top = st && st.files && st.files[0];
+        if(top){ var pct = Math.round(top.len / 940000 * 100);
+          rows.push({grp:"saves", key:"storage", name:"Storage", what:"Biggest data file against the relay's 1 MB save limit", when:st.at, every:"Every 6 hours",
+            level:pct >= 90 ? "bad" : pct >= 75 ? "warn" : "ok", note:top.n + " is " + pct + "% full"}); }
+      });
+    }).then(function(){
+      /* the robot, and rule checks */
+      var hm = HL.hm || {}, ra = hlAge(hm.robotAt);
+      rows.push({grp:"checks", key:"robot", name:"Background Work (GitHub)", what:"The hourly robot that takes in applications and records payments when nobody has the portal open", when:hm.robotAt || "", every:"Hourly, 7 am to 7 pm ET",
+        level:!hm.robotAt ? "info" : ra > 2 ? "bad" : ra > 1.1 ? "warn" : "ok", note:!hm.robotAt ? "Not on record yet" : ra > 1.1 ? "Hasn't run in " + Math.floor(ra * 24) + " hours" : "Running"});
+      var R = hlRuleChecks(), bad = R.filter(function(x){ return !x.ok; }); HL.checks = R;
+      rows.push({grp:"checks", key:"rule-checks", name:"Rule Checks", what:R.length + " made-up examples and data checks run through the portal's own code", when:new Date().toISOString(), every:"Every check",
+        level:bad.length ? "bad" : "ok", note:bad.length ? bad.length + " failing" : "All " + R.length + " pass"});
+      HL.rows = rows; HL.at = new Date().toISOString();
+      return hlRecord(rows);
+    }).then(function(){ HL.busy = false; hlPaint(); return HL.rows; }, function(e){ HL.busy = false; console.error("health", e); hlPaint(); return HL.rows; });
+  }
+  var HL_FILES = ["applications", "leads", "log", "outbox", "outbox-sent", "inbox", "inbox-taken", "touchpoints", "mailin", "plans", "companies", "workgroups", "others", "settings", "health"];
+  function hlStorage(){
+    var st = HL.store || {};
+    if(!hlIsAdmin() || (st.at && hlAge(st.at) * 24 < 6)) return Promise.resolve(st.at ? st : null);
+    return Promise.all(HL_FILES.map(function(n){ return db.once(n).then(function(d){ return {n:n, len:d ? JSON.stringify(d).length : 0}; }, function(){ return {n:n, len:0}; }); }))
+      .then(function(out){ out.sort(function(a, b){ return b.len - a.len; }); HL.store = {at:new Date().toISOString(), files:out}; return HL.store; });
+  }
+  /* made-up examples through the same code the team uses, and checks on the data itself */
+  function hlRuleChecks(){
+    var R = [];
+    var ck = function(name, fn, want){ var got, err = ""; try{ got = fn(); }catch(e){ err = e.message || String(e); }
+      R.push({name:name, ok:!err && JSON.stringify(got) === JSON.stringify(want), got:err ? "error: " + err : JSON.stringify(got), want:JSON.stringify(want)}); };
+    var yr = today().getFullYear() + 1;
+    ck("A company's name matches with or without Inc., LLC or The", function(){ return [companyKey("The Northwind Lending, Inc."), companyKey("Northwind Lending LLC")]; }, [companyKey("Northwind Lending"), companyKey("Northwind Lending")]);
+    ck("A " + yr + " Series counts a third at each of the three summits", function(){ var s = sharesOf({event:yr + " Series"}); return [s.length, Math.round(s.reduce(function(n, x){ return n + x.share; }, 0) * 1000) / 1000]; }, [3, 1]);
+    ck("One summit counts in full at that summit", function(){ var s = sharesOf({event:"Spring " + yr}); return s.map(function(x){ return [x.summit, x.share]; }); }, [["Spring " + yr, 1]]);
+    ck("An old prospect stage (New Lead) reads as Lead", function(){ return leadStage({status:"New Lead"}); }, "Lead");
+    ck("Any other sponsorship type counts under Other", function(){ return [coTypeOf("summit"), coTypeOf("workgroup"), coTypeOf("ai-webinar")]; }, ["summit", "workgroup", "other"]);
+    ck("A prospectus reference is read the same however it is typed", function(){ return prospectusRef({prospectusRef:" ms27-t0001 "}); }, "MS27-T0001");
+    ck("A declined application is not a live sponsorship", function(){ return appLive({status:"Declined", event:"Spring " + yr}); }, false);
+    /* the data */
+    var dup = function(list, f){ var m = {}, d = []; list.forEach(function(x){ var v = f(x); if(!v) return; if(m[v] && d.indexOf(v) < 0) d.push(v); m[v] = 1; }); return d.slice(0, 10); };
+    ck("No two applications share an application number", function(){ return dup(apps.filter(function(a){ return a.id !== draft; }), function(a){ return a.appNo; }); }, []);
+    ck("No prospectus application was taken in twice", function(){ return dup(apps.filter(function(a){ return a.id !== draft && a.status !== "Declined"; }), function(a){ return prospectusRef(a); }); }, []);
+    ck("Every application has a company", function(){ return apps.filter(function(a){ return a.id !== draft && !String(a.company || "").trim(); }).map(function(a){ return a.appNo; }).slice(0, 10); }, []);
+    ck("No two prospects share a prospect number", function(){ return dup(leads.filter(function(l){ return l.id !== leadDraft; }), function(l){ return l.leadNo; }); }, []);
+    ck("Every summit a prospect is for is a summit the portal knows", function(){
+      return leads.filter(function(l){ return l.summit && !SUMMITS[l.summit] && !/^\d{4} Series$/.test(l.summit); }).map(function(l){ return l.company + ": " + l.summit; }).slice(0, 10); }, []);
+    return R;
+  }
+  /* keep the result where every copy (and the robot) can see it; at most every 30 minutes unless it changed */
+  function hlRecord(rows){
+    if(!db || !canWrite) return Promise.resolve();
+    var hm = HL.hm || {}, keys = rows.filter(function(r){ return r.level === "bad"; }).map(function(r){ return r.key; }).sort().join(",");
+    var robot = /robot/i.test(whoAmI());
+    if(!robot && hlAge(hm.checkedAt) * 1440 < 30 && (hm.badKeys || "") === keys) return Promise.resolve();
+    var doc = {checkedAt:new Date().toISOString(), checkedBy:whoAmI(), badKeys:keys, robotAt:robot ? new Date().toISOString() : (hm.robotAt || ""),
+      problems:rows.filter(function(r){ return r.level === "bad" || r.level === "warn"; }).map(function(r){ return {key:r.key, name:r.name, level:r.level, note:r.note}; })};
+    HL.inErr = true;
+    return db.doc("health/main").set(doc).then(function(){ HL.hm = doc; HL.inErr = false; }, function(){ HL.inErr = false; });
+  }
+  /* a failed save is kept so it shows here (the same message once an hour per browser) */
+  function hlLogErr(name, e){
+    if(HL.inErr || !db || !canWrite) return;
+    var msg = (name ? name + ": " : "") + String((e && (e.message || e.code || e.status)) || e || "Unknown error").slice(0, 240);
+    if(Date.now() - (HL.errSeen[msg] || 0) < 36e5) return; HL.errSeen[msg] = Date.now();
+    var id = "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    HL.inErr = true;
+    db.doc("health/" + id).set({at:new Date().toISOString(), by:whoAmI(), msg:msg, where:currentView || ""}).then(function(){ HL.inErr = false; }, function(){ HL.inErr = false; });
+  }
+  function hlPaint(){
+    var rows = HL.rows || [], nb = rows.filter(function(r){ return r.level === "bad"; }).length, nw = rows.filter(function(r){ return r.level === "warn"; }).length;
+    var pip = $("pip-health"); if(pip){ pip.textContent = nb; pip.className = "pip" + (nb ? "" : " quiet"); }
+    var tab = $("tab-health"); if(tab) tab.hidden = !hlIsAdmin();
+    if(currentView !== "health" || !$("hl-sum")) return;
+    var no = rows.filter(function(r){ return r.level === "ok"; }).length, hm = HL.hm || {};
+    $("hl-sum").innerHTML = [[nb, "Need a look", "bad"], [nw, "Running late", "warn"], [no, "On time", "ok"], [HL.at ? hlWhen(HL.at).split(" · ")[1] : "Not yet", "Last checked", ""]].map(function(k){
+      return '<div class="hl-k ' + (k[2] && k[0] ? k[2] : k[2] === "ok" ? "ok" : "") + '"><b>' + esc(String(k[0])) + '</b><span>' + k[1] + '</span></div>'; }).join("");
+    var lab = {ok:"On time", warn:"Late", bad:"Needs a look", info:"Last update"};
+    var row = function(r){
+      var x = '<div class="hl-r"><div class="hl-d ' + r.level + '"></div><div><div class="hl-n">' + esc(r.name) + '</div><div class="hl-w">' + esc(r.what) + (r.every ? " · " + esc(r.every) : "") + '</div>' +
+        (r.when || r.feed ? '<div class="hl-t">' + (r.when ? "Last: " + esc(hlWhen(r.when)) : "Last: none on record") + '</div>' : '') + '</div><div class="hl-s ' + r.level + '">' + esc(r.note || lab[r.level]) + '</div>';
+      if((r.key === "email-flow" || r.key === "email-failed") && (r.ids || []).length){
+        x += '<div class="hl-list">' + r.ids.slice(0, 12).map(function(id){ var o = outbox.filter(function(z){ return z.id === id; })[0] || {};
+          return '<div><b>' + esc(hlWhen(o.queuedAt).split(" · ")[0]) + '</b> · ' + esc(ALERT_LABEL[o.kind] || (o.kind === "status" ? "List update" : o.kind || "Email")) + (o.appNo ? " · " + esc(o.appNo) : "") + (o.toNames ? " · to " + esc(o.toNames) : "") + '</div>'; }).join("") + '</div>';
+      }
+      if(r.key === "saves-failed"){ var e = HL.errs.filter(function(z){ return hlAge(z.at) <= 7; });
+        if(e.length) x += '<div class="hl-list">' + e.slice(0, 15).map(function(z){ return '<div><b>' + esc(hlWhen(z.at).split(" · ")[0]) + '</b> · ' + esc(z.by || "") + ' · ' + esc(z.msg) + '</div>'; }).join("") + '</div>'; }
+      return x + '</div>';
+    };
+    var card = function(id, title, g, foot){ $(id).innerHTML = '<h2>' + title + '</h2>' + rows.filter(function(r){ return r.grp === g; }).map(row).join("") + (foot ? '<div class="hl-foot">' + foot + '</div>' : ''); };
+    card("hl-feeds", "Data Feeds", "feeds", "Gray dots are feeds that only change when something happens, so they never show late.");
+    card("hl-email", "Email", "email", "");
+    card("hl-saves", "Saves and Storage", "saves", HL.store && HL.store.files ? "Data files against the 1 MB save limit: " + HL.store.files.slice(0, 6).map(function(f){ return esc(f.n) + " " + Math.round(f.len / 940000 * 100) + "%"; }).join(" · ") : "");
+    $("hl-checks").innerHTML = '<h2>Checks</h2>' + rows.filter(function(r){ return r.grp === "checks"; }).map(row).join("") +
+      '<div class="hl-r"><div class="hl-d ' + (hlAge(hm.checkedAt) * 24 < 2 ? "ok" : "warn") + '"></div><div><div class="hl-n">Last Shared Check</div><div class="hl-w">Saved by whoever had the portal open, or the robot</div><div class="hl-t">' +
+        (hm.checkedAt ? esc(hlWhen(hm.checkedAt)) + (hm.checkedBy ? " · " + esc(hm.checkedBy) : "") : "None yet") + '</div></div><div class="hl-s info"></div></div>' +
+      '<div class="hl-r"><div class="hl-d ' + (VER.newer ? "warn" : "ok") + '"></div><div><div class="hl-n">This Page</div><div class="hl-w">' + esc(verText() || "Version not read yet") + '</div></div><div class="hl-s ' + (VER.newer ? "warn" : "ok") + '">' + (VER.newer ? "Newer version out" : "Up to date") + '</div></div>' +
+      '<div class="hl-foot">Nothing is emailed from this page. The GitHub health check runs every morning at 8 am ET (prospectuses, the Availability and Intake flows, Team Emails, MISMO Money) and GitHub emails you if it fails.</div>';
+    var R = HL.checks || [], rb = R.filter(function(x){ return !x.ok; }).length;
+    $("hl-rules").innerHTML = '<h2>Rule Checks <span class="hl-sub">' + (R.length ? (rb ? rb + " of " + R.length + " failing" : "All " + R.length + " pass") : "") + '</span></h2><div class="hl-cg">' +
+      R.map(function(x){ return '<div class="hl-c"><div class="hl-d ' + (x.ok ? "ok" : "bad") + '"></div><div>' + esc(x.name) + (x.ok ? "" : '<div class="x">Expected ' + esc(x.want) + ', got ' + esc(x.got) + '</div>') + '</div></div>'; }).join("") + '</div>';
+  }
+  document.addEventListener("click", function(ev){
+    var b = ev.target && ev.target.closest && ev.target.closest("#hl-now"); if(!b) return;
+    b.disabled = true; b.textContent = "Checking…"; HL.store = null;
+    hlCheck().then(function(){ b.disabled = false; b.textContent = "Check Now"; });
+  });
+  function hlStart(){
+    db.collection("health").onSnapshot(function(snap){
+      var errs = [];
+      snap.docs.forEach(function(d){ var x = d.data() || {}; if(d.id === "main") HL.hm = x; else if(x.msg) errs.push(x); });
+      HL.errs = errs.sort(function(a, b){ return String(b.at).localeCompare(String(a.at)); });
+      hlPaint();
+    }, function(){});
+    setTimeout(hlCheck, 45000);
+    setInterval(function(){ if(!document.hidden) hlCheck(); }, 30 * 60000);
+  }
+
+  /* ---- the version of this page, and a notice when a newer one is published (as Member 360 does) ---- */
+  var VER = {fp:"", at:"", newer:false};
+  function verRead(){
+    return fetch(location.pathname + "?ver=" + Date.now(), {cache:"no-store"}).then(function(r){
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      var at = r.headers.get("last-modified") || "";
+      return r.text().then(function(t){
+        if(!(window.crypto && crypto.subtle)) return {fp:String(t.length), at:at};
+        return crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)).then(function(b){
+          return {fp:Array.prototype.slice.call(new Uint8Array(b), 0, 4).map(function(x){ return ("0" + x.toString(16)).slice(-2); }).join(""), at:at};
+        });
+      });
+    });
+  }
+  function verText(){
+    if(!VER.fp) return ""; var d = Date.parse(VER.at);
+    return "Version " + VER.fp + (isNaN(d) ? "" : ", published " + new Date(d).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}) + " at " + new Date(d).toLocaleTimeString("en-US", {hour:"numeric", minute:"2-digit"}));
+  }
+  function verBar(){
+    if(!VER.newer || $("ver-bar")) return;
+    var bar = document.createElement("div"); bar.id = "ver-bar"; bar.setAttribute("role", "status");
+    bar.innerHTML = '<span>The Sponsorship Portal has been updated. Reload to get the latest version.</span><button type="button" class="btn sm">Reload</button>';
+    bar.querySelector("button").addEventListener("click", function(){ location.reload(); });
+    document.body.appendChild(bar);
+  }
+  verRead().then(function(v){ VER.fp = v.fp; VER.at = v.at; hlPaint(); }, function(){});
+  setInterval(function(){
+    if(document.hidden || !VER.fp || VER.newer) return;
+    verRead().then(function(v){ if(v.fp !== VER.fp){ VER.newer = true; verBar(); hlPaint(); } }, function(){});
+  }, 15 * 60000);
 
   /* ---------------- wiring ---------------- */
   document.addEventListener("click", function(ev){
@@ -12320,6 +12802,7 @@ a series deal is counted once, at its full amount.</div>
     var s = RS.current() || {};
     user = {name: s.name || s.email || "MISMO"};
     canWrite = (role === "admin" || role === "staff");
+    myRole = role || ""; hlPaint();
     if(started) return;
     started = true;
     $("conn-banner").style.display = "none";
@@ -12452,6 +12935,7 @@ a series deal is counted once, at its full amount.</div>
     }, failed("loading the prospects"));
     setInterval(function(){ if(!document.hidden) d.poll(); }, POLL_MS);
     document.addEventListener("visibilitychange", function(){ if(!document.hidden) d.poll(); });
+    hlStart();
   }
 
   if(RS){

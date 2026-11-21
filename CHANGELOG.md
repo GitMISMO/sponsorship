@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-21: **Activity** (under Records), like Member 360's: what the team saved, logged, forwarded and planned, with boxes, the last 14 days, who did what, the kind of work and filters. **System Health** (for admins): every feed, the email flow, the Requests list check, failed saves, storage, the robot and rule checks, checked every 30 minutes and kept in data/health.json; a red count in the menu when something needs a look; nothing is emailed. A bar asks to reload when a newer version is published. Home's mismosponsor@ tile is now **Forwarded Emails**, like Member 360's: only the emails that still need a company. A new prospect or application can no longer get a number another one already has.
 - 2026-11-21: Choosing a page in the menu opens it at the top, rather than where the last page was scrolled to.
 - 2026-11-21: Outreach Planner: the week runs as rows, one per day (and Past Due), with the cards across each row; Who to Touch starts closed (with how many) and opens on a click.
 - 2026-11-21: Home: Just Came In shows the sponsors that came in through the prospectus this month (each with where it is now) and any application still waiting for review; new prospects are no longer there.

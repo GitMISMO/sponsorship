@@ -504,13 +504,18 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const n = (await P(portal, () => window.__practice.file('log').entries)).filter(e => e.appNo === 'AN90007' && /Registration Desk/.test(e.what)).length;
     expect(n === 1, 'the Desk entry was applied ' + n + ' times');
   });
-  await check('a prospect\'s stage changes right in its row', async () => {
+  await check('a prospect\'s stage changes on its company card, not in the list', async () => {
     await toFlow();
-    await portal.selectOption('#flow-body select[data-flowstage="lead-t-1"]', 'Meeting Scheduled');
+    expect(!(await P(portal, () => !!document.querySelector('#flow-body select[data-flowstage], #pl-body select[data-flowstage]'))), 'a list still has a stage picker in the row');
+    await openRec('lead-t-1');
+    if (await portal.isVisible('#cp-dockback')) { await portal.click('#cp-dockback'); await portal.waitForTimeout(400); }
+    if (!(await portal.isVisible('#co-panel select[data-flowstage="lead-t-1"]'))) { await portal.click('#co-panel [data-cotab="overview"]'); await portal.waitForTimeout(300); }
+    await portal.selectOption('#co-panel select[data-flowstage="lead-t-1"]', 'Meeting Scheduled');
     await portal.waitForTimeout(1500);
     const l = (await fileOf('leads')).docs['lead-t-1'];
     expect(l.status === 'Meeting Scheduled', 'the stage was not saved: ' + l.status);
     expect((l.history || []).some(h => /Contacted → Meeting Scheduled/.test(h.text)), 'the stage change is not in its notes');
+    await P(portal, () => { const c = document.getElementById('co-close'); if (c && c.offsetParent) c.click(); });
   });
   await check('the AI Webinar Series moved into Other Sponsorships, keeping its split', async () => {
     const o = (await fileOf('others')).docs['wb-t-1'], w = (await fileOf('webinars')).docs['wb-t-1'];
@@ -678,19 +683,37 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
   await check('new sponsors can be listed for this month, any month or any dates', async () => {
     await toCos('Sponsor');
-    await portal.click('[data-npp="year"]'); await portal.waitForTimeout(250);
+    await portal.click('#spm-newp [data-npp="year"]'); await portal.waitForTimeout(250);
     let t = await P(portal, () => document.getElementById('spm-newp').innerText);
     expect(/new sponsorship/i.test(t) && /This Year/.test(t), 'the New Sponsors panel is missing: ' + t.slice(0, 200));
-    await portal.click('[data-npp="custom"]'); await portal.waitForTimeout(200);
+    await portal.click('#spm-newp [data-npp="custom"]'); await portal.waitForTimeout(200);
     await portal.fill('#np-from', '2020-01-01'); await P(portal, () => document.getElementById('np-from').dispatchEvent(new Event('change', {bubbles: true})));
     await portal.fill('#np-to', '2030-12-31'); await P(portal, () => document.getElementById('np-to').dispatchEvent(new Event('change', {bubbles: true})));
     await portal.waitForTimeout(250);
     t = await P(portal, () => document.getElementById('spm-newp').innerText);
     expect(/Northwind Lending/.test(t) && /Contoso Mortgage/.test(t), 'a custom period does not list the sponsors in it: ' + t.slice(0, 300));
-    await portal.click('[data-npk="workgroup"]'); await portal.waitForTimeout(200);
+    await portal.click('#spm-newp [data-npk="workgroup"]'); await portal.waitForTimeout(200);
     t = await P(portal, () => document.getElementById('spm-newp').innerText);
     expect(!/Northwind Lending/.test(t), 'the Workgroup filter still lists summit sponsors');
-    await portal.click('[data-npk=""]'); await portal.click('[data-npp="this"]');
+    await portal.click('#spm-newp [data-npk=""]'); await portal.click('#spm-newp [data-npp="this"]');
+  });
+  await check('New Prospects at the top of Prospects lists the prospects added in a period', async () => {
+    await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await portal.click('.tab[data-view="plist"]'); await portal.waitForTimeout(300);
+    expect(await P(portal, () => document.querySelector('#view-plist').firstElementChild.id === 'pl-newp'), 'New Prospects is not at the top of Prospects');
+    await portal.click('#pl-newp [data-npp="custom"]'); await portal.waitForTimeout(200);
+    await portal.fill('#pnp-from', '2020-01-01'); await P(portal, () => document.getElementById('pnp-from').dispatchEvent(new Event('change', {bubbles: true})));
+    await portal.fill('#pnp-to', '2030-12-31'); await P(portal, () => document.getElementById('pnp-to').dispatchEvent(new Event('change', {bubbles: true})));
+    await portal.waitForTimeout(250);
+    let t = await P(portal, () => document.getElementById('pl-newp').innerText);
+    expect(/New Prospects/.test(t) && /new prospects/i.test(t) && /Wingtip Servicing/.test(t) && /Litware Group/.test(t), 'New Prospects does not list the prospects added: ' + t.slice(0, 300));
+    expect(!/Northwind Lending/.test(t), 'New Prospects lists a sponsor whose application made its prospect record: ' + t.slice(0, 300));
+    await portal.click('#pl-newp [data-npk="workgroup"]'); await portal.waitForTimeout(200);
+    t = await P(portal, () => document.getElementById('pl-newp').innerText);
+    expect(/Litware Group/.test(t) && !/Wingtip Servicing/.test(t), 'the Workgroup filter is wrong on New Prospects: ' + t.slice(0, 300));
+    const sp = await P(portal, () => document.getElementById('spm-newp').innerText);
+    expect(/New Sponsors/.test(sp) && !/Wingtip/.test(sp), 'New Prospects changed the New Sponsors panel');
+    await portal.click('#pl-newp [data-npk=""]'); await portal.click('#pl-newp [data-npp="this"]');
   });
   await check('prospects can be narrowed to a summit, and a summit prospect says which summit', async () => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c) c.click(); }); });

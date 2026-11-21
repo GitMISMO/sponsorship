@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-11-21: Prospects: **New Prospects** at the top, like New Sponsors: added this month, last month, this year, any month or any dates, by kind, with the forecast total; select one to open its company.
+- 2026-11-21: A prospect's stage is set on its company card (a Stage box beside Which Summit, or a step on its bar), not in the Pipeline or Prospects list; the lists show it.
 - 2026-11-21: Prospects: Which Summit is no longer a picker in each row. It is set on the prospect in its company card and the list shows it (or "Summit not picked yet").
 - 2026-11-21: Home: On Your Plate (beside the greeting) is gone; the greeting runs the full width. Past due and follow-ups due stay in the sentence and open the Pipeline. MISMO Media's side of the sponsor benefits feed is live.
 - 2026-11-21: The search in the menu finds companies: each company is listed once (under Sponsors or Prospects), with what it sponsors and why it matched (a contact, an application or order number, a billing name), and selecting it opens the company card rather than one of its sponsorships.

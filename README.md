@@ -66,6 +66,19 @@ falls back to SharePoint's `_layouts/15/download.aspx` link. **+ Add a Logo** / 
 saves a file of up to 4 MB with `db.putOnce`. Download Logo is on the company card and under Company Details, and
 Download the Logo is on the application.
 
+## Sponsors, Prospects, Also Waiting, MISMO Media (November 21, 2026)
+
+- **Sponsors** (`view-spm`, nav label Sponsors) lists only companies that sponsor now, applied or sponsored before
+  (`SPM_LIFE`); its band's third column is Sponsors by Summit (`data-spmpick` sets the summit filter); New Sponsors
+  only (no prospects). Prospects live on **Prospects** (`view-plist`).
+- **Pipeline**: `#flow-types` (Summit / Workgroup / Other) sits above the band in `.flowkinds`, with `#flow-kindnote`.
+- **Also Waiting** (`#op-also`): number boxes (`data-awt`: apps, late, inv, mail, newp) and one pane at a time
+  (`.aw-pane`, `opState.aw`); the mismosponsor@ box (`#flow-mailbox`) and New Prospects (`#flow-newbox`) are panes.
+- **MISMO Media**: `loadMediaFeed` reads `/marketing-hq/data/feed-sponsor-benefits` (read only, every 10 minutes);
+  `mediaDone(a, summit, "linkedin"|"micdup")` makes those two benefits show done. Shape in the Connections Map:
+  `{updatedAt, entries:{<id>:{appNo, company, summit, benefit, status, on, url, by, at}}}`; matched on appNo, else
+  company name; no summit = every summit; draft/planned/cancelled ignored. Nothing is written to the records.
+
 ## Back to kinds, one company card (November 21, 2026)
 
 Nav: Home, Outreach Planner, Pipeline, Prospects (`view-plist`), Sponsors and Prospects (`view-spm`), Benefits;

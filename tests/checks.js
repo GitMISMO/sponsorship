@@ -425,6 +425,9 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const local = await P(portal, () => document.getElementById('d-msg').textContent);
     expect(/Not saved/.test(local), 'the panel does not say Not saved: ' + local);
     await P(portal, () => window.__practice.failNext('applications', 0));
+    await portal.waitForTimeout(1500);
+    const hl = Object.entries(((await fileOf('health')) || {docs: {}}).docs || {}).filter(([k, v]) => k !== 'main' && v && v.msg);
+    expect(hl.some(([k, v]) => /applications/.test(v.msg)), 'the failed save is not kept for System Health: ' + JSON.stringify(hl).slice(0, 200));
     await P(portal, () => document.getElementById('d-close').click());
   });
   const toTodo = async () => {
@@ -840,6 +843,43 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await P(portal, () => document.getElementById('co-close').click());
   });
 
+  await check('Home\'s Forwarded Emails tile lists only the emails that still need a company, and opens them', async () => {
+    await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await portal.click('.tab[data-view="home"]'); await portal.waitForTimeout(400);
+    const tile = await P(portal, () => (document.querySelector('#home-grid .hm-fwd') || {}).innerText || '');
+    const need = await P(portal, () => Object.values(window.__practice.file('mailin').docs).filter(d => d.st === 'need').length);
+    expect(/Forwarded Emails/i.test(tile) && new RegExp('\\b' + need + '\\s+needs? a company').test(tile), 'the tile does not count the emails needing a company (' + need + '): ' + tile.replace(/\n/g, ' | '));
+    expect(!/logged this week/i.test(tile), 'the tile still counts emails logged this week');
+    if (need) expect(/Pick a company/i.test(tile) && /Question/.test(tile), 'the email needing a company is not on the tile: ' + tile);
+    await portal.click('#home-grid .hm-fwd'); await portal.waitForTimeout(600);
+    const on = await P(portal, () => ({view: document.querySelector('#view-todo.on') ? 'todo' : '', tab: (document.querySelector('#aw-tabs .aw-tab.on') || {}).getAttribute ? document.querySelector('#aw-tabs .aw-tab.on').getAttribute('data-awt') : ''}));
+    expect(on.view === 'todo' && on.tab === 'mail', 'the tile did not open the emails to pick: ' + JSON.stringify(on));
+  });
+  await check('Activity lists what the team did, with Member 360\'s boxes, band and filters', async () => {
+    await portal.click('.tab[data-view="activity"]'); await portal.waitForTimeout(1200);
+    const v = await P(portal, () => ({tiles: document.getElementById('act-tiles').innerText, band: document.getElementById('act-band').innerText, list: document.getElementById('act-list').innerText}));
+    expect(/Changes Saved/.test(v.tiles) && /Touchpoints/.test(v.tiles) && /Forwarded Emails/.test(v.tiles) && /People Active/.test(v.tiles), 'the Activity boxes are missing: ' + v.tiles.slice(0, 200));
+    expect(/Last 14 Days/i.test(v.band) && /Who Did What/i.test(v.band) && /Kind of Work/i.test(v.band), 'the Activity band is missing parts');
+    expect(/You\s+logged a call/.test(v.list) && /Northwind Lending/.test(v.list), 'the touchpoint logged in these checks is not on Activity: ' + v.list.slice(0, 300));
+    expect(!/^(Sponsorship Portal|Online prospectus|system)\b/m.test(v.list.replace(/^\d+:\d+ [AP]M\s*/gm, '')), 'Activity lists things the portal did on its own');
+    await portal.click('#act-tiles [data-actk="tp"]'); await portal.waitForTimeout(300);
+    const tp = await P(portal, () => ({what: document.getElementById('act-what').value, list: document.getElementById('act-list').innerText}));
+    expect(tp.what === 'tp' && /logged a call/.test(tp.list) && !/queued to email/.test(tp.list), 'the Touchpoints box did not filter the list');
+    await portal.selectOption('#act-what', '');
+  });
+  await check('System Health checks the feeds, the email flow, saves and the rule checks, and keeps the result', async () => {
+    expect(await P(portal, () => !document.getElementById('tab-health').hidden), 'System Health is not in the menu for an admin');
+    await portal.click('.tab[data-view="health"]'); await portal.waitForTimeout(300);
+    await portal.click('#hl-now'); await portal.waitForFunction(() => !document.getElementById('hl-now').disabled, null, {timeout: 20000});
+    const v = await P(portal, () => ({feeds: document.getElementById('hl-feeds').innerText, email: document.getElementById('hl-email').innerText, saves: document.getElementById('hl-saves').innerText, checks: document.getElementById('hl-checks').innerText, rules: document.getElementById('hl-rules').innerText}));
+    expect(/MISMO Money Payments/.test(v.feeds) && /Prospectus Applications/.test(v.feeds) && /mismosponsor@ Mailbox/.test(v.feeds) && /Registration Desk/.test(v.feeds) && /MISMO Media Benefits/.test(v.feeds), 'a feed is missing from System Health: ' + v.feeds.slice(0, 300));
+    expect(/Team Emails Flow/.test(v.email) && /Failed Emails/.test(v.email), 'the email checks are missing');
+    expect(/Failed Saves/.test(v.saves) && /[1-9][0-9]* failed saves?/.test(v.saves), 'the failed save from these checks is not on System Health: ' + v.saves.slice(0, 200));
+    expect(/Rule Checks/.test(v.rules) && /All \d+ pass/.test(v.rules), 'a rule check is failing: ' + v.rules.slice(0, 600));
+    expect(/Background Work/.test(v.checks) && /This Page/.test(v.checks), 'the robot or the version is missing from Checks');
+    const main = (((await fileOf('health')) || {docs: {}}).docs || {}).main;
+    expect(main && main.checkedAt && main.checkedBy, 'the shared check was not kept in data/health.json');
+  });
   await check('nothing reaches a real address', async () => {
     const out = [...new Set(portal.outside)];
     expect(!out.length, 'the page tried to reach ' + out.join(', '));

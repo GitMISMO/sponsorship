@@ -8365,9 +8365,12 @@ a series deal is counted once, at its full amount.</div>
     });
   });
 
+  /* every page opens at its top (Jonna, November 21, 2026: "when i select pipeline it doesn't land at the top
+     of the page, i have to scroll up") */
   $("tabband").addEventListener("click", function(ev){
     var b = ev.target.closest(".tab"); if(!b) return;
     showView(b.getAttribute("data-view"));
+    window.scrollTo(0, 0);
   });
 
   $("summit-nav").addEventListener("change", function(ev){

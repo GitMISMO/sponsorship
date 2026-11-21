@@ -739,6 +739,25 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(/invited to Mic.d Up[^)]*MISMO Media/.test(dr), 'the Mic\'d Up invitation MISMO Media recorded is not ticked');
     await P(portal, () => { ['d-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c) c.click(); }); });
   });
+  await check('searching a company opens its company card, once per company, even by its contact', async () => {
+    const find = async (q) => {
+      await P(portal, (q) => { const b = document.getElementById('nav-search'); b.value = q; b.dispatchEvent(new Event('input', {bubbles:true})); }, q);
+      await portal.waitForTimeout(400);
+      return P(portal, () => [...document.querySelectorAll('#nav-hits .rh')].map(b => b.querySelector('b').textContent + ' | ' + ((b.querySelector('i') || {}).textContent || '')));
+    };
+    const nw = await find('northwind');
+    expect(nw.filter(h => /^Northwind Lending/.test(h)).length === 1, 'Northwind is not listed exactly once: ' + JSON.stringify(nw));
+    const byContact = await find('avery test');
+    expect(byContact.some(h => /^Northwind Lending .*contact Avery Test/.test(h)), 'searching the contact does not find the company: ' + JSON.stringify(byContact));
+    await P(portal, () => document.querySelector('#nav-hits .rh').click()); await portal.waitForTimeout(500);
+    const st = await P(portal, () => ({panel:document.getElementById('co-panel').classList.contains('on'),
+      name:(document.querySelector('#cp-body .cp-band') || {}).innerText || '',
+      docked:!!document.querySelector('#co-panel .drawer.docked'),
+      drawer:['drawer','lead-drawer','bill-drawer'].some(id => document.getElementById(id).classList.contains('on'))}));
+    expect(st.panel && /Northwind Lending/.test(st.name), 'the company card did not open: ' + JSON.stringify(st).slice(0, 200));
+    expect(!st.docked && !st.drawer, 'a sponsorship record opened instead of just the company card');
+    await P(portal, () => { const b = document.getElementById('nav-search'); b.value = ''; b.dispatchEvent(new Event('input', {bubbles:true})); document.getElementById('co-close').click(); });
+  });
   /* 'a summit prospect can be tied to a summit' (the retired Summit-first page) is covered by the Prospects check above (November 21, 2026) */
   await check('a company record shows its emails and sponsorships, and takes a note and an owner', async () => {
     await toCos('Sponsor');

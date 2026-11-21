@@ -595,7 +595,8 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(/Good (morning|afternoon|evening)/.test(t) && !/On Your Plate/i.test(t) && /Sales Pipeline/i.test(t) && !/Team Activity/i.test(t), 'Home is missing its parts, or still has Team Activity or On Your Plate');
     /* a new application is the first thing on Home (Jonna, November 20, 2026) */
     const came = await P(portal, () => { const x = document.querySelector('#home-hero .hm-in'); return x ? x.innerText : ''; });
-    expect(/Just Came In/i.test(came) && /New Application/i.test(came) && /applications? waiting for review/.test(came), 'an application waiting for review is not under Just Came In: ' + came.slice(0, 200));
+    expect(/Just Came In/i.test(came) && /To Review/i.test(came) && /applications? waiting for review/.test(came), 'an application waiting for review is not under Just Came In: ' + came.slice(0, 200));
+    expect(/through the prospectus in/.test(came) && /Fabrikam Title/.test(came) && !/New Prospect/i.test(came), 'Just Came In should list this month\'s prospectus sponsors and no prospects: ' + came.slice(0, 300));
     expect(await P(portal, () => document.querySelector('#home-hero').firstElementChild.classList.contains('hm-in')), 'Just Came In is not at the top of Home');
   });
   /* the Outreach Planner: To Do, the Member 360 way (November 19, 2026) */

@@ -600,6 +600,13 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(await P(portal, () => document.querySelector('#home-hero').firstElementChild.classList.contains('hm-in')), 'Just Came In is not at the top of Home');
   });
   /* the Outreach Planner: To Do, the Member 360 way (November 19, 2026) */
+  await check('choosing a page in the menu opens it at the top', async () => {
+    await portal.click('.tab[data-view="spm"]'); await portal.waitForTimeout(300);
+    await P(portal, () => window.scrollTo(0, 2000)); await portal.waitForTimeout(150);
+    await portal.click('.tab[data-view="flow"]'); await portal.waitForTimeout(400);
+    const y = await P(portal, () => window.scrollY);
+    expect(y === 0, 'the Pipeline opened ' + y + 'px down the page');
+  });
   await check('the Outreach Planner works like Member 360: board, Up Next, drag, done, undo, plan', async () => {
     await toTodo();
     await portal.click('[data-opwho=""]'); await portal.click('[data-opwhen="0"]'); await portal.waitForTimeout(250);

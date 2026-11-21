@@ -609,7 +609,8 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const board = await P(portal, () => document.getElementById('op-board').innerText);
     expect(/Northwind Lending/.test(board), 'a touch planned for today is not on the board');
     expect(/Past Due/.test(board) && /Contoso Mortgage/.test(board), 'a planned touch from last week is not under Past Due');
-    expect(/Applications to Review/.test(t) && /Tailspin Data/.test(t), 'an application waiting for review is not under Also Waiting');
+    const awApps = await P(portal, () => (document.getElementById('aw-apps') || {}).innerText || '');
+    expect(/Applications to Review/.test(t) && /Review and approve/.test(awApps), 'an application waiting for review is not under Also Waiting: ' + awApps.slice(0, 200));
     expect(/Emails to mismosponsor@/i.test(t), 'the mismosponsor@ emails are not on the planner');
     await P(portal, () => { document.getElementById('op-fu').open = true; });
     const fu = await P(portal, () => document.getElementById('op-fu-rows').innerText);
@@ -636,6 +637,8 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     wl = (await fileOf('leads')).docs['lead-t-1'];
     expect(wl.nextFollowUpDate && !wl.lastFollowUp, 'Undo did not reopen the prospect follow-up');
     /* plan someone from Who to Touch */
+    expect(await P(portal, () => !document.getElementById('op-whosect').open), 'Who to Touch is not collapsed to start');
+    await portal.click('#op-whosect > summary'); await portal.waitForTimeout(200);
     const sel = await P(portal, () => { const s = document.querySelector('#op-lanes select[data-opplan]'); if (!s) return null; const o = [...s.options].find(o => o.value); return o ? {key: s.getAttribute('data-opplan'), v: o.value} : null; });
     expect(sel, 'Who to Touch has nobody to plan');
     if (sel) {

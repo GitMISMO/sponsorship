@@ -66,6 +66,28 @@ falls back to SharePoint's `_layouts/15/download.aspx` link. **+ Add a Logo** / 
 saves a file of up to 4 MB with `db.putOnce`. Download Logo is on the company card and under Company Details, and
 Download the Logo is on the application.
 
+## Back to kinds, one company card (November 21, 2026)
+
+Nav: Home, Outreach Planner, Pipeline, Prospects (`view-plist`), Sponsors and Prospects (`view-spm`), Benefits;
+Sponsorships: Summit (`view-pipeline`), Workgroup, Other; Records: Inventory, Money, Prospectuses.
+
+- **Pipeline** (`renderFlow`): `flowState.type` is `summit` (default), `workgroup` or `other` (`FLOW_KINDS`,
+  `flowKindOk` with `coTypeOf`); the whole page (headline, funnel, drill lists, rows) is that kind only.
+- **One company card**: `openDrawer`, `openBill` and `openLeadDrawer` are wrapped so a record with a company opens
+  docked inside `#co-panel` (`dockRec`: the drawer element moves into `#cp-dock`, class `docked`, the card body hides,
+  `#cp-dockback` says Back to the company). Closing the record (Back, Cancel, ×, Escape) undocks it and shows the card
+  again (`undockEl`); closing the company closes a docked record first. A new record with no company opens on its own.
+- **New Sponsors / New Prospects** (`paintNewIn`, `newInRows`, `npRange` on the Sponsors and Prospects page): a
+  sponsor is new on its application's `approvedDate` (else `dateSubmitted`) for Approved/Pending Payment/Paid/In
+  Kind/Written Off, or a workgroup/other sponsorship's `periodStart`/`invoiceDate`; a prospect on `createdDate`.
+  Periods: this month, last month, this year, any of the last 24 months, or custom dates; kinds via `coTypeOf`.
+  State in `sponsorship:spm` (`np`).
+- **Prospects**: Summit / Workgroup / Other buttons (`coTypeOf`), `#pl-summit` (a Series counts for its year's
+  summits; "Summit Not Picked Yet"), and a Which Summit picker in each summit row (`data-leadsummit`).
+- **Outreach Planner**: Past Due is a strip (`.op-catch`) above `.op-week` (five columns, each only as tall as its
+  cards); empty Who to Touch cards are left out.
+- Home no longer has Team Activity; `.wrap` bottom padding is 24px.
+
 ## When a save fails (November 20, 2026)
 
 Amy approved Guidehouse: the screen said Approved, the invoice request went to Bernie and the list was

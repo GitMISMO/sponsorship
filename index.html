@@ -1048,10 +1048,16 @@
   @media (max-width:900px){ .op-nb{grid-template-columns:repeat(3,minmax(0,1fr));} .op-who{grid-column:1/-1;} .op-fact:nth-child(2){border-left:0; padding-left:0;} }
   @media (max-width:560px){ .op-nb{grid-template-columns:1fr 1fr;} .op-fact{border-left:0; padding-left:0;} .op-fact.ct{grid-column:1/-1;} .op-na .op-skip{margin-left:0;} .op-who{align-items:flex-start;} }
   .op-sel{border:1px solid var(--border); border-radius:6px; padding:5px 8px; font:inherit; font-size:12.5px; background:var(--surface); color:var(--ink); max-width:100%;}
-  .op-board{display:grid; grid-template-columns:repeat(var(--cols,5),minmax(150px,1fr)); gap:10px; margin:0 0 18px; overflow-x:auto; padding-bottom:4px; align-items:stretch;}
+  .op-board{margin:0 0 18px;}
+  .op-week{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; align-items:start;}
+  @media (max-width:980px){ .op-week{grid-template-columns:repeat(3,minmax(0,1fr));} }
+  .op-catch{background:var(--bad-soft); border:1px solid var(--bad); border-radius:8px; padding:10px 12px 12px; margin:0 0 10px;}
+  .op-catch .op-dh{border-bottom:0; padding-bottom:8px;} .op-catch .op-dh b{color:var(--bad);} .op-hint{margin-left:auto; font-size:11.5px; color:var(--ink-3);}
+  .op-catch{width:fit-content; max-width:100%;}
+  .op-catchgrid{display:flex; flex-wrap:wrap; gap:8px;} .op-catchgrid .op-card{flex:0 0 250px; max-width:100%;}
   .op-board.op-due{display:block;}
   @media (max-width:700px){ .op-board{grid-template-columns:1fr;} }
-  .op-day{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px; min-height:170px; display:flex; flex-direction:column; gap:6px; min-width:0; transition:border-color .15s, box-shadow .15s;}
+  .op-day{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px; min-width:0; transition:border-color .15s, box-shadow .15s;}
   .op-day.today{border-color:var(--sky); box-shadow:inset 0 4px 0 var(--sky);} .op-day.past{opacity:.8;} .op-day.catch{background:var(--bad-soft); border-color:var(--bad);}
   .op-day.over{border-color:var(--sky); box-shadow:0 0 0 2px var(--sky);}
   body.op-dragging .op-day[data-opday]:not([data-opday=""]){border-style:dashed; border-color:var(--sky);}
@@ -1060,15 +1066,16 @@
   .op-dh em{font-style:normal; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:4px; background:var(--sky); color:#062033;}
   .op-dc{margin-left:auto; font-style:normal; font-size:11px; font-weight:600; color:var(--ink-3);} .op-dc.ok{color:var(--good);}
   .op-prog{height:4px; border-radius:2px; background:var(--rule); overflow:hidden;} .op-prog i{display:block; height:4px; background:var(--good);}
-  .op-list{display:flex; flex-direction:column; gap:6px; flex:1;}
-  .op-drop{border:2px dashed var(--border); border-radius:6px; padding:18px 8px; text-align:center; color:var(--ink-3); font-size:12px; flex:1; display:flex; align-items:center; justify-content:center;}
-  .op-card{display:grid; grid-template-columns:16px minmax(0,1fr) auto; gap:6px; align-items:start; padding:7px 8px; border:1px solid var(--border); border-left:3px solid var(--lc); border-radius:6px; background:var(--surface); cursor:pointer; font-size:12.5px; transition:transform .12s, box-shadow .12s;}
+  .op-list{display:flex; flex-direction:column; gap:6px;}
+  .op-drop{border:1px dashed var(--border); border-radius:6px; padding:8px; text-align:center; color:var(--ink-3); font-size:11.5px;}
+  body.op-dragging .op-drop{padding:18px 8px; border-color:var(--sky);}
+  .op-card{display:grid; grid-template-columns:16px minmax(0,1fr) auto; gap:6px; align-items:center; padding:6px 8px; border:1px solid var(--border); border-left:3px solid var(--lc); border-radius:6px; background:var(--surface); cursor:pointer; font-size:12.5px; transition:transform .12s, box-shadow .12s;}
   .op-card:hover{transform:translateY(-1px); box-shadow:0 4px 12px rgba(6,32,47,.12);} .op-card.dragging{opacity:.5;}
   .op-card input{margin:2px 0 0;} .op-main{min-width:0; display:flex; flex-direction:column; gap:2px;}
-  .op-main b{overflow-wrap:anywhere;} .op-sub{color:var(--ink-2); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;}
+  .op-main b{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} .op-sub{color:var(--ink-2); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .op-late{color:var(--bad); font-size:11px; font-weight:600;} .op-main .op-sel{margin-top:4px; align-self:flex-start;}
   .op-card.done{opacity:.6;} .op-card.done b{text-decoration:line-through;}
-  .op-side{display:flex; flex-direction:column; align-items:flex-end; gap:4px;}
+  .op-side{display:flex; align-items:center; gap:4px;}
   .op-own{display:inline-flex; width:22px; height:22px; border-radius:5px; background:#14486e; color:#a9d8f3; font-size:10px; font-weight:700; align-items:center; justify-content:center;} .op-own.none{background:var(--chip); color:var(--ink-3);}
   .op-x{border:0; background:none; color:var(--ink-3); font-size:16px; line-height:1; cursor:pointer; padding:0 2px;} .op-x:hover{color:var(--bad);}
   .op-pastlist{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:8px;}
@@ -1134,6 +1141,29 @@
   .hm-hi p{font-size:15px; line-height:1.65; color:rgba(255,255,255,.86); margin:0;}
   .hm-em{color:#74bfeb; font-weight:600; cursor:pointer; border-bottom:1px dashed rgba(116,191,235,.45);}
   .hm-em:hover{color:#fff; border-bottom-color:#fff;} .hm-em.late{color:#ffb4a8; border-bottom-color:rgba(255,180,168,.5);}
+  .wrap{padding-bottom:24px;}
+  /* a record inside its company's card (November 21, 2026) */
+  #co-panel .cp-dockbar, #cp-dock{display:none;}
+  #co-panel.docking #cp-body{display:none;}
+  #co-panel.docking .cp-dockbar{display:flex; padding:10px 20px; border-bottom:1px solid var(--border); background:var(--surface);}
+  #co-panel.docking .cp-dockbar .linkbtn{font-weight:600; font-size:13.5px;}
+  #co-panel.docking #cp-dock{display:block; flex:1; overflow:auto; padding:14px 16px 16px;}
+  .drawer.docked{position:relative; transform:none; width:auto; max-width:none; height:auto; z-index:auto; transition:none;
+    box-shadow:none; border:1px solid var(--border); border-radius:8px; display:block;}
+  .drawer.docked .widebtn, .drawer.docked .dclose{display:none;}
+  .drawer.docked .dbody{overflow:visible; max-height:none;}
+  .drawer.docked .dfoot{position:sticky; bottom:-16px; z-index:3; background:var(--surface); border-radius:0 0 8px 8px;}
+  /* new sponsors and prospects for any period (November 21, 2026) */
+  .np-head{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+  .np-head select, .np-d input{border:1px solid var(--border); border-radius:6px; padding:6px 8px; font:inherit; font-size:12.5px; background:var(--surface); color:var(--ink);}
+  .np-d{font-size:12px; color:var(--ink-3); display:inline-flex; gap:5px; align-items:center;}
+  .np-sum{font-size:13px; color:var(--ink-2); margin:10px 0 6px;} .np-sum span{color:var(--ink-3);}
+  .np-rows{display:grid; grid-template-columns:repeat(auto-fill,minmax(420px,1fr)); column-gap:16px;}
+  @media (max-width:600px){ .np-rows{grid-template-columns:1fr;} }
+  .np-row{all:unset; box-sizing:border-box; cursor:pointer; display:grid; grid-template-columns:52px minmax(0,1fr) auto 78px; gap:10px; align-items:center; padding:7px 8px; border-top:1px solid var(--rule); border-left:3px solid var(--kc); font-size:13px;}
+  .np-row:hover{background:var(--surface-2);} .np-row .d{font-size:12px; color:var(--ink-3);} .np-row .n{min-width:0;}
+  .np-row .n b{display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} .np-row .n small{display:block; font-size:11.5px; color:var(--ink-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .np-row .s{font-size:11.5px; color:var(--ink-2);} .np-row .a{text-align:right; font-weight:600; font-variant-numeric:tabular-nums;}
   /* Just Came In, across the top of Home */
   .hm-in{grid-column:1/-1; position:relative; z-index:1; background:rgba(240,185,74,.10); border:1px solid rgba(240,185,74,.45); border-radius:8px; padding:12px;}
   .hm-inh{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin:0 0 10px;}
@@ -1564,16 +1594,20 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
   </div>
   <nav class="tabband" id="tabband" aria-label="Sections">
     <div class="navgrp">Work</div>
-    <!-- November 19, 2026 (Amy, through Jonna): "easy to see who is a sponsor for what and who is a prospect for
-         what", summit first, and the first thing seen is what needs to be done. To Do opens first; Sponsors &amp;
-         Prospects is by summit and type. Home is At a Glance and the Pipeline moved under Records; the separate
-         Sponsors and Prospects lists stay in the page, unlinked. -->
+    <!-- November 21, 2026 (Amy, through Jonna): back to Summit, Workgroup and Other Sponsorships as their own
+         pages, the Pipeline (Summit first, with Summit / Workgroup / Other buttons) and the Prospects page, with
+         every record opening in the one company card, the Member 360 way. -->
     <button class="tab on" data-view="home" type="button" title="Home"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-home"/></svg><span class="tlbl">Home</span></button>
     <button class="tab" data-view="todo" type="button" title="Outreach Planner"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Outreach Planner</span><span class="pip quiet" id="pip-todo">0</span></button>
+    <button class="tab" data-view="flow" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Pipeline</span></button>
+    <button class="tab" data-view="plist" type="button" title="Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-lead"/></svg><span class="tlbl">Prospects</span></button>
     <button class="tab" data-view="spm" type="button" title="Sponsors and Prospects"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-co"/></svg><span class="tlbl">Sponsors and Prospects</span></button>
     <button class="tab" data-view="benefits" type="button" title="Sponsor Benefits"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Benefits</span><span class="pip quiet" id="pip-benefits">0</span></button>
+    <div class="navgrp">Sponsorships</div>
+    <button class="tab" data-view="pipeline" type="button" title="Summit Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pipe"/></svg><span class="tlbl">Summit Sponsorships</span><span class="pip quiet" id="pip-pipe">0</span></button>
+    <button class="tab" data-view="workgroup" type="button" title="Workgroup Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-apps"/></svg><span class="tlbl">Workgroup Sponsorships</span></button>
+    <button class="tab" data-view="other" type="button" title="Other Sponsorships"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-queue"/></svg><span class="tlbl">Other Sponsorships</span></button>
     <div class="navgrp">Records</div>
-    <button class="tab" data-view="flow" type="button" title="Pipeline"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-pipe"/></svg><span class="tlbl">Pipeline</span></button>
     <button class="tab" data-view="stock" type="button" title="Inventory"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-stock"/></svg><span class="tlbl">Inventory</span></button>
     <button class="tab" data-view="money" type="button" title="Money"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-money"/></svg><span class="tlbl">Money</span></button>
     <button class="tab" data-view="prospectus" type="button" title="Prospectuses"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><use href="#ico-doc"/></svg><span class="tlbl">Prospectuses</span></button>
@@ -1725,6 +1759,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <span class="seg" id="pl-types" role="group" aria-label="Type of sponsorship"></span>
         <span class="seg" id="pl-who" role="group" aria-label="Whose prospects"></span>
         <span class="seg" id="pl-show" role="group" aria-label="Which prospects"></span>
+        <select id="pl-summit" aria-label="Which summit"></select>
         <input type="search" id="pl-q" placeholder="Company or contact">
         <span class="fbcount" id="pl-count"></span>
         <button class="btn sm" id="pl-new" type="button" title="Opens a blank prospect">Add a Prospect</button>
@@ -2012,8 +2047,11 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>Also Waiting</b> holds applications to review, payments past due, invoices Bernie still has to raise, the mismosponsor@ emails and new prospects. <b>All Follow-Ups</b> at the bottom lists every follow-up, open or done, by owner.</li>
             <li><b>Sponsors and Prospects</b> is Member 360&rsquo;s Members and Prospects page for sponsors. The tiles and the tabs (<b>Current</b>, <b>Applied</b>, <b>Prospect</b>, <b>Past</b>, <b>Lost</b>, <b>All</b>) choose who is listed. The dark band shows current sponsors by tier, what is <b>outstanding</b> (approved or invoiced and not paid) for each summit, workgroups and each other kind, summit first, and the sponsor pipeline by stage; select any of them to list just those companies. Filter by summit or kind, stage and owner, tick <b>Outstanding Only</b>, or jump with the A to Z bar.</li>
             <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there. <b>Download Logo</b> saves the logo the sponsor sent with the online prospectus, straight from the portal (no SharePoint sign-in). <b>+ Add a Logo</b> keeps a logo a sponsor emailed (up to 4 MB), and <b>Replace Logo</b> swaps it. A sponsor already on the website gets <b>Open the Logo</b>. The file is also under Company Details and on the application.</li>
-            <li>A summit prospect can say which summit it&rsquo;s for (<b>Which Summit</b> on the prospect); the summit filter then finds it.</li>
-            <li>The <b>Pipeline</b> (every deal by stage) is under Records.</li>
+            <li><b>New Sponsors</b> on Sponsors and Prospects lists every sponsorship that started in a period: <b>This Month</b>, <b>Last Month</b>, <b>This Year</b>, any month from <b>Pick a Month</b>, or your own <b>Dates</b>, for Summit, Workgroup, Other or all of them, with the total. <b>New Prospects</b> does the same for prospects.</li>
+            <li>The <b>Pipeline</b> shows one kind at a time: <b>Summit</b> (where it opens), <b>Workgroup</b> or <b>Other</b>. Every number and stage box lists what makes it up.</li>
+            <li><b>Prospects</b> lists every prospect, one row each. Pick Summit, Workgroup or Other and My Prospects; pick a summit to see who is a prospect for it, and set <b>Which Summit</b> right in the row.</li>
+            <li><b>Summit Sponsorships</b>, <b>Workgroup Sponsorships</b> and <b>Other Sponsorships</b> are the full lists of each kind.</li>
+            <li><b>One company card.</b> Wherever you select a sponsorship or a prospect (these pages, the Pipeline, Home), it opens inside its company&rsquo;s card, under <b>&larr; Back to</b> the company, the way Member 360 does. The card itself shows everything the company has: every sponsorship, prospect and conversation.</li>
           </ul>
         </div>
       </details>
@@ -2364,7 +2402,9 @@ a series deal is counted once, at its full amount.</div>
     <div><div class="dsub">Company</div><h3 id="cp-title" class="sr-only">—</h3></div>
     <button class="dclose" id="co-close" type="button" aria-label="Close">&times;</button>
   </div>
+  <div class="cp-dockbar"><button type="button" class="linkbtn" id="cp-dockback">&larr; Back to the company</button></div>
   <div class="dbody" id="cp-body"></div>
+  <div id="cp-dock"></div>
 </aside>
 
 <aside class="drawer" id="lead-drawer" aria-hidden="true">
@@ -3815,24 +3855,24 @@ a series deal is counted once, at its full amount.</div>
         "sponsorships: summit, workgroup and every other kind. Pick a type to see only those. Select a company to see its " +
         "whole relationship with MISMO: sponsorships, prospects, emails, notes, contacts and money."},
     plist: {t:"Prospects",
-      s:"Everyone you are working toward a sponsorship with, one row per prospect. Pick a type and My Prospects to see " +
-        "just yours; the page remembers your choice. Change a stage right in its row, and select a row to open the company. " +
+      s:"Everyone you are working toward a sponsorship with, one row per prospect. Pick Summit, Workgroup or Other and My Prospects to see " +
+        "just yours, and pick a summit to see who is a prospect for it; the page remembers your choice. Set which summit a summit prospect is for, change a stage right in its row, and select a row to open the company. " +
         "A prospect leaves this list once they apply (summit) or their sponsorship is started (workgroup and other types)."},
     flow: {t:"Pipeline",
-      s:"Where every deal stands, from first contact to paid: summits, workgroups and every other kind. The top row is " +
+      s:"Where every deal stands, from first contact to paid, one kind at a time: <b>Summit</b> (where it opens), <b>Workgroup</b> or <b>Other</b>. The top row is " +
         "prospects (Lead to Verbal Commitment); the second is sponsorships being closed (Application In to Pending Payment). " +
         "For just your own prospects, use Prospects. Select any number " +
-        "to list what makes it up, pick a type to narrow the list, change a prospect\u2019s stage right in its row, and select a row to open its company. " +
+        "to list what makes it up, change a prospect\u2019s stage right in its row, and select a row to open its company card. " +
         "Emails forwarded or copied to <b>mismosponsor@mismo.org</b> land on the company they are about."},
     other: {t:"Other Sponsorships",
       s:"Every one-off or partner sponsorship that isn\u2019t a summit or a workgroup, by type. The AI Webinar Series is " +
         "the first; add a type with <b>New Sponsorship Type</b>. A type shared with a partner shows what MISMO keeps and drafts " +
-        "a past-due notice to the partner; any other type drafts the invoice email to the sponsor. Nothing is sent until you press Send. The Pipeline and Sponsors show these alongside every other kind; this page is the full record list for this kind alone."},
+        "a past-due notice to the partner; any other type drafts the invoice email to the sponsor. Nothing is sent until you press Send. Select a row to open it in its company\u2019s card. This page is the full list of other sponsorships."},
     pipeline: {t:"Summit Sponsorships",
       s:"Where every application sits, and who owns the next move. Select a stage to see the " +
         "applications in it \u2014 each one shows what is still waiting on someone, with a button to " +
         "act on it, right there. Every application is listed underneath, newest first; select a row " +
-        "to open its record. The Pipeline and Sponsors show these alongside every other kind; this page is the full record list for this kind alone."},
+        "to open it in its company\u2019s card, with everything else the company does. This page is the full list of summit sponsorships."},
     leads: {t:"Prospects",
       s:"Everyone the Strategic Growth Team is cultivating who hasn\u2019t applied yet. A prospect who " +
         "said \u201cnot this year\u201d is still a prospect \u2014 this is where they stay visible instead of " +
@@ -3856,7 +3896,7 @@ a series deal is counted once, at its full amount.</div>
     workgroup: {t:"Workgroup Sponsorships",
       s:"A company sponsoring one MISMO group for a term — Initial, then a numbered Renewal each cycle. " +
         "None of it comes from the public prospectus and none of it touches summit inventory. Payments arrive " +
-        "from MISMO Money against the Aptify order ID, the same as a summit sponsorship. Select a row to open its record. The Pipeline and Sponsors show these alongside every other kind; this page is the full record list for this kind alone."},
+        "from MISMO Money against the Aptify order ID, the same as a summit sponsorship. Select a row to open it in its company\u2019s card. This page is the full list of workgroup sponsorships."},
     webinar: {t:"AI Webinar Series",
       s:"The joint MISMO and MBA series. MISMO raises the invoice and the revenue is split in half, so every figure " +
         "shows what was invoiced and what MISMO keeps. Terms are net 30; a past-due notice for MBA\u2019s team is " +
@@ -8232,8 +8272,8 @@ a series deal is counted once, at its full amount.</div>
     if(arch) arch.addEventListener("change", function(){ billFilter[k].archived = arch.checked; renderBilling(); });
   });
 
-  $("bd-close").addEventListener("click", closeBill);
-  $("bd-cancel").addEventListener("click", closeBill);
+  $("bd-close").addEventListener("click", function(){ closeBill(); });
+  $("bd-cancel").addEventListener("click", function(){ closeBill(); });
   $("bd-save").addEventListener("click", saveBillDrawer);
 
   function showView(v){
@@ -8297,9 +8337,9 @@ a series deal is counted once, at its full amount.</div>
     }
   });
 
-  $("d-close").addEventListener("click", closeDrawer);
-  $("d-cancel").addEventListener("click", closeDrawer);
-  $("scrim").addEventListener("click", closeDrawer);
+  $("d-close").addEventListener("click", function(){ closeDrawer(); });
+  $("d-cancel").addEventListener("click", function(){ closeDrawer(); });
+  $("scrim").addEventListener("click", function(){ closeDrawer(); });
   $("d-save").addEventListener("click", doSave);
   $("s-close").addEventListener("click", closeStage);
   $("stage-scrim").addEventListener("click", closeStage);
@@ -9646,7 +9686,10 @@ a series deal is counted once, at its full amount.</div>
   }
   function leadType(l){ return (l && l.stype) || "summit"; }
 
-  var flowState = {type:"", group:"open", owner:"", q:"", nweek:0, stage:"", drill:""}, flowCtx = null;
+  /* the Pipeline is one kind at a time, Summit first (Amy, November 21, 2026): Summit, Workgroup, Other */
+  var flowState = {type:"summit", group:"open", owner:"", q:"", nweek:0, stage:"", drill:""}, flowCtx = null;
+  var FLOW_KINDS = [["summit","Summit"],["workgroup","Workgroup"],["other","Other"]];
+  function flowKindOk(it){ return !flowState.type || coTypeOf(it.type) === flowState.type; }
 
   function recentEnoughDay(day){
     var d = parseDate(day); if(!d) return true;
@@ -9717,7 +9760,7 @@ a series deal is counted once, at its full amount.</div>
   function flowRows(all){
     var f = flowState, q = (f.q || "").toLowerCase();
     return all.filter(function(it){
-      if(f.type && it.type !== f.type) return false;
+      if(!flowKindOk(it)) return false;
       if(f.stage ? it.stage !== f.stage : !inGroup(it, f.group)) return false;
       if(f.owner && it.owner !== f.owner) return false;
       if(q){
@@ -9743,16 +9786,17 @@ a series deal is counted once, at its full amount.</div>
   function renderFlow(){
     /* renderAll runs once before this part of the page has been read; it draws on the next pass */
     if(!$("flow-body") || !PIPE_OPEN || !others || !otherTypes || !touches) return;
-    var all = pipeItems(), t = today();
+    var all = pipeItems().filter(flowKindOk), t = today();
     var open = all.filter(function(it){ return PIPE_OPEN.indexOf(it.stage) >= 0; });
     /* follow-ups due: prospects' follow-up dates and touchpoint follow-ups that have come due */
-    var due = open.filter(function(it){ return it.kind === "lead" && it.nextDate && parseDate(it.nextDate) <= t; }).concat(touchFollowUps(0));
+    var due = open.filter(function(it){ return it.kind === "lead" && it.nextDate && parseDate(it.nextDate) <= t; })
+      .concat(touchFollowUps(0).filter(function(x){ return !x.tp || !x.tp.about || coTypeOf(x.tp.about) === flowState.type; }));
     var late = open.filter(function(it){ return it.late; });
     /* what an application or an invoice is waiting on: review, the invoice, a chase (the
        summit board showed these until it was folded in, November 18, 2026) */
     var todo = open.filter(function(it){ return !it.late && it.nextText && (it.kind === "app" || (it.kind !== "lead" && it.rec.status === "Draft")); });
     var forecast = open.reduce(function(n, it){ return n + it.amount; }, 0);
-    var wk = weekStart(0), newNow = leads.filter(function(l){ var d = parseDate(l.createdDate); return d && d >= wk && l.id !== leadDraft && !LEAD_CLOSED[l.status]; });
+    var wk = weekStart(0), newNow = leads.filter(function(l){ var d = parseDate(l.createdDate); return d && d >= wk && l.id !== leadDraft && !LEAD_CLOSED[l.status] && coTypeOf(leadType(l)) === flowState.type; });
 
     $("flow-date").textContent = "Today · " + new Date().toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
     flowCtx = {all:all, open:open, due:due, late:late, todo:todo, newNow:newNow, forecast:forecast};
@@ -9774,9 +9818,9 @@ a series deal is counted once, at its full amount.</div>
 
     /* the funnel: each open stage, its count and its money; selecting one shows only it */
     var maxN = 1;
-    PIPE_OPEN.forEach(function(sg){ maxN = Math.max(maxN, open.filter(function(it){ return it.stage === sg && (!flowState.type || it.type === flowState.type); }).length); });
+    PIPE_OPEN.forEach(function(sg){ maxN = Math.max(maxN, open.filter(function(it){ return it.stage === sg; }).length); });
     var stageBox = function(sg){
-      var here = open.filter(function(it){ return it.stage === sg && (!flowState.type || it.type === flowState.type); });
+      var here = open.filter(function(it){ return it.stage === sg; });
       var sum = here.reduce(function(n, it){ return n + it.amount; }, 0);
       var on = flowState.drill === "stage:" + sg;
       return '<button type="button" class="fstage' + (on ? " on" : "") + '" data-fdrill="stage:' + esc(sg) + '"' +
@@ -9791,9 +9835,9 @@ a series deal is counted once, at its full amount.</div>
         PIPE_OPEN.filter(function(sg){ return PL_STAGES.indexOf(sg) < 0; }).map(stageBox).join("") + '</div></div>';
 
     /* type and stage-group buttons */
-    var types = [["","All"]].concat(typeChoices());
-    $("flow-types").innerHTML = types.map(function(tc){
-      var n = all.filter(function(it){ return (!tc[0] || it.type === tc[0]) && inGroup(it, flowState.group); }).length;
+    var everyItem = pipeItems();
+    $("flow-types").innerHTML = FLOW_KINDS.map(function(tc){
+      var n = everyItem.filter(function(it){ return coTypeOf(it.type) === tc[0] && inGroup(it, flowState.group); }).length;
       return '<button type="button" data-ftype="' + esc(tc[0]) + '" aria-pressed="' + (flowState.type === tc[0] ? "true" : "false") + '">' +
         esc(tc[1]) + ' <span class="segn">' + n + '</span></button>';
     }).join("");
@@ -9814,7 +9858,7 @@ a series deal is counted once, at its full amount.</div>
     if(pip){ var nn = due.length + late.length + todo.length; pip.textContent = nn; pip.className = "pip" + (nn ? "" : " quiet"); }
     if(!rows.length){
       $("flow-body").innerHTML = '<tr><td colspan="8"><div class="empty">Nothing here' +
-        (flowState.type ? " for " + esc(typeName(flowState.type)) : "") + '. Try another type or stage, or add a New Prospect.</div></td></tr>';
+        (flowState.type ? " for " + esc((FLOW_KINDS.filter(function(k){ return k[0] === flowState.type; })[0] || ["",""])[1]) : "") + '. Try another type or stage, or add a New Prospect.</div></td></tr>';
     } else {
       $("flow-body").innerHTML = rows.map(function(it){
         var stCell;
@@ -9870,8 +9914,9 @@ a series deal is counted once, at its full amount.</div>
     }
     if(key.indexOf("stage:") === 0){
       var sg = key.slice(6);
-      return {title:sg + (flowState.type ? " · " + typeName(flowState.type) : ""), money:true, note:"Open opportunities at this stage" + (flowState.type ? ", " + typeName(flowState.type) + " only" : "") + ".",
-        items:c.open.filter(function(it){ return it.stage === sg && (!flowState.type || it.type === flowState.type); }).sort(function(x, y){ return y.amount - x.amount || String(x.company).localeCompare(String(y.company)); })};
+      var kn = (FLOW_KINDS.filter(function(k){ return k[0] === flowState.type; })[0] || ["", ""])[1];
+      return {title:sg + (kn ? " · " + kn : ""), money:true, note:"Open " + (kn ? kn.toLowerCase() + " " : "") + "opportunities at this stage.",
+        items:c.open.filter(function(it){ return it.stage === sg; }).sort(function(x, y){ return y.amount - x.amount || String(x.company).localeCompare(String(y.company)); })};
     }
     return null;
   }
@@ -10800,6 +10845,66 @@ a series deal is counted once, at its full amount.</div>
     return Math.round(out * 100) / 100;
   }
   function spmStageOf(c){ return c.stage || (c.rel === "Sponsor" ? "Paid" : ""); }
+  /* New sponsors (and prospects) for any month or any stretch of time (Amy, November 21, 2026: "a way
+     to see new sponsors for that month and filter for each month and any period of time"). A sponsor is
+     new on the day its sponsorship was approved (a summit application) or started (a workgroup or other
+     sponsorship); a prospect on the day it was added. */
+  function npRange(){
+    var st = spmState.np || (spmState.np = {tab:"sp", per:"this", kind:""}), t = today(), y = t.getFullYear(), m = t.getMonth();
+    var mk = function(yy, mm){ return [iso(new Date(yy, mm, 1)), iso(new Date(yy, mm + 1, 0))]; };
+    if(st.per === "last") return mk(y, m - 1).concat(["Last Month"]);
+    if(st.per === "year") return [iso(new Date(y, 0, 1)), iso(t), "This Year"];
+    if(/^m:\d{4}-\d{2}$/.test(st.per || "")){ var p = st.per.slice(2).split("-"); var r = mk(+p[0], +p[1] - 1);
+      return r.concat([new Date(+p[0], +p[1] - 1, 1).toLocaleDateString("en-US", {month:"long", year:"numeric"})]); }
+    if(st.per === "custom" && st.from && st.to) return [st.from, st.to, fmtDate(st.from) + " \u2013 " + fmtDate(st.to)];
+    return mk(y, m).concat(["This Month"]);
+  }
+  function newInRows(){
+    var st = spmState.np || {}, r = npRange(), out = [];
+    var inR = function(d){ d = String(d || "").slice(0, 10); return d && d >= r[0] && d <= r[1]; };
+    var kindOk = function(k){ return !st.kind || coTypeOf(k) === st.kind; };
+    if(st.tab === "pr"){
+      leads.forEach(function(l){ if(l.id === leadDraft || !inR(l.createdDate) || !kindOk(leadType(l))) return;
+        out.push({day:String(l.createdDate).slice(0, 10), key:companyKey(l.company), name:l.company || l.leadNo, kind:coTypeOf(leadType(l)),
+          what:(leadType(l) === "summit" ? "Summit" + (l.summit ? " \u00b7 " + l.summit : "") : typeName(leadType(l)) + (l.workgroup ? " \u00b7 " + l.workgroup : "")) + (l.source ? " \u00b7 " + l.source : ""),
+          amt:Number(l.forecast) || 0, sub:leadStage(l)}); });
+    } else {
+      apps.forEach(function(a){
+        if(a.id === draft || !/^(Approved|Pending Payment|Paid|In Kind|Written Off)$/.test(a.status || "") || !kindOk("summit")) return;
+        var d = a.approvedDate || a.dateSubmitted; if(!inR(d)) return;
+        out.push({day:String(d).slice(0, 10), key:companyKey(a.company), name:a.company || a.appNo, kind:"summit",
+          what:[a.event, levelOf(a) ? tierLabel(levelOf(a)) : "", oppLabel(a)].filter(Boolean).join(" \u00b7 "), amt:Number(a.amountDue) || 0, sub:a.status});
+      });
+      billAll().forEach(function(x){
+        var k = x.__kind === "workgroup" ? "workgroup" : (x.otype || "other");
+        if(x.archived || x.status === "Cancelled" || !kindOk(k)) return;
+        var d = x.periodStart || x.invoiceDate || x.createdDate || billWhen(x); if(!inR(d)) return;
+        out.push({day:String(d).slice(0, 10), key:companyKey(x.company), name:x.company || x.no, kind:coTypeOf(k),
+          what:x.__kind === "workgroup" ? "Workgroup \u00b7 " + (x.workgroup || "") : otypeOf(x).name, amt:Number(x.amountDue) || 0, sub:x.status || "Draft"});
+      });
+    }
+    return out.sort(function(x, y){ return y.day.localeCompare(x.day) || x.name.localeCompare(y.name); });
+  }
+  function paintNewIn(){
+    var box = $("spm-newp"); if(!box) return;
+    var st = spmState.np || (spmState.np = {tab:"sp", per:"this", kind:""}), r = npRange(), rows = newInRows();
+    var tot = rows.reduce(function(n, x){ return n + x.amt; }, 0), t = today(), months = [];
+    for(var i = 0; i < 24; i++){ var d = new Date(t.getFullYear(), t.getMonth() - i, 1); months.push(["m:" + iso(d).slice(0, 7), d.toLocaleDateString("en-US", {month:"long", year:"numeric"})]); }
+    var chip = function(attr, v, label, on){ return '<button type="button" ' + attr + '="' + v + '" class="' + (on ? "on" : "") + '">' + label + '</button>'; };
+    var kc = {summit:"#74bfeb", workgroup:"#5fd39a", other:"#b79cff"};
+    box.innerHTML = '<div class="np-head"><span class="m-chips">' + chip("data-npt", "sp", "New Sponsors", st.tab !== "pr") + chip("data-npt", "pr", "New Prospects", st.tab === "pr") + '</span>' +
+        '<span class="m-chips">' + chip("data-npp", "this", "This Month", st.per === "this" || !st.per) + chip("data-npp", "last", "Last Month", st.per === "last") + chip("data-npp", "year", "This Year", st.per === "year") + chip("data-npp", "custom", "Dates\u2026", st.per === "custom") + '</span>' +
+        '<select id="np-month" aria-label="Pick a month"><option value="">Pick a Month\u2026</option>' + months.map(function(m){ return '<option value="' + m[0] + '"' + (st.per === m[0] ? " selected" : "") + '>' + esc(m[1]) + '</option>'; }).join("") + '</select>' +
+        (st.per === "custom" ? '<label class="np-d">From <input type="date" id="np-from" value="' + esc(st.from || "") + '"></label><label class="np-d">To <input type="date" id="np-to" value="' + esc(st.to || "") + '"></label>' : '') +
+        '<span class="m-chips">' + [["", "All"], ["summit", "Summit"], ["workgroup", "Workgroup"], ["other", "Other"]].map(function(k){ return chip("data-npk", k[0], k[1], (st.kind || "") === k[0]); }).join("") + '</span></div>' +
+      '<div class="np-sum"><b>' + rows.length + '</b> new ' + (st.tab === "pr" ? (rows.length === 1 ? "prospect" : "prospects") : (rows.length === 1 ? "sponsorship" : "sponsorships")) + ' \u00b7 ' + esc(r[2]) +
+        (st.per !== "custom" || (st.from && st.to) ? ' <span>(' + esc(fmtDate(r[0])) + ' \u2013 ' + esc(fmtDate(r[1])) + ')</span>' : '') +
+        (tot ? ' \u00b7 <b>' + esc(money(tot)) + '</b>' + (st.tab === "pr" ? " forecast" : "") : '') + '</div>' +
+      (rows.length ? '<div class="np-rows">' + rows.map(function(x){
+        return '<button type="button" class="np-row" data-spco="' + esc(x.key) + '" style="--kc:' + kc[x.kind] + '"><span class="d">' + esc(fmtDate(x.day).replace(/, \d{4}$/, "")) + '</span>' +
+          '<span class="n"><b>' + esc(x.name) + '</b><small>' + esc(x.what) + '</small></span><span class="s">' + esc(x.sub || "") + '</span><span class="a">' + (x.amt ? esc(money(x.amt)) : "\u2014") + '</span></button>';
+      }).join("") + '</div>' : '<div class="fbempty">' + (st.per === "custom" && !(st.from && st.to) ? "Pick the first and last day." : "None in this period.") + '</div>');
+  }
   function renderSpm(){
     if(!$("spm-rows") || !PIPE_OPEN || !others || !touches || !spmState) return;
     FLOW_CACHE = pipeItems();
@@ -10845,16 +10950,7 @@ a series deal is counted once, at its full amount.</div>
       return '<button type="button" class="m-bar" data-spmstage="' + esc(sg) + '"><span>' + esc(short[sg] || sg) + '</span><span class="tr"><i style="width:' + Math.round((cntS[sg] || 0) / maxS * 100) + '%"></i></span><b>' + (cntS[sg] || 0) + '</b></button>';
     }).join("") + '</div></div>';
     $("spm-band").innerHTML = col1 + col2 + col3;
-    /* New Prospects This Week */
-    var from = weekStart(spmState.nweek || 0), to = new Date(from); to.setDate(to.getDate() + 7);
-    var np = leads.filter(function(l){ var d = parseDate(l.createdDate); return l.id !== leadDraft && d && d >= from && d < to && !LEAD_CLOSED[l.status]; })
-      .sort(function(x, y){ return String(y.createdDate).localeCompare(String(x.createdDate)); });
-    $("spm-newp").innerHTML = '<div class="fbhead"><h3>New Prospects ' + (spmState.nweek ? "Last Week" : "This Week") + ' (' + np.length + ')</h3><span class="m-chips">' +
-      '<button type="button" data-spmweek="0" class="' + (!spmState.nweek ? "on" : "") + '">This Week</button><button type="button" data-spmweek="1" class="' + (spmState.nweek ? "on" : "") + '">Last Week</button></span></div>' +
-      (np.length ? np.slice(0, 6).map(function(l){
-        return '<div class="fbrow" data-spco="' + esc(companyKey(l.company)) + '"><span class="fbdate">' + esc(fmtDate(l.createdDate)) + '</span><span class="fbmain"><b>' + esc(l.company || l.leadNo) + '</b> <span class="sub2">' +
-          esc(leadType(l) === "summit" ? "Summit" + (l.summit ? " · " + l.summit : "") : typeName(leadType(l))) + (l.source ? " · " + esc(l.source) : "") + '</span></span></div>';
-      }).join("") + (np.length > 6 ? '<div class="fbmore">and ' + (np.length - 6) + ' more on the Prospect tab</div>' : '') : '<div class="fbempty">No new prospects ' + (spmState.nweek ? "last week" : "yet this week") + '.</div>');
+    paintNewIn();
     /* filters */
     $("spm-life").innerHTML = LIFE.map(function(L){ return '<button type="button" data-spmlife="' + esc(L[0]) + '" class="' + (spmState.life === L[0] ? "on" : "") + '">' + esc(L[1]) + ' (' + cnt[L[0]] + ')</button>'; }).join("") +
       '<button type="button" data-spmlife="" class="' + (!spmState.life ? "on" : "") + '">All (' + all.length + ')</button>';
@@ -10908,12 +11004,16 @@ a series deal is counted once, at its full amount.</div>
     if((b = el.closest("[data-spmowe]"))){ spmState.what = b.getAttribute("data-spmowe"); spmState.owes = true; spmState.life = ""; spmState.stage = ""; go(); $("spm-rows").scrollIntoView({behavior:"smooth", block:"start"}); return; }
     if(el.closest("#spm-owes")){ spmState.owes = !spmState.owes; if(spmState.owes){ spmState.life = ""; spmState.stage = ""; } go(); return; }
     if((b = el.closest("[data-spmalpha]"))){ spmState.alpha = b.getAttribute("data-spmalpha"); renderSpm(); return; }
-    if((b = el.closest("[data-spmweek]"))){ spmState.nweek = +b.getAttribute("data-spmweek"); spmKeep(); renderSpm(); return; }
+    if((b = el.closest("[data-npt]"))){ (spmState.np = spmState.np || {}).tab = b.getAttribute("data-npt"); spmKeep(); paintNewIn(); return; }
+    if((b = el.closest("[data-npp]"))){ (spmState.np = spmState.np || {}).per = b.getAttribute("data-npp"); spmKeep(); paintNewIn(); return; }
+    if((b = el.closest("[data-npk]"))){ (spmState.np = spmState.np || {}).kind = b.getAttribute("data-npk"); spmKeep(); paintNewIn(); return; }
     if(el.closest("[data-spmmore]")){ spmState.shown += 50; renderSpm(); return; }
     if(el.closest("#spm-new")){ $("new-lead").click(); return; }
   });
   document.addEventListener("change", function(ev){
     var el = ev.target; if(!el) return;
+    if(el.id === "np-month" && el.value){ (spmState.np = spmState.np || {}).per = el.value; spmKeep(); paintNewIn(); return; }
+    if(el.id === "np-from" || el.id === "np-to"){ var np = spmState.np = spmState.np || {}; np[el.id === "np-from" ? "from" : "to"] = el.value; spmKeep(); paintNewIn(); return; }
     if(el.id === "spm-what"){ spmState.what = el.value; spmState.shown = 50; spmKeep(); renderSpm(); }
     if(el.id === "spm-stage"){ spmState.stage = el.value; spmState.shown = 50; spmKeep(); renderSpm(); }
     if(el.id === "spm-owner"){ spmState.owner = el.value; spmState.shown = 50; spmKeep(); renderSpm(); }
@@ -11069,7 +11169,7 @@ a series deal is counted once, at its full amount.</div>
     return '<div class="op-card' + (x.done ? ' done' : '') + (late ? ' late' : '') + '"' + (x.done ? '' : ' draggable="true"') +
       ' data-opk="' + x.kind + '" data-opid="' + esc(x.id) + '" data-spco="' + esc(x.key) + '" style="--lc:' + (L ? L.c : x.kind === "plan" ? "#9aa9b6" : "var(--sky)") + '" tabindex="0" role="button">' +
       '<input type="checkbox" data-opdone="1"' + (x.done ? ' checked' : '') + (canWrite ? '' : ' disabled') + ' aria-label="Mark ' + esc(x.name) + ' done">' +
-      '<span class="op-main"><b>' + esc(x.name) + '</b><span class="op-sub">' + esc((x.kind === "plan" ? "" : "Follow-up: ") + x.what) + '</span>' +
+      '<span class="op-main"><b>' + esc(x.name) + '</b><span class="op-sub" title="' + esc((x.kind === "plan" ? "Planned touch: " : "Follow-up: ") + x.what) + '">' + esc(x.what) + '</span>' +
         (late ? '<span class="op-late">Was due ' + esc(opShort(x.day)) + '</span>' : '') +
         (withMove && !x.done ? '<select class="op-sel" data-opmove="1" aria-label="Move ' + esc(x.name) + ' to a day">' + opDayOpts("Move to…") + '</select>' : '') + '</span>' +
       '<span class="op-side">' + opBadge(x.owner) + (x.kind === "plan" ? '<button type="button" class="op-x" data-opdrop="' + esc(x.id) + '" title="Take off the plan" aria-label="Take ' + esc(x.name) + ' off the plan">×</button>' : '') + '</span></div>';
@@ -11143,21 +11243,26 @@ a series deal is counted once, at its full amount.</div>
       $("op-board").className = "op-board op-due";
     } else {
       $("op-board").className = "op-board";
-      ["catch"].concat(days).forEach(function(k){
-        var items = (cols[k] || []).sort(order), isC = k === "catch";
-        if(isC && !items.length) return;
-        if(!isC) items.forEach(function(x){ totN++; if(x.done) doneN++; });
+      /* past due as a strip across the top, then the five days side by side, each only as tall as
+         what is in it (Jonna, November 21, 2026: no tall empty columns) */
+      var catchI = (cols.catch || []).sort(order);
+      if(catchI.length) html += '<div class="op-catch" data-opday=""><div class="op-dh"><b>Past Due</b><span>before this week \u00b7 ' + catchI.length + '</span>' +
+        '<span class="op-hint">move each to a day, or tick it done</span></div><div class="op-catchgrid">' + catchI.map(function(x){ return opCard(x, T, true); }).join("") + '</div></div>';
+      html += '<div class="op-week">';
+      days.forEach(function(k){
+        var items = (cols[k] || []).sort(order);
+        items.forEach(function(x){ totN++; if(x.done) doneN++; });
         var dn = items.filter(function(x){ return x.done; }).length;
-        html += '<div class="op-day' + (isC ? " catch" : "") + (k === T ? " today" : "") + (!isC && k < T ? " past" : "") + '" data-opday="' + (isC ? "" : k) + '">' +
-          '<div class="op-dh"><b>' + (isC ? "Past Due" : opDow(k)) + '</b><span>' + (isC ? "before this week" : opShort(k)) + '</span>' + (k === T ? '<em>Today</em>' : '') +
-            (items.length && !isC ? '<i class="op-dc' + (dn === items.length ? " ok" : "") + '">' + dn + '/' + items.length + '</i>' : '') + '</div>' +
-          (items.length && !isC ? '<div class="op-prog"><i style="width:' + Math.round(dn / items.length * 100) + '%"></i></div>' : '') +
+        html += '<div class="op-day' + (k === T ? " today" : "") + (k < T ? " past" : "") + '" data-opday="' + k + '">' +
+          '<div class="op-dh"><b>' + opDow(k) + '</b><span>' + opShort(k) + '</span>' + (k === T ? '<em>Today</em>' : '') +
+            (items.length ? '<i class="op-dc' + (dn === items.length ? " ok" : "") + '">' + dn + '/' + items.length + '</i>' : '') + '</div>' +
+          (items.length ? '<div class="op-prog"><i style="width:' + Math.round(dn / items.length * 100) + '%"></i></div>' : '') +
           '<div class="op-list">' + items.map(function(x){ return opCard(x, T); }).join("") +
-            (!items.length ? '<div class="op-drop">Drop a card here</div>' : '') + '</div></div>';
+            (!items.length ? '<div class="op-drop">' + (k < T ? 'Nothing was planned' : 'Nothing planned \u00b7 drop a card here') + '</div>' : '') + '</div></div>';
       });
+      html += '</div>';
     }
     $("op-board").innerHTML = html;
-    $("op-board").style.setProperty("--cols", $("op-board").children.length || 1);
     FLOW_CACHE = pipeItems();
     var cmap = companies();
     /* Up Next: the oldest thing past due, then today's, then the rest of the week */
@@ -11191,8 +11296,9 @@ a series deal is counted once, at its full amount.</div>
     var tot = sugN || 1;
     $("op-mix").innerHTML = '<div class="op-mixbar">' + OP_LANES.map(function(l){ var n = S[l.id].length; return n ? '<span style="width:' + (n / tot * 100) + '%;background:' + l.c + '" title="' + esc(l.name) + ': ' + n + '"></span>' : ''; }).join("") + '</div>' +
       '<div class="op-mixkey">' + OP_LANES.map(function(l){ return '<button type="button" data-opmix="' + l.id + '"><i style="background:' + l.c + '"></i>' + esc(l.name) + '<b>' + S[l.id].length + '</b></button>'; }).join("") + '</div>';
-    $("op-lanes").innerHTML = OP_LANES.map(function(l){
+    $("op-lanes").innerHTML = !sugN ? '<div class="op-empty">Nobody needs a touch right now: everyone has been touched in the last week or is already on the plan.</div>' : OP_LANES.map(function(l){
       var list = S[l.id], open = opState.open[l.id], show = open ? list : list.slice(0, 5);
+      if(!list.length) return "";   // an empty card is just an empty well; the key above still shows 0
       return '<div class="op-lane" id="op-lane-' + l.id + '" style="--lc:' + l.c + '"><div class="op-lh"><b>' + esc(l.name) + '</b><span>' + list.length + '</span></div>' +
         '<div class="op-ls">' + esc(l.say) + '</div>' +
         (list.length ? show.map(function(s){
@@ -11347,7 +11453,7 @@ a series deal is counted once, at its full amount.</div>
     saveLead(after);
     addLog(after.leadNo, "prospect for " + el.value, whoAmI());
     toast((after.company || after.leadNo) + " is a prospect for " + el.value + ".", "", "Saved");
-    renderSpx(); renderTodo();
+    renderSpx(); renderTodo(); renderProspectList();
   });
   /* ---------------- Prospects (November 19, 2026) ----------------
      One row per prospect (a company with a summit and a workgroup prospect has two), from the same
@@ -11355,7 +11461,7 @@ a series deal is counted once, at its full amount.</div>
   var plState = (function(){ try{ return JSON.parse(localStorage.getItem("sponsorship:plist") || "null"); }catch(e){ return null; } })() ||
                 {type:"", who:"", show:"open", stage:"", q:""};
   plState.q = ""; plState.stage = plState.stage || "";
-  function plKeep(){ try{ localStorage.setItem("sponsorship:plist", JSON.stringify({type:plState.type, who:plState.who, show:plState.show})); }catch(e){} }
+  function plKeep(){ try{ localStorage.setItem("sponsorship:plist", JSON.stringify({type:plState.type, who:plState.who, show:plState.show, summit:plState.summit || ""})); }catch(e){} }
   function renderProspectList(){
     if(!$("pl-body") || !PIPE_OPEN || !others || !touches || !plState) return;
     var me = whoAmI(), t = today();
@@ -11366,7 +11472,17 @@ a series deal is counted once, at its full amount.</div>
       return plState.show === "hold" ? it.stage === "Hold" : plState.show === "lost" ? it.stage === "Lost" : PL_STAGES.indexOf(it.stage) >= 0;
     };
     var whoOk = function(it){ return plState.who !== "mine" || it.owner === me; };
-    var typeOk = function(it, ty){ return !ty || it.type === ty; };
+    /* Summit, Workgroup, Other, the same as the Pipeline (November 21, 2026); a summit prospect can be
+       narrowed to the summit it is for */
+    if(plState.type && ["summit", "workgroup", "other"].indexOf(plState.type) < 0) plState.type = coTypeOf(plState.type);
+    var sumOk = function(it){
+      if(!plState.summit) return true;
+      if(coTypeOf(it.type) !== "summit") return false;
+      var w = (it.rec || {}).summit || "";
+      if(plState.summit === "-") return !w;
+      return w === plState.summit || (/Series$/.test(w) && plState.summit.split(" ")[1] === w.split(" ")[0]);
+    };
+    var typeOk = function(it, ty){ return (!ty || coTypeOf(it.type) === ty) && sumOk(it); };
     /* the stage tiles count what the type and owner buttons are showing */
     var base = all.filter(function(it){ return whoOk(it) && typeOk(it, plState.type) && PL_STAGES.indexOf(it.stage) >= 0; });
     var tones = ["#74bfeb", "#5fb3e6", "#e8b04a", "#b79cff", "#5fd39a"];
@@ -11375,7 +11491,10 @@ a series deal is counted once, at its full amount.</div>
       return '<button type="button" class="cotile' + (plState.stage === sg ? " on" : "") + '" data-plstage="' + esc(sg) + '" style="--k:' + tones[i] + '">' +
         '<b>' + here.length + '</b><span class="l">' + esc(sg) + '</span><span class="s">' + (sum ? esc(money(sum)) + " forecast" : "&nbsp;") + '</span></button>';
     }).join("");
-    $("pl-types").innerHTML = [["", "All"]].concat(typeChoices()).map(function(tc){
+    var sc = spxSummitChoices(), ps = $("pl-summit");
+    if(ps) ps.innerHTML = '<option value="">Every Summit</option>' + sc.map(function(x){ return '<option' + (x === plState.summit ? " selected" : "") + '>' + esc(x) + '</option>'; }).join("") +
+      '<option value="-"' + (plState.summit === "-" ? " selected" : "") + '>Summit Not Picked Yet</option>';
+    $("pl-types").innerHTML = [["", "All"], ["summit", "Summit"], ["workgroup", "Workgroup"], ["other", "Other"]].map(function(tc){
       var cnt = all.filter(function(it){ return whoOk(it) && showOk(it) && typeOk(it, tc[0]); }).length;
       return '<button type="button" data-pltype="' + esc(tc[0]) + '" aria-pressed="' + (plState.type === tc[0] ? "true" : "false") + '">' + esc(tc[1]) + ' <span class="segn">' + cnt + '</span></button>';
     }).join("");
@@ -11412,7 +11531,10 @@ a series deal is counted once, at its full amount.</div>
       return '<tr data-fkind="lead" data-fid="' + esc(it.id) + '">' +
         '<td><b>' + esc(it.company) + '</b>' + (it.contact ? '<div class="sub2">' + esc(it.contact) + '</div>' : '') + '</td>' +
         '<td><span class="tag ftype">' + esc(typeName(it.type)) + '</span></td>' +
-        '<td>' + esc(it.what || "\u2014") + '</td><td>' + stCell + '</td>' +
+        '<td>' + (coTypeOf(it.type) === "summit" && canWrite
+          ? '<select class="spx-pick-s pl-sum" data-leadsummit="' + esc(it.id) + '" aria-label="Which summit for ' + esc(it.company) + '"><option value="">Which Summit\u2026</option>' +
+              sc.concat((it.rec && it.rec.summit && sc.indexOf(it.rec.summit) < 0) ? [it.rec.summit] : []).map(function(x){ return '<option' + (x === (it.rec || {}).summit ? " selected" : "") + '>' + esc(x) + '</option>'; }).join("") + '</select>'
+          : esc(it.what || "\u2014")) + '</td><td>' + stCell + '</td>' +
         '<td>' + esc(it.owner || "Unassigned") + '</td>' +
         '<td class="r num">' + (it.amount ? esc(money(it.amount)) : "\u2014") + '</td>' +
         '<td>' + (it.nextDate ? '<span class="' + (over ? "bad" : "") + '">' + esc(fmtDate(it.nextDate)) + '</span>' : '<span class="sub2">Not set</span>') +
@@ -11450,6 +11572,44 @@ a series deal is counted once, at its full amount.</div>
     $("co-panel").setAttribute("aria-hidden", "true");
   }
   function coOf(key){ FLOW_CACHE = pipeItems(); return companies()[key] || null; }
+  /* ---- one company card (Amy, November 21, 2026: "the open the sponsorship is weird, that's not how
+     Member 360 handles it"). A summit application, a workgroup or other sponsorship, or a prospect opens
+     inside its company's card, under a Back to the company link, instead of as a second panel on top.
+     A record with no company yet (a new one being typed) still opens on its own. ---- */
+  var DOCK_SCRIM = {"drawer":"scrim", "bill-drawer":"lead-scrim", "lead-drawer":"lead-scrim"}, docked = null;
+  function dockRec(elId, rec){
+    var key = rec && companyKey(rec.company), el = $(elId);
+    if(!key || !el || !el.classList.contains("on") || !coOf(key)) return;
+    if(docked && docked !== elId) undockEl(docked);
+    if(coOpen !== key || !$("co-panel").classList.contains("on")){
+      coOpen = key; paintCompany();
+      $("co-scrim").classList.add("on"); $("co-panel").classList.add("on"); $("co-panel").setAttribute("aria-hidden", "false");
+    }
+    $(DOCK_SCRIM[elId]).classList.remove("on");
+    el.classList.remove("wide"); el.classList.add("docked");
+    if(el.parentNode !== $("cp-dock")){ $("cp-dock").appendChild(el); $("cp-dock").scrollTop = 0; }
+    $("co-panel").classList.add("docking"); docked = elId;
+    var c = coOf(key); $("cp-dockback").textContent = "\u2190 Back to " + (c ? c.name : "the company");
+  }
+  function undockEl(elId){
+    var el = $(elId); if(!el) return;
+    el.classList.remove("docked"); document.body.appendChild(el);
+    if(docked === elId){ docked = null; $("co-panel").classList.remove("docking"); if(coOpen) paintCompany(); }
+  }
+  function closeDocked(){
+    if(docked === "drawer") closeDrawer(); else if(docked === "bill-drawer") closeBill(); else if(docked === "lead-drawer") tryCloseLead();
+  }
+  var openDrawer0 = openDrawer; openDrawer = function(id, f){ openDrawer0(id, f); dockRec("drawer", findById(apps, id)); };
+  var openBill0 = openBill; openBill = function(kind, id){ openBill0(kind, id); dockRec("bill-drawer", findById(billList(kind), id)); };
+  var openLead0 = openLeadDrawer; openLeadDrawer = function(id, f){ openLead0(id, f); dockRec("lead-drawer", findById(leads, id)); };
+  var closeDrawer0 = closeDrawer; closeDrawer = function(){ closeDrawer0(); if(docked === "drawer") undockEl("drawer"); };
+  var closeBill0 = closeBill; closeBill = function(){ closeBill0(); if(docked === "bill-drawer") undockEl("bill-drawer"); };
+  var closeLead0 = closeLeadDrawer; closeLeadDrawer = function(){ closeLead0(); if(docked === "lead-drawer") undockEl("lead-drawer"); };
+  var closeCompany0 = closeCompany; closeCompany = function(){
+    if(docked){ closeDocked(); if(docked) return; }   // unsaved prospect changes: its own question decides
+    closeCompany0();
+  };
+  document.addEventListener("click", function(ev){ if(ev.target && ev.target.closest && ev.target.closest("#cp-dockback")) closeDocked(); });
   function paintCompany(){
     if(!coOpen || !$("co-panel")) return;
     var c = coOf(coOpen);
@@ -11540,7 +11700,7 @@ a series deal is counted once, at its full amount.</div>
     }).join("") + '</div>';
   }
   function coOppCard(it){
-    var r = it.rec, open = it.kind === "lead" ? "Open the Prospect" : it.kind === "app" ? "Open the Application" : "Open the Sponsorship";
+    var r = it.rec, open = it.kind === "lead" ? "See the Prospect" : "See the Details";
     return '<div class="cp-card opp"><div class="cp-head"><div><span class="tag ftype" style="border-left:3px solid ' + TYPE_COLOR[coTypeOf(it.type)] + '">' + esc(typeName(it.type)) + '</span> ' +
         '<b>' + esc(it.what || "") + '</b></div><div class="cp-amt">' + (it.amount ? esc(money(it.amount)) : "") + '</div></div>' +
       stepsBar(it) +
@@ -11572,7 +11732,7 @@ a series deal is counted once, at its full amount.</div>
         var nx = it.nextText ? "Next: " + it.nextText + (it.nextDate ? ", " + fmtDate(it.nextDate) : "") : (it.stage === "Paid" ? "Paid" : "");
         return '<div class="cp-stepcard"><div class="cp-stephd"><b>' + esc(title) + '</b><span>' + esc(nx) + '</span></div>' + stepsBar(it) +
           '<div class="cp-cardft" style="margin-top:8px;"><span class="sub2">' + esc(typeName(it.type)) + (it.no ? " \u00b7 " + esc(it.no) : "") + (it.amount ? " \u00b7 " + esc(money(it.amount)) : "") + '</span>' +
-          '<button class="btn ghost sm" type="button" data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '" data-direct="1">' + (it.kind === "lead" ? "Open the Prospect" : "Open the Sponsorship") + '</button></div></div>';
+          '<button class="btn ghost sm" type="button" data-fkind="' + esc(it.kind) + '" data-fid="' + esc(it.id) + '" data-direct="1">' + (it.kind === "lead" ? "See the Prospect" : "See the Details") + '</button></div></div>';
       }).join("") || '<div class="cp-stepcard"><div class="cp-stephd"><b>Not sponsoring or a prospect right now</b></div><div class="fldnote" style="margin:0;">' +
         (canWrite ? 'Use <b>Add a Prospective Sponsorship</b> to start one.' : '') + '</div></div>';
       var bens = [], done = 0;
@@ -11911,12 +12071,8 @@ a series deal is counted once, at its full amount.</div>
       '<button type="button" class="hm-tile" data-go="companies" style="--k:#5fd39a"><div class="hm-top"><span class="hm-lab">By Type</span><span class="hm-pill">12 months</span></div>' +
         '<div class="hm-stack">' + ["summit","workgroup","other"].map(function(k){ return '<i style="width:' + (byType[k] / typeTot * 100).toFixed(1) + '%;background:' + TYPE_COLOR[k] + '"></i>'; }).join("") + '</div>' +
         '<div class="hm-trio">' + [["summit","Summit"],["workgroup","Workgroup"],["other","Other"]].map(function(k){
-          return '<div class="hm-tc" style="--c:' + TYPE_COLOR[k[0]] + '"><b>' + esc(moneyK(byType[k[0]])) + '</b><span>' + k[1] + '</span></div>'; }).join("") + '</div></button>' +
-      '<div class="hm-tile w4 still" style="--k:#74bfeb"><div class="hm-top"><span class="hm-lab">Team Activity</span></div><div class="hm-acts">' +
-        (acts.length ? acts.map(function(e){
-          return '<div class="hm-act"><i>' + esc(coInitials(e.who || "MISMO")) + '</i><span><b>' + esc(e.who || "") + '</b> ' + esc(e.what || "") + (e.appNo ? ' <span class="m">' + esc(e.appNo) + '</span>' : '') + '</span>' +
-            '<span class="m">' + esc(fmtDate(String(e.at).slice(0, 10)).replace(/, \d{4}$/, "")) + '</span></div>';
-        }).join("") : '<div class="hm-sub">Nothing yet.</div>') + '</div></div>';
+          return '<div class="hm-tc" style="--c:' + TYPE_COLOR[k[0]] + '"><b>' + esc(moneyK(byType[k[0]])) + '</b><span>' + k[1] + '</span></div>'; }).join("") + '</div></button>';
+    /* Team Activity is gone from Home (Jonna, November 21, 2026); each record's History keeps it */
   }
 
   /* ---------------- wiring ---------------- */
@@ -11957,6 +12113,7 @@ a series deal is counted once, at its full amount.</div>
     var el = ev.target; if(!el) return;
     if(el.id === "co-owner"){ coState.owner = el.value; renderCompanies(); }
     if(el.id === "co-type"){ coState.type = el.value; renderCompanies(); }
+    if(el.id === "pl-summit"){ plState.summit = el.value; if(el.value && el.value !== "-") plState.type = "summit"; plKeep(); renderProspectList(); }
     if(el.getAttribute && el.getAttribute("data-coowner")) coSetOwner(el.getAttribute("data-coowner"), el.value);
     if(el.getAttribute && el.getAttribute("data-tpabout")) coSetAbout(el.getAttribute("data-tpabout"), el.value);
   });

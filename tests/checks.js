@@ -390,17 +390,18 @@ const appBy = async (page, test) => (await apps(page)).find(test);
       return t ? [...t.querySelectorAll('tbody tr')].map(r => r.querySelector('td').textContent).filter(d => new Date(d) > lim) : []; });
     expect(!late.length, 'To Do has items due more than 45 days out: ' + late.join(', '));
     expect(!/Rosalyn/.test(body), 'Rosalyn is listed in the portal (she works from Summit HQ only)');
-    /* someone else ticks the LinkedIn post while this screen ticks the Mic'd Up invitation: both stay */
+    /* someone else ticks the LinkedIn post while this screen ticks the opportunity: both stay (the Mic'd Up
+       invitation ticks itself from MISMO Media now, November 21, 2026) */
     await P(portal, () => window.__practice.write('applications', d => { d.docs['app-t-paid']['bf:Winter 2027:linkedin'] = { done: '2026-11-07', by: 'Someone Else' }; }));
     const unfold = () => P(portal, () => document.querySelectorAll('#ben-body details').forEach(d => { d.open = true; }));
     await unfold();
-    await portal.click('[data-ben-done="bf:Winter 2027:micdup"][data-ben-id="app-t-paid"]');
+    await portal.click('[data-ben-done="bf:Winter 2027:opp"][data-ben-id="app-t-paid"]');
     await portal.waitForTimeout(2000);
     await unfold();
     await portal.selectOption('[data-ben-owner="bf:Winter 2027:chair"][data-ben-id="app-t-paid"]', 'Amy Moses');
     await portal.waitForTimeout(2000);
     const a = await appBy(portal, x => x.id === 'app-t-paid');
-    expect(a['bf:Winter 2027:micdup'] && a['bf:Winter 2027:micdup'].done, 'Done was not saved');
+    expect(a['bf:Winter 2027:opp'] && a['bf:Winter 2027:opp'].done, 'Done was not saved');
     expect(a['bf:Winter 2027:linkedin'] && a['bf:Winter 2027:linkedin'].by === 'Someone Else', 'another person\'s tick was overwritten');
     expect(a['bf:Winter 2027:chair'] && a['bf:Winter 2027:chair'].owner === 'Amy Moses', 'the owner change was not saved');
     await portal.click('.tab[data-view="flow"]').catch(() => {});
@@ -563,7 +564,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const mail = (await fileOf('mailin')).docs;
     expect(mail['m-t-3'].st === 'need' && (mail['m-t-3'].cands || []).length > 1, 'an email several sponsors share is not waiting to be picked');
     expect(!mail['m-t-1'].html, 'a logged email\'s HTML was kept in the mailbox file');
-    await toTodo();
+    await toTodo(); await portal.click('[data-awt="mail"]'); await portal.waitForTimeout(200);
     await portal.click('[data-mailpick="m-t-3"][data-name="Contoso Mortgage"]'); await portal.waitForTimeout(1500);
     const m3 = (await fileOf('mailin')).docs['m-t-3'];
     expect(m3.st === 'logged' && m3.coName === 'Contoso Mortgage', 'picking a company did not log it: ' + m3.st);
@@ -677,7 +678,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
   await check('new sponsors can be listed for this month, any month or any dates', async () => {
     await toCos('Sponsor');
-    await portal.click('[data-npt="sp"]'); await portal.click('[data-npp="year"]'); await portal.waitForTimeout(250);
+    await portal.click('[data-npp="year"]'); await portal.waitForTimeout(250);
     let t = await P(portal, () => document.getElementById('spm-newp').innerText);
     expect(/new sponsorship/i.test(t) && /This Year/.test(t), 'the New Sponsors panel is missing: ' + t.slice(0, 200));
     await portal.click('[data-npp="custom"]'); await portal.waitForTimeout(200);
@@ -709,9 +710,10 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await toCos('Sponsor');
     let rows = await P(portal, () => document.getElementById('spm-rows').innerText);
     expect(/Northwind Lending/.test(rows) && !/Wingtip Servicing/.test(rows), 'the Current tab is not just sponsors');
-    await toCos('Prospect');
+    await toCos('');
     rows = await P(portal, () => document.getElementById('spm-rows').innerText);
-    expect(/Wingtip Servicing/.test(rows) && !/Northwind Lending/.test(rows), 'the Prospect tab is not just prospects');
+    expect(!/Wingtip Servicing/.test(rows) && /Northwind Lending/.test(rows), 'the Sponsors page lists prospects (they belong on Prospects)');
+    expect(!(await P(portal, () => !!document.querySelector('#spm-life [data-spmlife="Prospect"]'))), 'the Sponsors page still has a Prospect tab');
     /* a summit filter: Winter 2027 sponsors, a 2027 Series one included */
     await toCos('Sponsor'); await portal.selectOption('#spm-what', 'Winter 2027'); await portal.waitForTimeout(200);
     rows = await P(portal, () => document.getElementById('spm-rows').innerText);
@@ -727,6 +729,15 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     rows = await P(portal, () => document.getElementById('spm-rows').innerText);
     expect(/Fourth Coffee Test/.test(rows), 'the AI Webinar Series outstanding does not list Fourth Coffee');
     await toCos('Sponsor');
+  });
+  await check('MISMO Media ticks the LinkedIn post and the Mic\'d Up invitation it has done', async () => {
+    const t = await P(portal, () => { document.querySelector('.tab[data-view="benefits"]').click(); return new Promise(r => setTimeout(() => r(document.getElementById('view-benefits').innerText), 600)); });
+    const rec = await P(portal, () => document.body.innerText.length);
+    await openRec('app-t-paid'); await portal.waitForTimeout(400);
+    const dr = await P(portal, () => document.getElementById('drawer').innerText);
+    expect(/posted on LinkedIn[^)]*MISMO Media/.test(dr), 'the LinkedIn post MISMO Media recorded is not ticked on Northwind: ' + (dr.match(/LinkedIn[^\n]*\n[^\n]*\n[^\n]*/) || [''])[0]);
+    expect(/invited to Mic.d Up[^)]*MISMO Media/.test(dr), 'the Mic\'d Up invitation MISMO Media recorded is not ticked');
+    await P(portal, () => { ['d-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c) c.click(); }); });
   });
   /* 'a summit prospect can be tied to a summit' (the retired Summit-first page) is covered by the Prospects check above (November 21, 2026) */
   await check('a company record shows its emails and sponsorships, and takes a note and an owner', async () => {

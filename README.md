@@ -66,6 +66,18 @@ falls back to SharePoint's `_layouts/15/download.aspx` link. **+ Add a Logo** / 
 saves a file of up to 4 MB with `db.putOnce`. Download Logo is on the company card and under Company Details, and
 Download the Logo is on the application.
 
+## When a save fails (November 20, 2026)
+
+Amy approved Guidehouse: the screen said Approved, the invoice request went to Bernie and the list was
+updated, but the save to `applications.json` never landed (it failed silently), and a save moments later made
+from the screen's unsaved copy wrote only `updatedAt`, so nothing looked wrong. Now `saveApp`, `saveLead` and
+`saveBill` call `saveFailed()` on any failure: a **Not Saved** message, the panel says Not saved, and the file is
+read again (`db.reload`) so the screen shows what is saved; the promise rejects. `doSave` queues its emails
+(`doSaveAlerts`), writes its history line and shows "Saved" only after the save resolves; the list update in the
+`saveApp` wrapper and the Payment Made emails from MISMO Money and the Registration Desk wait the same way. A 409
+now retries up to seven times with a short random wait. Practice: `__practice.failNext(file, n)` makes the next n
+saves of a file fail.
+
 ## Just Came In (November 20, 2026)
 
 Home's hero starts with **Just Came In** (`.hm-in`, built in `renderHome`): every application still Submitted

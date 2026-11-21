@@ -69,6 +69,7 @@
     s.sent = s.sent.slice(0, 200);
   }
 
+  var failNext = {};
   /* the save relay: GET returns {data, sha}; PUT {content, sha} saves or answers 409 */
   function relay(method, name, body){
     var s = store(), f = s.files[name];
@@ -77,6 +78,8 @@
       return reply(200, {data: f.data, sha: "p" + f.sha});
     }
     if(method === "PUT"){
+      /* a save that doesn't land, the way a dropped connection or a busy relay would (checks only) */
+      if(failNext[name]){ failNext[name]--; return reply(503, {error: "UNAVAILABLE"}); }
       var b = {}; try{ b = JSON.parse(body || "{}"); }catch(e){}
       var cur = f ? "p" + f.sha : null;
       if(f && b.sha !== cur) return reply(409, {error: "CONFLICT"});
@@ -242,6 +245,8 @@
     list: function(){ return JSON.parse(JSON.stringify(store().list)); },
     /* change the practice Sponsorship Requests list the way a missed flow run would leave it */
     setList: function(fn){ fn(store().list); keep(); },
-    sent: function(){ return JSON.parse(JSON.stringify(store().sent)); }
+    sent: function(){ return JSON.parse(JSON.stringify(store().sent)); },
+    /* the next n saves of file `n` fail */
+    failNext: function(n, times){ failNext[n] = times || 1; }
   };
 })();

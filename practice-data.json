@@ -34,7 +34,8 @@
     "inbox-taken": {"docs": {}},
     "prospects-removed": {"docs": {}},
     "workgroups": {"docs": {
-      "wg-t-1": {"no": "WG90001", "company": "Proseware Group Test", "workgroup": "eMortgage CoP", "term": "Initial", "cadence": "Annual", "status": "Draft", "amountDue": 6000, "contactName": "Sam Test", "contactEmail": "sam@proseware-group.test"}
+      "wg-t-1": {"no": "WG90001", "company": "Proseware Group Test", "workgroup": "eMortgage CoP", "term": "Initial", "cadence": "Annual", "status": "Draft", "amountDue": 6000, "contactName": "Sam Test", "contactEmail": "sam@proseware-group.test"},
+      "wg-t-late": {"no": "WG90002", "company": "Alpine Ski House Test", "workgroup": "Data Standards CoP", "term": "Initial", "cadence": "Annual", "status": "Pending Payment", "amountDue": 6000, "invoiceNumber": "7000123", "invoiceDate": "{{today-45}}", "periodStart": "{{today-45}}", "periodEnd": "{{today+320}}", "contactName": "Jamie Test", "contactEmail": "jamie@alpine-ski.test", "about": "15 days past due: the first payment follow-up goes out automatically"}
     }},
     "webinars": {"docs": {
       "wb-t-1": {"no": "WB90001", "company": "Fourth Coffee Test", "webinar": "AI in Servicing", "status": "Pending Payment", "invoiceNumber": "990120", "invoiceDate": "{{today-50}}", "amountDue": 4000, "contactName": "Quinn Test", "contactEmail": "quinn@fourthcoffee.test", "about": "an AI webinar record from before Other Sponsorships: copied into others.json on first open"}

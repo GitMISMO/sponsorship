@@ -2245,6 +2245,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>Logo Request</b>: to Vanessa, Jonna, Amy and Kelly copied, with a link to the logo in Sponsor Logos when the sponsor uploaded one. No longer sent on approval (the logo now goes onto the website automatically); it only goes if someone presses <b>Logo Request</b> on a record.</li>
             <li><b>Payment Made</b>: to Jonna, Amy and Kelly. Sent when a record is marked Paid, by hand or from MISMO Money.</li>
             <li><b>Payment Follow-Up</b>: to Bernie, Jonna, Amy and Kelly. Sent when someone clicks Send Alert on a chase.</li>
+            <li><b>Workgroup Payment Follow-Up</b>: to the workgroup sponsor&rsquo;s contact, Jonna, Amy and Kelly copied. Sent automatically once a workgroup invoice is past due, then every 10 business days until it is paid (weekdays, 8 am to 6 pm Eastern). <b>Stop Follow-Ups</b> on the record turns them off.</li>
             <li><b>List Update</b>: no email. It updates the Sponsorship Requests list.</li>
           </ul>
           <p>They usually go out within a minute. Each record&rsquo;s <b>Alerts</b> section lists every one, with &ldquo;on its way&rdquo; or &ldquo;emailed&rdquo; and the date. The buttons there send one again.</p>
@@ -2284,6 +2285,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>Draft</b> means no invoice is out yet. Entering the <b>Aptify order ID</b> moves it to <b>Pending Payment</b> by itself, exactly like a summit sponsorship.</li>
             <li><b>Payment arrives on its own.</b> MISMO Money matches on the Aptify order ID, which these records hold as the invoice number, and marks the record Paid. No one watches for it by hand.</li>
             <li><b>The invoice email is drafted, never sent.</b> The record shows the message in full &mdash; recipients, subject, body. Read it, change anything, then press <b>Send</b>. Nothing leaves until you do.</li>
+            <li><b>Payment follow-ups go out by themselves</b> (Jonna&rsquo;s choice, November 21, 2026). Once an invoiced (Pending Payment) workgroup sponsorship is past due, net 30 from the invoice date or the Payment Due date, a past-due reminder is emailed to its contact from Jonna&rsquo;s mailbox, with Jonna, Amy and Kelly copied, then another every 10 business days until it is marked Paid. They go on weekdays between 8 am and 6 pm Eastern. The record&rsquo;s <b>Payment Follow-Ups</b> section lists each one and when the next goes; <b>Stop Follow-Ups</b> turns them off for that sponsorship (for example, when it was paid some way MISMO Money never sees, such as an MBA ACH), and <b>Restart Follow-Ups</b> turns them back on.</li>
             <li><b>Raise the Next Renewal On</b> is the date the following cycle should be invoiced, carried over from the tracker.</li>
             <li>Archived sponsors are hidden until you tick <b>Show Archived</b>, and the figures follow whatever is on screen.</li>
           </ul>
@@ -2368,7 +2370,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>MISMO Money payments are recorded when the portal is opened.</b> The recording happens inside the portal. Payments are recorded the next time anyone who can edit opens it, not the moment MISMO Money loads them. If nobody opens the portal, nothing is recorded until someone does. Someone who can only view the portal doesn&rsquo;t trigger it.</li>
             <li><b>Some payments never reach MISMO Money.</b> Aptify payments recorded as an MBA ACH payment or by credit memo aren&rsquo;t in its payment exports. Kastle AI&rsquo;s $15,000 was one. Bernie enters the date it was paid on his <b>Registration Desk</b> (or anyone can enter the <b>Payment Received</b> date on the record here), and it is marked Paid.</li>
             <li><b>MISMO Money covers recent payments only.</b> It covers payments from 1 January 2025 on. Older payments are already on their records.</li>
-            <li><b>Payment follow-ups need a click.</b> They don&rsquo;t send themselves on a timer, because nothing here emails people without someone choosing to send it. The card shows when one is due.</li>
+            <li><b>Summit payment follow-ups need a click.</b> They don&rsquo;t send themselves on a timer; the card shows when one is due. Workgroup payment follow-ups are the one exception: they go to the sponsor automatically (Jonna, November 21, 2026).</li>
             <li><b>Custom packages show one summit publicly.</b> The Sponsorship Requests list holds one row per sponsorship, so for a custom Series it carries the Winter choice. Spring and Fall choices show here on Inventory but not on the public page.</li>
             <li><b>The price list is kept in two places.</b> Tiers, prices and opportunities are in the prospectus <b>and</b> in this portal (for Inventory and custom packages). A change to one needs the same change in the other.</li>
             <li><b>The prospectus and this portal count availability separately.</b> The prospectus counts the Sponsorship Requests list; Inventory counts this portal&rsquo;s records. They agree as long as every change reaches the list.</li>
@@ -7837,6 +7839,7 @@ a series deal is counted once, at its full amount.</div>
     "billingName",
     /* who is working it (November 18, 2026), shown on the Pipeline, and the prospect it began as */ "owner","fromLead",
     /* workgroup only */ "workgroup","cadence","term","renewalNumber","periodStart","periodEnd",
+    /* automatic payment follow-ups (November 21, 2026) */ "followUpCount","lastFollowUpDate","followUps","noChase","noChaseBy","noChaseAt",
     "renewalInvoiceDate","sponsorName","sponsorAddress","logoMismo","logoConnect","logoAgendas",
     /* other sponsorships: the type, and what it is (the AI webinar records keep "webinar" too) */
     "otype","what","webinar",
@@ -8102,6 +8105,7 @@ a series deal is counted once, at its full amount.</div>
             }).join("") + '</div></div>';
         }).join("") + '</div></div>';
     }
+    if(kind === "workgroup") html += wgChaseSection(r);
     html += billEmailSection(kind, r);
     html += touchSection(r.company);
     html += billSect("Notes", spec.notes);
@@ -8352,6 +8356,101 @@ a series deal is counted once, at its full amount.</div>
       $("bd-msg").textContent = "It could not be queued — nothing was sent."; $("bd-msg").className = "savemsg bad";
     });
   }
+
+  /* ---------------- workgroup payment follow-ups, sent automatically (Jonna, November 21, 2026) ----------------
+     Jonna chose this herself ("can past due follow ups for workgroup sponsorship emails go out automatically?" ...
+     "Fully automatic"), an exception to the rule that nothing here sends on its own. A workgroup sponsorship that is
+     invoiced (Pending Payment) and past its net-30 due date gets a payment follow-up emailed to its contact, with
+     Jonna, Amy and Kelly on Cc, then another every 10 business days until it is marked Paid. It goes through the
+     Team Emails flow's Default case (To, Cc, Subject and the body as written), from Jonna's mailbox. Sent on weekdays,
+     8 am to 6 pm Eastern, by whoever who can edit has the portal open, or the hourly robot. Each email's outbox id is
+     fixed (wgpd-<record>-<number>), so two copies of the portal open at once queue it only once. "Stop Follow-Ups"
+     on the record turns them off for one sponsorship (a payment MISMO Money never sees, such as an MBA ACH). */
+  function wgChaseState(r){
+    var out = {due:false, next:null, count:Number(r && r.followUpCount || 0), days:0};
+    if(!r || r.status !== "Pending Payment" || r.noChase || !String(r.contactEmail || "").trim()) return out;
+    var o = billOverdue(r); if(!o.due) return out;
+    out.days = o.days;
+    var first = new Date(o.due); first.setDate(first.getDate() + 1);
+    var last = parseDate(r.lastFollowUpDate);
+    out.next = last ? addBusinessDays(last, CHASE_BDAYS) : first;
+    out.due = today() >= out.next;
+    return out;
+  }
+  function wgChaseHours(){
+    if(/[?&]practice\b/.test(location.search)) return true;   // the practice copy sends nothing, so any time will do
+    try{
+      var f = new Intl.DateTimeFormat("en-US", {timeZone:"America/New_York", weekday:"short", hour:"numeric", hourCycle:"h23"}).formatToParts(new Date());
+      var wd = (f.filter(function(x){ return x.type === "weekday"; })[0] || {}).value, h = +(f.filter(function(x){ return x.type === "hour"; })[0] || {}).value;
+      return wd !== "Sat" && wd !== "Sun" && h >= 8 && h < 18;
+    }catch(e){ return false; }
+  }
+  function wgChaseEmail(r, n, days){
+    var due = billOverdue(r).due, term = BILL.workgroup.termOf(r);
+    var body = "Hello " + (r.company || "") + " Team,\n\n" +
+      (n === 1 ? "This is a friendly reminder that payment for your Workgroup Sponsorship of the " + (r.workgroup || "MISMO workgroup") + " is past due."
+               : "We are following up again on payment for your Workgroup Sponsorship of the " + (r.workgroup || "MISMO workgroup") + ", which is still past due.") + "\n\n" +
+      "Invoice: " + (r.invoiceNumber || "—") + (r.invoiceDate ? ", sent " + fmtDate(r.invoiceDate) : "") + "\n" +
+      "Sponsorship: " + term + (r.periodStart && r.periodEnd ? ", " + fmtDate(r.periodStart) + " to " + fmtDate(r.periodEnd) : "") + "\n" +
+      "Amount due: " + money(r.amountDue) + "\n" +
+      "Payment was due: " + (due ? fmtDate(iso(due)) : "—") + " (" + days + " day" + (days === 1 ? "" : "s") + " ago)\n\n" +
+      "Instructions on how to make a payment are included on the invoice. If payment is already on its way, or you need another copy of the invoice, please reply to this email and let us know.\n\n" +
+      "Thank you,\nMISMO";
+    return {to:String(r.contactEmail || "").trim(), cc:BILL_CC,
+      subject:"Past Due: MISMO Workgroup Sponsorship Invoice" + (r.invoiceNumber ? " " + r.invoiceNumber : "") + (r.workgroup ? " — " + r.workgroup : "") + (n > 1 ? " (Reminder " + n + ")" : ""),
+      body:body};
+  }
+  var wgChaseBusy = false;
+  function wgChaseRun(){
+    if(wgChaseBusy || !db || !canWrite || !AUTO_SEND || !wgsSeen || !outboxLoaded || !wgChaseHours()) return;
+    var due = billList("workgroup").filter(function(r){ return r.id !== billDraftId && wgChaseState(r).due; });
+    if(!due.length) return;
+    wgChaseBusy = true;
+    var have = {}; outbox.forEach(function(o){ have[o.id] = 1; });
+    var one = function(i){
+      if(i >= due.length){ wgChaseBusy = false; return; }
+      var r = due[i], st = wgChaseState(r), n = st.count + 1, id = "wgpd-" + String(r.id).replace(/[^a-zA-Z0-9-]/g, "") + "-" + n;
+      var em = wgChaseEmail(r, n, st.days), now = new Date();
+      function plain(v, m){ return String(v == null ? "" : v).replace(/[<>]/g, "").slice(0, m || 300); }
+      var doc = {kind:"wg-pastdue", queuedAt:now.toISOString(), status:"queued", to:plain(em.to), cc:plain(em.cc), subject:plain(em.subject, 300),
+        bodyText:plain(em.body, 6000), bodyHtml:plain(em.body, 6000).replace(/\n/g, "<br>"), recordNo:plain(r.no), company:plain(r.company),
+        invoiceNumber:plain(r.invoiceNumber), amountDue:plain(money(r.amountDue)), line:"Workgroup Sponsorship", followUp:n, automatic:true,
+        approvedBy:"Automatic payment follow-up (Jonna, November 21, 2026)"};
+      var queued = have[id] ? Promise.resolve(false) : db.doc("outbox/" + id).set(doc).then(function(){ outbox.push(Object.assign({id:id}, doc)); return true; });
+      queued.then(function(sent){
+        var after = JSON.parse(JSON.stringify(r));
+        after.followUpCount = n; after.lastFollowUpDate = iso(today());
+        after.followUps = (after.followUps || []).concat([{n:n, at:now.toISOString(), to:em.to, auto:true}]);
+        return saveBill("workgroup", after).then(function(){
+          if(sent) addLog(r.no, "payment follow-up " + n + " emailed automatically to " + em.to + " (" + st.days + " days past due)", "Sponsorship Portal");
+        });
+      }).then(function(){ one(i + 1); }, function(){ one(i + 1); });
+    };
+    one(0);
+  }
+  /* the record's own section: what was sent, when the next one goes, and Stop / Restart */
+  function wgChaseSection(r){
+    if(!r || r.status !== "Pending Payment") return "";
+    var st = wgChaseState(r), list = (r.followUps || []).slice().reverse();
+    var line = !String(r.contactEmail || "").trim() ? "There is no contact email, so none can go out. Add one under Sponsor."
+      : r.noChase ? "Stopped" + (r.noChaseBy ? " by " + esc(r.noChaseBy) : "") + (r.noChaseAt ? " on " + esc(fmtDate(iso(new Date(r.noChaseAt)))) : "") + ". None will go out for this sponsorship until they are restarted."
+      : !billOverdue(r).due ? "The first goes out the day after payment is due (net " + BILL_GRACE + " from the invoice date), once the invoice date is filled in."
+      : "Next one: " + esc(fmtDate(iso(st.next))) + (st.due ? " (due now; it goes out on the next weekday between 8 am and 6 pm Eastern)" : "") + ", to " + esc(r.contactEmail) + ", with Jonna, Amy and Kelly on Cc.";
+    return '<div class="dsect"><h4>Payment Follow-Ups</h4><div class="fldnote" style="margin-top:0;">Sent automatically once payment is past due, then every 10 business days until it is marked Paid. ' + line + '</div>' +
+      (list.length ? '<div style="margin-top:8px;">' + list.map(function(f){ return '<div class="histrow"><span class="hwhen">' + esc(fmtDate(iso(new Date(f.at)))) + '</span><span>Follow-up ' + f.n + ' emailed to ' + esc(f.to || "") + (f.auto ? ' (automatic)' : '') + '</span></div>'; }).join("") + '</div>' : '') +
+      (canWrite ? '<div style="margin-top:10px;"><button class="btn ghost sm" type="button" data-wgchase="' + (r.noChase ? "on" : "off") + '">' + (r.noChase ? "Restart Follow-Ups" : "Stop Follow-Ups") + '</button></div>' : '') + '</div>';
+  }
+  document.addEventListener("click", function(ev){
+    var b = ev.target && ev.target.closest && ev.target.closest("[data-wgchase]"); if(!b || !billCur || billCurKind !== "workgroup" || !canWrite) return;
+    var stop = b.getAttribute("data-wgchase") === "off", after = JSON.parse(JSON.stringify(billCur));
+    after.noChase = stop; after.noChaseBy = stop ? whoAmI() : ""; after.noChaseAt = stop ? new Date().toISOString() : "";
+    saveBill("workgroup", after).then(function(){
+      addLog(after.no, (stop ? "stopped" : "restarted") + " the automatic payment follow-ups", whoAmI());
+      toast(stop ? "No more payment follow-ups will go out for " + (after.company || after.no) + "." : "Payment follow-ups are back on for " + (after.company || after.no) + ".", "", stop ? "Follow-Ups Stopped" : "Follow-Ups On");
+      billCur = after; openBill("workgroup", after.id);
+    }, function(){});
+  });
+  setInterval(function(){ if(!document.hidden) wgChaseRun(); }, 30 * 60000);
 
   /* ---------------- new records, and the wiring ---------------- */
   function newBill(kind, seed){
@@ -12598,6 +12697,16 @@ a series deal is counted once, at its full amount.</div>
       var fails = outbox.filter(function(o){ return o && (o.status === "failed" || (outboxSent[o.id] && /fail/i.test(outboxSent[o.id].status || ""))) && hlAge(o.queuedAt) <= 7; });
       rows.push({grp:"email", key:"email-failed", name:"Failed Emails, Last 7 Days", what:"Emails or list updates the flow could not send", when:fails.length ? fails.map(function(o){ return o.queuedAt; }).sort().pop() : "", every:"",
         level:fails.length ? "bad" : "ok", note:fails.length ? fails.length + " failed" : "None", ids:fails.map(function(o){ return o.id; })});
+      /* automatic workgroup payment follow-ups (November 21, 2026) */
+      var wgl = billList("workgroup"), sent30 = 0, lastFu = "", nextFu = null, nowDue = [];
+      wgl.forEach(function(r){
+        (r.followUps || []).forEach(function(f){ if(hlAge(f.at) <= 30) sent30++; if(f.at > lastFu) lastFu = f.at; });
+        var st = wgChaseState(r); if(st.next && (!nextFu || st.next < nextFu.d)) nextFu = {d:st.next, co:r.company};
+        if(st.due) nowDue.push(r.company || r.no);
+      });
+      rows.push({grp:"email", key:"wg-followups", name:"Workgroup Payment Follow-Ups", what:"Sent automatically to the sponsor once a workgroup invoice is past due, then every 10 business days, weekdays 8 am to 6 pm ET",
+        when:lastFu, every:"", level:nowDue.length && wgChaseHours() && !wgChaseBusy ? "warn" : "ok",
+        note:nowDue.length ? nowDue.length + " due now (" + nowDue.slice(0, 3).join(", ") + ")" : (sent30 ? sent30 + " sent in 30 days" : "None due") + (nextFu ? " \u00b7 next " + fmtDate(iso(nextFu.d)).replace(/, \d{4}$/, "") : "")});
       /* saves */
       var errs = HL.errs.filter(function(x){ return hlAge(x.at) <= 7; });
       rows.push({grp:"saves", key:"saves-failed", name:"Failed Saves, Last 7 Days", what:"Changes someone made that did not save (the portal says Not Saved on screen)", when:errs.length ? errs[0].at : "", every:"",
@@ -12848,7 +12957,7 @@ a series deal is counted once, at its full amount.</div>
           if(kind === "other") fresh.forEach(function(r){ r.__kind = "other"; });
           keep.forEach(function(r){ if(!fresh.some(function(x){ return x.id === r.id; })) fresh.push(r); });
           billSet(kind, fresh);
-          if(kind === "other"){ othersSeen = true; moveWebinars(); } else wgsSeen = true;
+          if(kind === "other"){ othersSeen = true; moveWebinars(); } else { wgsSeen = true; setTimeout(wgChaseRun, 8000); }
           renderBilling(); renderFlow(); renderCo();
         }catch(err){ loadFailed("reading the " + cname, err && err.message); }
       }, function(e){

@@ -66,6 +66,20 @@ falls back to SharePoint's `_layouts/15/download.aspx` link. **+ Add a Logo** / 
 saves a file of up to 4 MB with `db.putOnce`. Download Logo is on the company card and under Company Details, and
 Download the Logo is on the application.
 
+## Workgroup payment follow-ups, automatic (November 21, 2026)
+
+Jonna chose this ("can past due follow ups for workgroup sponsorship emails go out automatically?" → fully automatic),
+the one exception to nothing here sending on its own. `wgChaseRun` (after the workgroups load, every 30 minutes, and on
+each robot run) queues a `wg-pastdue` outbox email for each workgroup record that is Pending Payment, has a contact email,
+is not `noChase`, and is past due (`billOverdue`: the Payment Due date, else net 30 from the invoice date): the first the
+day after it is due, then every `CHASE_BDAYS` (10) business days after `lastFollowUpDate`, until it is marked Paid. Only
+on weekdays, 8 am to 6 pm Eastern (`wgChaseHours`; the practice copy any time). To the contact, Cc `BILL_CC` (Jonna, Amy,
+Kelly); the Team Emails flow's Default case sends it from Jonna's mailbox with the To, Cc, Subject and body as written
+(no flow change was needed). The outbox id is fixed (`wgpd-<record id>-<n>`) so two open copies queue it once; the record
+keeps `followUpCount`, `lastFollowUpDate` and `followUps` [{n, at, to, auto}], and the history says "payment follow-up n
+emailed automatically". The record's **Payment Follow-Ups** section (`wgChaseSection`) shows them and the next date, with
+Stop / Restart Follow-Ups (`noChase`, `noChaseBy`, `noChaseAt`). System Health has a Workgroup Payment Follow-Ups row.
+
 ## Activity, System Health, Forwarded Emails (November 21, 2026)
 
 Asked for by Jonna ("create an activity tab like member 360 and a system health tab ... to make this a rock solid program").

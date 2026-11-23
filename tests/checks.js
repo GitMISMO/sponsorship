@@ -627,7 +627,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(/Wingtip Servicing/.test(fu) && /Coho Lending Test/.test(fu) && /invoice copy/.test(fu), 'All Follow-Ups is missing a prospect follow-up or a touchpoint next step: ' + fu.slice(0, 200));
     /* drag Northwind's planned touch to another day, then undo */
     const T = await P(portal, () => { const d = new Date(), m = d.getMonth() + 1, x = d.getDate(); return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (x < 10 ? '0' : '') + x; });
-    const other = await P(portal, T => { const d = [...document.querySelectorAll('#op-board .op-day[data-opday]')].map(x => x.getAttribute('data-opday')).filter(x => x && x !== T); return d[d.length - 1] || ''; }, T);
+    const other = await P(portal, T => { const d = [...document.querySelectorAll('#op-board .op-day[data-opday]')].map(x => x.getAttribute('data-opday')).filter(x => x && x !== T); return d[0] || ''; }, T);
     if (other) {
       await portal.dragAndDrop('#op-board .op-card[data-opid="pl-t-1"]', '#op-board .op-day[data-opday="' + other + '"]'); await portal.waitForTimeout(1200);
       let pl = (await fileOf('plans')).docs['pl-t-1'];
@@ -880,31 +880,37 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const main = (((await fileOf('health')) || {docs: {}}).docs || {}).main;
     expect(main && main.checkedAt && main.checkedBy, 'the shared check was not kept in data/health.json');
   });
-  await check('a past-due workgroup sponsorship gets its payment follow-up emailed automatically, once, and can be stopped', async () => {
-    const ob = ((await fileOf('outbox')) || {docs: {}}).docs || {};
-    const mine = Object.entries(ob).filter(([id, o]) => o && o.kind === 'wg-pastdue');
-    expect(mine.length === 1 && mine[0][0] === 'wgpd-wg-t-late-1', 'expected exactly one automatic follow-up for the past-due workgroup sponsorship: ' + JSON.stringify(mine.map(x => x[0])));
-    const o = mine.length ? mine[0][1] : {};
-    expect(o.to === 'jamie@alpine-ski.test' && /jcritchley@mismo\.org/.test(o.cc) && /amoses/.test(o.cc) && /kbradshaw/.test(o.cc), 'the follow-up is not to the contact with Jonna, Amy and Kelly copied: ' + o.to + ' / ' + o.cc);
-    expect(/Past Due/.test(o.subject) && /7000123/.test(o.subject) && /Data Standards CoP/.test(o.subject), 'the subject is wrong: ' + o.subject);
-    expect(/past due/.test(o.bodyText) && /\$6,000/.test(o.bodyText) && /7000123/.test(o.bodyText) && /<br>/.test(o.bodyHtml), 'the message is missing the invoice, the amount or its line breaks');
-    expect(!Object.values(ob).some(x => x && x.kind === 'wg-pastdue' && x.recordNo === 'WG90001'), 'a draft workgroup sponsorship got a follow-up');
-    const r = ((await fileOf('workgroups')).docs || {})['wg-t-late'] || {};
-    expect(r.followUpCount === 1 && r.lastFollowUpDate && (r.followUps || []).length === 1, 'the follow-up is not recorded on the sponsorship: ' + JSON.stringify({c: r.followUpCount, d: r.lastFollowUpDate}));
-    /* the record says so, and Stop turns them off */
+  await check('payment reminders start only from the record, with the invoice attached, and can be stopped', async () => {
+    let ob = ((await fileOf('outbox')) || {docs: {}}).docs || {};
+    expect(!Object.keys(ob).some(id => /^(bpd|wgpd)-/.test(id)), 'a payment reminder went out before anyone pressed Start');
     await openRec('wg-t-late');
-    const sect = await P(portal, () => document.getElementById('bill-drawer').innerText);
-    expect(/Payment Follow-Ups/i.test(sect) && /Follow-up 1 emailed to jamie@alpine-ski\.test/.test(sect) && /Next one:/.test(sect), 'the record does not show the follow-ups: ' + (sect.match(/Payment Follow-Ups[\s\S]{0,300}/i) || [''])[0]);
+    let sect = await P(portal, () => document.getElementById('bill-drawer').innerText);
+    expect(/Payment Follow-Ups/i.test(sect) && /Add the invoice PDF first/.test(sect), 'the record does not ask for the invoice PDF first: ' + (sect.match(/Payment Follow-Ups[\s\S]{0,300}/i) || [''])[0]);
+    expect(await P(portal, () => { const b = document.querySelector('#bill-drawer [data-wgchase="on"]'); return !!b && b.disabled; }), 'Start is not held back until there is an invoice PDF');
+    const pdf = Buffer.from('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n');
+    await portal.setInputFiles('#bill-drawer input[data-invpdf]', {name: 'Invoice 7000123.pdf', mimeType: 'application/pdf', buffer: pdf});
+    await portal.waitForTimeout(1500);
+    const inv = await fileOf('invoice-wg-t-late');
+    expect(inv && inv.name === 'Invoice 7000123.pdf' && inv.data, 'the invoice PDF was not kept');
+    await portal.click('#bill-drawer [data-wgchase="on"]'); await portal.waitForTimeout(3500);
+    ob = ((await fileOf('outbox')) || {docs: {}}).docs || {};
+    const mine = Object.entries(ob).filter(([id]) => /^bpd-/.test(id));
+    expect(mine.length === 1 && mine[0][0] === 'bpd-wg-t-late-1', 'expected one reminder after Start: ' + JSON.stringify(mine.map(x => x[0])));
+    const o = mine.length ? mine[0][1] : {};
+    expect(o.to === 'jamie@alpine-ski.test' && /jcritchley@mismo\.org/.test(o.cc) && /amoses/.test(o.cc) && /kbradshaw/.test(o.cc), 'the reminder is not to the contact with Jonna, Amy and Kelly copied: ' + o.to + ' / ' + o.cc);
+    expect(/Friendly Reminder/.test(o.subject) && /7000123/.test(o.subject), 'the subject is wrong: ' + o.subject);
+    expect(/friendly reminder/.test(o.bodyText) && /attached the invoice/.test(o.bodyText) && /\$6,000/.test(o.bodyText) && /<br>/.test(o.bodyHtml), 'the message is not the friendly reminder with the invoice');
+    expect((o.attachments && o.attachments[0] && o.attachments[0].Name === 'Invoice 7000123.pdf' && o.attachments[0].ContentBytes) || o.attachmentsSent, 'the invoice is not attached');
+    const r = ((await fileOf('workgroups')).docs || {})['wg-t-late'] || {};
+    expect(r.chaseOn === true && r.chaseBy && r.followUpCount === 1 && (r.followUps || []).length === 1, 'Start and the reminder are not recorded on the sponsorship');
+    sect = await P(portal, () => document.getElementById('bill-drawer').innerText);
+    expect(/Follow-ups are on/.test(sect) && /Reminder 1 emailed to jamie@alpine-ski\.test/.test(sect) && /Next one:/.test(sect), 'the record does not show the reminders: ' + (sect.match(/Payment Follow-Ups[\s\S]{0,400}/i) || [''])[0]);
+    expect(await P(portal, () => [...document.querySelectorAll('#bill-drawer label')].some(l => /Billing Contact Email/i.test(l.textContent))), 'there is no Billing Contact Email on the record');
     await portal.click('#bill-drawer [data-wgchase="off"]'); await portal.waitForTimeout(1200);
-    const r2 = ((await fileOf('workgroups')).docs || {})['wg-t-late'] || {};
-    expect(r2.noChase === true && r2.noChaseBy, 'Stop Follow-Ups was not saved');
-    const sect2 = await P(portal, () => document.getElementById('bill-drawer').innerText);
-    expect(/Stopped by/.test(sect2) && /Restart Follow-Ups/.test(sect2), 'the record does not say the follow-ups are stopped');
-    await portal.click('#bill-drawer [data-wgchase="on"]'); await portal.waitForTimeout(1200);
-    expect(((((await fileOf('workgroups')).docs || {})['wg-t-late']) || {}).noChase === false, 'Restart Follow-Ups was not saved');
+    expect(((((await fileOf('workgroups')).docs || {})['wg-t-late']) || {}).chaseOn === false, 'Stop Follow-Ups was not saved');
     await P(portal, () => { ['bd-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
-    const after = Object.keys(((await fileOf('outbox')) || {docs: {}}).docs || {}).filter(id => /^wgpd-/.test(id));
-    expect(after.length === 1, 'a second follow-up went out before 10 business days: ' + after.join(', '));
+    const after = Object.keys(((await fileOf('outbox')) || {docs: {}}).docs || {}).filter(id => /^bpd-/.test(id));
+    expect(after.length === 1, 'a second reminder went out before 10 business days: ' + after.join(', '));
   });
   await check('nothing reaches a real address', async () => {
     const out = [...new Set(portal.outside)];

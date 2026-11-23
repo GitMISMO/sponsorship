@@ -232,6 +232,8 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const txt = await pop.evaluate(() => document.body.innerText);
     expect(/Litware Analytics/.test(txt) && /Gray Test, VP Marketing/.test(txt), 'the signed copy is missing the sponsor or signer');
     expect(/Cancellation and Force Majeure/.test(txt) && /Version|2027-v1/.test(txt), 'the signed copy is missing the contract terms');
+    const sig = await pop.evaluate(() => (document.querySelector('.sig') || {}).innerText || '');
+    expect(/Signature/i.test(sig) && /Gray Test/.test(sig) && /VP Marketing/.test(sig), 'the signed copy has no signature block at the end: "' + sig.slice(0, 120) + '"');
     await pop.close();
     await portal.click('#d-cancel').catch(() => {});
     await portal.click('#d-close').catch(() => {});
@@ -629,6 +631,8 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const T = await P(portal, () => { const d = new Date(), m = d.getMonth() + 1, x = d.getDate(); return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (x < 10 ? '0' : '') + x; });
     const other = await P(portal, T => { const d = [...document.querySelectorAll('#op-board .op-day[data-opday]')].map(x => x.getAttribute('data-opday')).filter(x => x && x !== T); return d[0] || ''; }, T);
     if (other) {
+      /* both rows on screen first: a drop row below the window doesn't take the drop (Monday, November 23, 2026) */
+      await P(portal, () => document.getElementById('op-board').scrollIntoView({ block: 'start' })); await portal.waitForTimeout(200);
       await portal.dragAndDrop('#op-board .op-card[data-opid="pl-t-1"]', '#op-board .op-day[data-opday="' + other + '"]'); await portal.waitForTimeout(1200);
       let pl = (await fileOf('plans')).docs['pl-t-1'];
       expect(pl.day === other, 'dragging a card onto a day did not move it: ' + pl.day + ' vs ' + other);
@@ -998,6 +1002,13 @@ const appBy = async (page, test) => (await apps(page)).find(test);
         expect(p.agreed && p.signerName === 'Pat Check', 'the signature was not sent');
         expect(p.contractVersion === '2027-v1', 'the contract version sent was "' + p.contractVersion + '"');
         expect(p.hp === '' && p.secondsOnPage >= 5, 'the spam signs were not sent as a person would send them (box "' + p.hp + '", ' + p.secondsOnPage + ' seconds)');
+        /* once submitted, the page's PDF carries what was signed (Guidehouse's PDF had no signature, November 23, 2026) */
+        await page.emulateMedia({ media: 'print' });
+        const signed = await P(page, () => { const b = document.getElementById('signed-print');
+          return { shown: !!b && getComputedStyle(b).display !== 'none', txt: b ? b.innerText : '', btn: !!document.getElementById('signed-pdf-btn') }; });
+        await page.emulateMedia({ media: 'screen' });
+        expect(signed.shown && /Pat Check/.test(signed.txt) && /VP/.test(signed.txt) && /2027-v1/.test(signed.txt), 'the PDF after submitting has no signature: "' + signed.txt.slice(0, 120) + '"');
+        expect(signed.btn, 'the confirmation has no Save a Signed Copy (PDF) button');
         expect(!page.errors.length, 'page errors: ' + page.errors.join(' | '));
       });
       await check(pg.name + ': the application arrives in the portal on the right summit', async () => {

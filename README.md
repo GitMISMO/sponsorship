@@ -78,8 +78,8 @@ record keeps `invoiceFile`) and has **Start Automated Follow-Ups** (needs the in
 after Start) queues an outbox email for each record that is on and due: the first at once, then every `CHASE_BDAYS` (10)
 business days after `lastFollowUpDate`, until Paid; weekdays 8 am to 6 pm Eastern only (`wgChaseHours`). Kind
 `wg-pastdue` (workgroup) or `os-reminder` (other); id `bpd-<record id>-<n>`; To the billing contact (else the sponsor
-contact); Cc the sponsor contact, `BILL_CC` (Jonna, Amy, Kelly) and, for a shared type, its notice list (MBA for the AI
-Webinar Series); `attachments: [{Name, ContentBytes}]` with the invoice. The Team Emails flow's Default case sends To, Cc,
+contact); Cc the sponsor contact, `BILL_CC` (Jonna, Amy, Kelly); MBA is not
+copied (Nov 22, 2026); `attachments: [{Name, ContentBytes}]` with the invoice. The Team Emails flow's Default case sends To, Cc,
 Subject, bodyHtml and Attachments from Jonna's mailbox. Once `outbox-sent` lists it, `chaseTrim` takes the invoice bytes
 off the outbox entry. The record keeps `followUpCount`, `lastFollowUpDate`, `followUps`; the history says "payment
 reminder n emailed automatically ... invoice attached". Billing Contact Name and Email are on every workgroup and other

@@ -2358,8 +2358,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <div class="hbody">
           <ul>
             <li>Any sponsorship that isn&rsquo;t a summit or a workgroup is an <b>Other Sponsorship</b>, kept by type. The <b>AI Webinar Series</b> with MBA is the first type; its records moved here from the old AI Webinars tab unchanged.</li>
-            <li><b>New Sponsorship&hellip; &rarr; A New Sponsorship Type</b> on the Pipeline adds a type: its name, what each one is called, what share MISMO keeps, and for a partner series who gets the past-due notice. One-offs are tracked under their type, and the type gets its own button on the Pipeline.</li>
-            <li>A type shared with a partner (the AI Webinar Series is split in half with MBA) shows what MISMO keeps in every figure, and drafts a <b>past-due notice to the partner</b> once an invoice is over net 30. Any other type drafts the <b>invoice email to the sponsor</b>. Nothing is sent until you read it and press <b>Send</b>.</li>
+            <li><b>New Sponsorship&hellip; &rarr; A New Sponsorship Type</b> on the Pipeline adds a type: its name, what each one is called, what share MISMO keeps, and the partner, if the money is shared. One-offs are tracked under their type, and the type gets its own button on the Pipeline.</li>
+            <li>A type shared with a partner (the AI Webinar Series is split in half with MBA) shows what MISMO keeps in every figure. Every type drafts the <b>invoice email to the sponsor</b>, and MISMO follows up past-due invoices itself with <b>Payment Follow-Ups</b>; MBA is not sent a notice. Nothing is sent until you read it and press <b>Send</b>.</li>
             <li>Payment arrives from MISMO Money the same way it does everywhere else in this portal &mdash; matched on the Aptify order ID.</li>
           </ul>
         </div>
@@ -3301,7 +3301,7 @@ a series deal is counted once, at its full amount.</div>
        3. the logo on the website (sponsor feed), opened as is */
   function logoOf(list, key){
     var cd = key && coDocs[key] && coDocs[key].logo;
-    if(cd && cd.name) return {store:"logo-co-" + key, file:cd.name, ext:(/\.([a-z0-9]+)$/i.exec(cd.name) || [])[1] || "", from:"Added by " + (cd.by || "the team") + (cd.at ? ", " + fmtDate(String(cd.at).slice(0, 10)) : ""), url:""};
+    if(cd && cd.name) return {store:logoStore(key), file:cd.name, ext:(/\.([a-z0-9]+)$/i.exec(cd.name) || [])[1] || "", from:"Added by " + (cd.by || "the team") + (cd.at ? ", " + fmtDate(String(cd.at).slice(0, 10)) : ""), url:""};
     var withFile = (list || []).filter(function(a){ return a && a.id !== draft && logoFileOf(a); })
       .sort(function(x, y){ return String(y.dateSubmitted || "").localeCompare(String(x.dateSubmitted || "")); })[0];
     if(withFile){ var f = logoFileOf(withFile);
@@ -3355,6 +3355,7 @@ a series deal is counted once, at its full amount.</div>
   /* Add a Logo on the company card: kept in the portal (data/logo-co-<key>.json) for a sponsor who
      emailed their logo, or to replace the one they sent */
   var LOGO_ADD_MAX = 4 * 1024 * 1024;
+  function logoStore(key){ return relayName("logo-co-", key); }
   function logoAdd(key, file){
     if(!file || !key || !db || !canWrite) return;
     if(file.size > LOGO_ADD_MAX){ toast("That file is " + Math.round(file.size / 1024 / 1024 * 10) / 10 + " MB. The portal keeps logos up to 4 MB; save a smaller PNG or SVG.", "bad", "Logo Too Big"); return; }
@@ -3362,7 +3363,7 @@ a series deal is counted once, at its full amount.</div>
     rd.onload = function(){
       var url = String(rd.result || ""), i = url.indexOf(",");
       var doc = {name:file.name, type:file.type || "", data:url.slice(i + 1), at:new Date().toISOString(), by:whoAmI(), company:(coOf(key) || {}).name || key};
-      db.putOnce("logo-co-" + key, doc).then(function(){
+      db.putOnce(logoStore(key), doc).then(function(){
         var meta = {name:file.name, type:file.type || "", at:doc.at, by:doc.by};
         coDocs[key] = Object.assign({}, coDocs[key] || {}, {logo:meta});
         db.doc("companies/" + key).update({logo:meta});
@@ -4003,8 +4004,8 @@ a series deal is counted once, at its full amount.</div>
         "Emails forwarded or copied to <b>mismosponsor@mismo.org</b> land on the company they are about."},
     other: {t:"Other Sponsorships",
       s:"Every one-off or partner sponsorship that isn\u2019t a summit or a workgroup, by type. The AI Webinar Series is " +
-        "the first; add a type with <b>New Sponsorship Type</b>. A type shared with a partner shows what MISMO keeps and drafts " +
-        "a past-due notice to the partner; any other type drafts the invoice email to the sponsor. Nothing is sent until you press Send. Select a row to open it in its company\u2019s card. This page is the full list of other sponsorships."},
+        "the first; add a type with <b>New Sponsorship Type</b>. A type shared with a partner shows what MISMO keeps; every type " +
+        "drafts the invoice email to the sponsor, and MISMO follows up past-due ones itself. Nothing is sent until you press Send. Select a row to open it in its company\u2019s card. This page is the full list of other sponsorships."},
     pipeline: {t:"Summit Sponsorships",
       s:"Where every application sits, and who owns the next move. Select a stage to see the " +
         "applications in it \u2014 each one shows what is still waiting on someone, with a button to " +
@@ -7648,8 +7649,9 @@ a series deal is counted once, at its full amount.</div>
        Sponsorship Tracker spreadsheet.
 
        AI Webinar Series — the joint MISMO/MBA series. MISMO raises the invoice
-       and MISMO and MBA split the money in half. Net 30, and MBA's team is told
-       when one goes past due. Came off the MISMO_MBA AI Webinar tracker.
+       and MISMO and MBA split the money in half. Net 30. MISMO follows up with the
+       sponsor itself; MBA is no longer sent a past-due notice (Jonna, November 22,
+       2026). Came off the MISMO_MBA AI Webinar tracker.
 
      Underneath they are the same thing: a company, an Aptify invoice, an amount
      and a payment. So they share this one module, differing only in their field
@@ -7672,8 +7674,7 @@ a series deal is counted once, at its full amount.</div>
   /* the kinds of Other Sponsorship. The AI Webinar Series is always there; the rest are
      added on the page and kept in data/settings.json, settings/main.otherTypes. */
   var OTHER_TYPES_BASE = [
-    {key:"ai-webinar", name:"AI Webinar Series", detail:"Webinar", share:0.5, partner:"MBA",
-     noticeTo:"DUpbin@mba.org; amoses@mismo.org", noticeCc:"jcritchley@mismo.org", noticeHi:"David and Amy"}
+    {key:"ai-webinar", name:"AI Webinar Series", detail:"Webinar", share:0.5, partner:"MBA"}
   ];
   var otherTypes = OTHER_TYPES_BASE.slice();
   var settingsDoc = null, settingsSeen = false;
@@ -8065,8 +8066,7 @@ a series deal is counted once, at its full amount.</div>
       "Pending Payment by itself. The invoice email is drafted below for you to read before it goes anywhere.";
     else if(r.status === "Pending Payment" && o.late) note = "<b>" + o.days + " days past due.</b> Invoiced " +
       (r.invoiceDate ? fmtDate(r.invoiceDate) : "—") + ", payment was due " +
-      (o.due ? fmtDate(iso(o.due)) : "—") + "." +
-      (kind === "other" && otypeOf(r).noticeTo ? " A notice for " + esc(otypeOf(r).partner || "the partner") + "'s team is drafted below — read it, then press Send." : "");
+      (o.due ? fmtDate(iso(o.due)) : "—") + "." + " Use Payment Follow-Ups below to send the sponsor a reminder.";
     else if(r.status === "Pending Payment") note = "<b>Awaiting payment.</b> Invoiced " +
       (r.invoiceDate ? fmtDate(r.invoiceDate) : "—") + (o.due ? ", due " + fmtDate(iso(o.due)) : "") +
       ". The payment check marks this Paid on its own once the money reaches the Financial System.";
@@ -8199,14 +8199,12 @@ a series deal is counted once, at its full amount.</div>
      full and lets it be edited, and Send is the only thing that puts it in the outbox
      for the messenger to deliver (Jonna, November 3, 2026). */
   var BILL_CC = "jcritchley@mismo.org; amoses@mismo.org; kbradshaw@mismo.org";
-  /* the AI webinar series is run with MBA, so a past-due notice goes to David Upbin there
-     and to Amy, with Jonna copied (Jonna, November 3, 2026) */
-  var BILL_MBA_TO = "DUpbin@mba.org; amoses@mismo.org";
-  var BILL_MBA_CC = "jcritchley@mismo.org";
+  /* MBA's team is no longer sent a past-due notice for the AI Webinar Series; MISMO
+     follows up with the sponsor itself (Jonna, November 22, 2026) */
 
   function billDraft(kind, r){
     var cfg = BILL[kind], ot = kind === "other" ? otypeOf(r) : null;
-    if(kind === "other" && !ot.noticeTo){
+    if(kind === "other"){
       return {
         kind: "os-invoice",
         to: r.contactEmail || "",
@@ -8238,38 +8236,19 @@ a series deal is counted once, at its full amount.</div>
         attach: "The Aptify invoice PDF"
       };
     }
-    var o = billOverdue(r);
-    return {
-      kind: ot.key === "ai-webinar" ? "wb-pastdue" : "os-pastdue",
-      to: r.draftTo || ot.noticeTo || BILL_MBA_TO,
-      cc: ot.noticeCc || BILL_MBA_CC,
-      subject: "Past Due — " + ot.name + " Sponsorship — " + (r.company || "") +
-               (r.invoiceNumber ? " — Invoice " + r.invoiceNumber : ""),
-      body: "Hi " + (ot.noticeHi || "all") + ",\n\n" +
-        "A " + ot.name + " sponsorship is past due and I wanted to flag it.\n\n" +
-        "Sponsor: " + (r.company || "") + "\n" +
-        (ot.detail || "What") + ": " + cfg.titleOf(r) + "\n" +
-        "Invoice: " + (r.invoiceNumber || "—") +
-          (r.invoiceDate ? ", raised " + fmtDate(r.invoiceDate) : "") + "\n" +
-        "Payment due: " + (o.due ? fmtDate(iso(o.due)) : "—") + " (net " + BILL_GRACE + ")\n" +
-        "Days past due: " + o.days + "\n" +
-        "Amount: " + money(r.amountDue) + " invoiced · " +
-          money(keepOf(r, billMoney(r))) + " to MISMO" + (ot.partner ? ", the rest to " + ot.partner : "") + "\n\n" +
-        "Nothing has reached MISMO against this invoice. Let me know if your team has anything on it, " +
-        "or if you would like us to follow up with the sponsor directly.\n\n" +
-        "Thank you,\nMISMO",
-      attach: ""
-    };
+    return null;
   }
 
   function billEmailSection(kind, r){
     var cfg = BILL[kind], o = billOverdue(r);
-    var partner = kind === "other" && !!otypeOf(r).noticeTo;
-    var wanted = !partner ? (r.status === "Draft" || r.status === "Pending Payment") : o.late;
-    var d = (r.draftSubject || r.draftBody)
+    var partner = false;
+    var wanted = r.status === "Draft" || r.status === "Pending Payment";
+    /* an old drafted past-due notice to MBA is dropped, not shown */
+    var d = ((r.draftSubject || r.draftBody) && !/pastdue/.test(r.draftKind || ""))
       ? {kind:r.draftKind || "", to:r.draftTo || "", cc:r.draftCc || "", subject:r.draftSubject || "",
          body:r.draftBody || "", attach:"The Aptify invoice PDF"}
       : billDraft(kind, r);
+    if(!d) return "";
     var title = !partner ? "Invoice Email" : "Past-Due Notice to " + (otypeOf(r).partner || "the Partner");
     var why = !partner
       ? "The invoice email to the sponsor. Read it, change anything you want, then press <b>Send</b>. It does not go anywhere until you do."
@@ -8373,8 +8352,8 @@ a series deal is counted once, at its full amount.</div>
      nudge to pay the invoice and have the invoice attached" (November 22), for the AI Webinar sponsorships too.
      Nothing goes until someone presses Start Automated Follow-Ups on the record (it needs the invoice PDF and a billing
      or sponsor contact). Then a friendly reminder with the invoice attached is emailed to the billing contact (the
-     sponsor contact if there is no billing contact), the sponsor contact, Jonna, Amy and Kelly copied (and the partner's
-     notice list for a shared type, MBA for the AI Webinar Series), at once and then every 10 business days until the
+     sponsor contact if there is no billing contact), the sponsor contact, Jonna, Amy and Kelly copied (MBA is not copied,
+     Jonna, November 22), at once and then every 10 business days until the
      record is marked Paid or someone presses Stop. Weekdays 8 am to 6 pm Eastern; whoever who can edit has the portal
      open, or the hourly robot, sends it. It goes through the Team Emails flow's Default case (To, Cc, Subject, body and
      attachments as written), from Jonna's mailbox. Each email's outbox id is fixed (bpd-<record>-<n>), so two copies of
@@ -8411,7 +8390,6 @@ a series deal is counted once, at its full amount.</div>
     var to = chaseTo(r).toLowerCase(), list = [];
     var add = function(v){ String(v || "").split(/[;,]/).forEach(function(x){ x = x.trim(); if(x && to.indexOf(x.toLowerCase()) < 0 && list.map(function(y){ return y.toLowerCase(); }).indexOf(x.toLowerCase()) < 0) list.push(x); }); };
     add(r.contactEmail); add(BILL_CC);
-    if(kind === "other" && otypeOf(r).noticeTo) add(otypeOf(r).noticeTo);
     return list.join("; ");
   }
   function chaseEmail(kind, r, n){
@@ -8429,7 +8407,15 @@ a series deal is counted once, at its full amount.</div>
         " — " + (r.company || "") + (n > 1 ? " (Reminder " + n + ")" : ""),
       body:body};
   }
-  function invoiceStore(r){ return "invoice-" + String(r.id || "").toLowerCase().replace(/[^a-z0-9-]+/g, "-"); }
+  /* the relay takes data names up to 40 characters, so a long one is cut and given a short fixed tag
+     (Black Lake's invoice name was 41 and would not save, November 22, 2026) */
+  function relayName(prefix, key){
+    var n = prefix + String(key || "").toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+    if(n.length <= 40) return n;
+    var h = 0; for(var i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) >>> 0;
+    return n.slice(0, 33).replace(/-+$/, "") + "-" + h.toString(36).slice(0, 6);
+  }
+  function invoiceStore(r){ return relayName("invoice-", r.id); }
   var wgChaseBusy = false;
   function wgChaseRun(){
     if(wgChaseBusy || !db || !canWrite || !AUTO_SEND || !wgsSeen || !othersSeen || !outboxLoaded || !wgChaseHours()) return;
@@ -8488,7 +8474,7 @@ a series deal is counted once, at its full amount.</div>
                   : esc(st.why));
     var pdf = r.invoiceFile ? 'Invoice PDF: <b>' + esc(r.invoiceFile) + '</b>' : 'No invoice PDF yet.';
     return '<div class="dsect"><h4>Payment Follow-Ups</h4><div class="fldnote" style="margin-top:0;">A friendly reminder to pay, with the invoice attached, to ' +
-        esc(chaseTo(r) || "the billing contact") + ' with the sponsor contact, Jonna, Amy and Kelly copied' + (kind === "other" && otypeOf(r).noticeTo ? " (and " + esc(otypeOf(r).partner || "the partner") + ")" : "") +
+        esc(chaseTo(r) || "the billing contact") + ' with the sponsor contact, Jonna, Amy and Kelly copied' +
         '. It starts when someone presses Start, then goes every 10 business days until the sponsorship is marked Paid.</div>' +
       '<div class="fldnote">' + pdf + (canWrite ? ' <label class="btn ghost sm" style="cursor:pointer;margin-left:6px;">' + (r.invoiceFile ? "Replace the PDF" : "+ Add the Invoice PDF") +
         '<input type="file" accept="application/pdf,.pdf" data-invpdf="1" hidden></label>' : '') + '</div>' +
@@ -10701,10 +10687,8 @@ a series deal is counted once, at its full amount.</div>
       '<div class="fld"><label for="ot-detail">What Each One Is Called</label><input id="ot-detail" type="text" placeholder="e.g. Event, Session or Report"></div>' +
       '<div class="fld"><label for="ot-share">MISMO Keeps (%)</label><input id="ot-share" type="number" min="1" max="100" value="100"></div>' +
       '<div class="fld"><label for="ot-partner">Partner (if the money is shared)</label><input id="ot-partner" type="text" placeholder="e.g. MBA"></div>' +
-      '<div class="fld"><label for="ot-to">Past-Due Notice To (partner only)</label><input id="ot-to" type="text" placeholder="name@mba.org; name@mismo.org"></div>' +
-      '<div class="fld"><label for="ot-hi">Notice Greeting</label><input id="ot-hi" type="text" placeholder="e.g. David and Amy"></div>' +
       '</div><div class="fldnote">A one-off sponsorship that doesn’t fit Summit or Workgroup gets a type here, and every one of them is ' +
-      'tracked on this page and on the Pipeline. A partner type drafts a past-due notice to the partner; any other type drafts the invoice email to the sponsor.</div>' +
+      'tracked on this page and on the Pipeline. Each one drafts the invoice email to the sponsor, and Payment Follow-Ups sends the reminders.</div>' +
       '<div style="margin-top:10px;display:flex;gap:8px;"><button class="btn sm" type="button" id="ot-save">Add the Type</button>' +
       '<button class="btn ghost sm" type="button" id="ot-cancel">Cancel</button><span class="savemsg" id="ot-msg"></span></div>';
     setTimeout(function(){ var n = $("ot-name"); if(n) n.focus(); }, 50);
@@ -10716,9 +10700,7 @@ a series deal is counted once, at its full amount.</div>
     if(otherType(key) || key === "summit" || key === "workgroup"){ $("ot-msg").textContent = "There is already a type with that name."; $("ot-msg").className = "savemsg err"; return; }
     var share = Math.min(100, Math.max(1, Number($("ot-share").value) || 100)) / 100;
     var t = {key:key, name:name, detail:($("ot-detail").value || "").trim() || "What They’re Sponsoring", share:share,
-      partner:($("ot-partner").value || "").trim(), noticeTo:($("ot-to").value || "").trim(), noticeHi:($("ot-hi").value || "").trim(),
-      addedBy:whoAmI(), addedOn:iso(today())};
-    if(!t.partner) t.noticeTo = "";
+      partner:($("ot-partner").value || "").trim(),       addedBy:whoAmI(), addedOn:iso(today())};
     if(!db || !canWrite){ $("ot-msg").textContent = "Not connected — nothing was saved."; $("ot-msg").className = "savemsg err"; return; }
     var mine = ((settingsDoc && settingsDoc.otherTypes) || []).concat([t]);
     db.doc("settings/main").update({otherTypes:mine}).then(function(){

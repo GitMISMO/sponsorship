@@ -252,8 +252,9 @@ workgroup or other sponsorship), which joins Due Now and the Pipeline's menu cou
 Any sponsorship that isn't a summit or a workgroup is an Other Sponsorship (`data/others.json`),
 with its type on each record (`otype`). Types are `OTHER_TYPES_BASE` (the AI Webinar Series, split
 50/50 with MBA) plus the ones added with **New Sponsorship… → A New Sponsorship Type** on the Pipeline, kept in `data/settings.json`
-(`settings/main.otherTypes`): name, what each one is called, MISMO's share, and for a partner
-series who gets the past-due notice. The AI webinar records were copied into `others.json` under the
+(`settings/main.otherTypes`): name, what each one is called, MISMO's share, and the partner if
+the money is shared. MBA is no longer sent a past-due notice; MISMO follows up with the sponsor itself
+(Payment Follow-Ups, Nov 22, 2026). The AI webinar records were copied into `others.json` under the
 same ids and numbers the first time an editor opened the portal; `data/webinars.json` is kept as it
 was.
 

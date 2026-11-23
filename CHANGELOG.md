@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-23: Print Signed Copy ends with a Signature block (sponsor, who signed, title, date, reference, contract version), as a procurement team expects (Guidehouse asked). The prospectuses' PDF now carries what was signed once an application is submitted, with a Save a Signed Copy (PDF) button on the confirmation.
 - 2026-11-22: The AI Webinar Series no longer drafts a past-due notice to MBA, and MBA is not copied on payment reminders (Jonna): MISMO follows up with the sponsor itself, with Payment Follow-Ups. Like any other type, it now drafts the invoice email to the sponsor. New Sponsorship Type no longer asks who gets a past-due notice. A long record or company name no longer stops its invoice PDF or added logo from saving.
 - 2026-11-22: Payment follow-ups start only when someone presses **Start Automated Follow-Ups** on the record (Jonna), for workgroup and other sponsorships (the AI Webinar Series too): a friendly reminder with the invoice PDF attached, to the billing contact, the first at once and then every 10 business days until paid. Each record has Billing Contact Name and Email and takes the invoice PDF.
 - 2026-11-22: Other Sponsorships, for a type shared with a partner (the AI Webinar Series): each figure shows MISMO's share as the big number, with the total smaller under it.

@@ -9401,11 +9401,19 @@ a series deal is counted once, at its full amount.</div>
         'table{border-collapse:collapse;width:100%;margin:0 0 26px;font:13px/1.45 system-ui,sans-serif;}th,td{text-align:left;padding:6px 10px;border-bottom:1px solid #d5dde5;vertical-align:top;}' +
         'th{width:34%;color:#0d314c;font-weight:600;}h2{font:700 16px system-ui,sans-serif;color:#0d314c;margin:0 0 12px;}p{margin:0 0 12px;}strong{color:#0d314c;}' +
         '.bar{font:13px system-ui,sans-serif;margin:0 0 22px;}.bar button{font:inherit;padding:6px 14px;border-radius:6px;border:1px solid #0d314c;background:#0d314c;color:#fff;cursor:pointer;}' +
+        '.sig{margin:28px 0 0;padding:16px 18px;border:1.5px solid #0d314c;border-radius:4px;break-inside:avoid;page-break-inside:avoid;font:13px/1.5 system-ui,sans-serif;}' +
+        '.sig h2{margin:0 0 2px;}.sig .lead{color:#6b7b8c;margin:0 0 14px;}.sig .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;}' +
+        '.sig .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:#6b7b8c;}.sig .v{border-bottom:1px solid #3b4b5c;padding:1px 0 3px;color:#0d314c;font-weight:600;}' +
         '.foot{font:11.5px/1.5 system-ui,sans-serif;color:#6b7b8c;margin-top:26px;border-top:1px solid #d5dde5;padding-top:12px;}@media print{.bar{display:none;}main{padding:0;}}</style></head><body><main>' +
         '<div class="bar"><button type="button" onclick="print()">Print or Save as PDF</button></div>' +
         '<h1>MISMO Event Sponsor Contract</h1><p class="sub">Signed copy from the Sponsorship Portal</p>' +
         '<table>' + rows.filter(function(r){ return r[1]; }).map(function(r){ return '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join("") + '</table>' +
         '<h2>Terms</h2>' + (terms ? terms.innerHTML : "<p>The contract wording couldn\u2019t be read.</p>") +
+        /* the signature at the end, as a procurement team expects it (Guidehouse asked, Jonna, November 23, 2026) */
+        '<div class="sig"><h2>Signature</h2><p class="lead">Signed electronically on the MISMO sponsorship prospectus, by checking the agreement box and submitting the application.</p><div class="grid">' +
+        [["Sponsor", a.company], ["Signed By", a.acceptanceName], ["Title", title], ["Date Signed", a.acceptanceDate ? new Date(String(a.acceptanceDate).slice(0, 10) + "T12:00:00").toLocaleDateString("en-US", {month:"long", day:"numeric", year:"numeric"}) : ""],
+         ["Prospectus Reference", prospectusRef(a)], ["Contract Version", cv.version]].filter(function(r){ return r[1]; }).map(function(r){
+          return '<div><div class="k">' + esc(r[0]) + '</div><div class="v">' + esc(r[1]) + '</div></div>'; }).join("") + '</div></div>' +
         '<p class="foot">Made ' + esc(new Date().toLocaleDateString("en-US", {month:"long", day:"numeric", year:"numeric"})) +
         ' from the Sponsorship Portal. The terms above are version ' + esc(cv.version) + ', kept unchanged at resources.mismo.org' +
         esc(CONTRACTS_URL + file) + '.</p></main></body></html>');

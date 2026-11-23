@@ -66,19 +66,24 @@ falls back to SharePoint's `_layouts/15/download.aspx` link. **+ Add a Logo** / 
 saves a file of up to 4 MB with `db.putOnce`. Download Logo is on the company card and under Company Details, and
 Download the Logo is on the application.
 
-## Workgroup payment follow-ups, automatic (November 21, 2026)
+## Payment follow-ups for workgroup and other sponsorships (November 21-22, 2026)
 
-Jonna chose this ("can past due follow ups for workgroup sponsorship emails go out automatically?" → fully automatic),
-the one exception to nothing here sending on its own. `wgChaseRun` (after the workgroups load, every 30 minutes, and on
-each robot run) queues a `wg-pastdue` outbox email for each workgroup record that is Pending Payment, has a contact email,
-is not `noChase`, and is past due (`billOverdue`: the Payment Due date, else net 30 from the invoice date): the first the
-day after it is due, then every `CHASE_BDAYS` (10) business days after `lastFollowUpDate`, until it is marked Paid. Only
-on weekdays, 8 am to 6 pm Eastern (`wgChaseHours`; the practice copy any time). To the contact, Cc `BILL_CC` (Jonna, Amy,
-Kelly); the Team Emails flow's Default case sends it from Jonna's mailbox with the To, Cc, Subject and body as written
-(no flow change was needed). The outbox id is fixed (`wgpd-<record id>-<n>`) so two open copies queue it once; the record
-keeps `followUpCount`, `lastFollowUpDate` and `followUps` [{n, at, to, auto}], and the history says "payment follow-up n
-emailed automatically". The record's **Payment Follow-Ups** section (`wgChaseSection`) shows them and the next date, with
-Stop / Restart Follow-Ups (`noChase`, `noChaseBy`, `noChaseAt`). System Health has a Workgroup Payment Follow-Ups row.
+Jonna asked for automatic past-due follow-ups for workgroup sponsorships (Nov 21), then that they start only "when amy or
+we trigger the automated follow up button", as a friendly nudge with the invoice attached, for the AI Webinar sponsorships
+too (Nov 22). On a workgroup or other record that is Pending Payment, the **Payment Follow-Ups** section (`chaseSection`)
+takes the invoice PDF (stored as `data/invoice-<record id>.json`, {name, type, data, at, by, recordNo}, up to 2 MB; the
+record keeps `invoiceFile`) and has **Start Automated Follow-Ups** (needs the invoice date, the PDF, and
+`billingContactEmail` or `contactEmail`). Start sets `chaseOn`, `chaseBy`, `chaseAt`; Stop sets `chaseOn:false`,
+`chaseStoppedBy`, `chaseStoppedAt`. `wgChaseRun` (after the records load, every 30 minutes, each robot run, and right
+after Start) queues an outbox email for each record that is on and due: the first at once, then every `CHASE_BDAYS` (10)
+business days after `lastFollowUpDate`, until Paid; weekdays 8 am to 6 pm Eastern only (`wgChaseHours`). Kind
+`wg-pastdue` (workgroup) or `os-reminder` (other); id `bpd-<record id>-<n>`; To the billing contact (else the sponsor
+contact); Cc the sponsor contact, `BILL_CC` (Jonna, Amy, Kelly) and, for a shared type, its notice list (MBA for the AI
+Webinar Series); `attachments: [{Name, ContentBytes}]` with the invoice. The Team Emails flow's Default case sends To, Cc,
+Subject, bodyHtml and Attachments from Jonna's mailbox. Once `outbox-sent` lists it, `chaseTrim` takes the invoice bytes
+off the outbox entry. The record keeps `followUpCount`, `lastFollowUpDate`, `followUps`; the history says "payment
+reminder n emailed automatically ... invoice attached". Billing Contact Name and Email are on every workgroup and other
+record. System Health has a Payment Follow-Ups row.
 
 ## Activity, System Health, Forwarded Emails (November 21, 2026)
 

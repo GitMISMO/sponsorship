@@ -284,6 +284,8 @@ was.
 
 ## The mismosponsor@ mailbox
 
+Logos (November 24, 2026): the flow (includeAttachments on) keeps each image attachment whose name says logo, or any non-inline image when the subject says logo, up to 3 MB (Filter logos), PUTs it to data/maillogo-<received yyMMddHHmmss>-<base64 length>.json as {name, type, data, from}, and lists them on the email as logos:[{name, type, store}]. mailLogo() saves the first (one named logo, if any) as the matched company's data/logo-co-<key>.json and companies/<key>.logo (via: "mismosponsor"), the same as + Add a Logo; the Summit Sponsor Feed copies it to the website within the hour. The email gets logoSaved.
+
 Forward, Cc or Bcc an email to mismosponsor@mismo.org and it is logged on the sponsor or prospect it
 is about, the way 360@ works for Member 360. The Power Automate flow **Sponsorship - mismosponsor
 Mailbox** (Jonna's account) adds each email to `data/mailin.json` as `{docs:{<id>:{from, to, cc,

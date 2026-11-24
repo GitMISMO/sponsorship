@@ -2177,6 +2177,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>The Sponsorship Requests list</b> in SharePoint (MISMO Summits site) holds one row per sponsorship. The prospectus reads it to show sponsors what is already sold.</li>
             <li><b>The Sponsorship Team Emails flow</b> in Power Automate sends the portal&rsquo;s emails, keeps the Sponsorship Requests list in step with the portal, and copies booked sponsors to Summit HQ&rsquo;s People tab.</li>
             <li><b>MISMO Money</b> (the Financial System) tells the portal which invoices Aptify shows as paid.</li>
+            <li><b>Member 360</b> shows each company&rsquo;s sponsorship activity in a Sponsorship section on its record. It reads a list GitHub makes from the portal&rsquo;s records (every company, prospects included: its Aptify Company ID when a record gives one, the prospect&rsquo;s stage, owner, last touch and next step, each sponsorship with its amount, status, invoice and payment dates, and the latest thing that happened). The list is remade within minutes of any change and every morning; Member 360 only reads it and never changes anything here. System Health shows when it was last made.</li>
           </ul>
           <p>The portal&rsquo;s records are kept in MISMO&rsquo;s private data store. Every save is shared with everyone else using the portal within about 20 seconds.</p>
         </div>
@@ -2388,6 +2389,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>This portal&rsquo;s page:</b> GitHub, GitMISMO/sponsorship.</li>
             <li><b>Its records:</b> GitHub, GitMISMO/sponsorship-data (private). That&rsquo;s applications, prospects, workgroup sponsorships, other sponsorships and their types (settings), the emails logged from mismosponsor@ (mailin, touchpoints and the monthly mailtext files), the email requests and the payments file MISMO Money writes, which the portal only reads. The old AI webinar file (webinars) is kept as it was.</li>
             <li><b>System Health:</b> its last shared check and any failed saves are kept in data/health.json in GitMISMO/sponsorship-data.</li>
+            <li><b>The list Member 360 reads:</b> data/feed-member360.json in GitMISMO/sponsorship-data, read through the save relay (sponsorship/data/feed-member360) with each Member 360 user&rsquo;s own sign-in. GitHub writes it (the workflow <b>Member 360 Feed</b> in GitMISMO/sponsorship-data, running tools/member360-feed.js from GitMISMO/sponsorship); nobody edits it by hand.</li>
             <li><b>The mismosponsor@ mailbox:</b> the Power Automate flow <b>Sponsorship - mismosponsor Mailbox</b> on Jonna&rsquo;s account adds each email to the mailin file.</li>
             <li><b>The prospectus:</b> GitHub, GitMISMO/Sponsorship-Prospectus.</li>
             <li><b>SharePoint, MISMO Summits site:</b> the Sponsorship Requests list and the Sponsor Logos library.</li>
@@ -12722,7 +12724,7 @@ a series deal is counted once, at its full amount.</div>
     return fetch(RELAY_URL + "/" + path, {cache:"no-store", headers:{"Authorization":"Bearer " + tok}})
       .then(function(r){ if(r.status === 403 || r.status === 401) return {no:"no access"}; if(!r.ok) return {no:"HTTP " + r.status}; return r.json().then(function(b){ return {data:(b && b.data) || null}; }); }, function(e){ return {no:String(e && e.message || e)}; });
   }
-  function hlSaved(d){ d = d || {}; return d.savedAt || d.writtenAt || d.updatedAt || (d.doc && (d.doc.savedAt || d.doc.updatedAt)) || ""; }
+  function hlSaved(d){ d = d || {}; return d.savedAt || d.writtenAt || d.updatedAt || d.updated || (d.doc && (d.doc.savedAt || d.doc.updatedAt)) || ""; }
   /* feeds: how often each should update, in days, before it shows late (yellow) and then stale (red) */
   var HL_FEEDS = [
     {key:"money", name:"MISMO Money Payments", what:"Paid Aptify sponsorship orders, matched to the records", every:"Daily", late:2, bad:4, at:function(){ return moneyFeed && (moneyFeed.writtenAt || moneyFeed.savedAt) || ""; }},
@@ -12730,7 +12732,10 @@ a series deal is counted once, at its full amount.</div>
     {key:"mailin", name:"mismosponsor@ Mailbox", what:"Emails forwarded, copied or Bcc'd to " + MAIL_ADDR, every:"When one comes in", info:true, own:"mailin"},
     {key:"desk", name:"Registration Desk (Summit HQ)", what:"Bernie's invoices, comp codes and payment follow-ups", every:"When the Desk saves", info:true, ext:"summit-hq/data/feed-desk-sponsor"},
     {key:"agenda", name:"Summit HQ Agenda", what:"Sponsors marked on each summit's agenda", every:"When the agenda changes", info:true, ext:"summit-hq/data/sponsor-agenda"},
-    {key:"media", name:"MISMO Media Benefits", what:"LinkedIn posts and Mic'd Up invitations done for sponsors", every:"When MISMO Media saves", info:true, ext:"marketing-hq/data/feed-sponsor-benefits"}];
+    {key:"media", name:"MISMO Media Benefits", what:"LinkedIn posts and Mic'd Up invitations done for sponsors", every:"When MISMO Media saves", info:true, ext:"marketing-hq/data/feed-sponsor-benefits"},
+    /* outgoing (CN-016, Nov 24, 2026): the read-only list Member 360 reads, written by GitHub (sponsorship-data
+       workflow "Member 360 Feed", tools/member360-feed.js) on every change to the records and every morning */
+    {key:"m360", name:"Member 360 Sponsorship List", what:"Every company's sponsorship activity, read by Member 360 (written by GitHub, sent nowhere)", every:"On each change, and daily", late:1.5, bad:3, own:"feed-member360"}];
   function hlCheck(){
     if(HL.busy || !db) return Promise.resolve(HL.rows);
     HL.busy = true;

@@ -123,6 +123,9 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     }
   }
 
+  console.log('\nMember 360 list (tools/member360-feed.js)');
+  await require('./feed-check').run(check, expect);
+
   console.log('\nSponsorship Portal');
   const portal = await open('/sponsorship/?practice');
   /* A record opens inside its company's card now (November 21, 2026), and the card covers the page. A
@@ -876,7 +879,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await portal.click('.tab[data-view="health"]'); await portal.waitForTimeout(300);
     await portal.click('#hl-now'); await portal.waitForFunction(() => !document.getElementById('hl-now').disabled, null, {timeout: 20000});
     const v = await P(portal, () => ({feeds: document.getElementById('hl-feeds').innerText, email: document.getElementById('hl-email').innerText, saves: document.getElementById('hl-saves').innerText, checks: document.getElementById('hl-checks').innerText, rules: document.getElementById('hl-rules').innerText}));
-    expect(/MISMO Money Payments/.test(v.feeds) && /Prospectus Applications/.test(v.feeds) && /mismosponsor@ Mailbox/.test(v.feeds) && /Registration Desk/.test(v.feeds) && /MISMO Media Benefits/.test(v.feeds), 'a feed is missing from System Health: ' + v.feeds.slice(0, 300));
+    expect(/MISMO Money Payments/.test(v.feeds) && /Prospectus Applications/.test(v.feeds) && /mismosponsor@ Mailbox/.test(v.feeds) && /Registration Desk/.test(v.feeds) && /MISMO Media Benefits/.test(v.feeds) && /Member 360 Sponsorship List/.test(v.feeds), 'a feed is missing from System Health: ' + v.feeds.slice(0, 300));
     expect(/Team Emails Flow/.test(v.email) && /Failed Emails/.test(v.email), 'the email checks are missing');
     expect(/Failed Saves/.test(v.saves) && /[1-9][0-9]* failed saves?/.test(v.saves), 'the failed save from these checks is not on System Health: ' + v.saves.slice(0, 200));
     expect(/Rule Checks/.test(v.rules) && /All \d+ pass/.test(v.rules), 'a rule check is failing: ' + v.rules.slice(0, 600));

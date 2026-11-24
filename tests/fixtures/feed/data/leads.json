@@ -1,0 +1,5 @@
+{"docs":{
+ "lead-pt00001":{"leadNo":"PT-P1","company":"Acme Lending","status":"Converted to Application","owner":"Sam Owner","createdDate":"2026-09-01","updatedAt":"2026-10-01T10:00:00Z"},
+ "lead-pt00002":{"leadNo":"PT-P2","company":"Cobalt Mortgage LLC","status":"Pitching to Management","owner":"Robin Owner","nextStep":"Send the Spring prospectus","nextFollowUpDate":"2027-01-05","lastContactDate":"2026-11-10","createdDate":"2026-09-15","season":"2027","updatedAt":"2026-11-10T10:00:00Z","history":[{"at":"2026-11-12","who":"Robin Owner","text":"Left a voicemail"},{"at":"2099-01-01","who":"Robin Owner","text":"A date in the future"}]},
+ "lead-pt00003":{"leadNo":"PT-P3","company":"Dune Data","status":"Lost","owner":"Sam Owner","createdDate":"2026-08-01","updatedAt":"2026-08-20T10:00:00Z"}
+}}

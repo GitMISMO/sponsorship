@@ -1,0 +1,5 @@
+{"docs":{
+ "tp-1":{"co":"cobaltmortgage","coName":"Cobalt Mortgage","date":"2026-11-14","type":"Call","summary":"Talked about the Winter workshop"},
+ "tp-2":{"co":"evergreenservicing","coName":"Evergreen Servicing","date":"2026-11-02","type":"Email","subject":"Hello from MISMO","next":{"text":"Call back in December","due":"2026-12-01"}},
+ "tp-3":{"co":"bluebirdtitle","coName":"Bluebird Title","date":"2026-11-03","type":"Note","summary":"Archived note","archived":true}
+}}

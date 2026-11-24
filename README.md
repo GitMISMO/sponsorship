@@ -14,6 +14,7 @@ The public prospectuses that feed it are in the Sponsorship-Prospectus repo.
 | `tests/apply-catalog.js` | Carries the price list onto every page (see below). |
 | `.github/workflows/checks.yml` | Runs the checks on GitHub after every change and every Monday. |
 | `tests/background.js` | Opens the portal every hour, so its background work happens without anyone opening it (see below). |
+| `tools/member360-feed.js` | Makes the read-only list Member 360 reads (see below). Checked by `tests/feed-check.js` (part of the checks). |
 
 ## The price list
 
@@ -37,6 +38,25 @@ the prospectuses can count sold slots. Every time the portal opens (the robot op
 reads the list through the Availability flow and compares it with the records. A record the list
 has wrong or missing is sent to it again (at most once a day each), and a sold slot the list holds
 that no record accounts for is shown on Inventory to be cleared in SharePoint.
+
+## The list Member 360 reads (CN-016, November 23, 2026)
+
+Approved by Jonna (Nov 24, 2026 notice): Member 360 shows each company's sponsorship activity in a Sponsorship section
+on its record. It reads `data/feed-member360.json` in sponsorship-data through the save relay
+(`/sponsorship/data/feed-member360`) with its own users' sign-in, matches by Aptify Company ID (the company name when
+there is none) and never writes here. Shape (add fields, never rename or remove):
+`{updated, count, companies:[{cid, name, prospect:{stage, owner, lastTouch, nextStep, open, nextDate, kind, season,
+interestedIn, leadNo, createdDate}, sponsorships:[{event, package, amount, status, invoiceSent, paid, kind, no,
+invoiceNumber, amountPaid, ...}], lastEvent:{date, what}, key, aka}]}`. Every company the portal knows
+(`companies()`: prospects, applications, workgroup and other sponsorships, touchpoints), one per `companyKey`. `cid`
+comes from a record's `aptifyCustomerId`, else MISMO Money's paid order for its invoice number, else blank.
+`prospect.stage` is the newest open prospect's stage (blank when none); owner and last touch follow `coFill`.
+
+`tools/member360-feed.js` builds it from the data files with the portal's own rules (its copied constants are compared
+with `index.html` by `tests/feed-check.js`, so change both together). The sponsorship-data workflow **Member 360 Feed**
+(`.github/workflows/member360-feed.yml`) runs it on every push that changes the records, every morning (10:23 UTC) and
+by hand, with that repository's own `GITHUB_TOKEN`; it rewrites the file only when a company changed or the copy is
+over 20 hours old. System Health shows it as Member 360 Sponsorship List (late after a day and a half, red after 3).
 
 ## Sponsors and Prospects, the Member 360 way (November 19, 2026)
 

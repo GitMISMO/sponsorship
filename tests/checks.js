@@ -478,8 +478,10 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const dueRows = await P(portal, () => document.querySelectorAll('#flow-due .fbrow').length);
     expect(dueRows <= 4, 'Due Now shows ' + dueRows + ' rows (it keeps to four, with See All for the rest)');
     /* the record pages are back as their own pages (November 21, 2026) */
-    expect(await P(portal, () => document.querySelectorAll('.tab[data-view="pipeline"], .tab[data-view="workgroup"], .tab[data-view="other"], .tab[data-view="plist"]').length === 4),
-      'Summit, Workgroup and Other Sponsorships and Prospects do not all have a tab');
+    expect(await P(portal, () => document.querySelectorAll('.tab[data-view="pipeline"], .tab[data-view="workgroup"], .tab[data-view="other"]').length === 3),
+      'Summit, Workgroup and Other Sponsorships do not all have a tab');
+    /* Prospects is part of the Pipeline (Amy, November 24, 2026) */
+    expect(!(await P(portal, () => !!document.querySelector('.tab[data-view="plist"]'))), 'Prospects still has its own tab');
     expect(await portal.isVisible('[data-fdrill="todo"]'), 'applications waiting on a next step are not counted on the Pipeline');
     await portal.click('[data-fdrill="todo"]'); await portal.waitForTimeout(250);
     const todo = await P(portal, () => document.getElementById('flow-drill').innerText);
@@ -718,11 +720,11 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     expect(!/Northwind Lending/.test(t), 'the Workgroup filter still lists summit sponsors');
     await portal.click('#spm-newp [data-npk=""]'); await portal.click('#spm-newp [data-npp="this"]');
   });
-  await check('New Prospects at the top of Prospects lists the prospects added in a period', async () => {
+  await check('New Prospects on the Pipeline lists the prospects added in a period', async () => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
-    await portal.click('.tab[data-view="plist"]'); await portal.waitForTimeout(300);
-    const shape = await P(portal, () => ['view-spm', 'view-plist'].map(v => [...document.querySelectorAll('#' + v + ' > *')].map(e => e.className).join(' / ')));
-    expect(shape[0] === shape[1], 'Prospects is not laid out the same as Sponsors: ' + JSON.stringify(shape));
+    await portal.click('.tab[data-view="flow"]'); await portal.waitForTimeout(300);
+    expect(await P(portal, () => !!document.querySelector('#view-flow #pl-newp') && !!document.querySelector('#view-flow #flow-band')), 'New Prospects and the prospects band are not on the Pipeline');
+    await portal.click('#pl-newp [data-npk=""]'); await portal.waitForTimeout(200);
     await portal.click('#pl-newp [data-npp="custom"]'); await portal.waitForTimeout(200);
     await portal.fill('#pnp-from', '2020-01-01'); await P(portal, () => document.getElementById('pnp-from').dispatchEvent(new Event('change', {bubbles: true})));
     await portal.fill('#pnp-to', '2030-12-31'); await P(portal, () => document.getElementById('pnp-to').dispatchEvent(new Event('change', {bubbles: true})));
@@ -739,27 +741,39 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   });
   await check('prospects can be narrowed to a summit, and a summit prospect says which summit', async () => {
     await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c) c.click(); }); });
-    await portal.click('.tab[data-view="plist"]'); await portal.waitForTimeout(300);
-    if (await P(portal, () => document.getElementById('pl-mine').classList.contains('on'))) await portal.click('#pl-mine');
-    await portal.click('#pl-life [data-pllife=""]'); await portal.waitForTimeout(200);
-    expect(!(await P(portal, () => !!document.querySelector('#pl-rows select'))), 'the list still has a picker in a row');
+    await portal.click('.tab[data-view="flow"]'); await portal.waitForTimeout(300);
+    await portal.click('[data-ftype="summit"]'); await portal.click('[data-fgroup="prospects"]'); await portal.waitForTimeout(250);
+    if (await P(portal, () => document.getElementById('flow-mine').classList.contains('on'))) await portal.click('#flow-mine');
+    await portal.selectOption('#flow-owner', ''); await portal.waitForTimeout(200);
+    expect(!(await P(portal, () => !!document.querySelector('#flow-body select'))), 'the list still has a picker in a row');
     /* set on the prospect in its company card */
-    await portal.click('#pl-rows [data-plid="lead-t-1"]'); await portal.waitForTimeout(500);
+    await portal.click('#flow-body tr[data-fid="lead-t-1"]'); await portal.waitForTimeout(500);
     const cpick = '#co-panel select[data-leadsummit="lead-t-1"]';
     expect(await portal.isVisible(cpick), 'the company card has no Which Summit for the prospect');
     const opt = await P(portal, s => [...document.querySelector(s).options].map(o => o.value).find(v => /Spring/.test(v)), cpick);
     await portal.selectOption(cpick, opt); await portal.waitForTimeout(1200);
     expect(((await fileOf('leads')).docs['lead-t-1'] || {}).summit === opt, 'the summit was not saved on the prospect');
     await P(portal, () => { ['ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
-    await portal.click('.tab[data-view="plist"]'); await portal.waitForTimeout(300);
-    const listed = await P(portal, () => (document.querySelector('#pl-rows [data-plid="lead-t-1"]') || {}).innerText || '');
-    expect(listed.indexOf(opt) >= 0, 'the list does not show the summit set on the card: ' + listed);
-    await portal.selectOption('#pl-what', opt); await portal.waitForTimeout(250);
-    const rows = await P(portal, () => document.getElementById('pl-rows').innerText);
+    await portal.click('.tab[data-view="flow"]'); await portal.waitForTimeout(300);
+    const listed = await P(portal, () => (document.querySelector('#flow-body tr[data-fid="lead-t-1"]') || {}).innerText || '');
+    expect(listed.indexOf(opt.replace(/ Summit$/, '')) >= 0, 'the list does not show the summit set on the card: ' + listed);
+    await portal.selectOption('#flow-what', opt); await portal.waitForTimeout(250);
+    let rows = await P(portal, () => document.getElementById('flow-body').innerText);
     expect(/Wingtip Servicing/.test(rows) && !/Newco Lending Test/.test(rows) && !/Litware Group/.test(rows), 'the summit filter is wrong: ' + rows.slice(0, 300));
-    const band = await P(portal, () => document.getElementById('pl-band').innerText);
-    expect(/Open Prospects by Stage/i.test(band) && /Forecast/i.test(band) && /Prospects by Summit/i.test(band), 'the Prospects band is missing parts: ' + band.slice(0, 200));
-    await portal.selectOption('#pl-what', ''); await portal.click('#pl-life [data-pllife="open"]');
+    const band = await P(portal, () => document.getElementById('flow-band').innerText);
+    expect(/Forecast/i.test(band) && /Prospects by Summit/i.test(band) && /Follow-Ups/i.test(band), 'the prospects band is missing parts: ' + band.slice(0, 200));
+    await portal.selectOption('#flow-what', '');
+    /* a follow-up bucket narrows the list to those prospects */
+    await portal.click('#flow-band [data-ffu="none"]'); await portal.waitForTimeout(250);
+    rows = await P(portal, () => [...document.querySelectorAll('#flow-body tr[data-fid]')].map(r => r.getAttribute('data-fid')));
+    expect(rows.length && rows.indexOf('lead-t-1') < 0, 'No Follow-Up Set lists a prospect that has one: ' + rows.join(', '));
+    await portal.click('#flow-groups [data-ffu=""]'); await portal.waitForTimeout(200);
+    /* the old Prospects address opens the Pipeline on its prospects */
+    await P(portal, () => { const t = document.querySelector('.tab[data-view="spm"]'); if (t) t.click(); });
+    await P(portal, () => { const a = document.createElement('a'); a.className = 'hm-em'; a.setAttribute('data-go', 'plist'); document.body.appendChild(a); a.click(); a.remove(); });
+    await portal.waitForTimeout(300);
+    expect(await P(portal, () => document.getElementById('view-flow').classList.contains('on')), 'going to Prospects did not open the Pipeline');
+    await portal.click('[data-fgroup="open"]');
   });
   await check('Sponsors and Prospects works like Member 360: tabs, filters, outstanding by summit', async () => {
     await toCos('Sponsor');

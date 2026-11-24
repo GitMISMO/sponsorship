@@ -245,6 +245,10 @@ Next Step, follow-up date and last contact date are set on the prospect too (`on
 follow-up isn't counted twice; otherwise the touchpoint's own follow-up shows on Home, under Due Now
 on the Pipeline and in the company's Follow-Ups until marked Done. Emails get the same About picker. The look follows Member 360's (navy gradient tiles, squared tags).
 
+## Prospects on the Pipeline (November 24, 2026)
+
+Amy: "it's about where the prospects are in the pipeline". The Prospects menu item is gone (showView("plist") opens the Pipeline with flowState.group = "prospects"); view-plist stays in the page, unlinked. Under the Pipeline's stage boxes: #flow-band (paintFlowBand: Forecast, Prospects by Summit/Workgroup/Type, Follow-Ups from flowFuOf: late, week, later, none), then New Prospects (#pl-newp, paintNewBox("pr"), starting on the kind picked). The list adds #flow-what (flowWhatChoices / flowWhatOk: a summit key or summit:-, wg:<name> or wg:-, type:<key>), flowState.fu, and #flow-mine (owner = whoAmI()). A summit prospect's What says its summit, or that none is picked yet.
+
 ## The Pipeline (November 18, 2026)
 
 One list of every sponsorship, from first contact to paid, the way Member 360 works its prospects:

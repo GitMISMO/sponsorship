@@ -284,7 +284,7 @@ was.
 
 ## The mismosponsor@ mailbox
 
-Logos (November 24, 2026): the flow (includeAttachments on) keeps each image attachment whose name says logo, or any non-inline image when the subject says logo, up to 3 MB (Filter logos), PUTs it to data/maillogo-<received yyMMddHHmmss>-<base64 length>.json as {name, type, data, from}, and lists them on the email as logos:[{name, type, store}]. mailLogo() saves the first (one named logo, if any) as the matched company's data/logo-co-<key>.json and companies/<key>.logo (via: "mismosponsor"), the same as + Add a Logo; the Summit Sponsor Feed copies it to the website within the hour. The email gets logoSaved.
+Logos (November 24, 2026): the flow (includeAttachments on) keeps each image attachment whose name says logo, or any non-inline image when the subject says logo, up to 3 MB (Filter logos), PUTs it to data/maillogo-<received yyMMddHHmmss>-<base64 length>.json as {name, type, data, from}, and lists them on the email as logos:[{name, type, store}]. mailLogo() saves the first (one named logo, if any) as the matched company's data/logo-co-<key>.json and companies/<key>.logo (via: "mismosponsor"), the same as + Add a Logo; the Summit Sponsor Feed copies it to the website within a few minutes (CN-022 signal). The email gets logoSaved.
 
 Forward, Cc or Bcc an email to mismosponsor@mismo.org and it is logged on the sponsor or prospect it
 is about, the way 360@ works for Member 360. The Power Automate flow **Sponsorship - mismosponsor
@@ -327,11 +327,22 @@ The Benefits page's To Do holds only what is late or due in the next 45 days (`B
 the rest is folded under Coming Later. Rosalyn works from Summit HQ only, so she is not an owner here.
 
 The logo is not a task: the site's Summit Sponsor Feed (GitMISMO.github.io,
-`sponsors/build-sponsors.mjs`) puts every approved sponsor on the website within the hour, with its
-logo. The portal reads the feed's published list (`/sponsors/<summit>-2027.json`) and ticks the logo
+`sponsors/build-sponsors.mjs`) puts every approved sponsor on the website, with its
+logo, within a few minutes of a save (see The Website Sponsor Signal below; its hourly run is the backup). The portal reads the feed's published list (`/sponsors/<summit>-2027.json`) and ticks the logo
 from it. The only time it shows as a to-do is when the website lists a sponsor with its name but
 no logo file; then the file is saved once in the site repo as `sponsors/logos/<company-name>.png`.
 The checks use a made-up copy of that list in `tests/fixtures/sponsors/`.
+
+## The Website Sponsor Signal (CN-022, November 24, 2026)
+
+Whenever a save changes `data/applications.json` (a sponsor record or a status change) or a `data/logo-*.json`
+copy, the sponsorship-data workflow **Website Sponsor Signal** (`.github/workflows/website-sponsor-signal.yml`)
+sends `repository_dispatch` `sponsor-data-changed` to GitMISMO.github.io, which starts its Summit Sponsor Feed, so
+the website shows the change within a few minutes. The feed's hourly run stays as the backup. The workflow runs after
+the save is on GitHub, so it never blocks or undoes a save. It uses the sponsorship-data repository secret
+`WEBSITE_DISPATCH_TOKEN` (a fine-grained token for GitMISMO/GitMISMO.github.io only, Contents: Read and write). Until
+that secret is set, each run passes with a note in its summary; a token that has expired or can't reach the site makes
+the run fail, which the Failure Watcher reports.
 
 ## Activity history
 

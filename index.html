@@ -2398,7 +2398,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li><b>Its records:</b> GitHub, GitMISMO/sponsorship-data (private). That&rsquo;s applications, prospects, workgroup sponsorships, other sponsorships and their types (settings), the emails logged from mismosponsor@ (mailin, touchpoints and the monthly mailtext files), the email requests and the payments file MISMO Money writes, which the portal only reads. The old AI webinar file (webinars) is kept as it was.</li>
             <li><b>System Health:</b> its last shared check and any failed saves are kept in data/health.json in GitMISMO/sponsorship-data.</li>
             <li><b>The list Member 360 reads:</b> data/feed-member360.json in GitMISMO/sponsorship-data, read through the save relay (sponsorship/data/feed-member360) with each Member 360 user&rsquo;s own sign-in. GitHub writes it (the workflow <b>Member 360 Feed</b> in GitMISMO/sponsorship-data, running tools/member360-feed.js from GitMISMO/sponsorship); nobody edits it by hand.</li>
-            <li><b>The mismosponsor@ mailbox:</b> the Power Automate flow <b>Sponsorship - mismosponsor Mailbox</b> on Jonna&rsquo;s account adds each email to the mailin file. An image attached as a logo (its file name says logo, or the subject does) is saved too, and becomes the company&rsquo;s logo once the email is matched, so the website shows it within the hour.</li>
+            <li><b>The website&rsquo;s sponsor list:</b> whenever a sponsor record, a status or a logo is saved, the workflow <b>Website Sponsor Signal</b> in GitMISMO/sponsorship-data tells the website&rsquo;s Summit Sponsor Feed (GitMISMO.github.io) to run, so the change shows on the website within a few minutes; the feed&rsquo;s hourly run is the backup. It uses the secret WEBSITE_DISPATCH_TOKEN in GitMISMO/sponsorship-data, and never holds up a save.</li>
+            <li><b>The mismosponsor@ mailbox:</b> the Power Automate flow <b>Sponsorship - mismosponsor Mailbox</b> on Jonna&rsquo;s account adds each email to the mailin file. An image attached as a logo (its file name says logo, or the subject does) is saved too, and becomes the company&rsquo;s logo once the email is matched, so the website shows it within a few minutes (within the hour at the latest).</li>
             <li><b>The prospectus:</b> GitHub, GitMISMO/Sponsorship-Prospectus.</li>
             <li><b>SharePoint, MISMO Summits site:</b> the Sponsorship Requests list and the Sponsor Logos library.</li>
             <li><b>Power Automate:</b> the intake flow (prospectus to list), the availability flow (list to prospectus) and the Sponsorship Team Emails flow (emails, list updates, Summit HQ).</li>
@@ -10607,7 +10608,7 @@ a series deal is counted once, at its full amount.</div>
      saves each image attachment the email calls a logo (its file name says logo, or the subject does and it isn't
      a picture in the signature) as data/maillogo-<received>-<size>.json, and lists it on the email as
      logos:[{name, type, store}]. Once the email is matched to a company, the logo becomes that company's logo,
-     the same as + Add a Logo on its card, and the website's sponsor feed picks it up within the hour. */
+     the same as + Add a Logo on its card, and the website's sponsor feed picks it up within a few minutes (CN-022 signal; hourly at the latest). */
   var MAIL_LOGO = /^image\/(png|jpe?g|svg\+xml|webp)$/i;
   function mailLogo(d, co, who){
     var list = (d && Array.isArray(d.logos) ? d.logos : []).filter(function(x){
@@ -10622,7 +10623,7 @@ a series deal is counted once, at its full amount.</div>
         var meta = {name:doc.name, type:doc.type, at:doc.at, by:doc.by, via:"mismosponsor"};
         coDocs[co.key] = Object.assign({}, coDocs[co.key] || {}, {logo:meta});
         db.doc("companies/" + co.key).update({logo:meta});
-        addLog("", "logo for " + co.name + " saved from an email to mismosponsor@ (" + doc.name + "); the website picks it up within the hour", "Sponsorship Portal");
+        addLog("", "logo for " + co.name + " saved from an email to mismosponsor@ (" + doc.name + "); the website picks it up within a few minutes", "Sponsorship Portal");
         return doc.name;
       });
     }).catch(function(){ return null; });
@@ -10688,7 +10689,7 @@ a series deal is counted once, at its full amount.</div>
     if(logged.length) toast(logged.length === 1 ? "An email to mismosponsor@ is logged on " + logged[0].co.name + "." :
       logged.length + " emails to mismosponsor@ are logged.", "", "Logged");
     logged.filter(function(r){ return r.logo; }).forEach(function(r){
-      toast(r.co.name + "\u2019s logo is updated from the email (" + r.logo + "). The website shows it within the hour.", "", "Logo Updated"); });
+      toast(r.co.name + "\u2019s logo is updated from the email (" + r.logo + "). The website shows it within a few minutes.", "", "Logo Updated"); });
     if(need.length) toast((need.length === 1 ? "An email needs" : need.length + " emails need") +
       " a company. Pick it from Home, on the Forwarded Emails tile.", "warn", "Pick a Company");
     renderFlow();
@@ -10715,7 +10716,7 @@ a series deal is counted once, at its full amount.</div>
     var patch = {st:"logged", co:co.key, coName:co.name, tp:tid, doneAt:new Date().toISOString(), pickedBy:whoAmI()};
     Object.assign(d, patch); db.doc("mailin/" + id).update(patch);
     mailLogo(d, co, whoAmI()).then(function(n){ if(n){ db.doc("mailin/" + id).update({logoSaved:n});
-      toast(co.name + "\u2019s logo is updated from the email (" + n + "). The website shows it within the hour.", "", "Logo Updated"); if(coOpen) paintCompany(); } });
+      toast(co.name + "\u2019s logo is updated from the email (" + n + "). The website shows it within a few minutes.", "", "Logo Updated"); if(coOpen) paintCompany(); } });
     addLog("", "email to mismosponsor@ logged on " + co.name + " (picked by hand)", whoAmI());
     toast("Logged on " + co.name + ".", "", "Logged"); renderFlow();
   }

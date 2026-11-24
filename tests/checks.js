@@ -579,6 +579,12 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const mail = (await fileOf('mailin')).docs;
     expect(mail['m-t-3'].st === 'need' && (mail['m-t-3'].cands || []).length > 1, 'an email several sponsors share is not waiting to be picked');
     expect(!mail['m-t-1'].html, 'a logged email\'s HTML was kept in the mailbox file');
+    /* a logo attached to the email becomes the company's logo, so the website picks it up (November 24, 2026) */
+    const cos = (await fileOf('companies')).docs || {};
+    const ck = Object.keys(cos).find(k => cos[k] && cos[k].logo && cos[k].logo.via === 'mismosponsor');
+    const lf = ck ? await P(portal, k => window.__practice.file('logo-co-' + k), ck) : null;
+    expect(ck && lf && lf.name === 'Northwind 2027 Logo.png' && lf.data && mail['m-t-1'].logoSaved === 'Northwind 2027 Logo.png',
+      'the logo emailed to mismosponsor@ did not become Northwind\'s logo: ' + JSON.stringify({ck, name: lf && lf.name, saved: mail['m-t-1'].logoSaved}));
     await toTodo(); await portal.click('[data-awt="mail"]'); await portal.waitForTimeout(200);
     await portal.click('[data-mailpick="m-t-3"][data-name="Contoso Mortgage"]'); await portal.waitForTimeout(1500);
     const m3 = (await fileOf('mailin')).docs['m-t-3'];

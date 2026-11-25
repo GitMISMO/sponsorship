@@ -16,6 +16,16 @@ The public prospectuses that feed it are in the Sponsorship-Prospectus repo.
 | `tests/background.js` | Opens the portal every hour, so its background work happens without anyone opening it (see below). |
 | `tools/member360-feed.js` | Makes the read-only list Member 360 reads (see below). Checked by `tests/feed-check.js` (part of the checks). |
 
+## The browser's Back button (CN-033, November 25, 2026)
+
+`index.html` loads the shared `/assets/back.js` (owned by Forms and shared pages, GitMISMO.github.io) right after
+`session.js`. Each left-menu button carries `data-hq` (the same name as its `data-view`), and `showView` puts
+`aria-current="page"` on the page showing, so each page picked is a Back step. Back closes an open panel first; the
+panels are registered with `MismoBack.layer` next to `closeDocked`, bottom first: the stage list, the company card,
+the application, workgroup/other and prospect panels, the two imports and the Read the Whole Email box, each with the
+close its own X uses. Never copy back.js here or add `history.pushState`. `tests/checks.js` serves `/assets/back.js`
+from the live copy and checks it (Back returns to the last page and closes a record first; Forward; X then Back).
+
 ## The price list
 
 `Sponsorship-Prospectus/catalog.json` is the one place tiers, prices, registrations, slot counts

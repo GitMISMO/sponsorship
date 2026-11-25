@@ -23,8 +23,16 @@ const ORIGIN = 'http://localhost:' + PORT;
    made-up website sponsor list at /sponsors/ (tests/fixtures/sponsors/) */
 const ROOTS = { '/sponsorship/': PORTAL + '/', '/Sponsorship-Prospectus/': PROS + '/', '/sponsors/': path.join(__dirname, 'fixtures', 'sponsors') + '/' };
 const TYPES = { '.js': 'text/javascript', '.json': 'application/json', '.html': 'text/html', '.png': 'image/png', '.svg': 'image/svg+xml' };
+/* the shared Back button (CN-033): /assets/back.js is served from the live copy on resources.mismo.org,
+   never a copy kept here, as Summit HQ's harness does. Fetched once before the checks start. */
+let BACK_JS = null;
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
+  if (p === '/assets/back.js') {
+    if (!BACK_JS) { res.writeHead(404); return res.end(); }
+    res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
+    return res.end(BACK_JS);
+  }
   if (p.endsWith('/')) p += 'index.html';
   let f = null;
   for (const k in ROOTS) if (p.startsWith(k)) f = ROOTS[k] + p.slice(k.length);
@@ -65,6 +73,10 @@ const appBy = async (page, test) => (await apps(page)).find(test);
 
 (async () => {
   await new Promise(r => server.listen(PORT, r));
+  try {
+    const r = await fetch('https://resources.mismo.org/assets/back.js');
+    if (r.ok) BACK_JS = await r.text();
+  } catch (e) {}
   browser = await chromium.launch();
 
   if (HAVE_PROS) {
@@ -709,6 +721,44 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const back = await P(portal, () => ({dock: document.getElementById('co-panel').classList.contains('docking'), on: document.getElementById('co-panel').classList.contains('on'), card: document.getElementById('cp-body').innerText.slice(0, 200)}));
     expect(!back.dock && back.on && /Northwind Lending/.test(back.card), 'Back did not return to the company card');
     await P(portal, () => document.getElementById('co-close').click());
+  });
+  /* CN-033 (Nov 25, 2026): the browser's Back button, like Summit HQ's check 31. A fresh copy of the portal, so
+     nothing the other checks opened is in its history. */
+  await check('Back returns to the last page and closes an open panel first; Forward goes again', async () => {
+    expect(BACK_JS && /MismoBack/.test(BACK_JS), 'could not read the live https://resources.mismo.org/assets/back.js');
+    const pg = await open('/sponsorship/?practice');
+    try {
+      const view = () => P(pg, () => (document.querySelector('#tabband .tab[aria-current]') || {}).getAttribute ? document.querySelector('#tabband .tab[aria-current]').getAttribute('data-view') : '');
+      const panels = () => P(pg, () => ['co-panel', 'drawer', 'bill-drawer', 'lead-drawer'].filter(id => document.getElementById(id).classList.contains('on')).join(','));
+      const back = async () => { await P(pg, () => history.back()); await pg.waitForTimeout(700); };
+      const fwd = async () => { await P(pg, () => history.forward()); await pg.waitForTimeout(700); };
+      const addr = await P(pg, () => location.href);
+      expect(await P(pg, () => !!window.MismoBack && document.querySelectorAll('nav button[data-hq]').length >= 6), 'back.js is not loaded, or the left menu buttons have no data-hq');
+      expect(await view() === 'home', 'the portal should open on Home with aria-current on its menu button, found "' + await view() + '"');
+
+      await pg.click('.tab[data-view="spm"]'); await pg.waitForTimeout(400);
+      await pg.click('.tab[data-view="money"]'); await pg.waitForTimeout(400);
+      await back();
+      expect(await view() === 'spm' && await P(pg, () => document.getElementById('view-spm').classList.contains('on')), 'Back from Money should return to Sponsors, it shows "' + await view() + '"');
+      await fwd();
+      expect(await view() === 'money' && await P(pg, () => document.getElementById('view-money').classList.contains('on')), 'Forward should go to Money again, it shows "' + await view() + '"');
+
+      await pg.click('.tab[data-view="pipeline"]'); await pg.waitForTimeout(400);
+      await pg.click('#view-pipeline tr[data-open="app-t-paid"]'); await pg.waitForTimeout(700);
+      expect(/drawer/.test(await panels()), 'the record did not open: ' + await panels());
+      await back();
+      expect(await panels() === '' && await view() === 'pipeline', 'Back should close the record and stay on Summit Sponsorships: open "' + await panels() + '", page "' + await view() + '"');
+
+      await pg.click('#view-pipeline tr[data-open="app-t-paid"]'); await pg.waitForTimeout(700);
+      expect(/co-panel/.test(await panels()), 'the record did not open again');
+      await pg.click('#co-close'); await pg.waitForTimeout(700);
+      expect(await panels() === '', 'its X did not close the company card');
+      await back();
+      expect(await panels() === '' && await view() === 'money', 'after closing the card with its X, Back should go straight to Money, the page before; it shows "' + await view() + '" with "' + await panels() + '" open');
+
+      expect(await P(pg, () => location.href) === addr, 'the address changed');
+      expect(!pg.errors.length, 'page errors: ' + pg.errors.join(' | '));
+    } finally { await pg.ctx.close(); }
   });
   await check('new sponsors can be listed for this month, any month or any dates', async () => {
     await toCos('Sponsor');

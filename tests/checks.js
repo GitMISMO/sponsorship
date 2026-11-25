@@ -926,6 +926,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const o = mine.length ? mine[0][1] : {};
     expect(o.to === 'jamie@alpine-ski.test' && /jcritchley@mismo\.org/.test(o.cc) && /amoses/.test(o.cc) && /kbradshaw/.test(o.cc), 'the reminder is not to the contact with Jonna, Amy and Kelly copied: ' + o.to + ' / ' + o.cc);
     expect(/Friendly Reminder/.test(o.subject) && /7000123/.test(o.subject), 'the subject is wrong: ' + o.subject);
+    expect(o.fromBox === 'mismosponsor@mismo.org', 'the reminder is not sent from mismosponsor@: ' + o.fromBox);
     expect(/friendly reminder/.test(o.bodyText) && /attached the invoice/.test(o.bodyText) && /\$6,000/.test(o.bodyText) && /<br>/.test(o.bodyHtml), 'the message is not the friendly reminder with the invoice');
     expect((o.attachments && o.attachments[0] && o.attachments[0].Name === 'Invoice 7000123.pdf' && o.attachments[0].ContentBytes) || o.attachmentsSent, 'the invoice is not attached');
     const r = ((await fileOf('workgroups')).docs || {})['wg-t-late'] || {};

@@ -100,7 +100,7 @@ business days after `lastFollowUpDate`, until Paid; weekdays 8 am to 6 pm Easter
 `wg-pastdue` (workgroup) or `os-reminder` (other); id `bpd-<record id>-<n>`; To the billing contact (else the sponsor
 contact); Cc the sponsor contact, `BILL_CC` (Jonna, Amy, Kelly); MBA is not
 copied (Nov 22, 2026); `attachments: [{Name, ContentBytes}]` with the invoice. The Team Emails flow's Default case sends To, Cc,
-Subject, bodyHtml and Attachments from Jonna's mailbox. Once `outbox-sent` lists it, `chaseTrim` takes the invoice bytes
+Subject, bodyHtml and Attachments; a request with `fromBox` (the payment reminders, since Nov 25, 2026) goes from that shared mailbox, mismosponsor@mismo.org, so replies are logged on the company, and any other from Jonna's mailbox. Once `outbox-sent` lists it, `chaseTrim` takes the invoice bytes
 off the outbox entry. The record keeps `followUpCount`, `lastFollowUpDate`, `followUps`; the history says "payment
 reminder n emailed automatically ... invoice attached". Billing Contact Name and Email are on every workgroup and other
 record. System Health has a Payment Follow-Ups row.

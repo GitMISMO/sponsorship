@@ -796,6 +796,35 @@ const appBy = async (page, test) => (await apps(page)).find(test);
       expect(!pg.errors.length, 'page errors: ' + pg.errors.join(' | '));
     } finally { await pg.ctx.close(); }
   });
+  /* CN-053 (Nov 26, 2026): every internal tool's masthead is Certification Management's to the pixel, so the logo
+     box sits in the same spot everywhere (numbers measured on resources.mismo.org/cms/). The left menu hangs right
+     below the bar, with no overlap and no gap, on a wide screen and a phone. */
+  await check('masthead matches Certification Management\'s, and the left menu lines up under it', async () => {
+    const want = {
+      1400: { mast: 68, plate: '22,13,183,42', logo: '35,22,157,24', rule: '219,13,1,42', name: '16px 500 rgb(148, 200, 233)', pad: '9px 13px 5px' },
+      390: { mast: 62, plate: '16,15,145,33', logo: '26,22,125,19', rule: '172,11,1,40', name: '13px 500 rgb(148, 200, 233)', pad: '7px 10px 5px' },
+    };
+    for (const w of [1400, 390]) {
+      const pg = await open('/sponsorship/?practice', { viewport: { width: w, height: 800 } });
+      try {
+        const g = await P(pg, () => {
+          const q = s => document.querySelector(s), b = e => { const r = e.getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map(Math.round).join(','); };
+          const m = q('.mast'), pl = q('.mast .plate'), nm = q('.mast-name'), cs = getComputedStyle(nm), pc = getComputedStyle(pl);
+          scrollTo(0, 120);
+          return { mast: m.getBoundingClientRect().height, plate: b(pl), logo: b(q('.mast .wordmark')), rule: b(q('.mast-rule')),
+            name: [cs.fontSize, cs.fontWeight, cs.color].join(' '), pad: pc.padding + ' ' + pc.borderRadius,
+            foot: getComputedStyle(m).boxShadow, side: Math.round(q('.side').getBoundingClientRect().top), old: document.querySelectorAll('.santa, #mismo-hat').length };
+        });
+        const x = want[w];
+        expect(g.mast === x.mast, w + 'px wide: the masthead is ' + g.mast + 'px tall, not ' + x.mast + 'px');
+        for (const k of ['plate', 'logo', 'rule', 'name', 'pad']) expect(g[k] === x[k], w + 'px wide: ' + k + ' is ' + g[k] + ', Certification Management has ' + x[k]);
+        expect(/rgba\(80, 164, 219, 0\.28\) 0px 1px 0px/.test(g.foot), w + 'px wide: the 1px line along the masthead foot is ' + g.foot);
+        expect(g.side === x.mast, w + 'px wide: the left menu starts at ' + g.side + 'px, the masthead ends at ' + x.mast + 'px');
+        expect(!g.old, 'the older December hat (.santa / #mismo-hat) is back');
+        expect(!pg.errors.length, 'page errors: ' + pg.errors.join(' | '));
+      } finally { await pg.ctx.close(); }
+    }
+  });
   await check('new sponsors can be listed for this month, any month or any dates', async () => {
     await toCos('Sponsor');
     await portal.click('#spm-newp [data-npp="year"]'); await portal.waitForTimeout(250);

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-26: Masthead matches the other MISMO tools (CN-053): the navy bar, the white logo box, the divider and the name now use Certification Management's exact measurements (68px tall; 62px on a phone, like Certification Management's), so the MISMO logo sits in the same spot in every tool. The left menu, its phone overlay and the version bar line up under the new height. A new check compares the masthead with Certification Management's on a wide screen and a phone.
 - 2026-11-26: December santa hat (CN-052): from December 1 to 31 the shared resources.mismo.org/assets/holiday.js (loaded by session.js for MISMO and MBA sign-ins) puts the hat on the O of the masthead logo, with a little snow. The portal's own older top-left hat is removed; it also pushed the masthead down 10 pixels in December. A new check makes sure the hat lands on the O and nothing else moves.
 - 2026-11-25: The browser's Back button works (CN-033): Back goes to the last page you were on and closes an open panel first, one at a time; Forward goes again. It never undoes a change, and the address and the page the portal opens on stay the same. It uses the shared resources.mismo.org/assets/back.js.
 - 2026-11-25: Browser tab icon now matches mismo.org (CN-030): the tab shows the MISMO S mark from the one shared copy at resources.mismo.org/assets/favicon-48x48.png.

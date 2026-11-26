@@ -85,7 +85,9 @@
      is identical on both pages at every width. Before this the portal kept the full
      157x24 lockup all the way down, which was 41% wider than the prospectus's and
      wrapped the masthead onto two lines below 430px. Changing one page's numbers
-     here means changing the other's. */
+     here means changing the other's.
+     Superseded by CN-053 (Nov 26, 2026): the masthead section further down now copies
+     Certification Management's masthead at every width, and wins by source order. */
   @media (max-width:560px){
     .eyebrow{display:none;}
     .mast{padding:0 14px; gap:12px; min-height:64px; flex-wrap:nowrap;}
@@ -106,11 +108,11 @@
   }
 
   /* ---------- the page below it: sections panel beside the content ---------- */
-  .shell{display:flex; align-items:flex-start; min-height:calc(100vh - var(--mast-h,60px));}
+  .shell{display:flex; align-items:flex-start; min-height:calc(100vh - var(--mast-h,68px));}
   .main{flex:1 1 auto; min-width:0; display:flex; flex-direction:column;}
 
-  .side{position:sticky; top:var(--mast-h,60px); z-index:30; align-self:flex-start;
-    flex:0 0 240px; width:240px; height:calc(100dvh - var(--mast-h,60px)); overflow:hidden;
+  .side{position:sticky; top:var(--mast-h,68px); z-index:30; align-self:flex-start;
+    flex:0 0 240px; width:240px; height:calc(100dvh - var(--mast-h,68px)); overflow:hidden;
     background:var(--navy); color:rgba(255,255,255,.82);
     border-right:1px solid rgba(80,164,219,.22);
     display:flex; flex-direction:column; transition:flex-basis .18s ease, width .18s ease;}
@@ -226,8 +228,8 @@
        screen now, and the record, stage and import panels are full-width on a phone,
        so the rail has to sit UNDER them (they are 52-54) or it would paint over their
        left edge. It still sits above its own scrim, which is 45. */
-    .side{position:fixed; left:0; top:var(--mast-h,60px); z-index:46; flex:0 0 auto;
-      height:calc(100dvh - var(--mast-h,60px)); width:min(264px, 80vw);
+    .side{position:fixed; left:0; top:var(--mast-h,68px); z-index:46; flex:0 0 auto;
+      height:calc(100dvh - var(--mast-h,68px)); width:min(264px, 80vw);
       transition:width .18s ease; box-shadow:4px 0 26px rgba(6,32,47,.34);}
     .side.mini{width:64px; flex-basis:auto; box-shadow:1px 0 0 rgba(80,164,219,.22);}
     html[data-drawer="open"] .nav-scrim{display:block;}
@@ -668,7 +670,7 @@
     --c1:#2477b8; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300;
     --display:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     --shadow:0 1px 2px rgba(13,49,76,.06),0 6px 18px rgba(13,49,76,.06);
-    --hq-h:64px;
+    --hq-h:68px;
     --tab-active:#ffffff; --chip:#eef4f9; --overlay:rgba(6,32,47,.42);
     --rail-on:#14486e; --rail-pip:#c0392f;
     color-scheme:light;
@@ -701,24 +703,36 @@
   h1,h2,h3,h4{letter-spacing:-.012em; text-wrap:balance;}
   a{color:var(--c1);}
 
-  /* ---- masthead ---- */
-  .mast{height:var(--hq-h); padding:0 22px; gap:0; flex-wrap:nowrap;
-    box-shadow:0 1px 0 rgba(116,191,235,.28);}
-  .mast-rule{width:2px; height:34px; align-self:center; flex:0 0 auto;
-    margin-inline:20px; border-radius:1px; background:var(--sky);}
-  .mast-name{font-size:15.5px; font-weight:700; letter-spacing:-.005em; color:var(--sky);
+  /* ---- masthead ----
+     Certification Management's masthead, to the pixel (CN-053, Jonna, Nov 26, 2026), so the MISMO logo
+     sits in the same spot in every internal tool: a 68px navy bar (13px above and below the logo box,
+     22px in from the left, a 1px line along its foot), a white logo box (9px 13px, 5px corners, a 1px
+     sky line under it) holding the logo 24px tall, 14px gaps, a 1px divider as tall as the box, and
+     the name at 16px / 500 in #94c8e9. On a phone, the same numbers resources.mismo.org/cms/ uses.
+     The rail, its overlay and the version bar hang below it by its measured height (--mast-h), so
+     they follow any change here. Compare with resources.mismo.org/cms/ before changing a number. */
+  .mast{height:auto; min-height:0; padding:13px 22px; gap:8px 14px; flex-wrap:nowrap;
+    background:#0d314c; box-shadow:0 1px 0 rgba(80,164,219,.28);}
+  .plate{border-radius:5px; padding:9px 13px; box-shadow:0 1px 0 rgba(80,164,219,.35);}
+  .plate .wordmark{height:24px; width:auto;}
+  .mast-rule{width:1px; height:auto; align-self:stretch; flex:0 0 auto; margin:0;
+    border-radius:0; background:rgba(80,164,219,.4);}
+  .mast-name{font-size:16px; font-weight:500; line-height:1.55; letter-spacing:0; color:#94c8e9;
     min-width:0; overflow:hidden; text-overflow:ellipsis;}
   .eyebrow{font-weight:600;}
-  .plate{border-radius:7px; padding:8px 14px;}
   @media (max-width:700px){ .eyebrow{display:none;} }
   @media (max-width:560px){
-    .mast{padding:0 12px;} .mast-rule{margin-inline:12px; height:30px;}
-    .plate{padding:7px 10px;} .plate .wordmark{height:20px; width:131px;}
-    .mast-name{font-size:13.5px;}
+    .mast{padding:11px 16px; gap:11px; min-height:62px;}
+    .plate{padding:7px 10px;} .plate .wordmark{height:19px; width:auto;}
+    .mast-rule{height:auto; margin:0;}
+    .mast-name{font-size:13px; letter-spacing:0; white-space:nowrap;}
+    .mast-right{gap:10px;}
   }
   @media (max-width:430px){
-    .mast{padding:0 11px;} .mast-rule{margin-inline:9px; height:26px;}
-    .plate .wordmark{height:17px; width:111px;}
+    .mast{padding:11px 16px; gap:11px;}
+    .plate{padding:7px 10px;} .plate .wordmark{height:19px; width:auto;}
+    .mast-rule{height:auto; margin:0;}
+    .mast-name{font-size:13px; letter-spacing:0;}
   }
 
   /* ---- the rail ---- */
@@ -1261,7 +1275,7 @@
   .hl-foot{font-size:12px; color:var(--ink-3); margin-top:8px; padding-top:8px; border-top:1px solid var(--rule);}
   .hl-cg{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:2px 18px; margin-top:4px;}
   .hl-c{display:grid; grid-template-columns:12px minmax(0,1fr); gap:8px; padding:6px 0; border-top:1px solid var(--rule); font-size:12.5px;} .hl-c .x{font-size:11.5px; color:var(--bad); margin-top:2px;}
-  #ver-bar{position:fixed; left:50%; top:76px; transform:translateX(-50%); z-index:9999; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-left:4px solid #74bfeb; border-radius:6px; box-shadow:0 8px 24px rgba(6,32,47,.18); padding:9px 12px; display:flex; gap:12px; align-items:center; font-size:13px; max-width:calc(100vw - 32px);}
+  #ver-bar{position:fixed; left:50%; top:calc(var(--mast-h,68px) + 12px); transform:translateX(-50%); z-index:9999; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-left:4px solid #74bfeb; border-radius:6px; box-shadow:0 8px 24px rgba(6,32,47,.18); padding:9px 12px; display:flex; gap:12px; align-items:center; font-size:13px; max-width:calc(100vw - 32px);}
   .hm-fwdrow{margin-top:8px; min-width:0;} .hm-fwdrow b{display:block; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;} .hm-fwdrow span{display:block; font-size:12px; color:rgba(255,255,255,.65);}
   .hm-fwd .hm-sub{margin-top:10px;}
   .stat .valtot{font-size:13px; font-weight:600; opacity:.75; margin:2px 0 2px; font-variant-numeric:tabular-nums;}
@@ -1569,7 +1583,7 @@
     .widebtn + .dclose{margin-left:auto;}
   }
   /* so the smooth scroll doesn't tuck the list under the masthead */
-  #view-leads .panel{scroll-margin-top:calc(var(--mast-h,64px) + 14px);}
+  #view-leads .panel{scroll-margin-top:calc(var(--mast-h,68px) + 14px);}
 
   /* The Inventory picker kept an older id-level rule, which beat the band's own
      styling and left it a big white box next to the navy pickers on the other tabs.

@@ -16,6 +16,17 @@ The public prospectuses that feed it are in the Sponsorship-Prospectus repo.
 | `tests/background.js` | Opens the portal every hour, so its background work happens without anyone opening it (see below). |
 | `tools/member360-feed.js` | Makes the read-only list Member 360 reads (see below). Checked by `tests/feed-check.js` (part of the checks). |
 
+## The masthead (CN-053, November 26, 2026)
+
+The masthead is Certification Management's (resources.mismo.org/cms/) to the pixel, so the MISMO logo sits in the
+same spot in every internal tool: a 68px navy bar (13px above and below the logo box, 22px in from the left, a 1px
+line along its foot), a white logo box (9px 13px padding, 5px corners, a 1px sky line under it) with the logo 24px
+tall, 14px gaps, a 1px divider as tall as the box, and the name at 16px, weight 500, #94c8e9. Under 560px it uses
+Certification Management's phone numbers (a 62px bar, the logo 19px tall). The rules are the `/* ---- masthead ---- */`
+section of `index.html`; it wins over the older masthead rules above it by source order. The left menu, its phone
+overlay and the version bar hang below the bar by its measured height (`--mast-h`), so they follow it. `tests/checks.js`
+compares every number with Certification Management's at 1400px and 390px wide; change both together.
+
 ## The December hat (CN-052, November 26, 2026)
 
 From December 1 to 31 the shared `/assets/holiday.js` (owned by Forms and shared pages) puts a santa hat on the O of

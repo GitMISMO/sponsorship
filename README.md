@@ -16,6 +16,17 @@ The public prospectuses that feed it are in the Sponsorship-Prospectus repo.
 | `tests/background.js` | Opens the portal every hour, so its background work happens without anyone opening it (see below). |
 | `tools/member360-feed.js` | Makes the read-only list Member 360 reads (see below). Checked by `tests/feed-check.js` (part of the checks). |
 
+## The December hat (CN-052, November 26, 2026)
+
+From December 1 to 31 the shared `/assets/holiday.js` (owned by Forms and shared pages) puts a santa hat on the O of
+the masthead logo, with a little snow the first time the portal opens in a session. `session.js` loads it by itself on
+this page (it has the sign-in chip, `#rs-account`) for MISMO and MBA sign-ins, and it finds the logo by itself
+(`.mast` `use[href="#mismo-logo"]`, on `.plate`), so `index.html` has no hat code of its own. The older top-left hat
+(`.santa`, `#mismo-hat`, `html[data-season="december"]`) was removed: holiday.js sets `data-season="december"`, and
+that hat's masthead padding moved the logo and sign-in chip down 10 pixels. Never add December CSS here. Preview
+any time with `?holiday=preview`. `tests/checks.js` serves the live holiday.js and checks that the hat sits on the O
+and the masthead doesn't move.
+
 ## The browser's Back button (CN-033, November 25, 2026)
 
 `index.html` loads the shared `/assets/back.js` (owned by Forms and shared pages, GitMISMO.github.io) right after

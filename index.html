@@ -69,12 +69,8 @@
     padding:14px 22px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
   .plate{background:#fff; border-radius:7px; padding:8px 14px; display:flex; align-items:center;
     line-height:0; position:relative; flex:0 0 auto;}
-  /* ---------- December: internal pages only. Turns itself on 1-31 Dec, every year.
-     Overlays the plate; the lockup itself is never altered. ---------- */
-  .plate .santa{position:absolute; display:none; pointer-events:none;
-    left:-9px; top:-12px; width:31px; height:31px;}
-  html[data-season="december"] .plate .santa{display:block;}
-  html[data-season="december"] .mast{padding-top:20px;}
+  /* December: the santa hat on the O comes from the shared /assets/holiday.js, which session.js loads
+     (CN-052). Keep no hat code here, and never pad the masthead for it: nothing else may move. */
   .plate .wordmark{height:24px; width:157px; display:block;}
   .mast-rule{width:1px; align-self:stretch; background:rgba(80,164,219,.4);}
   .mast-name{font-size:15px; font-weight:600; letter-spacing:.02em; color:var(--sky-soft);}
@@ -1617,15 +1613,6 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 -220 5 -410 14 -422 19 -29 12 -30 43 -3 70 19 19 33 20 288 20 277 0 331 -6
 355 -41 13 -18 24 -19 218 -17 l204 3 3 44 c4 60 -31 168 -70 215 -17 21 -52
 52 -77 67 l-45 29 -550 0 c-440 -1 -557 -3 -581 -14z"/></g></symbol>
-<symbol id="mismo-hat" viewBox="0 0 100 100">
-  <path d="M17,73 C9,44 20,17 42,9 C59,3 72,10 80,22 C85,30 86,38 81,41
-           C76,44 70,40 65,32 C60,46 57,60 57,73 Z" fill="#c0392f"/>
-  <path d="M17,73 C9,44 20,17 42,9 C48,7 53,6 58,7 C41,19 30,45 30,73 Z"
-        fill="#0f314c" opacity=".17"/>
-  <rect x="10" y="65" width="56" height="20" rx="10" fill="#ffffff"/>
-  <rect x="10" y="75" width="56" height="10" rx="5" fill="#0f314c" opacity=".07"/>
-  <circle cx="86" cy="45" r="11.5" fill="#ffffff"/>
-</symbol>
 <symbol id="ico-queue" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.2 3.3 5.5 5.6 3"/><path d="M2 9.9l1.3 1.3L5.6 8.7"/><path d="M7.6 4.3h6.6M7.6 11h6.6"/></g></symbol>
 <symbol id="ico-pipe" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.8" y="2.6" width="3.6" height="10.8" rx="1.2"/><rect x="6.2" y="2.6" width="3.6" height="7.6" rx="1.2"/><rect x="10.6" y="2.6" width="3.6" height="5" rx="1.2"/></g></symbol>
 <symbol id="ico-apps" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 1.9h6l3.2 3.2v9a1 1 0 0 1-1 1H3.4a1 1 0 0 1-1-1V2.9a1 1 0 0 1 1-1z"/><path d="M9.2 2v3.3h3.3M5 8.5h6M5 11.2h4"/></g></symbol>
@@ -1647,7 +1634,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
 </defs></svg>
 
 <header class="mast">
-  <span class="plate"><svg class="wordmark" role="img" aria-label="MISMO" viewBox="0 0 708 108"><use href="#mismo-logo"/></svg><svg class="santa" viewBox="0 0 100 100" aria-hidden="true"><use href="#mismo-hat"/></svg></span>
+  <span class="plate"><svg class="wordmark" role="img" aria-label="MISMO" viewBox="0 0 708 108"><use href="#mismo-logo"/></svg></span>
   <span class="mast-rule" aria-hidden="true"></span>
   <span class="mast-name">Sponsorship Portal</span>
   <span class="mast-right">
@@ -13477,12 +13464,6 @@ a series deal is counted once, at its full amount.</div>
   }
   box.addEventListener("mousedown", reveal);
   box.addEventListener("touchstart", reveal, {passive:false});
-})();
-</script>
-<script>
-/* December hat: on 1-31 December, every year, with no upkeep. */
-(function season(){
-  if(new Date().getMonth() === 11) document.documentElement.setAttribute("data-season","december");
 })();
 </script>
 </body>

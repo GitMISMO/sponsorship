@@ -26,12 +26,15 @@ const TYPES = { '.js': 'text/javascript', '.json': 'application/json', '.html': 
 /* the shared Back button (CN-033): /assets/back.js is served from the live copy on resources.mismo.org,
    never a copy kept here, as Summit HQ's harness does. Fetched once before the checks start. */
 let BACK_JS = null;
+/* the December hat (CN-052): /assets/holiday.js, also served from the live copy, never kept here */
+let HOLIDAY_JS = null;
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
-  if (p === '/assets/back.js') {
-    if (!BACK_JS) { res.writeHead(404); return res.end(); }
+  if (p === '/assets/back.js' || p === '/assets/holiday.js') {
+    const js = p === '/assets/back.js' ? BACK_JS : HOLIDAY_JS;
+    if (!js) { res.writeHead(404); return res.end(); }
     res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
-    return res.end(BACK_JS);
+    return res.end(js);
   }
   if (p.endsWith('/')) p += 'index.html';
   let f = null;
@@ -76,6 +79,10 @@ const appBy = async (page, test) => (await apps(page)).find(test);
   try {
     const r = await fetch('https://resources.mismo.org/assets/back.js');
     if (r.ok) BACK_JS = await r.text();
+  } catch (e) {}
+  try {
+    const r = await fetch('https://resources.mismo.org/assets/holiday.js');
+    if (r.ok) HOLIDAY_JS = await r.text();
   } catch (e) {}
   browser = await chromium.launch();
 
@@ -757,6 +764,35 @@ const appBy = async (page, test) => (await apps(page)).find(test);
       expect(await panels() === '' && await view() === 'money', 'after closing the card with its X, Back should go straight to Money, the page before; it shows "' + await view() + '" with "' + await panels() + '" open');
 
       expect(await P(pg, () => location.href) === addr, 'the address changed');
+      expect(!pg.errors.length, 'page errors: ' + pg.errors.join(' | '));
+    } finally { await pg.ctx.close(); }
+  });
+  /* CN-052 (Nov 26, 2026): in December the shared /assets/holiday.js (session.js loads it here for MISMO and MBA
+     sign-ins) puts a santa hat on the O of the masthead logo. Session.js isn't served in the checks, so the check
+     adds holiday.js itself, with ?holiday=preview. The hat must find the logo and nothing else may move: the
+     portal keeps no December code of its own (its old one padded the masthead down). */
+  await check('December hat (preview): sits on the O of the masthead logo and nothing else moves', async () => {
+    expect(HOLIDAY_JS && /MismoHoliday/.test(HOLIDAY_JS), 'could not read the live https://resources.mismo.org/assets/holiday.js');
+    const boxes = () => P(pg, () => ['.mast .wordmark', '#rs-account', '.mast-name', '#tabband', '.mast'].map(q => {
+      const e = document.querySelector(q); if (!e) return q + ' missing';
+      const r = e.getBoundingClientRect(); return q + ' ' + [r.x, r.y, r.width, r.height].map(Math.round).join(',');
+    }).join(' | '));
+    const pg = await open('/sponsorship/?practice&holiday=preview');
+    try {
+      const before = await boxes();
+      await pg.addScriptTag({ url: '/assets/holiday.js' }); await pg.waitForTimeout(1500);
+      const hat = await P(pg, () => {
+        const h = document.querySelector('.mast .mismo-hat'), L = document.querySelector('.mast .wordmark');
+        if (!h || !L) return null;
+        const a = h.getBoundingClientRect(), b = L.getBoundingClientRect();
+        return { on: window.MismoHoliday && window.MismoHoliday.on, mid: (a.left + a.width * 0.4 - b.left) / b.width, below: a.bottom - b.top, old: document.querySelectorAll('.santa, #mismo-hat').length };
+      });
+      expect(hat && hat.on, 'holiday.js put no hat on the masthead logo');
+      expect(hat.mid > 0.7 && hat.mid < 1.05, 'the hat is not over the O at the right of the logo (' + hat.mid.toFixed(2) + ' of the logo width)');
+      expect(hat.below > 0, 'the hat does not reach down to the logo');
+      expect(!hat.old, 'the portal still has its own older December hat (.santa / #mismo-hat)');
+      const after = await boxes();
+      expect(after === before, 'the hat moved the masthead: before ' + before + ' — after ' + after);
       expect(!pg.errors.length, 'page errors: ' + pg.errors.join(' | '));
     } finally { await pg.ctx.close(); }
   });

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-26: December santa hat (CN-052): from December 1 to 31 the shared resources.mismo.org/assets/holiday.js (loaded by session.js for MISMO and MBA sign-ins) puts the hat on the O of the masthead logo, with a little snow. The portal's own older top-left hat is removed; it also pushed the masthead down 10 pixels in December. A new check makes sure the hat lands on the O and nothing else moves.
 - 2026-11-25: The browser's Back button works (CN-033): Back goes to the last page you were on and closes an open panel first, one at a time; Forward goes again. It never undoes a change, and the address and the page the portal opens on stay the same. It uses the shared resources.mismo.org/assets/back.js.
 - 2026-11-25: Browser tab icon now matches mismo.org (CN-030): the tab shows the MISMO S mark from the one shared copy at resources.mismo.org/assets/favicon-48x48.png.
 - 2026-11-25: Payment reminders go from mismosponsor@mismo.org instead of Jonna's mailbox (Jonna), so a sponsor's reply lands in that mailbox and is logged on the company. Jonna, Amy and Kelly are still copied.

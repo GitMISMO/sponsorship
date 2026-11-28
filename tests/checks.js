@@ -131,7 +131,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
         const out = fs.mkdtempSync(path.join(os.tmpdir(), 'pros-'));
         cp.execFileSync('python3', [path.join(PROS, 'tools', 'build.py'), out], { stdio: 'pipe' });
         const conf = JSON.parse(fs.readFileSync(path.join(PROS, 'tools', 'prospectuses.json'), 'utf8'));
-        const files = ['index.html'].concat(conf.pages.map(p => p.folder + '/index.html'));
+        const files = ['index.html'].concat(conf.pages.map(p => p.folder + '/index.html'), ['app/index.html']);
         const off = files.filter(f => !fs.existsSync(path.join(PROS, f)) || fs.readFileSync(path.join(PROS, f), 'utf8') !== fs.readFileSync(path.join(out, f), 'utf8'));
         expect(!off.length, off.join(', ') + ' differ from the build. Make the change in tools/template.html (or tools/prospectuses.json), run python3 tools/build.py, and publish what it writes');
       });
@@ -572,6 +572,23 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     await toFlow();
     const btns = await P(portal, () => document.getElementById('flow-newkind').innerText + ' | ' + document.getElementById('flow-types').innerText);
     expect(/Bootcamp Test/.test(btns) && /Other/.test(btns), 'the new type is not offered on the Pipeline: ' + btns);
+  });
+  await check('Publish on MyMISMO boxes on the Prospectuses tab save to the settings', async () => {
+    await P(portal, () => { ['d-close','bd-close','ld-close','co-close'].forEach(id => { const c = document.getElementById(id); if (c && c.offsetParent) c.click(); }); });
+    await portal.click('.tab[data-view="prospectus"]'); await portal.waitForTimeout(300);
+    const boxes = await P(portal, () => [...document.querySelectorAll('#view-prospectus [data-mymismo]')].map(b => b.getAttribute('data-mymismo') + '=' + b.checked).join(','));
+    expect(boxes === 'series-winter=true,spring=false,fall=false,spring-fall=false', 'the boxes should start with only Series + Winter on: ' + boxes);
+    await portal.click('#view-prospectus [data-mymismo="spring"]'); await portal.waitForTimeout(1000);
+    const st = (await fileOf('settings')) || {docs:{}};
+    const mm = (st.docs.main || {}).mymismo || {};
+    expect(mm.pages && mm.pages.spring === true && mm.pages['series-winter'] === true && mm.pages.fall === false, 'saved: ' + JSON.stringify(mm.pages));
+    expect(mm.changed && mm.changed.spring && mm.changed.spring.by && mm.changed.spring.at, 'who and when were not saved');
+    expect(((st.docs.main || {}).otherTypes || []).length, 'saving the box lost the Other Sponsorship types');
+    const note = await P(portal, () => document.querySelector('#view-prospectus [data-pub="spring"]').innerText);
+    expect(/Shown in the app/.test(note), 'the Spring card does not say it is in the app: ' + note);
+    await portal.click('#view-prospectus [data-mymismo="spring"]'); await portal.waitForTimeout(1000);
+    const st2 = (await fileOf('settings')) || {docs:{}};
+    expect(((st2.docs.main || {}).mymismo || {}).pages.spring === false, 'unchecking did not save');
   });
   await check('a workgroup prospect starts its sponsorship, filled in', async () => {
     await toFlow(); await portal.click('[data-ftype="workgroup"]'); await portal.waitForTimeout(200);
@@ -1194,6 +1211,133 @@ const appBy = async (page, test) => (await apps(page)).find(test);
       });
       await phone.ctx.close();
     }
+
+    console.log('\nMyMISMO app prospectus (Sponsorship-Prospectus/app/, November 27, 2026)');
+    const APP = '/Sponsorship-Prospectus/app/?practice';
+    const appPage = async (opts = {}) => {
+      const pg = await open(APP + (opts.q || ''), Object.assign({ viewport: { width: 390, height: 844 }, wait: 1500 }, opts));
+      await pg.addStyleTag({ content: '#practice-bar{display:none !important}' });
+      return pg;
+    };
+    const app = await appPage();
+    await check('app: opens with no errors, live availability, and Series and Winter until the portal publishes more', async () => {
+      expect(!app.errors.length, 'page errors: ' + app.errors.join(' | '));
+      const cards = await P(app, () => [...document.querySelectorAll('#prog-list .prog')].map(b => b.dataset.prog).join());
+      expect(cards === 'series,winter', 'offers ' + cards);
+      const st = await P(app, () => document.getElementById('avail-stamp').textContent);
+      expect(/just now/.test(st), 'availability was not read: ' + st);
+    });
+    await check('app: counts availability exactly as each prospectus does', async () => {
+      const A = JSON.parse(await P(app, () => JSON.stringify(window.__app.programs)));
+      const pages = [['/Sponsorship-Prospectus/', ['winter', 'series']], ['/Sponsorship-Prospectus/spring-2027/', ['spring']],
+        ['/Sponsorship-Prospectus/fall-2027/', ['fall']], ['/Sponsorship-Prospectus/spring-fall-2027/', ['springfall']]];
+      const off = [];
+      for (const [url, keys] of pages) {
+        const pg = await open(url + '?practice', { wait: 1500 });
+        const B = JSON.parse(await P(pg, () => JSON.stringify(window.__prospectus().tiers)));
+        await pg.ctx.close();
+        for (const k of keys) for (const tid of ['diamond', 'platinum', 'gold', 'silver', 'bronze']) {
+          const x = A[k].tiers[tid], y = B[k][tid];
+          if (x.price !== y.price) off.push(k + ' ' + tid + ' price ' + x.price + ' vs ' + y.price);
+          if (!!x.soldOut !== !!y.soldOut) off.push(k + ' ' + tid + ' sold out');
+          (y.opportunities || []).forEach((o, i) => {
+            const q = (x.opportunities || [])[i] || {};
+            if (q.name !== o.name || q.note !== o.note || !!q.sold !== !!o.sold || String(q.soldDays || '') !== String(o.soldDays || ''))
+              off.push(k + ' ' + o.name + ': app "' + q.note + ' ' + (q.soldDays || '') + '", page "' + o.note + ' ' + (o.soldDays || '') + '"');
+          });
+        }
+      }
+      expect(!off.length, off.join('; '));
+    });
+    await check('app: shows exactly the contract wording the prospectus shows', async () => {
+      const norm = h => h.replace(/\s+/g, ' ').trim();
+      const a = fs.readFileSync(path.join(PROS, 'app', 'index.html'), 'utf8'), b = fs.readFileSync(path.join(PROS, 'index.html'), 'utf8');
+      const ma = /<div class="sheet-bd contract-box" id="k-body" data-contract-version="([^"]+)">([\s\S]*?)<\/div>/.exec(a);
+      const mb = /<div class="contract-box" data-contract-version="([^"]+)">([\s\S]*?)<\/div>/.exec(b);
+      expect(ma && mb && ma[1] === mb[1] && norm(ma[2]) === norm(mb[2]), 'the app\'s contract differs from the prospectus\'s (' + (ma && ma[1]) + ' / ' + (mb && mb[1]) + ')');
+    });
+    await check('app: an application goes through, step by step, with the prospectus\'s fields, summit and price', async () => {
+      await app.click('[data-prog="series"]'); await app.waitForTimeout(400);
+      await app.click('#go'); await app.waitForTimeout(200);
+      expect(await P(app, () => window.__app.step()) === 'level', 'Continue moved on with no level chosen');
+      await app.click('[data-tier="platinum"]'); await app.click('#go'); await app.waitForTimeout(300);
+      await app.click('[data-opp="reception"] .opp-row'); await app.waitForTimeout(200);
+      await app.click('#go'); await app.waitForTimeout(200);
+      expect(await P(app, () => window.__app.step()) === 'opp', 'Continue moved on with no day chosen');
+      await app.click('.day:not([disabled]) >> nth=0'); await app.click('#go'); await app.waitForTimeout(300);
+      await app.fill('#f-company', 'Check MyMISMO App'); await app.fill('#f-contact', 'Pat Check'); await app.fill('#f-email', 'pat@example.org'); await app.fill('#f-phone', '555-0100');
+      await app.click('#go'); await app.waitForTimeout(200);
+      expect(await P(app, () => window.__app.step()) === 'details', 'Continue moved on with no logo');
+      const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64');
+      await app.setInputFiles('#f-logo', { name: 'logo.png', mimeType: 'image/png', buffer: png }); await app.waitForTimeout(300);
+      await app.click('#go'); await app.waitForTimeout(300);
+      await app.fill('#f-signer-title', 'VP');
+      await app.click('#go'); await app.waitForTimeout(200);
+      expect(await P(app, () => window.__app.step()) === 'sign' && !(await P(app, () => window.__practice.sent())).some(x => x.kind === 'intake'), 'it was sent without agreeing to the contract');
+      await app.click('#read-contract'); await app.waitForTimeout(400);
+      expect(await app.isVisible('#k-done'), 'the full contract does not open');
+      await app.click('#k-done'); await app.waitForTimeout(400);
+      await app.check('#f-agree');
+      await app.waitForTimeout(2500);
+      await app.click('#go'); await app.waitForTimeout(1500);
+      const sub = (await P(app, () => window.__practice.sent())).find(x => x.kind === 'intake');
+      expect(sub, 'nothing reached the Intake flow');
+      const p = sub.payload;
+      const want = ['reference', 'submittedAt', 'source', 'program', 'summits', 'package', 'programLabel', 'tier', 'tierName', 'price', 'opportunity', 'day', 'multiDayInterest',
+        'company', 'contactName', 'contactEmail', 'contactPhone', 'logoFileName', 'logoContentType', 'signerName', 'signerTitle', 'signedDate', 'agreed', 'contractVersion', 'hp', 'secondsOnPage'];
+      const missing = want.filter(k => !(k in p));
+      expect(!missing.length, 'the application is missing ' + missing.join(', '));
+      expect(p.program === 'Summit Series' && p.summits === 'Winter,Spring,Fall' && p.tier === 'Platinum' && p.price === '$40,500', 'sent ' + p.program + ' / ' + p.summits + ' / ' + p.tier + ' / ' + p.price);
+      expect(/^Reception Sponsor — (Monday|Tuesday)$/.test(p.opportunity) && p.day, 'opportunity sent: ' + p.opportunity);
+      expect(p.signerName === 'Pat Check' && p.agreed && p.contractVersion === '2027-v1' && p.signedDate, 'the signature was not sent');
+      expect(p.hp === '' && p.secondsOnPage >= 5, 'spam signs: box "' + p.hp + '", ' + p.secondsOnPage + ' seconds');
+      expect(await P(app, () => window.__app.step()) === 'done' && /^SP-\d{8}-\w{4}$/.test(await P(app, () => document.getElementById('done-ref').textContent)), 'no confirmation with the reference');
+      await app.emulateMedia({ media: 'print' });
+      const pr = await P(app, () => { const b = document.getElementById('print'); return { shown: getComputedStyle(b).display !== 'none', txt: b.innerText }; });
+      await app.emulateMedia({ media: 'screen' });
+      expect(pr.shown && /Pat Check/.test(pr.txt) && /VP/.test(pr.txt) && /2027-v1/.test(pr.txt) && /Scope\./.test(pr.txt), 'the signed copy is missing the contract or signature');
+      expect(!app.errors.length, 'page errors: ' + app.errors.join(' | '));
+    });
+    await check('app: the application arrives in the portal on the Series', async () => {
+      const portal3 = await open('/sponsorship/?practice', { ctx: app.ctx });
+      const a = await appBy(portal3, x => x.company === 'Check MyMISMO App');
+      expect(a, 'the portal did not pick it up from the inbox');
+      expect(/Series/.test(a.event), 'it was filed under "' + a.event + '"');
+      expect(!portal3.errors.length, 'portal errors: ' + portal3.errors.join(' | '));
+    });
+    await check('app: nothing reaches a real address', async () => {
+      const out = [...new Set(app.outside)];
+      expect(!out.length, 'the page tried to reach ' + out.join(', '));
+    });
+    await app.ctx.close();
+    await check('app: offers what the portal publishes (/sponsors/prospectus-app.json), and says so when nothing is', async () => {
+      for (const [pages, want] of [[{ 'series-winter': false, spring: true, 'spring-fall': true }, 'spring,springfall'], [{ 'series-winter': false }, '']]) {
+        const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+        await ctx.route(u => !u.href.startsWith(ORIGIN), r => r.abort());
+        await ctx.route('**/sponsors/prospectus-app.json*', r => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ pages }) }));
+        const pg = await open(APP, { ctx, wait: 1500 });
+        const got = await P(pg, () => [...document.querySelectorAll('#prog-list .prog')].map(b => b.dataset.prog).join());
+        const none = await P(pg, () => document.getElementById('prog-list').innerText);
+        await ctx.close();
+        expect(got === want, 'with ' + JSON.stringify(pages) + ' it offers "' + got + '"');
+        if (!want) expect(/open soon/.test(none), 'nothing published, and the page does not say so');
+      }
+    });
+    await check('app: fits a 320px phone at every step with no sideways scrolling', async () => {
+      const ctx = await browser.newContext({ viewport: { width: 320, height: 640 } });
+      await ctx.route(u => !u.href.startsWith(ORIGIN), r => r.abort());
+      const pg = await open(APP, { ctx, wait: 1500 });
+      await pg.addStyleTag({ content: '#practice-bar{display:none !important}' });
+      const wide = [];
+      const w = async n => { const x = await P(pg, () => document.documentElement.scrollWidth); if (x > 322) wide.push(n + ' ' + x + 'px'); };
+      await w('start');
+      await pg.click('[data-prog="winter"]'); await pg.waitForTimeout(300); await w('level');
+      await pg.click('[data-tier="bronze"]'); await pg.click('#go'); await pg.waitForTimeout(300);
+      await pg.click('[data-opp="breakfast"] .opp-row'); await pg.waitForTimeout(200); await w('opportunity');
+      await pg.click('.day:not([disabled]) >> nth=0'); await pg.click('#go'); await pg.waitForTimeout(300); await w('details');
+      await ctx.close();
+      expect(!wide.length, 'too wide: ' + wide.join(', '));
+    });
   }
 
   await browser.close();

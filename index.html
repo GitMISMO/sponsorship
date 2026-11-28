@@ -199,6 +199,14 @@
     border:1px solid var(--border); border-radius:6px; padding:7px 9px; margin-bottom:12px; overflow-wrap:anywhere;
     line-height:1.45; user-select:all;}
   .pc-acts{display:flex; gap:8px;}
+  /* Publish on MyMISMO (Jonna, November 27, 2026) */
+  .pc-pub{display:flex; align-items:flex-start; gap:10px; margin:12px 0 0; padding:10px 12px; border:1px solid var(--border);
+    border-radius:6px; background:var(--surface-2); cursor:pointer;}
+  .pc-pub input{width:17px; height:17px; margin:1px 0 0; flex:0 0 auto; accent-color:var(--sky-deep, #3f96c9); cursor:pointer;}
+  .pc-pub b{display:block; font-size:13px; color:var(--ink);}
+  .pc-pub span{display:block; font-size:12px; color:var(--ink-3); line-height:1.4; margin-top:2px;}
+  .pc-pub.on{border-color:var(--sky); background:var(--accent-soft, #e4f2fb);}
+  .pc-pub.busy{opacity:.6; pointer-events:none;}
   .pc-acts .btn{flex:1 1 0; text-align:center; text-decoration:none;}
 
   /* ---------- the foot of the panel: light / dark ---------- */
@@ -2103,6 +2111,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <dl class="pc-rows"><div><dt>Winter</dt><dd>January 11&ndash;14, 2027 &middot; InterContinental New Orleans</dd></div><div><dt>Series</dt><dd>Winter, Spring and Fall, 10% off individual rates</dd></div><div><dt>Sells</dt><dd>Winter Summit tiers and the 2027 Summit Series</dd></div></dl>
         <div class="pc-url" title="https://resources.mismo.org/Sponsorship-Prospectus/">resources.mismo.org/Sponsorship-Prospectus/</div>
         <div class="pc-acts"><a class="btn sm" href="https://resources.mismo.org/Sponsorship-Prospectus/" target="_blank" rel="noopener">Open</a><a class="btn ghost sm" href="https://resources.mismo.org/Sponsorship-Prospectus/?pdf" target="_blank" rel="noopener" title="Opens the prospectus with today’s availability and its Save as PDF window">Download PDF</a><button class="btn ghost sm" type="button" data-copy="https://resources.mismo.org/Sponsorship-Prospectus/" data-name="2027 Series and Winter Summit">Copy Link</button></div>
+        <label class="pc-pub" data-pub="series-winter"><input type="checkbox" data-mymismo="series-winter"><div><b>Publish on MyMISMO</b><span class="pc-pubnote">Not in the app</span></div></label>
       </article>
       <article class="pcard">
         <div class="pc-eb">Spring</div>
@@ -2110,6 +2119,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <dl class="pc-rows"><div><dt>Dates</dt><dd>June 7&ndash;10, 2027</dd></div><div><dt>Where</dt><dd>Salt Lake Marriott Downtown at City Creek, Salt Lake City, UT</dd></div><div><dt>Sells</dt><dd>Spring Summit tiers, $5,000 to $22,500</dd></div></dl>
         <div class="pc-url" title="https://resources.mismo.org/Sponsorship-Prospectus/spring-2027/">resources.mismo.org/Sponsorship-Prospectus/spring-2027/</div>
         <div class="pc-acts"><a class="btn sm" href="https://resources.mismo.org/Sponsorship-Prospectus/spring-2027/" target="_blank" rel="noopener">Open</a><a class="btn ghost sm" href="https://resources.mismo.org/Sponsorship-Prospectus/spring-2027/?pdf" target="_blank" rel="noopener" title="Opens the prospectus with today’s availability and its Save as PDF window">Download PDF</a><button class="btn ghost sm" type="button" data-copy="https://resources.mismo.org/Sponsorship-Prospectus/spring-2027/" data-name="Spring 2027 Summit">Copy Link</button></div>
+        <label class="pc-pub" data-pub="spring"><input type="checkbox" data-mymismo="spring"><div><b>Publish on MyMISMO</b><span class="pc-pubnote">Not in the app</span></div></label>
       </article>
       <article class="pcard">
         <div class="pc-eb">Fall</div>
@@ -2117,6 +2127,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <dl class="pc-rows"><div><dt>Dates</dt><dd>September 13&ndash;16, 2027</dd></div><div><dt>Where</dt><dd>The Bethesdan Hotel, Bethesda, MD</dd></div><div><dt>Sells</dt><dd>Fall Summit tiers, $5,000 to $22,500</dd></div></dl>
         <div class="pc-url" title="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/">resources.mismo.org/Sponsorship-Prospectus/fall-2027/</div>
         <div class="pc-acts"><a class="btn sm" href="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/" target="_blank" rel="noopener">Open</a><a class="btn ghost sm" href="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/?pdf" target="_blank" rel="noopener" title="Opens the prospectus with today’s availability and its Save as PDF window">Download PDF</a><button class="btn ghost sm" type="button" data-copy="https://resources.mismo.org/Sponsorship-Prospectus/fall-2027/" data-name="Fall 2027 Summit">Copy Link</button></div>
+        <label class="pc-pub" data-pub="fall"><input type="checkbox" data-mymismo="fall"><div><b>Publish on MyMISMO</b><span class="pc-pubnote">Not in the app</span></div></label>
       </article>
       <article class="pcard">
         <div class="pc-eb">Spring &amp; Fall Package</div>
@@ -2124,6 +2135,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
         <dl class="pc-rows"><div><dt>Dates</dt><dd>June 7&ndash;10 (Salt Lake City) and September 13&ndash;16, 2027 (Bethesda)</dd></div><div><dt>Package</dt><dd>The same opportunity at both summits, 10% off individual rates</dd></div><div><dt>When</dt><dd>For sponsors signing up after the Winter Summit</dd></div></dl>
         <div class="pc-url" title="https://resources.mismo.org/Sponsorship-Prospectus/spring-fall-2027/">resources.mismo.org/Sponsorship-Prospectus/spring-fall-2027/</div>
         <div class="pc-acts"><a class="btn sm" href="https://resources.mismo.org/Sponsorship-Prospectus/spring-fall-2027/" target="_blank" rel="noopener">Open</a><a class="btn ghost sm" href="https://resources.mismo.org/Sponsorship-Prospectus/spring-fall-2027/?pdf" target="_blank" rel="noopener" title="Opens the prospectus with today’s availability and its Save as PDF window">Download PDF</a><button class="btn ghost sm" type="button" data-copy="https://resources.mismo.org/Sponsorship-Prospectus/spring-fall-2027/" data-name="Spring &amp; Fall 2027 Summits">Copy Link</button></div>
+        <label class="pc-pub" data-pub="spring-fall"><input type="checkbox" data-mymismo="spring-fall"><div><b>Publish on MyMISMO</b><span class="pc-pubnote">Not in the app</span></div></label>
       </article>
     </div>
   </section>
@@ -4044,7 +4056,8 @@ a series deal is counted once, at its full amount.</div>
       s:"The public pages sponsors use to pick a sponsorship, sign the contract and apply. Open one " +
         "to see what a sponsor sees, copy its link to send to a sponsor, or download it as a PDF to attach " +
         "to an email (it shows today\u2019s availability and leaves out the application form). Applications from all " +
-        "of them land on the Pipeline under Submitted."},
+        "of them land on the Pipeline under Submitted. Publish on MyMISMO puts one in the MyMISMO app\u2019s " +
+        "Sponsor a Summit page, made for phones."},
     money: {t:"Where the Money Is",
       s:"Every summit side by side. Pick a year and a season below to open one on its own."},
     workgroup: {t:"Workgroup Sponsorships",
@@ -8650,6 +8663,49 @@ a series deal is counted once, at its full amount.</div>
     });
   });
 
+  /* Publish on MyMISMO (Jonna, November 27, 2026): which prospectuses the MyMISMO app's Sponsor a
+     Summit page offers. Kept in settings/main.mymismo {pages:{key:true|false}, changed:{key:{by,at}}};
+     the website's sponsors job copies pages into the public /sponsors/prospectus-app.json, and the
+     app (resources.mismo.org/Sponsorship-Prospectus/app/) reads that. Until a box has been saved,
+     Series + Winter is on and the rest are off. */
+  var MYMISMO_DEFAULT = {"series-winter":true, "spring":false, "fall":false, "spring-fall":false};
+  function mymismoPages(){
+    var s = (settingsDoc && settingsDoc.mymismo) || {};
+    return Object.assign({}, MYMISMO_DEFAULT, s.pages || {});
+  }
+  function paintPublish(){
+    var pg = mymismoPages(), ch = ((settingsDoc && settingsDoc.mymismo) || {}).changed || {};
+    document.querySelectorAll("#view-prospectus [data-pub]").forEach(function(l){
+      var k = l.getAttribute("data-pub"), on = !!pg[k], c = ch[k];
+      var box = l.querySelector("input"); if(box) box.checked = on;
+      l.classList.toggle("on", on);
+      var when = c && c.at ? " \u00b7 " + (on ? "on" : "off") + " since " + new Date(c.at).toLocaleDateString("en-US", {month:"short", day:"numeric"}) + (c.by ? " (" + String(c.by).split(" ")[0] + ")" : "") : "";
+      l.querySelector(".pc-pubnote").textContent = (on ? "Shown in the app\u2019s Sponsor a Summit page" : "Not in the app") + when;
+    });
+  }
+  document.querySelectorAll("#view-prospectus [data-mymismo]").forEach(function(box){
+    box.addEventListener("change", function(){
+      var k = box.getAttribute("data-mymismo"), on = box.checked, lab = box.closest(".pc-pub");
+      if(!db || !canWrite){ box.checked = !on; toast("Nothing was saved.", "warn", "Not connected"); return; }
+      var cur = (settingsDoc && settingsDoc.mymismo) || {};
+      var pages = Object.assign({}, mymismoPages()); pages[k] = on;
+      var changed = Object.assign({}, cur.changed || {}); changed[k] = {by:whoAmI(), at:new Date().toISOString()};
+      var next = {pages:pages, changed:changed};
+      var nm = lab.closest(".pcard").querySelector(".pc-title").textContent;
+      lab.classList.add("busy");
+      db.doc("settings/main").update({mymismo:next}).then(function(){
+        lab.classList.remove("busy");
+        applySettings(Object.assign({}, settingsDoc || {}, {mymismo:next})); paintPublish();
+        addLog("", (on ? "published on MyMISMO: " : "taken off MyMISMO: ") + nm, whoAmI());
+        toast((on ? "It shows in" : "It leaves") + " the MyMISMO app the next time the website\u2019s sponsor update runs (every 10 minutes on weekdays).", "", (on ? "Publishing \u2014 " : "Unpublishing \u2014 ") + nm);
+      }, function(){
+        lab.classList.remove("busy"); box.checked = !on; paintPublish();
+        toast("Please try again.", "warn", "It could not be saved");
+      });
+    });
+  });
+  paintPublish();
+
   /* every page opens at its top (Jonna, November 21, 2026: "when i select pipeline it doesn't land at the top
      of the page, i have to scroll up") */
   $("tabband").addEventListener("click", function(ev){
@@ -13217,7 +13273,7 @@ a series deal is counted once, at its full amount.</div>
       var main = null;
       snap.docs.forEach(function(doc){ if(doc.id === "main") main = doc.data() || {}; });
       applySettings(main); settingsSeen = true;
-      renderBilling(); renderFlow();
+      renderBilling(); renderFlow(); paintPublish();
     }, function(e){ settingsSeen = true; });
     /* emails sent to mismosponsor@ (the mailbox flow writes them) and the timeline they become */
     d.collection("mailin").onSnapshot(function(snap){

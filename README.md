@@ -314,6 +314,13 @@ the money is shared. MBA is no longer sent a past-due notice; MISMO follows up w
 same ids and numbers the first time an editor opened the portal; `data/webinars.json` is kept as it
 was.
 
+**Publish on MyMISMO** (November 27, 2026): the box on each Prospectuses card is kept in
+`settings/main.mymismo` as `{pages:{"series-winter":true,"spring":false,"fall":false,"spring-fall":false},
+changed:{<key>:{by, at}}}` (until a box is first saved, Series + Winter is on and the rest are off).
+The website's sponsors job copies `pages` (and nothing else) to the public
+`/sponsors/prospectus-app.json`; the MyMISMO app's prospectus (`Sponsorship-Prospectus/app/`) offers
+the programs that are on.
+
 ## The mismosponsor@ mailbox
 
 Logos (November 24, 2026): the flow (includeAttachments on) keeps each image attachment whose name says logo, or any non-inline image when the subject says logo, up to 3 MB (Filter logos), PUTs it to data/maillogo-<received yyMMddHHmmss>-<base64 length>.json as {name, type, data, from}, and lists them on the email as logos:[{name, type, store}]. mailLogo() saves the first (one named logo, if any) as the matched company's data/logo-co-<key>.json and companies/<key>.logo (via: "mismosponsor"), the same as + Add a Logo; the Summit Sponsor Feed copies it to the website within a few minutes (CN-022 signal). The email gets logoSaved.

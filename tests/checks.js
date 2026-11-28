@@ -1338,6 +1338,60 @@ const appBy = async (page, test) => (await apps(page)).find(test);
       await ctx.close();
       expect(!wide.length, 'too wide: ' + wide.join(', '));
     });
+    /* the full audit, November 28, 2026 */
+    const appFill = async (pg, sign = true) => {
+      await pg.click('[data-prog="winter"]'); await pg.waitForTimeout(300);
+      await pg.click('[data-tier="bronze"]'); await pg.click('#go'); await pg.waitForTimeout(300);
+      await pg.click('[data-opp="breakfast"] .opp-row'); await pg.click('.day[data-day="Monday"]'); await pg.click('#go'); await pg.waitForTimeout(300);
+      await pg.fill('#f-company', 'Audit Co'); await pg.fill('#f-contact', 'Pat Audit'); await pg.fill('#f-email', 'pat@example.org'); await pg.fill('#f-phone', '555-0100');
+      await pg.setInputFiles('#f-logo', { name: 'l.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64') });
+      await pg.waitForTimeout(300);
+      if (sign) { await pg.click('#go'); await pg.waitForTimeout(300); await pg.fill('#f-signer-title', 'VP'); await pg.check('#f-agree'); }
+    };
+    const intakes = pg => P(pg, () => window.__practice.sent().filter(x => x.kind === 'intake').map(x => x.payload));
+    await check('app: Back and Forward never skip an unfinished step, and a sent application can\'t be sent twice', async () => {
+      if (!BACK_JS) throw new Error('could not read the live https://resources.mismo.org/assets/back.js');
+      let pg = await appPage();
+      await appFill(pg);
+      for (let i = 0; i < 3; i++) { await pg.goBack(); await pg.waitForTimeout(400); }
+      expect(await P(pg, () => window.__app.step()) === 'level', 'three Backs from Review and Sign did not reach the level');
+      await pg.click('[data-tier="platinum"]'); await pg.waitForTimeout(200);
+      for (let i = 0; i < 3; i++) { await pg.goForward(); await pg.waitForTimeout(400); }
+      const at = await P(pg, () => window.__app.step());
+      expect(at === 'opp', 'after changing the level, Forward went on to "' + at + '" with no opportunity chosen');
+      await pg.waitForTimeout(3000); await pg.click('#go'); await pg.waitForTimeout(800);
+      expect(!(await intakes(pg)).length, 'an application went with no opportunity chosen');
+      await pg.ctx.close();
+      pg = await appPage();
+      await appFill(pg); await pg.waitForTimeout(4000); await pg.click('#go'); await pg.waitForTimeout(1500);
+      expect(await P(pg, () => window.__app.step()) === 'done', 'the application did not go');
+      await pg.goBack(); await pg.waitForTimeout(600);
+      const after = await P(pg, () => ({ step: window.__app.step(), program: window.__app.state().program, co: document.getElementById('f-company').value }));
+      expect(after.step === 'start' && !after.program && !after.co, 'Back after sending should start a fresh application: ' + JSON.stringify(after));
+      expect((await intakes(pg)).length === 1, 'the application was sent ' + (await intakes(pg)).length + ' times');
+      expect(!pg.errors.length, 'page errors: ' + pg.errors.join(' | '));
+      await pg.ctx.close();
+    });
+    await check('app: a pick that sells out while someone is applying sends them back to choose again, and says why', async () => {
+      const pg = await appPage();
+      await appFill(pg);
+      await P(pg, () => window.__practice.setList(l => l.push({ reference: 'MS27-AUDIT', program: 'Winter Summit', tier: 'Bronze', opportunity: 'Breakfast Sponsor — Monday', day: 'Monday', status: 'Approved', lines: null })));
+      await P(pg, () => window.__app.recheck()); await pg.waitForTimeout(800);
+      const st = await P(pg, () => ({ step: window.__app.step(), day: window.__app.state().day, note: document.getElementById('op-gone').hidden ? '' : document.getElementById('op-gone').textContent,
+        mon: document.querySelector('.day[data-day="Monday"]').disabled }));
+      expect(st.step === 'opp' && !st.day && st.mon && /Monday for Breakfast Sponsor has just been taken/.test(st.note), 'got ' + JSON.stringify(st));
+      await pg.click('.day:not([disabled]) >> nth=0'); await pg.click('#go'); await pg.waitForTimeout(300);
+      expect(await pg.inputValue('#f-company') === 'Audit Co', 'what they had entered was lost');
+      expect(!pg.errors.length, 'page errors: ' + pg.errors.join(' | '));
+      await pg.ctx.close();
+    });
+    await check('app: the practice card never covers the Continue button', async () => {
+      const pg = await open(APP, { viewport: { width: 390, height: 844 }, wait: 1500 });
+      await pg.click('[data-prog="winter"]'); await pg.waitForTimeout(500);
+      const hit = await P(pg, () => { const r = document.getElementById('go').getBoundingClientRect(); const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return el && el.id; });
+      await pg.ctx.close();
+      expect(hit === 'go', 'something else is on top of Continue');
+    });
   }
 
   await browser.close();

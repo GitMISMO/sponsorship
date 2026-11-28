@@ -10464,7 +10464,7 @@ a series deal is counted once, at its full amount.</div>
       if(r.goal){
         if(secured >= r.goal) gap = '<div class="g-gap ok">Forecast met: ' + esc(money(secured - r.goal)) + ' over</div>';
         else if(all >= r.goal) gap = '<div class="g-gap ok">' + esc(money(r.goal - secured)) + ' to go, covered if what\u2019s applied for and in prospects closes</div>';
-        else gap = '<div class="g-gap short">' + esc(money(r.goal - all)) + ' short even if every prospect signs</div>';
+        else gap = '<div class="g-gap short">' + esc(money(r.goal - secured)) + ' short</div>';   // of the forecast, by what's secured
       }
       var nm = String((SUMMITS[r.id] || {}).label || r.id).replace(/ Summit$/, "");
       return '<button type="button" class="g-sum' + (flowState.what === r.id ? " on" : "") + '" data-fgoal="' + esc(r.id) + '" title="List this summit\u2019s sponsorships and prospects">' +

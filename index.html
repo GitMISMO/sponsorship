@@ -990,6 +990,28 @@
   .m-bar.m-owe{grid-template-columns:118px minmax(0,1fr) 62px;} .m-bar em{font-style:normal; color:rgba(255,255,255,.55); font-size:11px;}
   .m-bnote{font-size:12.5px; line-height:1.55; color:rgba(255,255,255,.78); margin-top:10px;}
   .m-bar.on{box-shadow:inset 3px 0 0 #74bfeb; padding-left:7px;} .m-bar.on span:first-child{color:#fff; font-weight:700;}
+  /* Goal vs. Pipeline */
+  .goal-band{grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,.9fr);}
+  @media (max-width:1100px){ .goal-band{grid-template-columns:1fr;} }
+  .g-sum{all:unset; box-sizing:border-box; display:flex; flex-direction:column; justify-content:flex-start; cursor:pointer; background:rgba(255,255,255,.05); border:1px solid rgba(116,191,235,.18); border-radius:8px; padding:12px 14px; min-width:0;}
+  .g-sum:hover, .g-sum.on{border-color:#74bfeb; background:rgba(116,191,235,.1);}
+  .g-sum:focus-visible{outline:2px solid #74bfeb; outline-offset:1px;}
+  .g-top{display:flex; justify-content:space-between; align-items:baseline; gap:8px;}
+  .g-name{font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#74bfeb;}
+  .g-pct{font-size:12px; color:rgba(255,255,255,.7);}
+  .g-big{font-size:21px; font-weight:700; line-height:1.15; margin:4px 0 1px; font-variant-numeric:tabular-nums;}
+  .g-big small{font-size:12.5px; font-weight:500; color:rgba(255,255,255,.7);}
+  .g-track{position:relative; height:12px; margin:9px 0 8px; background:rgba(255,255,255,.1); border-radius:2px; display:flex; overflow:visible;}
+  .g-track i{display:block; height:100%;}
+  .g-track i:first-child{border-radius:2px 0 0 2px;}
+  .g-track .g-goal{position:absolute; top:-4px; bottom:-4px; width:2px; background:#fff; border-radius:1px;}
+  .g-lines{display:grid; grid-template-columns:auto 1fr; gap:2px 10px; font-size:12px; color:rgba(255,255,255,.8); font-variant-numeric:tabular-nums;}
+  .g-lines span:nth-child(even){text-align:right; color:#fff;}
+  .g-lines .sw{display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:6px;}
+  .g-gap{margin-top:8px; font-size:12.5px; font-weight:600;}
+  .g-gap.short{color:#ffb4a8;} .g-gap.ok{color:#8fe0b8;}
+  .g-note{font-size:12.5px; line-height:1.55; color:rgba(255,255,255,.78);}
+  .g-note b{color:#fff;}
   #flow-band{grid-template-columns:repeat(3,minmax(0,1fr));} @media (max-width:1100px){ #flow-band{grid-template-columns:1fr;} }
   .m-newp{padding:14px 16px; margin-bottom:16px;}
   .m-filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center;}
@@ -1883,6 +1905,9 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
     <div class="panel flowdrill" id="flow-drill" hidden></div>
     <!-- Prospects folded in (Amy, November 24, 2026): the forecast and prospects by summit, follow-ups,
          and New Prospects, all for the kind picked above -->
+    <!-- Goal vs. Pipeline (Jonna, November 28, 2026): MISMO Money's forecast for each summit, and how
+         much of it is paid, invoiced, approved, applied for and still only prospects -->
+    <div class="m-band goal-band" id="flow-goal" hidden></div>
     <div class="m-band" id="flow-band"></div>
     <div class="panel m-newp" id="pl-newp"></div>
     <div class="panel">
@@ -2183,7 +2208,7 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
             <li>Select any company to open its record, laid out like a Member 360 record: tier, sponsor since, when the sponsorship ends and this season&rsquo;s status across the top; each deal on its stage bar; Money, Benefits Used and Open Deal; Key Contacts; Recent Activity; and Company Details. <b>Log a Touchpoint</b>, email them, or add a prospective sponsorship from there. <b>Download Logo</b> saves the logo the sponsor sent with the online prospectus, straight from the portal (no SharePoint sign-in). <b>+ Add a Logo</b> keeps a logo a sponsor emailed (up to 4 MB), and <b>Replace Logo</b> swaps it. A sponsor already on the website gets <b>Open the Logo</b>. The file is also under Company Details and on the application.</li>
             <li><b>New Sponsors</b> on Sponsors lists every sponsorship that started in a period: <b>This Month</b>, <b>Last Month</b>, <b>This Year</b>, any month from <b>Pick a Month</b>, or your own <b>Dates</b>, for Summit, Workgroup, Other or all of them, with the total.</li>
             <li>The <b>Pipeline</b> shows one kind at a time: <b>Summit</b> (where it opens), <b>Workgroup</b> or <b>Other</b>. Every number and stage box lists what makes it up.</li>
-            <li><b>Prospects</b> are on the <b>Pipeline</b> (Amy, November 24, 2026: it&rsquo;s about where the prospects are in the pipeline). Its top row counts them by stage, Lead to Verbal Commitment; under it, the <b>Forecast</b>, <b>Prospects by Summit</b> (by workgroup or type for those kinds) and their <b>Follow-Ups</b> (past due, the next 7 days, later, none set), any of which narrows the list; then <b>New Prospects</b> for this month, last month, this year, any month or any dates. In the list, <b>Prospects</b> shows just prospects, <b>My Prospects Only</b> just yours, and the summit picker one summit. Select a row to open its company, where you set the stage and <b>Which Summit</b>.</li>
+            <li><b>Prospects</b> are on the <b>Pipeline</b> (Amy, November 24, 2026: it&rsquo;s about where the prospects are in the pipeline). Its top row counts them by stage, Lead to Verbal Commitment; under it, the <b>Prospect Value</b>, <b>Prospects by Summit</b> (by workgroup or type for those kinds) and their <b>Follow-Ups</b> (past due, the next 7 days, later, none set), any of which narrows the list; then <b>New Prospects</b> for this month, last month, this year, any month or any dates. In the list, <b>Prospects</b> shows just prospects, <b>My Prospects Only</b> just yours, and the summit picker one summit. Select a row to open its company, where you set the stage and <b>Which Summit</b>.</li>
             <li><b>Summit Sponsorships</b>, <b>Workgroup Sponsorships</b> and <b>Other Sponsorships</b> are the full lists of each kind.</li>
             <li><b>One company card.</b> Wherever you select a sponsorship or a prospect (these pages, the Pipeline, Home), it opens inside its company&rsquo;s card, under <b>&larr; Back to</b> the company, the way Member 360 does. The card itself shows everything the company has: every sponsorship, prospect and conversation.</li>
             <li><b>The browser&rsquo;s Back button</b> goes to the last page you were on and closes an open panel first, one at a time; it never undoes a change.</li>
@@ -2338,7 +2363,8 @@ c57 -33 76 -84 76 -200 0 -116 -19 -167 -76 -200 -32 -19 -52 -20 -294 -20
           <ul>
             <li><b>One list for everything:</b> summit sponsorships, workgroup sponsorships and every Other Sponsorship type, prospects included. Each row shows its <b>Type</b>, what it is, its <b>Stage</b>, owner, amount, the next step and the last time anyone was in touch.</li>
             <li><b>The stages:</b> Lead, Contacted, Meeting Scheduled, Proposal, Verbal Commitment, Application In, Approved, Pending Payment and Paid, plus Hold and Lost. A prospect moves through the first five; you change its stage on its company card (the Stage box, or select a step on its bar). From Application In on, the sponsorship record carries the stage itself (a summit application, a workgroup or an other sponsorship), so it moves when that record does.</li>
-            <li>The band at the top has two rows: <b>Prospects</b> (Lead to Verbal Commitment, before they apply) and <b>Sponsorships Being Closed</b> (Application In, Approved and Pending Payment). Each box counts a stage and its money. Select any number there, or any stage, and the list of what makes it up opens right under it. Under the band: the prospects&rsquo; <b>Forecast</b>, <b>Prospects by Summit</b> and <b>Follow-Ups</b> (select any to narrow the list), and <b>New Prospects</b>.</li>
+            <li>The band at the top has two rows: <b>Prospects</b> (Lead to Verbal Commitment, before they apply) and <b>Sponsorships Being Closed</b> (Application In, Approved and Pending Payment). Each box counts a stage and its money. Select any number there, or any stage, and the list of what makes it up opens right under it. Under the band: the prospects&rsquo; <b>Prospect Value</b>, <b>Prospects by Summit</b> and <b>Follow-Ups</b> (select any to narrow the list), and <b>New Prospects</b>.</li>
+            <li><b>Goal vs. Pipeline</b> (Summit): for each summit still to come, MISMO Money&rsquo;s forecast (its Statement of Activities, Sponsorships: Events) against what&rsquo;s <b>secured</b> (paid, invoiced and approved), then applications in and open prospects&rsquo; <b>Prospect Value</b>, and how far short or over. A Series counts a third at each summit. The white line on each bar is the forecast. Select a summit to list it.</li>
             <li>The Pipeline shows one kind at a time, <b>Summit</b> first, then <b>Workgroup</b> or <b>Other</b>; the buttons above the list narrow it by All Open, Prospects, Being Closed, Won, Hold, Lost or All. Won and Lost keep a year of history; <b>All</b> shows every record however old, archived ones included.</li>
             <li><b>New Sponsorship&hellip;</b> next to the search starts a summit application, a workgroup sponsorship or one of any other type, or adds <b>A New Sponsorship Type</b>.</li>
             <li><b>New Prospects</b> lists who was added this week or last. <b>Due Now</b> lists follow-ups that have come due, invoices past due, and applications or sponsorships waiting on a next step (review, raising the invoice, a payment chase). Each shows four; <b>See All</b> opens the rest.</li>
@@ -4026,7 +4052,7 @@ a series deal is counted once, at its full amount.</div>
     flow: {t:"Pipeline",
       s:"Where every deal stands, from first contact to paid, one kind at a time: <b>Summit</b> (where it opens), <b>Workgroup</b> or <b>Other</b>. The top row is " +
         "prospects (Lead to Verbal Commitment); the second is sponsorships being closed (Application In to Pending Payment). " +
-        "Under it, the forecast, prospects by summit and their follow-ups, and New Prospects; then the list, with <b>Prospects</b> " +
+        "Under it, Goal vs. Pipeline for summits (MISMO Money\u2019s forecast against what\u2019s secured), prospect value, prospects by summit and their follow-ups, and New Prospects; then the list, with <b>Prospects</b> " +
         "and <b>My Prospects Only</b> for just yours. Select any number " +
         "to list what makes it up, and select a row to open its company card, where a prospect\u2019s stage is changed. " +
         "Emails forwarded or copied to <b>mismosponsor@mismo.org</b> land on the company they are about."},
@@ -6257,7 +6283,7 @@ a series deal is counted once, at its full amount.</div>
       fldL("Sponsorship Season","season","select",leadSeasonChoices()) +
       fldL("Acquisition or Retention","engagementType","select",["","Acquisition","Retention"]) +
       fldL("Owner","owner","select",[""].concat(BENEFIT_OWNERS)) +
-      fldL("Forecast Amount","forecast","number") +
+      fldL("Prospect Value","forecast","number") +
       '</div></div>';
 
     html += '<div class="dsect"><h4>Contact</h4><div class="grid2">' +
@@ -6917,6 +6943,7 @@ a series deal is counted once, at its full amount.</div>
      lines). The portal only reads it, never writes it. Its orders become the same per-order
      groups the export import builds, and go through the same buildPlan(), so a record already
      Paid at that amount is never proposed again and nothing is ever marked unpaid. */
+  var forecastFeed = null;   // MISMO Money's forecast for each summit (paintGoal)
   var impSource = "export";   // "export" | "money" — what the drawer's plan came from
   var moneyFeed = null;
   function moneyGroups(feed){
@@ -8999,7 +9026,7 @@ a series deal is counted once, at its full amount.</div>
       return {docs: (c.docs && typeof c.docs === "object") ? c.docs : {}};
     }
     function kindOf(name){
-      if(name === "mismo-money-paid") return "raw";   // written by MISMO Money only (October 23, 2026)
+      if(name === "mismo-money-paid" || name === "mismo-money-forecast") return "raw";   // written by MISMO Money only (October 23 and November 28, 2026)
       return (name === "log" || /^log-\d{4}-\d{2}$/.test(name)) ? "log" : ((name === "outbox-sent" || name === "inbox") ? "list" : "docs");
     }
     function notify(f){ f.listeners.forEach(function(fn){ try{ fn(f.data); }catch(e){} }); }
@@ -10346,6 +10373,7 @@ a series deal is counted once, at its full amount.</div>
       $("flow-groups").innerHTML += '<button type="button" data-ffu="" aria-pressed="true" title="Show every follow-up again">Follow-Up: ' + esc(fuL) + ' ×</button>';
     }
     paintFlowBand(wch);
+    paintGoal();
 
     /* the table */
     var rows = flowRows(flowState.group === "all" ? pipeItems(true) : all);
@@ -10386,6 +10414,77 @@ a series deal is counted once, at its full amount.</div>
   }
   /* ---- the Prospects band (folded in from the Prospects page, November 24, 2026): open prospects of the
      kind picked, by summit (workgroup, type) in money and in number, and when their follow-ups are ---- */
+  /* ---- Goal vs. Pipeline (Jonna, November 28, 2026) ----
+     The goal for each summit is MISMO Money's forecast (its Statement of Activities, Sponsorships >
+     Events, the month the summit is in), which MISMO Money writes to data/mismo-money-forecast.json:
+     {"for":"sponsorship", "fy":2027, "madeAt":ISO, "summits":{"Winter 2027":147416.66, ...}}.
+     Against it: paid, invoiced, approved (summitRoll, a Series split evenly or by its own summit
+     lines, as everywhere in this portal), applications not yet approved, and open prospects' Prospect
+     Value (a Series prospect split three ways). Summit sponsorships only, the summits still to come. */
+  function goalOf(id){
+    var f = forecastFeed, s = f && f.summits;
+    if(!s || (f["for"] && f["for"] !== "sponsorship")) return null;
+    var v = s[id]; if(v && typeof v === "object") v = v.forecast;
+    v = Number(v);
+    return isFinite(v) && v > 0 ? v : null;
+  }
+  function goalRows(){
+    var ups = spxUpcoming(), out = {}, unplaced = 0, nUnplaced = 0;
+    ups.forEach(function(k){ var b = summitRoll(k); out[k] = {id:k, goal:goalOf(k), paid:b.collected, invoiced:b.invoiced, approved:b.approved, applied:b.inReview, pros:0, nPros:0}; });
+    leads.forEach(function(l){
+      if(l.id === leadDraft || coTypeOf(leadType(l)) !== "summit") return;
+      var st = l.status || "Lead";
+      if(PL_STAGES.indexOf(st) < 0) return;
+      var amt = Number(l.forecast) || 0, sm = l.summit || "";
+      if(out[sm]){ out[sm].pros += amt; out[sm].nPros++; return; }
+      var m = /^(\d{4}) Series$/.exec(sm);
+      if(m){ var ks = SEASONS.map(function(se){ return se + " " + m[1]; }).filter(function(k){ return out[k]; });
+        ks.forEach(function(k){ out[k].pros += amt / 3; out[k].nPros++; }); return; }
+      if(!sm){ unplaced += amt; nUnplaced++; }
+    });
+    var rows = ups.map(function(k){ return out[k]; });
+    rows.unplaced = unplaced; rows.nUnplaced = nUnplaced;
+    return rows;
+  }
+  var GOAL_PARTS = [["paid","Paid","#4fc79b"],["invoiced","Invoiced","#e8b04a"],["approved","Approved","#74bfeb"],["applied","Applications In","#c7a6ff"],["pros","Prospects","rgba(255,255,255,.32)"]];
+  function paintGoal(){
+    var el = $("flow-goal"); if(!el) return;
+    if(flowState.type !== "summit"){ el.hidden = true; return; }
+    var rows = goalRows();
+    if(!rows.length){ el.hidden = true; return; }
+    el.hidden = false;
+    var have = rows.some(function(r){ return r.goal; });
+    var cards = rows.map(function(r){
+      var secured = r.paid + r.invoiced + r.approved, all = secured + r.applied + r.pros;
+      var scale = Math.max(r.goal || 0, all, 1);
+      var bar = GOAL_PARTS.map(function(p){ var v = r[p[0]]; return v ? '<i style="width:' + (v / scale * 100).toFixed(2) + '%;background:' + p[2] + '" title="' + esc(p[1] + ": " + money(v)) + '"></i>' : ''; }).join("") +
+        (r.goal ? '<span class="g-goal" style="left:calc(' + (r.goal / scale * 100).toFixed(2) + '% - 1px)" title="MISMO Money forecast: ' + esc(money(r.goal)) + '"></span>' : '');
+      var lines = GOAL_PARTS.map(function(p){ return '<span><i class="sw" style="background:' + p[2] + '"></i>' + p[1] + (p[0] === "pros" && r.nPros ? ' (' + r.nPros + ')' : '') + '</span><span>' + esc(money(r[p[0]])) + '</span>'; }).join("");
+      var gap = "";
+      if(r.goal){
+        if(secured >= r.goal) gap = '<div class="g-gap ok">Forecast met: ' + esc(money(secured - r.goal)) + ' over</div>';
+        else if(all >= r.goal) gap = '<div class="g-gap ok">' + esc(money(r.goal - secured)) + ' to go, covered if what\u2019s applied for and in prospects closes</div>';
+        else gap = '<div class="g-gap short">' + esc(money(r.goal - all)) + ' short even if every prospect signs</div>';
+      }
+      var nm = String((SUMMITS[r.id] || {}).label || r.id).replace(/ Summit$/, "");
+      return '<button type="button" class="g-sum' + (flowState.what === r.id ? " on" : "") + '" data-fgoal="' + esc(r.id) + '" title="List this summit\u2019s sponsorships and prospects">' +
+        '<div class="g-top"><span class="g-name">' + esc(nm) + '</span><span class="g-pct">' + (r.goal ? Math.round(secured / r.goal * 100) + '% of forecast' : '') + '</span></div>' +
+        '<div class="g-big">' + esc(money(secured)) + ' <small>' + (r.goal ? 'secured of ' + esc(money(r.goal)) : 'secured') + '</small></div>' +
+        '<div class="g-track">' + bar + '</div><div class="g-lines">' + lines + '</div>' + gap + '</button>';
+    }).join("");
+    var tg = rows.reduce(function(n, r){ return n + (r.goal || 0); }, 0), ts = rows.reduce(function(n, r){ return n + r.paid + r.invoiced + r.approved; }, 0);
+    var tp = rows.reduce(function(n, r){ return n + r.applied + r.pros; }, 0);
+    var at = forecastFeed && (forecastFeed.madeAt || forecastFeed.writtenAt);
+    var note = '<div class="m-bcol"><div class="m-bh">Goal vs. Pipeline</div><div class="g-note">' +
+      '<b>' + esc(money(ts)) + '</b> secured' + (have ? ' of <b>' + esc(money(tg)) + '</b> (' + Math.round(ts / (tg || 1) * 100) + '%)' : '') +
+      ', plus <b>' + esc(money(tp)) + '</b> applied for or in prospects.<br>' +
+      (have ? 'Forecast: MISMO Money' + (forecastFeed && forecastFeed.fy ? ' FY' + esc(String(forecastFeed.fy)) : '') + ', Sponsorships: Events' + (at ? ', as of ' + esc(fmtDate(String(at).slice(0, 10))) : '') + '. '
+            : 'MISMO Money\u2019s forecast for each summit shows here once MISMO Money shares it. ') +
+      'Secured is paid, invoiced and approved; a Series counts a third at each summit.' +
+      (rows.unplaced ? ' <b>' + esc(money(rows.unplaced)) + '</b> in ' + rows.nUnplaced + ' prospect' + (rows.nUnplaced === 1 ? '' : 's') + ' with no summit picked isn\u2019t counted.' : '') +
+      '</div></div>';
+    el.innerHTML = cards + note;
+  }
   function paintFlowBand(wch){
     var el = $("flow-band"); if(!el) return;
     var open = pipeItems().filter(function(it){ return it.kind === "lead" && flowKindOk(it) && PL_STAGES.indexOf(it.stage) >= 0 && (!flowState.owner || it.owner === flowState.owner); });
@@ -10398,10 +10497,10 @@ a series deal is counted once, at its full amount.</div>
     var totF = open.reduce(function(n, it){ return n + (it.amount || 0); }, 0);
     var sel = function(r){ return flowState.what === r[0] ? " on" : ""; };
     var none = '<div class="m-bnote">No open prospects' + (flowState.owner ? " for " + esc(flowState.owner) : "") + '.</div>';
-    var col1 = '<div class="m-bcol"><div class="m-bh">Forecast<span>open prospects by ' + by.toLowerCase() + ' · select one</span></div>' +
+    var col1 = '<div class="m-bcol"><div class="m-bh">Prospect Value<span>open prospects by ' + by.toLowerCase() + ' · select one</span></div>' +
       (rowsP.length ? '<div class="m-bars">' + rowsP.map(function(r){
         return '<button type="button" class="m-bar m-owe' + sel(r) + '" data-fwhat="' + esc(r[0]) + '"><span>' + esc(r[1]) + (r[2] ? ' <em>(' + r[2] + ')</em>' : '') + '</span><span class="tr"><i style="width:' + Math.round(r[3] / maxF * 100) + '%;background:#e8b04a"></i></span><b>' + (r[3] ? esc(moneyK(r[3])) : '—') + '</b></button>';
-      }).join("") + '</div>' : none) + '<div class="m-bnote"><b>' + esc(money(totF)) + '</b> forecast in all.</div></div>';
+      }).join("") + '</div>' : none) + '<div class="m-bnote"><b>' + esc(money(totF)) + '</b> prospect value in all.</div></div>';
     var col2 = '<div class="m-bcol"><div class="m-bh">Prospects by ' + by + '<span>open prospects · select one</span></div>' +
       (rowsP.length ? '<div class="m-bars">' + rowsP.map(function(r){
         return '<button type="button" class="m-bar' + sel(r) + '" data-fwhat="' + esc(r[0]) + '"><span>' + esc(r[1]) + '</span><span class="tr"><i style="width:' + Math.round(r[2] / maxN * 100) + '%;background:#74bfeb"></i></span><b>' + r[2] + '</b></button>';
@@ -10426,7 +10525,7 @@ a series deal is counted once, at its full amount.</div>
     if(key === "closing") return {title:"Sponsorships Being Closed", money:true, note:"Applications and sponsorships from Application In to Pending Payment: approved, invoiced, waiting on payment.", items:c.open.filter(function(it){ return PL_STAGES.indexOf(it.stage) < 0; }).sort(byStage)};
     if(key === "open") return {title:"Open Opportunities", note:"Every prospect and sponsorship in an open stage, Lead through Pending Payment.", items:c.open.slice().sort(byStage)};
     if(key === "worth") return {title:"What Makes Up " + money(c.forecast), money:true,
-      note:"Open opportunities with an amount, largest first. A prospect counts its forecast; a sponsorship counts what it is for.",
+      note:"Open opportunities with an amount, largest first. A prospect counts its Prospect Value; a sponsorship counts what it is for.",
       items:c.open.filter(function(it){ return it.amount; }).sort(function(x, y){ return y.amount - x.amount; })};
     if(key === "due") return {title:"Follow-Ups Due", note:"Prospects and touchpoints whose follow-up date is today or earlier.", items:c.due.slice().sort(byDate)};
     if(key === "late") return {title:"Past Due", money:true, note:"Invoices sent and not paid by their due date.", items:c.late.slice().sort(function(x, y){ return y.amount - x.amount; })};
@@ -10917,6 +11016,8 @@ a series deal is counted once, at its full amount.</div>
     var b;
     if((b = el.closest("[data-ftype]"))){ flowState.type = b.getAttribute("data-ftype"); flowState.what = ""; npState("pr").kind = flowState.type; renderFlow(); return; }
     var toList = function(){ var tb = $("flow-body"); if(tb && tb.closest(".panel")) tb.closest(".panel").scrollIntoView({behavior:"smooth", block:"start"}); };
+    /* a Goal vs. Pipeline summit lists everything for that summit, paid included */
+    if((b = el.closest("[data-fgoal]"))){ var fg = b.getAttribute("data-fgoal"); flowState.what = flowState.what === fg ? "" : fg; if(flowState.what){ flowState.group = "all"; flowState.stage = ""; } renderFlow(); if(flowState.what) toList(); return; }
     if((b = el.closest("[data-fwhat]"))){ var fw = b.getAttribute("data-fwhat"); flowState.what = flowState.what === fw ? "" : fw; if(flowState.what){ flowState.group = "prospects"; flowState.stage = ""; } renderFlow(); if(flowState.what) toList(); return; }
     if((b = el.closest("[data-ffu]"))){ var fu = b.getAttribute("data-ffu"); flowState.fu = flowState.fu === fu ? "" : fu; if(flowState.fu){ flowState.group = "prospects"; flowState.stage = ""; } renderFlow(); if(flowState.fu) toList(); return; }
     if(el.closest("#flow-mine")){ var me0 = whoAmI(); flowState.owner = flowState.owner === me0 ? "" : me0; if(flowState.owner) flowState.group = flowState.group === "open" ? "prospects" : flowState.group; renderFlow(); return; }
@@ -11320,7 +11421,7 @@ a series deal is counted once, at its full amount.</div>
     var label = (picks.filter(function(p){ return p[0] === pick; })[0] || [0, pick])[1];
     $("spx-scount").textContent = spons.length + (spons.length === 1 ? " sponsor" : " sponsors") + (total ? " · " + money(total) : "");
     var fc = pros.reduce(function(n, l){ return n + (Number(l.forecast) || 0); }, 0);
-    $("spx-pcount").textContent = pros.length + (pros.length === 1 ? " prospect" : " prospects") + (fc ? " · " + money(fc) + " forecast" : "");
+    $("spx-pcount").textContent = pros.length + (pros.length === 1 ? " prospect" : " prospects") + (fc ? " · " + money(fc) + " prospect value" : "");
     $("spx-head").innerHTML = '<span><b>' + esc(label) + '</b>' + (SUMMITS[pick] && SUMMITS[pick].opens ? ' &nbsp;' + esc(fmtDate(SUMMITS[pick].opens)) : '') + '</span>' +
       '<span>' + spons.length + ' sponsoring' + (total ? ', ' + esc(money(total)) : '') + '</span><span>' + pros.length + ' prospect' + (pros.length === 1 ? '' : 's') +
       (unpicked.length ? ' (plus ' + unpicked.length + ' summit prospect' + (unpicked.length === 1 ? '' : 's') + ' not tied to a summit yet)' : '') + '</span>';
@@ -11468,7 +11569,7 @@ a series deal is counted once, at its full amount.</div>
         '<span class="m-chips">' + [["", "All"], ["summit", "Summit"], ["workgroup", "Workgroup"], ["other", "Other"]].map(function(k){ return chip("data-npk", k[0], k[1], (st.kind || "") === k[0]); }).join("") + '</span></div>' +
       '<div class="np-sum"><b>' + rows.length + '</b> new ' + (st.tab === "pr" ? (rows.length === 1 ? "prospect" : "prospects") : (rows.length === 1 ? "sponsorship" : "sponsorships")) + ' \u00b7 ' + esc(r[2]) +
         (st.per !== "custom" || (st.from && st.to) ? ' <span>(' + esc(fmtDate(r[0])) + ' \u2013 ' + esc(fmtDate(r[1])) + ')</span>' : '') +
-        (tot ? ' \u00b7 <b>' + esc(money(tot)) + '</b>' + (st.tab === "pr" ? " forecast" : "") : '') + '</div>' +
+        (tot ? ' \u00b7 <b>' + esc(money(tot)) + '</b>' + (st.tab === "pr" ? " prospect value" : "") : '') + '</div>' +
       (rows.length ? '<div class="np-rows">' + rows.map(function(x){
         return '<button type="button" class="np-row" data-spco="' + esc(x.key) + '" style="--kc:' + kc[x.kind] + '"><span class="d">' + esc(fmtDate(x.day).replace(/, \d{4}$/, "")) + '</span>' +
           '<span class="n"><b>' + esc(x.name) + '</b><small>' + esc(x.what) + '</small></span><span class="s">' + esc(x.sub || "") + '</span><span class="a">' + (x.amt ? esc(money(x.amt)) : "\u2014") + '</span></button>';
@@ -12084,7 +12185,7 @@ a series deal is counted once, at its full amount.</div>
     $("pl-tiles").innerHTML = PL_LIFE.map(function(L){
       var fc = all.filter(function(it){ return mineOk(it) && plLifeOf(it) === L[0]; }).reduce(function(n, it){ return n + (it.amount || 0); }, 0);
       return '<button type="button" class="cotile' + (plState.life === L[0] ? " on" : "") + '" data-pllife="' + L[0] + '" style="--k:' + L[4] + '">' +
-        '<b>' + cnt[L[0]] + '</b><span class="l">' + esc(L[2]) + '</span><span class="s">' + esc(L[3]) + (fc && L[0] !== "lost" ? " · " + esc(moneyK(fc)) + " forecast" : "") + '</span></button>';
+        '<b>' + cnt[L[0]] + '</b><span class="l">' + esc(L[2]) + '</span><span class="s">' + esc(L[3]) + (fc && L[0] !== "lost" ? " · " + esc(moneyK(fc)) + " prospect value" : "") + '</span></button>';
     }).join("");
     /* the band: open prospects by stage; forecast by summit and kind; prospects by summit */
     var open = all.filter(function(it){ return mineOk(it) && plLifeOf(it) === "open"; });
@@ -12103,9 +12204,9 @@ a series deal is counted once, at its full amount.</div>
     }).filter(function(r){ return r[0] !== "summit:-" || r[2]; });
     var maxF = Math.max.apply(null, rowsP.map(function(r){ return r[3]; }).concat([1])), maxN = Math.max.apply(null, rowsP.map(function(r){ return r[2]; }).concat([1]));
     var totF = open.reduce(function(n, it){ return n + (it.amount || 0); }, 0);
-    var col2 = '<div class="m-bcol"><div class="m-bh">Forecast<span>open prospects · select one</span></div><div class="m-bars">' + rowsP.map(function(r){
+    var col2 = '<div class="m-bcol"><div class="m-bh">Prospect Value<span>open prospects · select one</span></div><div class="m-bars">' + rowsP.map(function(r){
       return '<button type="button" class="m-bar m-owe" data-plpick="' + esc(r[0]) + '"><span>' + esc(r[1]) + (r[2] ? ' <em>(' + r[2] + ')</em>' : '') + '</span><span class="tr"><i style="width:' + Math.round(r[3] / maxF * 100) + '%;background:#e8b04a"></i></span><b>' + (r[3] ? esc(moneyK(r[3])) : '—') + '</b></button>';
-    }).join("") + '</div><div class="m-bnote"><b>' + esc(money(totF)) + '</b> forecast in all.</div></div>';
+    }).join("") + '</div><div class="m-bnote"><b>' + esc(money(totF)) + '</b> prospect value in all.</div></div>';
     var col3 = '<div class="m-bcol"><div class="m-bh">Prospects by Summit<span>open prospects · select one</span></div><div class="m-bars">' + rowsP.map(function(r){
       return '<button type="button" class="m-bar" data-plpick="' + esc(r[0]) + '"><span>' + esc(r[1]) + '</span><span class="tr"><i style="width:' + Math.round(r[2] / maxN * 100) + '%;background:#74bfeb"></i></span><b>' + r[2] + '</b></button>';
     }).join("") + '</div></div>';
@@ -12131,7 +12232,7 @@ a series deal is counted once, at its full amount.</div>
       return true;
     }).sort(function(x, y){ return String(x.company).localeCompare(String(y.company)); });
     $("pl-count").textContent = rows.length + (rows.length === 1 ? " prospect" : " prospects") +
-      (rows.reduce(function(n, it){ return n + (it.amount || 0); }, 0) ? " · " + money(rows.reduce(function(n, it){ return n + (it.amount || 0); }, 0)) + " forecast" : "");
+      (rows.reduce(function(n, it){ return n + (it.amount || 0); }, 0) ? " · " + money(rows.reduce(function(n, it){ return n + (it.amount || 0); }, 0)) + " prospect value" : "");
     var due = mineAll.filter(function(it){ return it.nextDate && parseDate(it.nextDate) <= t; }).length;
     var pip = $("pip-plist"); if(pip){ pip.textContent = due; pip.className = "pip" + (due ? "" : " quiet"); pip.title = due ? due + " of your prospects due for a follow-up" : ""; }
     var initial = function(nm){ var ch = String(nm || "").trim().charAt(0).toUpperCase(); return /[A-Z]/.test(ch) ? ch : "#"; };
@@ -12945,6 +13046,9 @@ a series deal is counted once, at its full amount.</div>
   /* feeds: how often each should update, in days, before it shows late (yellow) and then stale (red) */
   var HL_FEEDS = [
     {key:"money", name:"MISMO Money Payments", what:"Paid Aptify sponsorship orders, matched to the records", every:"Daily", late:2, bad:4, at:function(){ return moneyFeed && (moneyFeed.writtenAt || moneyFeed.savedAt) || ""; }},
+    /* each summit's forecast, for Goal vs. Pipeline (November 28, 2026); "waiting" until MISMO Money first writes it */
+    {key:"forecast", name:"MISMO Money Forecast", what:"Each summit's sponsorship forecast, for Goal vs. Pipeline", every:"Daily", late:3, bad:7, waiting:"Not shared by MISMO Money yet",
+      at:function(){ return forecastFeed && (forecastFeed.madeAt || forecastFeed.writtenAt) || ""; }},
     {key:"intake", name:"Prospectus Applications", what:"The Sponsorship Intake flow: applications from the online prospectus", every:"When one comes in", info:true, own:"inbox"},
     {key:"mailin", name:"mismosponsor@ Mailbox", what:"Emails forwarded, copied or Bcc'd to " + MAIL_ADDR, every:"When one comes in", info:true, own:"mailin"},
     {key:"desk", name:"Registration Desk (Summit HQ)", what:"Bernie's invoices, comp codes and payment follow-ups", every:"When the Desk saves", info:true, ext:"summit-hq/data/feed-desk-sponsor"},
@@ -12966,6 +13070,7 @@ a series deal is counted once, at its full amount.</div>
         var r = res[i] || {}, at = r.at || "", lv, note;
         if(r.no){ lv = r.no === "no access" ? "info" : "warn"; note = r.no === "no access" ? "Your sign-in can't read it" : "Couldn't be read"; }
         else if(f.info){ lv = "info"; note = ""; }
+        else if(!at && f.waiting){ lv = "info"; note = f.waiting; }
         else { var a = hlAge(at); lv = !at ? "bad" : a > f.bad ? "bad" : a > f.late ? "warn" : "ok"; note = !at ? "Couldn't be read" : lv === "bad" ? "Hasn't updated in " + Math.floor(a) + " days" : lv === "warn" ? "Running late" : "On time"; }
         rows.push({grp:"feeds", key:"feed-" + f.key, name:f.name, what:f.what, when:at, every:f.every, level:lv, note:note, feed:true});
       });
@@ -13315,6 +13420,8 @@ a series deal is counted once, at its full amount.</div>
     }, function(){});
     /* Paid Aptify orders from MISMO Money (October 23, 2026). Read only. */
     d.raw("mismo-money-paid", function(content){ moneyFeed = content; paintMoneyBanner(); });
+    /* each summit's sponsorship forecast, from MISMO Money (November 28, 2026). Read only. */
+    d.raw("mismo-money-forecast", function(content){ forecastFeed = content; renderFlow(); });
     d.collection("outbox-sent").onSnapshot(function(snap){
       try{
         outboxSent = {};

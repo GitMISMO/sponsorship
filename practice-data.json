@@ -56,6 +56,13 @@
       "m-t-2": {"from": "pat@newco-lending.test", "to": "mismosponsor@mismo.org; kbradshaw@mismo.org", "subject": "Sponsoring the Spring summit", "received": "{{today}}T10:00:00Z", "html": "<p>Hi Kelly, we would like to hear about sponsoring Spring.</p><p>Company: Newco Lending Test</p><p>Pat Test</p>", "about": "nobody matches: a new prospect is made"},
       "m-t-3": {"from": "kim@example.org", "to": "mismosponsor@mismo.org", "subject": "Question", "received": "{{today}}T11:00:00Z", "html": "<p>A question about our sponsorship.</p>", "about": "example.org belongs to several sponsors: waits for someone to pick"}
     }},
+    "mismo-money-forecast": {
+      "for": "sponsorship",
+      "fy": 2027,
+      "madeAt": "{{today}}T11:45:00.000Z",
+      "line": "Sponsorships: Events",
+      "summits": {"Winter 2027": 60000, "Spring 2027": 45000, "Fall 2027": 40000}
+    },
     "mismo-money-paid": {
       "for": "sponsorship", "writtenAt": "{{today}}T12:00:00.000Z", "paymentsThrough": "{{today-1}}",
       "orders": [

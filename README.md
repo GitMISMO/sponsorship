@@ -314,6 +314,14 @@ the money is shared. MBA is no longer sent a past-due notice; MISMO follows up w
 same ids and numbers the first time an editor opened the portal; `data/webinars.json` is kept as it
 was.
 
+**Goal vs. Pipeline** (November 28, 2026): the Pipeline's Summit view shows, for each summit still to come,
+MISMO Money's forecast against secured (paid, invoiced, approved, from `summitRoll`), applications in, and open
+prospects' Prospect Value (`forecast` on a prospect; a Series prospect split three ways; no summit picked: not
+counted). MISMO Money writes the forecast to sponsorship-data `data/mismo-money-forecast.json`, read only here:
+`{"for":"sponsorship", "fy":2027, "madeAt":ISO, "line":"Sponsorships: Events", "summits":{"Winter 2027":147416.66, ...}}`
+(a summit's value may also be `{"forecast":n}`). Until it exists the band shows the pipeline without a goal and
+System Health's MISMO Money Forecast row says it isn't shared yet.
+
 **Publish on MyMISMO** (November 27, 2026): the box on each Prospectuses card is kept in
 `settings/main.mymismo` as `{pages:{"series-winter":true,"spring":false,"fall":false,"spring-fall":false},
 changed:{<key>:{by, at}}}` (until a box is first saved, Series + Winter is on and the rest are off).

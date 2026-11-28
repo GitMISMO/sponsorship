@@ -590,6 +590,24 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     const st2 = (await fileOf('settings')) || {docs:{}};
     expect(((st2.docs.main || {}).mymismo || {}).pages.spring === false, 'unchecking did not save');
   });
+  await check('Goal vs. Pipeline: MISMO Money\'s forecast for each summit against what is secured, applied for and in prospects', async () => {
+    await toFlow(); await portal.click('[data-ftype="summit"]'); await portal.waitForTimeout(300);
+    const g = await P(portal, () => { const el = document.getElementById('flow-goal'); return { hidden: el.hidden, cards: [...el.querySelectorAll('.g-sum')].map(c => c.dataset.fgoal + ': ' + c.innerText.replace(/\s+/g, ' ')) }; });
+    expect(!g.hidden && g.cards.length >= 3, 'the goal band is not showing: ' + JSON.stringify(g));
+    const w = g.cards.find(c => c.indexOf('Winter 2027:') === 0) || '';
+    expect(/secured of \$60,000/.test(w) && /Paid \$[\d,]+/.test(w) && /Applications In \$[\d,]+/.test(w) && /Prospects \$[\d,]+/.test(w), 'Winter 2027 does not show the practice forecast and its parts: ' + w);
+    /* the numbers are the summit's own: secured = paid + invoiced + approved, against the Money tab's figures for that summit */
+    const parts = await P(portal, () => { const c = document.querySelector('#flow-goal .g-sum[data-fgoal="Winter 2027"]'); const v = [...c.querySelectorAll('.g-lines span:nth-child(even)')].map(x => Number(x.textContent.replace(/[^0-9.]/g, ''))); return { v, big: Number(c.querySelector('.g-big').firstChild.textContent.replace(/[^0-9.]/g, '')) }; });
+    expect(Math.abs(parts.v[0] + parts.v[1] + parts.v[2] - parts.big) < 1, 'secured is not paid + invoiced + approved: ' + JSON.stringify(parts));
+    await portal.click('#flow-goal .g-sum[data-fgoal="Spring 2027"]'); await portal.waitForTimeout(300);
+    expect(await P(portal, () => document.getElementById('flow-what').value) === 'Spring 2027', 'selecting a summit does not narrow the list to it');
+    await portal.click('#flow-goal .g-sum[data-fgoal="Spring 2027"]'); await portal.waitForTimeout(200);
+    await portal.click('[data-ftype="workgroup"]'); await portal.waitForTimeout(200);
+    expect(await P(portal, () => document.getElementById('flow-goal').hidden), 'the goal band shows for workgroup sponsorships');
+    await portal.click('[data-ftype="summit"]'); await portal.waitForTimeout(200);
+    const help = await P(portal, () => document.getElementById('flow-goal').innerText);
+    expect(/MISMO Money/.test(help) && /a Series counts a third/.test(help), 'the band does not say where the forecast comes from');
+  });
   await check('a workgroup prospect starts its sponsorship, filled in', async () => {
     await toFlow(); await portal.click('[data-ftype="workgroup"]'); await portal.waitForTimeout(200);
     /* a Pipeline row opens the company; its See the Prospect button opens the prospect inside the card */
@@ -899,7 +917,7 @@ const appBy = async (page, test) => (await apps(page)).find(test);
     let rows = await P(portal, () => document.getElementById('flow-body').innerText);
     expect(/Wingtip Servicing/.test(rows) && !/Newco Lending Test/.test(rows) && !/Litware Group/.test(rows), 'the summit filter is wrong: ' + rows.slice(0, 300));
     const band = await P(portal, () => document.getElementById('flow-band').innerText);
-    expect(/Forecast/i.test(band) && /Prospects by Summit/i.test(band) && /Follow-Ups/i.test(band), 'the prospects band is missing parts: ' + band.slice(0, 200));
+    expect(/Prospect Value/i.test(band) && /Prospects by Summit/i.test(band) && /Follow-Ups/i.test(band), 'the prospects band is missing parts: ' + band.slice(0, 200));
     await portal.selectOption('#flow-what', '');
     /* a follow-up bucket narrows the list to those prospects */
     await portal.click('#flow-band [data-ffu="none"]'); await portal.waitForTimeout(250);
